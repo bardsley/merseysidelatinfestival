@@ -18,7 +18,6 @@ blocks:
     image:
       src: /uploads/mlflogo.png
       alt: ''
-    backgroundimage: /uploads/background1.png
     color: primary
     _template: hero
   - items:
@@ -29,7 +28,7 @@ blocks:
         title: Incredible Classes
         text: >-
           This is where you might talk about the feature, if this wasn't just
-          filler text.
+          filler text. test
       - icon:
           name: BiSolidBowlHot
           color: yellow
