@@ -18,6 +18,7 @@ blocks:
     image:
       src: /uploads/mlflogo.png
       alt: ''
+    backgroundimage: /uploads/background1.png
     color: primary
     _template: hero
   - items:
