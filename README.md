@@ -1,3 +1,13 @@
+[Colour Pallette base ](https://coolors.co/02252f-001014-e23912-ffd20a-eee2df)
+
+TODO
+======
+[ ] Merseyside small logo
+[ ] Optimise images
+[ ] Video of dancing for hero
+
+
+
 # Tina Starter 🦙
 
 ![tina-cloud-starter-demo](https://user-images.githubusercontent.com/103008/130587027-995ccc45-a852-4f90-b658-13e8e0517339.gif)
