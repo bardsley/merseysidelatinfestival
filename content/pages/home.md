@@ -48,5 +48,11 @@ blocks:
           filler text.
     color: default
     _template: features
+  - quote: >-
+      Last year was incredible and I am so excited for 3 days. Bring it on!
+      #MLF2024
+    author: Adam Bardsley
+    color: primary
+    _template: testimonial
 ---
 
