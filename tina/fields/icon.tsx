@@ -33,7 +33,6 @@ export const IconPickerInput = wrapFieldsWithMeta(({ input }) => {
     ? parseIconName(input.value)
     : "Select Icon";
   const InputIcon = IconOptions[input.value] ? IconOptions[input.value] : null;
-
   return (
     <div className="relative z-[1000]">
       <input type="text" id={input.name} className="hidden" {...input} />

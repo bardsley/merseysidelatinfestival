@@ -5,9 +5,10 @@ import Link from "next/link";
 import { Container } from "../layout/container";
 import { cn } from "../../lib/utils";
 import { tinaField } from "tinacms/dist/react";
-import { Icon } from "../icon";
 import NavItems from "./nav-items";
 import { useLayout } from "../layout/layout-context";
+import Logo from '../../public/mlf.svg';
+
 
 const headerColor = {
   default:
@@ -21,6 +22,7 @@ const headerColor = {
     purple: "text-white from-purple-400 to-purple-500",
     orange: "text-white from-orange-400 to-orange-500",
     yellow: "text-white from-yellow-400 to-yellow-500",
+    merseyside: "text-white from-richblack-500 to-richblack-500",
   },
 };
 
@@ -44,7 +46,7 @@ export default function Header() {
               href="/"
               className="flex gap-1 items-center whitespace-nowrap tracking-[.002em]"
             >
-              <Icon
+              {/* <Icon
                 tinaField={tinaField(header, "icon")}
                 parentColor={header.color}
                 data={{
@@ -52,8 +54,10 @@ export default function Header() {
                   color: header.icon.color,
                   style: header.icon.style,
                 }}
-              />{" "}
-              <span data-tina-field={tinaField(header, "name")}>
+              /> */}
+              <Logo className="w-12 h-12"></Logo>
+              {" "}
+              <span data-tina-field={tinaField(header, "name")} className="ml-2 hidden md:inline">
                 {header.name}
               </span>
             </Link>
@@ -62,13 +66,14 @@ export default function Header() {
         </div>
         <div
           className={cn(
-            `absolute h-1 bg-gradient-to-r from-transparent`,
+            `absolute h-[1px] bg-gradient-to-r from-transparent`,
             theme.darkMode === "primary"
               ? `via-white`
               : `via-black dark:via-white`,
-            "to-transparent bottom-0 left-4 right-4 -z-1 opacity-5"
+            "to-transparent bottom-0 left-4 right-4 -z-1 opacity-20"
           )}
         />
+        
       </Container>
     </div>
   );

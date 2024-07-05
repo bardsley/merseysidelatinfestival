@@ -1,38 +1,33 @@
 {
   "header": {
     "icon": {
-      "name": "Tina",
-      "color": "orange",
+      "color": "yellow",
       "style": "float"
     },
-    "name": "Tina Starter",
-    "color": "default",
+    "name": "Merseyside Latin Festival 2024",
+    "color": "primary",
     "nav": [
       {
-        "href": "",
+        "href": "home",
         "label": "Home"
       },
       {
-        "href": "about",
-        "label": "About"
-      },
-      {
-        "href": "posts",
-        "label": "Blog"
+        "href": "tickets",
+        "label": "Tickets"
       }
     ]
   },
   "footer": {
-    "color": "default",
+    "color": "primary",
     "social": {
-      "facebook": "/",
-      "twitter": "/",
-      "instagram": "/"
+      "facebook": "/https://www.facebook.com/profile.php?id=100091289556414",
+      "twitter": "",
+      "instagram": "https://www.instagram.com/merseysidelatinfestival/"
     }
   },
   "theme": {
-    "color": "blue",
+    "color": "merseyside",
     "font": "sans",
-    "darkMode": "light"
+    "darkMode": "dark"
   }
 }

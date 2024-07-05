@@ -1,7 +1,7 @@
 import React from "react";
 import { useLayout } from "../layout/layout-context";
 
-export const Section = ({ children, color = "", className = "" }) => {
+export const Section = ({ children, color = "", className = "" , backgroundImage = "" }) => {
   const { theme } = useLayout();
   const sectionColor = {
     default:
@@ -19,7 +19,9 @@ export const Section = ({ children, color = "", className = "" }) => {
       orange:
         "text-white bg-orange-500 bg-gradient-to-br from-orange-500 to-orange-600",
       yellow:
-        "text-white bg-yellow-500 bg-gradient-to-br from-yellow-500 to-yellow-600",
+        "text-white bg-richblack-500 bg-gradient-to-br from-richblack-500 to-yellow-600",
+      merseyside:
+        "text-white bg-richblack-500 bg-gradient-to-br from-richblack-500 to-richblack-600",
     },
   };
   const sectionColorCss =
@@ -32,7 +34,16 @@ export const Section = ({ children, color = "", className = "" }) => {
   return (
     <section
       className={`flex-1 relative transition duration-150 ease-out body-font overflow-hidden ${sectionColorCss} ${className}`}
-    >
+    > 
+      {backgroundImage && (
+        <div
+          className="absolute inset-0 bg-gradient-to-b bg-cover from-gray-50 to-transparent dark:from-gray-900 dark:to-transparent"
+          style={{
+            backgroundImage: `url(${backgroundImage})`,
+            opacity: 0.2,
+          }}
+        />
+      )}
       {children}
     </section>
   );

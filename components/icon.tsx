@@ -64,6 +64,10 @@ const iconColorClass: {
     regular: "text-white opacity-80",
     circle: "bg-white-400 dark:bg-white-500 text-white-50",
   },
+  merseyside: {
+    regular: "text-richblack-500 dark:text-white",
+    circle: "bg-richblack-500 dark:bg-white text-white dark:text-richblack-500",
+  },
 };
 
 const iconSizeClass = {

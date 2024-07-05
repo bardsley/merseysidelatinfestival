@@ -9,7 +9,7 @@ export default function NavActive({
   return (
     <svg
       className={cn(
-        `absolute bottom-0 left-1/2 w-[180%] h-full -translate-x-1/2 -z-1 opacity-10 dark:opacity-15 `,
+        `absolute bottom-0 left-1/2 w-[180%] h-full -translate-x-1/2 -z-1 opacity-10 dark:opacity-10 `,
         backgroundColor
       )}
       preserveAspectRatio="none"
