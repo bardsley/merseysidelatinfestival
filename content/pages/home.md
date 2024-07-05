@@ -32,7 +32,7 @@ blocks:
           filler text. test
       - icon:
           name: BiSolidBowlHot
-          color: yellow
+          color: green
           style: circle
         title: Delicious Food
         text: >-
