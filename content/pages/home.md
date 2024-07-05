@@ -54,5 +54,20 @@ blocks:
     author: Adam Bardsley
     color: primary
     _template: testimonial
+  - tagline: Last year
+    headline: Last year's video
+    text: |
+      Some test testset I can tsee???
+    text2: ''
+    actions:
+      - label: Watch last years video
+        type: button
+        icon: true
+        link: /
+    image:
+      src: /uploads/mlflogo.png
+    backgroundimage: /uploads/backgroundMovie.mp4
+    color: primary
+    _template: hero
 ---
 

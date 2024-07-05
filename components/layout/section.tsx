@@ -30,19 +30,36 @@ export const Section = ({ children, color = "", className = "" , backgroundImage
       : sectionColor[color]
       ? sectionColor[color]
       : sectionColor.default;
+  
+  const videoMatcher = /.*\.mp4/
+  const hasVideo = videoMatcher.test(backgroundImage)
 
   return (
     <section
       className={`flex-1 relative transition duration-150 ease-out body-font overflow-hidden ${sectionColorCss} ${className}`}
     > 
       {backgroundImage && (
-        <div
+        hasVideo ? (
+          <video
+            className="absolute inset-0 object-cover w-full h-full"
+            autoPlay
+            muted
+            loop
+            playsInline
+            style={{filter: 'blur(5px) grayscale(50%)'}}
+          >
+            <source src={backgroundImage} type="video/mp4" />
+          </video>
+        ) : (
+          <div
           className="absolute inset-0 bg-gradient-to-b bg-cover from-gray-50 to-transparent dark:from-gray-900 dark:to-transparent"
           style={{
             backgroundImage: `url(${backgroundImage})`,
             opacity: 0.2,
           }}
         />
+        )
+        
       )}
       {children}
     </section>
