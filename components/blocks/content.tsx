@@ -20,7 +20,7 @@ export const Content = ({ data }: { data: PageBlocksContent }) => {
         }`}
         data-tina-field={tinaField(data, "body")}
         size="large"
-        width="medium"
+        width={data.width || 'medium'}  
       >
         <TinaMarkdown content={data.body} components={components}/>
       </Container>
@@ -51,10 +51,35 @@ export const contentBlockSchema: Template = {
               name: "description",
               label: "Description",
               type: "rich-text",
+            },
+            {
+              name: "buttonid",
+              label: "Buy Button Type",
+              type: "string",
+              options: [
+                {
+                  value: 'buy_btn_1PX2hYEWkmdeWsQPpM9k8WFI',
+                  label: 'Student',
+                },
+                {
+                  value: 'buy_btn_1PX2eZEWkmdeWsQPvSMRezVD',
+                  label: 'Normal',
+                },
+              ],
             }
           ],
         },
       ]
+    },
+    {
+      type: "string",
+      label: "Width",
+      name: "width",
+      options: [
+        { label: "Full Width", value: "large" },
+        { label: "Thinner", value: "medium" },
+        { label: "Thin", value: "small" },
+      ],
     },
     {
       type: "string",
