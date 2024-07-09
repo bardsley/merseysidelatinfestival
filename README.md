@@ -10,15 +10,33 @@ Adam
 [ ] Video of dancing for hero
 [ ] Add see through option for a section
 [ ] Add title to features section
-
+[ ] Disclaimer on food choices
+ 
 Connor
 ------  
 [ ] Add a video of the dancing man
+[ ] Send Adm the SVG files
+[ ] Send me the link
 
 Karen
 -----
+[ ] Video of dancing wide
+
+Purchasing Rules
+----------------
 
 
+name: "Adam",
+email "Email"
+number_of_tickets: 1,
+line_items: [
+  { name: "Party pass", stripe_product_id: 456798, access: [1,0,0,1,0,1] },
+  { name: "Dinner Option", stripe_product_id: 456798, access: [0,0,1,0,0,0] },
+]
+price: 100
+
+chgeckout
+emails
 
 # Tina Starter 🦙
 
