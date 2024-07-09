@@ -15,5 +15,5 @@ interface ClientPageProps {
 
 export default function ClientPage(props: ClientPageProps) {
   const { data } = useTina({...props});
-  return <Blocks {...data?.page} />;
+  return <><h2>Test</h2><Blocks {...data?.page} /></>;
 }

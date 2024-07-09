@@ -7,6 +7,9 @@ import { PageBlocksContent } from "../../tina/__generated__/types";
 import { tinaField } from "tinacms/dist/react";
 import { Container } from "../layout/container";
 import { Section } from "../layout/section";
+import BuyButton from "../content/buybutton";
+
+const components = { BuyButton }
 
 export const Content = ({ data }: { data: PageBlocksContent }) => {
   return (
@@ -19,7 +22,7 @@ export const Content = ({ data }: { data: PageBlocksContent }) => {
         size="large"
         width="medium"
       >
-        <TinaMarkdown content={data.body} />
+        <TinaMarkdown content={data.body} components={components}/>
       </Container>
     </Section>
   );
@@ -39,6 +42,19 @@ export const contentBlockSchema: Template = {
       type: "rich-text",
       label: "Body",
       name: "body",
+      templates: [
+        {
+          name: "BuyButton",
+          label: "BuyButton",
+          fields: [
+            {
+              name: "description",
+              label: "Description",
+              type: "rich-text",
+            }
+          ],
+        },
+      ]
     },
     {
       type: "string",

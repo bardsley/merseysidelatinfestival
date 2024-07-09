@@ -8,15 +8,13 @@ const Page: Collection = {
   label: "Pages",
   name: "page",
   path: "content/pages",
+  format: "mdx",
   ui: {
     router: ({ document }) => {
       if (document._sys.filename === "home") {
         return `/`;
       }
-      if (document._sys.filename === "about") {
-        return `/about`;
-      }
-      return undefined;
+      return document._sys.filename ? `/${document._sys.filename}` : undefined;
     },
   },
   fields: [

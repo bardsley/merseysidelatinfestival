@@ -9,11 +9,13 @@ export default async function Page({
   params: { filename: string[] };
 }) {
   const data = await client.queries.page({
-    relativePath: `${params.filename}.md`,
+    relativePath: `${params.filename}.mdx`,
   });
 
+  console.log("PAGE:",params, data.variables);
   return (
     <Layout rawPageData={data}>
+      <h2>Testing</h2>
       <ClientPage {...data}></ClientPage>
     </Layout>
   );
