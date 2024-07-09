@@ -3,9 +3,10 @@ import React from "react";
 // import client from "../../../tina/__generated__/client";
 import Layout from "../../components/layout/layout";
 import {Section} from "../../components/layout/section";
+import Table  from "../../components/ticketing/Table";
 // import PostClientPage from "./client-page";
 
-export default async function PostPage({
+export default function TimetablePage({
   params,
 }: {
   params: { filename: string[] };
@@ -17,8 +18,9 @@ export default async function PostPage({
   return (
     // <Layout rawPageData={data}>
     <Layout>
-       <Section>
-        <h2>Coming soon</h2>
+       <Section className="">
+        <Table></Table>
+        {params.filename }
        </Section>
       
       
