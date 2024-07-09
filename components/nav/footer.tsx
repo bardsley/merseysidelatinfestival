@@ -38,35 +38,20 @@ export default function Footer() {
       purple: "text-white from-purple-500 to-purple-600",
       orange: "text-white from-orange-500 to-orange-600",
       yellow: "text-white from-yellow-500 to-yellow-600",
+      merseyside: "text-white from-chillired-300 to-chillired-500",
     },
   };
 
   const footerColorCss =
-    theme?.darkMode === "primary"
+    theme?.darkMode === "dark"
       ? footerColor.primary[theme.color]
       : footerColor.default;
 
   return (
     <footer className={cn(`bg-gradient-to-br`, footerColorCss)}>
       <Container className="relative" size="small">
-        <div className="flex justify-between items-center gap-6 flex-wrap">
-          <Link
-            href="/"
-            className="group mx-2 flex items-center font-bold tracking-tight text-gray-400 dark:text-gray-300 opacity-50 hover:opacity-100 transition duration-150 ease-out whitespace-nowrap"
-          >
-            <Icon
-              parentColor={footer.color}
-              data={{
-                name: globalSettings?.header.icon.name,
-                color:
-                  theme.color === "primary"
-                    ? "primary"
-                    : globalSettings?.header.icon.color,
-                style: globalSettings?.header.icon.style,
-              }}
-              className="inline-block h-10 w-auto group-hover:text-orange-500"
-            />
-          </Link>
+        <div className="flex justify-center items-center gap-6 flex-wrap">
+          
           <div className="flex gap-4">
             {footer.social && footer.social.facebook && (
               <a
@@ -129,7 +114,7 @@ export default function Footer() {
               </a>
             )}
           </div>
-          <RawRenderer parentColor={footer.color} rawData={pageData} />
+          {/* <RawRenderer parentColor={footer.color} rawData={pageData} /> */}
         </div>
         <div
           className={cn(

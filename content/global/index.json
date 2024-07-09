@@ -12,8 +12,16 @@
         "label": "Home"
       },
       {
+        "href": "timetable",
+        "label": "Timetable"
+      },
+      {
         "href": "tickets",
         "label": "Tickets"
+      },
+      {
+        "href": "artists",
+        "label": "Artists"
       }
     ]
   },

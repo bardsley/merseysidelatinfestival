@@ -23,6 +23,7 @@ export const Section = ({ children, color = "", className = "" , backgroundImage
       merseyside:
         "text-white bg-richblack-500 bg-gradient-to-br from-richblack-500 to-richblack-600",
     },
+    transparent: "text-gray-900 dark:text-gray-100",
   };
   const sectionColorCss =
     color === "primary"
@@ -34,34 +35,44 @@ export const Section = ({ children, color = "", className = "" , backgroundImage
   const videoMatcher = /.*\.mp4/
   const hasVideo = videoMatcher.test(backgroundImage)
 
-  return (
-    <section
-      className={`flex-1 relative transition duration-150 ease-out body-font overflow-hidden ${sectionColorCss} ${className}`}
-    > 
-      {backgroundImage && (
-        hasVideo ? (
-          <video
-            className="absolute inset-0 object-cover w-full h-full"
-            autoPlay
-            muted
-            loop
-            playsInline
-            style={{filter: 'blur(5px) grayscale(50%)'}}
-          >
-            <source src={backgroundImage} type="video/mp4" />
-          </video>
-        ) : (
-          <div
-          className="absolute inset-0 bg-gradient-to-b bg-cover from-gray-50 to-transparent dark:from-gray-900 dark:to-transparent"
-          style={{
-            backgroundImage: `url(${backgroundImage})`,
-            opacity: 0.2,
-          }}
-        />
-        )
-        
-      )}
+  if (backgroundImage) {
+    return hasVideo ? (
+      <section
+        className={`flex-1 relative transition duration-150 ease-out body-font overflow-hidden ${sectionColorCss} bg-none`}
+      > 
+        <video
+          className="absolute inset-0 object-cover w-full h-full opacity-50"
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{filter: 'blur(5px) grayscale(50%)'}}
+        >
+          <source src={backgroundImage} type="video/mp4" />
+        </video>
+        {children}
+      </section>
+    ) : (
+      <section
+        className={`flex-1 relative transition duration-150 ease-out body-font overflow-hidden ${sectionColorCss} ${className}`}
+      > 
+        <div
+        className="absolute inset-0 bg-gradient-to-b bg-cover from-gray-50 to-transparent dark:from-gray-900 dark:to-transparent"
+        style={{
+          backgroundImage: `url(${backgroundImage})`,
+          opacity: 0.2,
+        }}
+      />
       {children}
-    </section>
-  );
+      </section>
+    )
+  } else {
+    return (
+      <section
+        className={`flex-1 relative transition duration-150 ease-out body-font overflow-hidden ${sectionColorCss} ${className}`}
+      > 
+        {children}
+      </section>
+    )
+  }
 };

@@ -2,9 +2,21 @@
 
 TODO
 ======
+
+Adam
+----
 [ ] Merseyside small logo
 [ ] Optimise images
 [ ] Video of dancing for hero
+[ ] Add see through option for a section
+[ ] Add title to features section
+
+Connor
+------  
+[ ] Add a video of the dancing man
+
+Karen
+-----
 
 
 

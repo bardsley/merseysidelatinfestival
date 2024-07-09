@@ -48,8 +48,8 @@ export const Testimonial = ({ data }: { data: PageBlocksTestimonial }) => {
               data-tina-field={tinaField(data, `author`)}
               className={`tracking-wide title-font font-bold text-lg ${
                 data.color === "primary"
-                  ? `text-blue-200`
-                  : `text-blue-500 dark:text-blue-300`
+                  ? `text-gold-400`
+                  : `text-gold-500 dark:text-gold-300`
               }`}
             >
               {data.author}
