@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Cell from './Cell';
 import DiscountMessage from './DiscountMessage';
-import './Ticketing.css';
+// import './Ticketing.css';
 
 const initialOptions = {
   Friday: [
@@ -22,6 +22,7 @@ const initialOptions = {
 };
 
 const predefinedPrices = {
+  'Friday Pass': 15,
   'Saturday Pass': 95,
   'Sunday Pass': 59,
   'Class Pass': 95,
@@ -206,48 +207,76 @@ const Table = () => {
     setStudentDiscountMessage(studentDiscount ? "Student prices require you provide a valid student ID on the day of the event." : "");
   }, [selectedOptions, studentDiscount]);
 
+  const allSelected = selectedOptions.length === 6
+  const toggleFullPassCss = allSelected ?  'bg-chillired-700' : 'bg-chillired-300 border border-chillired-700';
   return (
-    <div className="table-container">
-      <div className='full-pass-containter'>
-        <h2>I want the best value! =&gt;</h2>
-        <button className="full-pass-toggle" onClick={handleFullPassToggle}>Full Pass</button>
-      </div>   
-      <button
-        className={`student-discount-toggle ${studentDiscount ? 'active' : ''}`}
-        onClick={handleStudentDiscountToggle}
-      >
-        Student Discount
-      </button>
-      {studentDiscount && (
-        <div className="student-discount-message">
-          {studentDiscountMessage}
-        </div>
-      )}
-      <table className="option-table">
+    <div className="table-container  w-full max-w-6xl mx-auto">
+      <h1 className='text-3xl font-bold mt-6'>Ticket and pass options</h1>
+      <h2>Select the element's you want from the weekend and we'll calculate the best price</h2>
+      <table className="option-table table-auto border-collapse border-b border-chillired-300 ">
         <thead>
           <tr>
-            <th></th>
-            {Object.keys(initialOptions).map((day) => (
-              <th key={day} onClick={() => handleColumnSelect(day)}>{day}</th>
-            ))}
+            <th>
+            <button onClick={handleFullPassToggle} 
+              className={`${toggleFullPassCss} rounded-md px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-chillired-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chillired-600`}
+            >Full Pass</button>
+            </th>
+            {Object.keys(initialOptions).map((day) => {
+              return (<th key={day} className='px-24 py-6'>
+                {day}
+              </th>
+              )})}
+          </tr>
+          <tr>
+            <th className='border border-chillired-300'>Full  Day</th>
+            {Object.keys(initialOptions).map((day) => {
+              const isSelected = day == 'Saturday' && selectedOptions.includes(`${day}-Classes`) && selectedOptions.includes(`${day}-Party`) && selectedOptions.includes(`${day}-Dinner`) ? true
+                  : day == 'Sunday' && selectedOptions.includes(`${day}-Classes`) && selectedOptions.includes(`${day}-Party`) ? true
+                    : false
+              return (<th key={day} className='py-6 border border-chillired-300'>
+                { day != 'Friday' ? <Cell
+                  key={`${day}-full`}
+                  option={{ name: `${day}-Pass`, cost: predefinedPrices[`${day} Pass`], studentCost: predefinedStudentPrices[`${day} Pass`], isAvailable: true }}
+                  isSelected={isSelected}
+                  onSelect={() => handleColumnSelect(day)}  
+                  studentDiscount={studentDiscount}             
+                /> : <>N/A</>}
+              </th>
+              )})}
           </tr>
         </thead>
         <tbody>
           {['Party', 'Classes', 'Dinner'].map((row, rowIndex) => (
             <tr key={row}>
-              <td className="rowSelector" onClick={() => handleRowSelect(row)}>{row}</td>
+              <th className="rowSelector border border-chillired-300 py-6 px-24 " onClick={() => handleRowSelect(row)}>{row}</th>
+
               {Object.keys(initialOptions).map((day) => (
+                <td className='border border-chillired-300 py-6' key={`${day}-${row}`}>
                 <Cell
-                  key={`${day}-${row}`}
                   option={initialOptions[day][rowIndex]}
                   isSelected={selectedOptions.includes(`${day}-${row}`)}
                   onSelect={() => handleCellSelect(day, initialOptions[day][rowIndex])}
                   studentDiscount={studentDiscount}
                 />
+                </td>
               ))}
             </tr>
           ))}
         </tbody>
+        <caption className='caption-bottom pt-3'>
+          If you&apos;re a student we offer a  
+          <button
+            className={`student-discount-toggle ${studentDiscount ? 'active' : ''} inline pl-1 underline`}
+            onClick={handleStudentDiscountToggle}
+          >
+            student discount
+          </button>
+          {studentDiscount && (
+            <div className="student-discount-message">
+              {studentDiscountMessage}
+            </div>
+          )}
+        </caption>
       </table>
       <DiscountMessage message={discountMessages.join(', ')} />
       <div className="total-cost">
