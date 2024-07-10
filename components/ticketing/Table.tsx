@@ -212,7 +212,7 @@ const Table = () => {
   return (
     <div className="table-container  w-full max-w-6xl mx-auto">
       <h1 className='text-3xl font-bold mt-6'>Ticket and pass options</h1>
-      <h2>Select the element's you want from the weekend and we'll calculate the best price</h2>
+      <h2>Select the element&apos;s you want from the weekend and we&apos;ll calculate the best price</h2>
       <table className="option-table table-auto border-collapse border-b border-chillired-300 ">
         <thead>
           <tr>

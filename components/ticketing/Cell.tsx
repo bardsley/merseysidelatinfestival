@@ -4,7 +4,8 @@ import React from 'react';
 import { Field, Label, Switch } from '@headlessui/react'
 
 const Cell = ({ option, isSelected, onSelect, studentDiscount }) => {
-  const { name, cost, studentCost, isAvailable } = option;
+  // const { name, cost, studentCost, isAvailable } = option;
+  const { cost, studentCost, isAvailable } = option;
   const checkBoxCss = isSelected? 'bg-chillired-600' : 'bg-gray-200';
   return (
       <>{isAvailable ? (
