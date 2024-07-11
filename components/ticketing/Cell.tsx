@@ -33,7 +33,7 @@ const Cell: React.FC<ICellProps> = (props: ICellProps) => {
         <Field className="flex items-center justify-center">
           <Switch
             checked={isSelected}
-            onClick={prevState => onSelect(setValue.one,setValue.two)}
+            onClick={() => onSelect(setValue.one,setValue.two)}
             // onChange={onSelect(day,passType)}
             className={`${checkBoxCss} group relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent  transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-chillired-600 focus:ring-offset-2`}
           >

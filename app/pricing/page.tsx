@@ -1,8 +1,6 @@
 import React from "react";
 // import client from "../../../tina/__generated__/client";
 import Layout from "../../components/layout/layout";
-import {Section} from "../../components/layout/section";
-import Table  from "../../components/ticketing/Table";
 import Pricing  from "../../components/ticketing/Pricing";
 // import PostClientPage from "./client-page";
 

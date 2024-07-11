@@ -14,24 +14,24 @@ type DayTickets = {
   Classes: Ticket;
   Dinner: Ticket;
 };
-type IndividualTickets = {
-  Friday: DayTickets;
-  Saturday: DayTickets;
-  Sunday: DayTickets;
-};
+// type IndividualTickets = {
+//   Friday: DayTickets;
+//   Saturday: DayTickets;
+//   Sunday: DayTickets;
+// };
 type SelectedOptions = {
   Friday: { Party: boolean; Classes: boolean; Dinner: boolean };
   Saturday: { Party: boolean; Classes: boolean; Dinner: boolean };
   Sunday: { Party: boolean; Classes: boolean; Dinner: boolean };
 };
-type Pass = {
-  cost: number;
-  studentCost: number;
-  isAvailable: boolean;
-  saving: number;
-  combination: string[];
-};
-type Passes = { [key: string]: Pass };
+// type Pass = {
+//   cost: number;
+//   studentCost: number;
+//   isAvailable: boolean;
+//   saving: number;
+//   combination: string[];
+// };
+// type Passes = { [key: string]: Pass };
 
 const individualTickets = { 
   Friday: {
@@ -78,11 +78,11 @@ const passes = {
   'Full Pass': { cost: 125, studentCost: 110, isAvailable: true, saving: 77, combination: ['Friday Party', 'Saturday Classes', 'Saturday Dinner', 'Saturday Party', 'Sunday Classes', 'Sunday Party'] },
 }
 
-const allowedCombinationSums = [
-  ['Sunday Pass', 'Saturday Pass'],
-  ['Party Pass', 'Class Pass'],
-  ['Class Pass', 'Dine and Dance Pass'],
-];
+// const allowedCombinationSums = [
+//   ['Sunday Pass', 'Saturday Pass'],
+//   ['Party Pass', 'Class Pass'],
+//   ['Class Pass', 'Dine and Dance Pass'],
+// ];
 
 const days = ['Friday', 'Saturday', 'Sunday']
 const passTypes = ['Party', 'Classes', 'Dinner']
@@ -91,7 +91,7 @@ const passTypes = ['Party', 'Classes', 'Dinner']
 const cellClasses = 'border border-chillired-300 text-center py-6 px-16';
 const Pricing = () => {
   const [selectedOptions, setSelectedOptions] = useState(initialSelectedOptions);
-  const [provisionalOptions, setProvisionalOptions] = useState({});
+  // const [provisionalOptions, setProvisionalOptions] = useState({});
   const [studentDiscount, setStudentDiscount] = useState(false);
   const [priceModel, setPriceModel] = useState("cost")
   const [totalCost, setTotalCost] = useState(0);
@@ -144,7 +144,7 @@ const Pricing = () => {
 
   const optionsToPassArray = (options) => { // max 2 level
     const keys = Object.keys(options)
-    return keys.flatMap((key,value,index) => {
+    return keys.flatMap((key) => {
       return Object.keys(options[key]).map((subkey) => {
         return options[key][subkey] === true || options[key][subkey].isAvailable ? `${key} ${subkey}` : null
       })
@@ -250,8 +250,8 @@ const Pricing = () => {
 
 
   const selectPassCombination = () => {
-    let filteredOptions = deepCopy(selectedOptions)
-    const orderedPassNames = optionsToPassArray(selectedOptions)//Object.keys(passes).sort((a,b) => { return passes[a].saving - passes[b].saving })
+    // let filteredOptions = deepCopy(selectedOptions)
+    // const orderedPassNames = optionsToPassArray(selectedOptions)//Object.keys(passes).sort((a,b) => { return passes[a].saving - passes[b].saving })
     // console.log(orderedPassNames)
     const passCombinations = generateAllPassCombinations(passes)
     console.log(passCombinations)
