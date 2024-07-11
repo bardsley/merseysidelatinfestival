@@ -4,16 +4,16 @@ import Cell from './Cell';
 import { ICellProps } from './Cell';
 // import DiscountMessage from './DiscountMessage';
 
-type Ticket = {
-  cost: number;
-  studentCost: number;
-  isAvailable: boolean;
-};
-type DayTickets = {
-  Party: Ticket;
-  Classes: Ticket;
-  Dinner: Ticket;
-};
+// type Ticket = {
+//   cost: number;
+//   studentCost: number;
+//   isAvailable: boolean;
+// };
+// type DayTickets = {
+//   Party: Ticket;
+//   Classes: Ticket;
+//   Dinner: Ticket;
+// };
 // type IndividualTickets = {
 //   Friday: DayTickets;
 //   Saturday: DayTickets;
@@ -138,9 +138,9 @@ const Pricing = () => {
 
   
 
-  const deepCopy = (object: any) => {
-    return JSON.parse(JSON.stringify(object))
-  }
+  // const deepCopy = (object: any) => {
+  //   return JSON.parse(JSON.stringify(object))
+  // }
 
   const optionsToPassArray = (options) => { // max 2 level
     const keys = Object.keys(options)

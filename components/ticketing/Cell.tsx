@@ -11,7 +11,7 @@ export interface ICellProps {
     isAvailable: boolean 
   }, 
   isSelected: boolean, 
-  onSelect: (day:any,passType?:any) => any
+  onSelect: (arg1:any,arg2?:any) => any
   studentDiscount: boolean,
   day?: string
   passType?: string
