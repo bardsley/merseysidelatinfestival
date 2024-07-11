@@ -11,6 +11,7 @@ export interface ICellProps {
     isAvailable: boolean 
   }, 
   isSelected: boolean, 
+  //@ts-ignore
   onSelect?: (arg0:any, arg1?: any) => any
   studentDiscount: boolean,
   day?: string
