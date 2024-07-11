@@ -9,25 +9,21 @@ type Ticket = {
   studentCost: number;
   isAvailable: boolean;
 };
-
 type DayTickets = {
   Party: Ticket;
   Classes: Ticket;
   Dinner: Ticket;
 };
-
 type IndividualTickets = {
   Friday: DayTickets;
   Saturday: DayTickets;
   Sunday: DayTickets;
 };
-
 type SelectedOptions = {
   Friday: { Party: boolean; Classes: boolean; Dinner: boolean };
   Saturday: { Party: boolean; Classes: boolean; Dinner: boolean };
   Sunday: { Party: boolean; Classes: boolean; Dinner: boolean };
 };
-
 type Pass = {
   cost: number;
   studentCost: number;
@@ -35,7 +31,6 @@ type Pass = {
   saving: number;
   combination: string[];
 };
-
 type Passes = { [key: string]: Pass };
 
 const individualTickets = { 
@@ -93,7 +88,6 @@ const days = ['Friday', 'Saturday', 'Sunday']
 const passTypes = ['Party', 'Classes', 'Dinner']
 
 
-
 const cellClasses = 'border border-chillired-300 text-center py-6 px-16';
 const Pricing = () => {
   const [selectedOptions, setSelectedOptions] = useState(initialSelectedOptions);
@@ -101,6 +95,8 @@ const Pricing = () => {
   const [studentDiscount, setStudentDiscount] = useState(false);
   const [priceModel, setPriceModel] = useState("cost")
   const [totalCost, setTotalCost] = useState(0);
+  const [packages,setPackages] = useState([])
+  const [packageCost, setPackageCost] = useState(0)
 
   const setIndividualOption = (day,passType) => {
     let initialOptions = selectedOptions
@@ -127,7 +123,7 @@ const Pricing = () => {
     Object.keys(evaluatedOptions).forEach((day) => {
       Object.keys(evaluatedOptions[day]).forEach((passType) => {
         if (evaluatedOptions[day][passType]) {
-          total += individualTickets && individualTickets[day] && individualTickets[day][passType]? individualTickets[day][passType][priceModel] : 1
+          total += individualTickets && individualTickets[day] && individualTickets[day][passType]? individualTickets[day][passType][priceModel] : 0
           // console.log(day,passType,priceModel, individualTickets)
         }
       })
@@ -140,10 +136,143 @@ const Pricing = () => {
     setStudentDiscount(priceModel === "cost" ? true : false) //! Look backwards but priceModel hasn't changed yet
   }
 
-  const selectPassCombination = () => {
-    let filteredOptions = JSON.parse(JSON.stringify(selectedOptions)) //? Deep copy
-    // const orderedPassNames = Object.keys(passes).sort((a,b) => { return passes[a].saving - passes[b].saving })
+  
 
+  const deepCopy = (object: any) => {
+    return JSON.parse(JSON.stringify(object))
+  }
+
+  const optionsToPassArray = (options) => { // max 2 level
+    const keys = Object.keys(options)
+    return keys.flatMap((key,value,index) => {
+      return Object.keys(options[key]).map((subkey) => {
+        return options[key][subkey] === true || options[key][subkey].isAvailable ? `${key} ${subkey}` : null
+      })
+    }).filter(Boolean)
+  }
+
+  const availableOptionsForDay = (day:string) => {
+    return Object.keys(individualTickets[day]).filter((key)=>{ return individualTickets[day][key].isAvailable})
+  }
+  const isAllDayOptions = (options: SelectedOptions,day:string) => {
+    const daySelection = new Set(Object.keys(options[day]).filter((key) => options[day][key]))
+    const allSelections = new Set(availableOptionsForDay(day))
+    return new Set(daySelection).symmetricDifference(allSelections).size == 0
+  }
+
+  const availableDaysForOption = (option: string) => {
+    return Object.keys(individualTickets).map((day) => {
+      const options = availableOptionsForDay(day)
+      return options.includes(option) ? day : null
+    }).filter(Boolean)
+  }
+
+  const isAllPassOptions = (options: SelectedOptions,passType:string) => {
+    const relevantDays = availableDaysForOption(passType)
+    return relevantDays.map((day) => {
+      return options[day][passType]
+    }).every(Boolean)
+  }
+
+  const generateAllPassCombinations = (passes) => {
+    const fullPassName = 'Full Pass'
+    const passTitles = Object.keys(passes).filter((item) => { return item != fullPassName})
+    const passCombinations = generateAllSubArrays(passTitles)
+    return [[],...passCombinations, [fullPassName]]
+  }
+
+  function generateAllSubArrays(arr) {
+    const n = arr.length;
+    let result = new Set()
+    for (let i = 0; i < n; i++) {
+      for (let j = i; j < n; j++) {
+        // we have index i and j of the subarray, let's print it
+        let ans = [];
+        for (let k = i; k <= j; k++) {
+          ans.push(arr[k]);
+        } 
+        result.add(ans);
+      }
+    }
+    return Array.from(result.values())
+  }
+
+  const priceForPasscomination = (passCombination,priceModel) => {
+    const price = passCombination.reduce((price ,passTitle) => {
+      return price + passes[passTitle][priceModel]
+    },0)
+    return price
+  }
+
+  const itemsFromPassCombination = (passCombination) => {
+    const items = passCombination.reduce((items ,passTitle) => {
+      passes[passTitle].combination.forEach((item) => items.add(item))
+      return items
+    },new Set)
+    return Array.from(items.values())
+  }
+
+  const priceForIndividualItems = (items: any[]) => {
+    const price = items.reduce((price ,itemKey) => {
+      const [day,passType] = itemKey.split(' ')
+      return price + individualTickets[day][passType][priceModel]
+    },0)
+    return price
+  }
+  
+  const itemsNotCovered = (optionsRequested,optionsCovered) => {
+    const requested = new Set(optionsRequested) 
+    // console.log("Requested",requested,optionsRequested)
+    const covered = new Set(optionsCovered)
+    // console.log("Covered",requested,optionsCovered)
+    // console.log("Difference",requested.difference(covered))
+    return Array.from(requested.difference(covered).values())
+  }
+
+  const getBestCombination = (options) => {
+    if(optionsToPassArray(options).length == 0) {
+      return {price: 0, options: []}
+    }
+    const passCombinations = generateAllPassCombinations(passes)
+    let bestOptions = []
+    let bestPrice = 999.00
+    passCombinations.forEach((passCombination: any[]) => {
+      const packagePrice = priceForPasscomination(passCombination,priceModel)
+      const tickePrice = priceForIndividualItems(itemsNotCovered(optionsToPassArray(selectedOptions),itemsFromPassCombination(passCombination)))
+      const combinedPrice = packagePrice + tickePrice
+      if(combinedPrice <= bestPrice) {
+        bestPrice = combinedPrice
+        bestOptions = [...passCombination, ...itemsNotCovered(optionsToPassArray(selectedOptions),itemsFromPassCombination(passCombination))]
+      }
+    })
+    return {price: bestPrice, options: bestOptions}
+  }
+
+
+  const selectPassCombination = () => {
+    let filteredOptions = deepCopy(selectedOptions)
+    const orderedPassNames = optionsToPassArray(selectedOptions)//Object.keys(passes).sort((a,b) => { return passes[a].saving - passes[b].saving })
+    // console.log(orderedPassNames)
+    const passCombinations = generateAllPassCombinations(passes)
+    console.log(passCombinations)
+    passCombinations.forEach((passCombination: any[]) => {
+      const packagePrice = priceForPasscomination(passCombination,priceModel)
+      const tickePrice = priceForIndividualItems(itemsNotCovered(optionsToPassArray(selectedOptions),itemsFromPassCombination(passCombination)))
+      const combinedPrice = packagePrice + tickePrice
+      // const passCombination = Array.from(passCombinations.values())[0]
+      console.log(`${passCombination.join(' / ')} , £${packagePrice} + £${tickePrice} = £${combinedPrice}
+        - provides    (${itemsFromPassCombination(passCombination).join(',')})
+        - wanted      (${optionsToPassArray(selectedOptions)})
+        - individuals (${itemsNotCovered(optionsToPassArray(selectedOptions),itemsFromPassCombination(passCombination))})
+        `
+      )
+    })
+
+    console.log('-------')
+    const {price: suggestedCost, options: suggestedPackages} = getBestCombination(selectedOptions)
+    setPackageCost(suggestedCost)
+    setPackages(suggestedPackages)
+    
     // // const passNames = [orderedPassNames[0]]
     // let potentialSaving = 0
     // // passNames.forEach((passName) => {
@@ -164,150 +293,17 @@ const Pricing = () => {
     //   // console.log(passName,filteredOptions)
     //   // remove everything in pass and add
     // })
-    // console.log(orderedPassNames)
-
-    const result = getMostCostEffectiveOptions(individualTickets, filteredOptions, passes);
-    console.log(result);
 
   }
-
-  // AI generated
-
-  function getMostCostEffectiveOptions(
-    individualTickets: IndividualTickets,
-    selectedOptions: SelectedOptions,
-    passes: Passes
-  ): { totalCost: number; selectedPasses: string[]; individualTickets: string[] } {
-    const passKeys = Object.keys(passes);
-  
-    // Helper function to calculate individual ticket costs
-    function calculateIndividualCosts(
-      selectedOptions: SelectedOptions
-    ): { cost: number; studentCost: number; tickets: string[] } {
-      let cost = 0;
-      let studentCost = 0;
-      let tickets: string[] = [];
-  
-      for (const day in selectedOptions) {
-        for (const event in selectedOptions[day]) {
-          if (selectedOptions[day][event]) {
-            const ticket: Ticket = individualTickets[day as keyof IndividualTickets][event as keyof DayTickets];
-            if (ticket.isAvailable) {
-              cost += ticket.cost;
-              studentCost += ticket.studentCost;
-              tickets.push(`${day} ${event}`);
-            }
-          }
-        }
-      }
-  
-      return { cost, studentCost, tickets };
-    }
-  
-    // Recursive function to find the best combination of passes and individual tickets
-    function findBestCombination(
-      selectedPasses: string[],
-      individualSelected: string[],
-      startIndex: number
-    ): { cost: number; studentCost: number; passes: string[]; individualTickets: string[] } {
-      if (startIndex >= passKeys.length) {
-        const cost = calculateCostForPassCombination(selectedPasses) + calculateIndividualCostsFromSelected(individualSelected).cost;
-        const studentCost = calculateStudentCostForPassCombination(selectedPasses) + calculateIndividualCostsFromSelected(individualSelected).studentCost;
-        if (areAllSelectedEventsCovered(selectedOptions, selectedPasses, individualSelected)) {
-          return { cost, studentCost, passes: [...selectedPasses], individualTickets: [...individualSelected] };
-        } else {
-          return { cost: Infinity, studentCost: Infinity, passes: [], individualTickets: [] };
-        }
-      }
-  
-      // Calculate cost for the current combination
-      const withCurrentPass = findBestCombination([...selectedPasses, passKeys[startIndex]], individualSelected, startIndex + 1);
-      const withoutCurrentPass = findBestCombination(selectedPasses, individualSelected, startIndex + 1);
-      const addIndividual = findBestCombination(selectedPasses, [...individualSelected, passKeys[startIndex]], startIndex + 1);
-  
-      // Compare and return the best combination
-      return [withCurrentPass, withoutCurrentPass, addIndividual].reduce((prev, curr) => (prev.cost < curr.cost ? prev : curr));
-    }
-  
-    // Helper function to check if all required events are covered
-    function areAllSelectedEventsCovered(
-      selectedOptions: SelectedOptions,
-      selectedPasses: string[],
-      individualSelected: string[]
-    ): boolean {
-      const requiredEvents = new Set<string>();
-      for (const day in selectedOptions) {
-        for (const event in selectedOptions[day]) {
-          if (selectedOptions[day][event]) {
-            requiredEvents.add(`${day} ${event}`);
-          }
-        }
-      }
-  
-      const coveredEvents = new Set<string>();
-      for (const pass of selectedPasses) {
-        for (const event of passes[pass].combination) {
-          coveredEvents.add(event);
-        }
-      }
-  
-      for (const event of individualSelected) {
-        coveredEvents.add(event);
-      }
-  
-      for (const event of requiredEvents) {
-        if (!coveredEvents.has(event)) {
-          return false;
-        }
-      }
-      return true;
-    }
-  
-    // Helper function to calculate cost for a pass combination
-    function calculateCostForPassCombination(selectedPasses: string[]): number {
-      return selectedPasses.reduce((total, pass) => total += passes[pass].cost, 0);
-    }
-  
-    // Helper function to calculate student cost for a pass combination
-    function calculateStudentCostForPassCombination(selectedPasses: string[]): number {
-      return selectedPasses.reduce((total, pass) => total += passes[pass].studentCost, 0);
-    }
-  
-    // Helper function to calculate individual costs from selected individual tickets
-    function calculateIndividualCostsFromSelected(individualSelected: string[]): { cost: number; studentCost: number } {
-      let cost = 0;
-      let studentCost = 0;
-      for (const event of individualSelected) {
-        const [day, eventName] = event.split(' ');
-        const ticket = individualTickets[day as keyof IndividualTickets][eventName as keyof DayTickets];
-        if (ticket.isAvailable) {
-          cost += ticket.cost;
-          studentCost += ticket.studentCost;
-        }
-      }
-      return { cost, studentCost };
-    }
-  
-    const bestCombination = findBestCombination([], [], 0);
-  
-    // Compare individual ticket cost with the best pass combination cost
-    const individualCosts = calculateIndividualCosts(selectedOptions);
-  
-    if (individualCosts.cost < bestCombination.cost) {
-      return { totalCost: individualCosts.cost, selectedPasses: [], individualTickets: individualCosts.tickets };
-    } else {
-      return { totalCost: bestCombination.cost, selectedPasses: bestCombination.passes, individualTickets: bestCombination.individualTickets };
-    }
-  }
-  // End AI generated
 
   useEffect(() => {
     setTotalCost(calculateTotalCost(selectedOptions))
+    selectPassCombination()
   }, [selectedOptions,priceModel])
 
   return (
-    <div className="table-container w-full max-w-6xl mx-auto">
-      <button className="border rounded-md p-6" onClick={selectPassCombination}>Select pass</button>
+    <div className="table-container w-full flex justify-center flex-col pt-12 max-w-6xl mx-auto">
+      {/* <button className="border rounded-md p-6" onClick={selectPassCombination}>Select pass</button> */}
     <table className='option-table table-auto border-collapse border-b border-chillired-300'>
       <thead>
         <tr >
@@ -321,7 +317,7 @@ const Pricing = () => {
           <th></th>
           {['Saturday','Sunday'].map((day) => { 
             const cellProps = {
-              isSelected: selectedOptions[day]['Party'] && (selectedOptions[day]['Dinner'] || day === 'Sunday') && selectedOptions[day]['Classes'],
+              isSelected: isAllDayOptions(selectedOptions,day), //selectedOptions[day]['Party'] && (selectedOptions[day]['Dinner'] || day === 'Sunday') && selectedOptions[day]['Classes'],
               onSelect: setDayPass,
               studentDiscount: priceModel === "studentCost",
               day: day,
@@ -338,7 +334,7 @@ const Pricing = () => {
         {passTypes.map((passType) => {
           const passOption = passType === 'Party'? passes['Party Pass'] : passType === 'Classes' ? passes['Class Pass'] : {cost: 0, studentCost: 0, isAvailable: false}
           const cellProps = {
-            isSelected: (selectedOptions['Friday'][passType] || passType === 'Classes') && (selectedOptions['Saturday'][passType]) && (selectedOptions['Sunday'][passType] || passType === 'Classes'),
+            isSelected: isAllPassOptions(selectedOptions,passType),
             onSelect: setTypePass,
             studentDiscount: priceModel === "studentCost",
             passType: passType,
@@ -381,8 +377,26 @@ const Pricing = () => {
         isSelected={studentDiscount} onSelect={togglePriceModel} studentDiscount={studentDiscount} />
       </caption>
     </table>
-    <h2 className='text-2xl'>£{totalCost}</h2>
+    
+    { totalCost && totalCost > 0 ? (
+      <div className='mx-auto max-w-md pt-12'>
+        {/* <h2 className='text-2xl'>Full Price £{totalCost}</h2>
+        <h2 className='text-2xl'>Packages & Tickets {packages.join(', ')}</h2>
+        <h2 className='text-2xl'>Pass Saving £{totalCost - packageCost}</h2>
+        <h2 className='text-2xl'>Your Package £{packageCost}</h2> */}
+
+        <p>We Suggest</p>
+        <h2 className='text-2xl'>{packages.join(', ')}</h2>
+        <h2 className='text-2xl'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost}</span>) : null } £{packageCost}</h2>
+        { totalCost - packageCost > 0 ? (<p>Saving you £{totalCost - packageCost}!</p>) : null }
+
+      </div>
+    ) : null }
+    
+    {/* <hr />
+    <h2>Debug Ignore below the line</h2>
     <div className='flex'>
+      
     <pre>Selected 
 --
 
@@ -391,7 +405,7 @@ const Pricing = () => {
       --
 
       {JSON.stringify(provisionalOptions,null,2)}</pre>
-    </div>
+    </div> */}
     
     </div>
   )

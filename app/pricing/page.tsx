@@ -24,7 +24,7 @@ export default function TimetablePage({
         
        <Pricing></Pricing>
         {params.filename }
-        <h2 className="text-center text-6xl font-bold uppercase">Old</h2>
+        {/* <h2 className="text-center text-6xl font-bold uppercase">Old</h2> */}
         {/* <Table></Table> */}
         
       </section>
