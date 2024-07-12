@@ -2,61 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import Cell from './Cell';
 import { ICellProps } from './Cell';
-import {IndividualTickets, Passes, SelectedOptions } from './pricingTypes'
+import { SelectedOptions } from './pricingTypes'
+import { individualTickets,initialSelectedOptions, passes, passTypes, days, fullPassName } from './pricingDefaults'
 import symmetricDifference from 'set.prototype.symmetricdifference'
 symmetricDifference.shim();
 
-
-
-const individualTickets: IndividualTickets = { 
-  Friday: {
-    Party: { cost: 15, studentCost: 10, isAvailable: true },
-    Classes: { cost: 0, studentCost: 0, isAvailable: false },
-    Dinner: { cost: 0, studentCost: 0, isAvailable: false }
-  },
-  Saturday: {
-    Party: { cost: 22, studentCost: 15, isAvailable: true },
-    Classes: { cost: 55, studentCost: 45, isAvailable: true },
-    Dinner: { cost: 40, studentCost: 40, isAvailable: true }
-  },
-  Sunday: {
-    Party: { cost: 15, studentCost: 10, isAvailable: true },
-    Classes: { cost: 55, studentCost: 45, isAvailable: true },
-    Dinner: { cost: 0, studentCost: 0, isAvailable: false }
-  }
-}
-
-const initialSelectedOptions = {
-  Friday: {
-    Party: false,
-    Classes: false,
-    Dinner: false
-  },
-  Saturday: {
-    Party: false,
-    Classes: false,
-    Dinner: false
-  },
-  Sunday: {
-    Party: false,
-    Classes: false,
-    Dinner: false
-  }
-}
-
-const passes: Passes = {
-  'Saturday Pass': { cost: 95, studentCost: 85, isAvailable: true, saving: 22, combination: ['Saturday Classes', 'Saturday Party', 'Saturday Dinner'] },
-  'Sunday Pass': { cost: 59, studentCost: 50, isAvailable: true, saving: 11, combination: ['Sunday Pass', 'Sunday Party'] },
-  'Class Pass': { cost: 95, studentCost: 85, isAvailable: true, saving: 15, combination: ['Saturday Classes', 'Sunday Classes'] },
-  'Dine and Dance Pass': { cost: 60, studentCost: 55, isAvailable: true, saving: 2, combination: ['Saturday Dinner', 'Saturday Party'] },
-  'Party Pass': { cost: 45, studentCost: 35, isAvailable: true, saving: 7, combination: ['Friday Party', 'Saturday Party', 'Sunday Party'] },
-  'Full Pass': { cost: 125, studentCost: 110, isAvailable: true, saving: 77, combination: ['Friday Party', 'Saturday Classes', 'Saturday Dinner', 'Saturday Party', 'Sunday Classes', 'Sunday Party'] },
-}
-const days = ['Friday', 'Saturday', 'Sunday']
-const passTypes = ['Party', 'Classes', 'Dinner']
-
-
-const cellClasses = 'border border-chillired-300 text-center py-6 px-16';
 const Pricing = () => {
   const [selectedOptions, setSelectedOptions] = useState(initialSelectedOptions);
   const [studentDiscount, setStudentDiscount] = useState(false);
@@ -144,7 +94,7 @@ const Pricing = () => {
   }
 
   const generateAllPassCombinations = (passes) => {
-    const fullPassName = 'Full Pass'
+    
     const passTitles = Object.keys(passes).filter((item) => { return item != fullPassName})
     const passCombinations = generateAllSubArrays(passTitles)
     return [[],...passCombinations, [fullPassName]]
@@ -165,8 +115,9 @@ const Pricing = () => {
     return Array.from(result.values())
   }
 
-  const priceForPasscomination = (passCombination,priceModel) => {
+  const priceForPassCombination = (passCombination,priceModel) => {
     const price = passCombination.reduce((price ,passTitle) => {
+      // console.log(passTitle,passes[passTitle])
       return price + passes[passTitle][priceModel]
     },0)
     return price
@@ -205,7 +156,7 @@ const Pricing = () => {
     let bestOptions = []
     let bestPrice = 999.00
     passCombinations.forEach((passCombination: any[]) => {
-      const packagePrice = priceForPasscomination(passCombination,priceModel)
+      const packagePrice = priceForPassCombination(passCombination,priceModel)
       const tickePrice = priceForIndividualItems(itemsNotCovered(optionsToPassArray(selectedOptions),itemsFromPassCombination(passCombination)))
       const combinedPrice = packagePrice + tickePrice
       if(combinedPrice <= bestPrice) {
@@ -216,13 +167,20 @@ const Pricing = () => {
     return {price: bestPrice, options: bestOptions}
   }
 
+  const selectFullPass = () => {
+    setSelectedOptions({
+      Friday: { Party: true, Classes: false, Dinner: false },
+      Saturday: { Party: true, Classes: true, Dinner: true },
+      Sunday: { Party: true, Classes: true, Dinner: false },
+    })
+  }
 
   const selectPassCombination = () => {
 
     const passCombinations = generateAllPassCombinations(passes)
     console.log(passCombinations)
     passCombinations.forEach((passCombination: any[]) => {
-      const packagePrice = priceForPasscomination(passCombination,priceModel)
+      const packagePrice = priceForPassCombination(passCombination,priceModel)
       const tickePrice = priceForIndividualItems(itemsNotCovered(optionsToPassArray(selectedOptions),itemsFromPassCombination(passCombination)))
       const combinedPrice = packagePrice + tickePrice
       // const passCombination = Array.from(passCombinations.values())[0]
@@ -236,6 +194,7 @@ const Pricing = () => {
 
     console.log('-------')
     const {price: suggestedCost, options: suggestedPackages} = getBestCombination(selectedOptions)
+    console.log(`Suggested packages: ${suggestedPackages.join(', ')} - £${suggestedCost}`)
     setPackageCost(suggestedCost)
     setPackages(suggestedPackages)
 
@@ -246,13 +205,30 @@ const Pricing = () => {
     selectPassCombination()
   }, [selectedOptions,priceModel])
 
+  const cellClasses = 'border border-chillired-300 text-center py-2 px-4 ';
+
   return (
-    <div className="table-container w-full flex justify-center flex-col pt-12 max-w-6xl mx-auto">
-      {/* <button className="border rounded-md p-6" onClick={selectPassCombination}>Select pass</button> */}
-    <table className='option-table table-auto border-collapse border-b border-chillired-300'>
+    <div className="table-container w-full flex justify-center flex-col pt-12 max-w-6xl lg:mx-auto mx-3">
+    
+    <h1 className='text-2xl font-bold'>Pass Options</h1>
+
+    <div className='rounded-md w-96 mx-auto mb-12 bg-richblack-500 border-gray-700 border text-white p-8 text-center'>
+    <h2 className='text-3xl font-bold'>Limited time deal</h2>
+    <p className=''>
+      Currently we are offering an early bird price at an incredible £125! <br/>
+      <button className={ `${packages.length == 1 && packages[0] == fullPassName ? "text-chillired-500 border border-chillired-500" : "text-white bg-chillired-500"} rounded-md p-6 mt-6 `} onClick={selectFullPass}>
+        { packages.length == 1 && packages[0] == fullPassName ? `Already selected` : `Give me the ${fullPassName}`}
+      </button>
+    </p>
+    
+    </div>
+    
+    <table className='option-table table-auto border-collapse border-b border-chillired-300 mr-6'>
       <thead>
         <tr >
-          <th className={cellClasses}>Full Pass Toggle</th>
+          <th className={cellClasses}>
+            
+          </th>
           {days.map((day) => (
             <th key={day} className={cellClasses}>{day}</th> 
           ))}
@@ -316,13 +292,13 @@ const Pricing = () => {
       </tbody>
       <caption className='caption-bottom pt-6'>
         
-        <Cell option={{name: 'I am a student with ID', cost: 0, studentCost: 0, isAvailable: true } }
+        <Cell option={{name: 'I am a student and will bring Student ID', cost: 0, studentCost: 0, isAvailable: true } }
         isSelected={studentDiscount} onSelect={togglePriceModel} studentDiscount={studentDiscount} />
       </caption>
     </table>
     
     { totalCost && totalCost > 0 ? (
-      <div className='mx-auto max-w-2xl pt-12'>
+      <div className='mx-auto max-w-2xl pt-12 mb-12'>
         <p>We Suggest</p>
         <h2 className='text-2xl'>{packages.map((packageName) => `${packageName} ${passOrTicket(packageName)}`).join(', ')}</h2>
         <h2 className='text-3xl font-bold'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost}</span>) : null } £{packageCost}</h2>

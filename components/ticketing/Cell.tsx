@@ -30,12 +30,12 @@ const Cell: React.FC<ICellProps> = (props: ICellProps) => {
         : {one:passType, two: !isSelected} ;
   return (
       <>{isAvailable ? (
-        <Field className="flex items-center justify-center">
+        <Field className="flex items-center justify-center flex-col sm:flex-row">
           <Switch
             checked={isSelected}
             onClick={() => onSelect(setValue.one,setValue.two)}
             // onChange={onSelect(day,passType)}
-            className={`${checkBoxCss} group relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent  transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-chillired-600 focus:ring-offset-2`}
+            className={`${checkBoxCss} group relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent  transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-chillired-600 focus:ring-offset-2 order-2 sm:order-1`}
           >
             <span
             aria-hidden="true"
@@ -43,7 +43,7 @@ const Cell: React.FC<ICellProps> = (props: ICellProps) => {
           />
           </Switch>
             
-          <Label as="span" className="ml-3 text-sm text-white">
+          <Label as="span" className="text-sm text-white sm:ml-3 mt-0 mb-2 sm:mt-3 order-1 sm:order-2">
             {/* <span className="font-medium text-white">{name}</span>{' '} */}
             { cost || studentCost ? (<span className="text-white">£{studentDiscount ? studentCost : cost }</span>) : null }
             { JSON.stringify(setValue) == "{}" ? (
