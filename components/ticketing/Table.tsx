@@ -1,3 +1,4 @@
+'use client'
 import React, { useState, useEffect } from 'react';
 import Cell from './Cell';
 import DiscountMessage from './DiscountMessage';
@@ -138,11 +139,12 @@ const Table = () => {
     ];
 
     const matchedCombinations = combinations.filter(checkCombination);
-    // console.log(matchedCombinations)
+    console.log(matchedCombinations)
     let matchedCombinationMessages = matchedCombinations.map(combo => combo.message);
 
     // Handle Full Pass exclusion logic
     if (matchedCombinationMessages.includes('Full Pass')) {
+      console.log("Offered full pass")
       matchedCombinationMessages = ['Full Pass'];
       cost = studentDiscount ? predefinedStudentPrices['Full Pass'] : predefinedPrices['Full Pass'];
       setDiscountMessages(matchedCombinationMessages);
@@ -152,6 +154,7 @@ const Table = () => {
 
     // Handle Saturday Pass and Dine and Dance Pass conflict
     if (matchedCombinationMessages.includes('Saturday Pass') && matchedCombinationMessages.includes('Dine and Dance Pass')) {
+      console.log("Offered Dine and Dance Pass")
       matchedCombinationMessages = matchedCombinationMessages.filter(msg => msg !== 'Dine and Dance Pass');
     }
 
@@ -160,7 +163,7 @@ const Table = () => {
       const allowedCombinations = allowedCombinationSums.filter(
         allowedCombo => allowedCombo.every(combo => matchedCombinationMessages.includes(combo))
       );
-      // console.log(allowedCombinations)
+      console.log("Allowed:",allowedCombinations)
 
       if (allowedCombinations.length > 0) {
         const combinationItemCounts = matchedCombinations.reduce((acc, combo) => {
@@ -173,10 +176,11 @@ const Table = () => {
           const currCount = curr.reduce((acc, msg) => acc + (combinationItemCounts[msg] || 0), 0);
           return currCount < prevCount ? curr : prev;
         });
+        console.log("Matched 1:",matchedCombinationMessages)
         matchedCombinationMessages = bestCombination;
       } else {
-        console.log(matchedCombinationMessages)
-        matchedCombinationMessages = [matchedCombinationMessages[0]];
+        console.log("Matched 2:",matchedCombinationMessages)
+        // matchedCombinationMessages = [matchedCombinationMessages[0]]; 
       }
     }
 

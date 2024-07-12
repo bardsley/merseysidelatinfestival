@@ -1,7 +1,11 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import Cell from './Cell';
+<<<<<<< HEAD
 // import ICellProps from './Cell';
+=======
+import { ICellProps } from './Cell';
+>>>>>>> 77b401bb7be33d6b538b0661d959cc1644ba1ef5
 import symmetricDifference from 'set.prototype.symmetricdifference'
 symmetricDifference.shim();
 // import DiscountMessage from './DiscountMessage';
@@ -72,12 +76,12 @@ const initialSelectedOptions = {
 }
 
 const passes = {
-  'Saturday Pass': { cost: 95, studentCost: 85, isAvailable: true, saving: 22, combination: ['Saturday Classes', 'Saturday Party', 'Saturday Dinner'], description: "Includes Saturday classes, party and dinner" },
-  'Sunday Pass': { cost: 59, studentCost: 50, isAvailable: true, saving: 11, combination: ['Sunday Pass', 'Sunday Party'], description: "Includes Sunday classes and party" },
-  'Class Pass': { cost: 95, studentCost: 85, isAvailable: true, saving: 15, combination: ['Saturday Classes', 'Sunday Classes'], description: "Includes classes on Saturday and Sunday" },
-  'Dine and Dance Pass': { cost: 60, studentCost: 55, isAvailable: true, saving: 2, combination: ['Saturday Dinner', 'Saturday Party'], description: "Saturday dinner and party" },
-  'Party Pass': { cost: 45, studentCost: 35, isAvailable: true, saving: 7, combination: ['Friday Party', 'Saturday Party', 'Sunday Party'], description: "Includes all parties" },
-  'Full Pass': { cost: 125, studentCost: 110, isAvailable: true, saving: 77, combination: ['Friday Party', 'Saturday Classes', 'Saturday Dinner', 'Saturday Party', 'Sunday Classes', 'Sunday Party'], description: "Includes EVEERYTHING and is the best value!" },
+  'Saturday Pass': { cost: 95, studentCost: 85, isAvailable: true, saving: 22, combination: ['Saturday Classes', 'Saturday Party', 'Saturday Dinner'] },
+  'Sunday Pass': { cost: 59, studentCost: 50, isAvailable: true, saving: 11, combination: ['Sunday Pass', 'Sunday Party'] },
+  'Class Pass': { cost: 95, studentCost: 85, isAvailable: true, saving: 15, combination: ['Saturday Classes', 'Sunday Classes'] },
+  'Dine and Dance Pass': { cost: 60, studentCost: 55, isAvailable: true, saving: 2, combination: ['Saturday Dinner', 'Saturday Party'] },
+  'Party Pass': { cost: 45, studentCost: 35, isAvailable: true, saving: 7, combination: ['Friday Party', 'Saturday Party', 'Sunday Party'] },
+  'Full Pass': { cost: 125, studentCost: 110, isAvailable: true, saving: 77, combination: ['Friday Party', 'Saturday Classes', 'Saturday Dinner', 'Saturday Party', 'Sunday Classes', 'Sunday Party'] },
 }
 
 // const allowedCombinationSums = [
