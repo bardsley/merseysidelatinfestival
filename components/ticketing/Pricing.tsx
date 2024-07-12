@@ -4,38 +4,37 @@ import Cell from './Cell';
 import { ICellProps } from './Cell';
 import symmetricDifference from 'set.prototype.symmetricdifference'
 symmetricDifference.shim();
-// import DiscountMessage from './DiscountMessage';
 
-// type Ticket = {
-//   cost: number;
-//   studentCost: number;
-//   isAvailable: boolean;
-// };
-// type DayTickets = {
-//   Party: Ticket;
-//   Classes: Ticket;
-//   Dinner: Ticket;
-// };
-// type IndividualTickets = {
-//   Friday: DayTickets;
-//   Saturday: DayTickets;
-//   Sunday: DayTickets;
-// };
+type Ticket = {
+  cost: number;
+  studentCost: number;
+  isAvailable: boolean;
+};
+type DayTickets = {
+  Party: Ticket;
+  Classes: Ticket;
+  Dinner: Ticket;
+};
+type IndividualTickets = {
+  Friday: DayTickets;
+  Saturday: DayTickets;
+  Sunday: DayTickets;
+};
 type SelectedOptions = {
   Friday: { Party: boolean; Classes: boolean; Dinner: boolean };
   Saturday: { Party: boolean; Classes: boolean; Dinner: boolean };
   Sunday: { Party: boolean; Classes: boolean; Dinner: boolean };
 };
-// type Pass = {
-//   cost: number;
-//   studentCost: number;
-//   isAvailable: boolean;
-//   saving: number;
-//   combination: string[];
-// };
-// type Passes = { [key: string]: Pass };
+type Pass = {
+  cost: number;
+  studentCost: number;
+  isAvailable: boolean;
+  saving: number;
+  combination: string[];
+};
+type Passes = { [key: string]: Pass };
 
-const individualTickets = { 
+const individualTickets: IndividualTickets = { 
   Friday: {
     Party: { cost: 15, studentCost: 10, isAvailable: true },
     Classes: { cost: 0, studentCost: 0, isAvailable: false },
@@ -71,7 +70,7 @@ const initialSelectedOptions = {
   }
 }
 
-const passes = {
+const passes: Passes = {
   'Saturday Pass': { cost: 95, studentCost: 85, isAvailable: true, saving: 22, combination: ['Saturday Classes', 'Saturday Party', 'Saturday Dinner'] },
   'Sunday Pass': { cost: 59, studentCost: 50, isAvailable: true, saving: 11, combination: ['Sunday Pass', 'Sunday Party'] },
   'Class Pass': { cost: 95, studentCost: 85, isAvailable: true, saving: 15, combination: ['Saturday Classes', 'Sunday Classes'] },
