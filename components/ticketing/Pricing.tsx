@@ -1,11 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import Cell from './Cell';
-<<<<<<< HEAD
-// import ICellProps from './Cell';
-=======
 import { ICellProps } from './Cell';
->>>>>>> 77b401bb7be33d6b538b0661d959cc1644ba1ef5
 import symmetricDifference from 'set.prototype.symmetricdifference'
 symmetricDifference.shim();
 // import DiscountMessage from './DiscountMessage';
@@ -142,7 +138,9 @@ const Pricing = () => {
     setStudentDiscount(priceModel === "cost" ? true : false) //! Look backwards but priceModel hasn't changed yet
   }
 
-  
+  const passOrTicket = (itemName) => {
+    return Object.keys(passes).includes(itemName)? "" : "Ticket"
+  }
 
   // const deepCopy = (object: any) => {
   //   return JSON.parse(JSON.stringify(object))
@@ -298,11 +296,11 @@ const Pricing = () => {
           ))}
         </tr>
         <tr>
-          <th className={cellClasses}>Full pass</th>
+          <th className={cellClasses}>Day pass</th>
           <th></th>
           {['Saturday','Sunday'].map((day) => { 
             const cellProps = {
-              isSelected: isAllDayOptions(selectedOptions,day), //selectedOptions[day]['Party'] && (selectedOptions[day]['Dinner'] || day === 'Sunday') && selectedOptions[day]['Classes'],
+              isSelected: isAllDayOptions(selectedOptions,day), 
               onSelect: setDayPass,
               studentDiscount: priceModel === "studentCost",
               day: day,
@@ -346,10 +344,8 @@ const Pricing = () => {
               
                 individualTickets[day][passType].isAvailable ? (
                   <td key={`${day}-${passType}`} className={cellClasses}>
-                  {/* {day} {passType} £{individualTickets[day][passType][priceModel]} <br/>  */}
                   {selectedOptions[day][passType]}
                   <Cell {...cellProps} />  
-                  {/* {JSON.stringify(individualTickets[day][passType],null,2)} */}
                 </td>
                 ) : <td key={`${day}-${passType}`} className={cellClasses}></td>
             )})}
@@ -364,15 +360,10 @@ const Pricing = () => {
     </table>
     
     { totalCost && totalCost > 0 ? (
-      <div className='mx-auto max-w-md pt-12'>
-        {/* <h2 className='text-2xl'>Full Price £{totalCost}</h2>
-        <h2 className='text-2xl'>Packages & Tickets {packages.join(', ')}</h2>
-        <h2 className='text-2xl'>Pass Saving £{totalCost - packageCost}</h2>
-        <h2 className='text-2xl'>Your Package £{packageCost}</h2> */}
-
+      <div className='mx-auto max-w-2xl pt-12'>
         <p>We Suggest</p>
-        <h2 className='text-2xl'>{packages.join(', ')}</h2>
-        <h2 className='text-2xl'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost}</span>) : null } £{packageCost}</h2>
+        <h2 className='text-2xl'>{packages.map((packageName) => `${packageName} ${passOrTicket(packageName)}`).join(', ')}</h2>
+        <h2 className='text-3xl font-bold'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost}</span>) : null } £{packageCost}</h2>
         { totalCost - packageCost > 0 ? (<p>Saving you £{totalCost - packageCost}!</p>) : null }
 
       </div>
