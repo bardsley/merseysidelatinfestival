@@ -157,7 +157,7 @@ const Pricing = () => {
   const isAllDayOptions = (options: SelectedOptions,day:string) => {
     const daySelection = new Set(Object.keys(options[day]).filter((key) => options[day][key]))
     const allSelections = new Set(availableOptionsForDay(day))
-    return new Set(daySelection).symmetricDifference(allSelections).size == 0
+    return daySelection.symmetricDifference(allSelections).size == 0
   }
 
   const availableDaysForOption = (option: string) => {
@@ -272,27 +272,6 @@ const Pricing = () => {
     const {price: suggestedCost, options: suggestedPackages} = getBestCombination(selectedOptions)
     setPackageCost(suggestedCost)
     setPackages(suggestedPackages)
-    
-    // // const passNames = [orderedPassNames[0]]
-    // let potentialSaving = 0
-    // // passNames.forEach((passName) => {
-    // orderedPassNames.forEach((passName) => {
-    //   const combinationsIncluded = passes[passName].combination
-    //   combinationsIncluded.forEach((combination) => {
-    //     const [day, passType] = combination.split(' ')
-    //     if (filteredOptions[day][passType]) {
-    //       filteredOptions[day][passType] = false
-    //     }
-    //   })
-    //   const newcost = calculateTotalCost(filteredOptions) + passes[passName][priceModel]
-    //   potentialSaving = newcost < totalCost ? totalCost - newcost : potentialSaving
-    //   console.log(passName," saving ",potentialSaving,newcost,filteredOptions)
-    //   console.log("Reset")
-    //   filteredOptions = JSON.parse(JSON.stringify(selectedOptions)) //? Deep copy
-    //   // setProvisionalOptions({...filteredOptions})
-    //   // console.log(passName,filteredOptions)
-    //   // remove everything in pass and add
-    // })
 
   }
 
