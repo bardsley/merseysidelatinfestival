@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import Cell from './Cell';
 import { ICellProps } from './Cell';
+import symmetricDifference from 'set.prototype.symmetricdifference'
+symmetricDifference.shim();
 // import DiscountMessage from './DiscountMessage';
 
 // type Ticket = {
