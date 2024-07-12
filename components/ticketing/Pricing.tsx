@@ -2,37 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import Cell from './Cell';
 import { ICellProps } from './Cell';
+import {IndividualTickets, Passes, SelectedOptions } from './pricingTypes'
 import symmetricDifference from 'set.prototype.symmetricdifference'
 symmetricDifference.shim();
 
-type Ticket = {
-  cost: number;
-  studentCost: number;
-  isAvailable: boolean;
-};
-type DayTickets = {
-  Party: Ticket;
-  Classes: Ticket;
-  Dinner: Ticket;
-};
-type IndividualTickets = {
-  Friday: DayTickets;
-  Saturday: DayTickets;
-  Sunday: DayTickets;
-};
-type SelectedOptions = {
-  Friday: { Party: boolean; Classes: boolean; Dinner: boolean };
-  Saturday: { Party: boolean; Classes: boolean; Dinner: boolean };
-  Sunday: { Party: boolean; Classes: boolean; Dinner: boolean };
-};
-type Pass = {
-  cost: number;
-  studentCost: number;
-  isAvailable: boolean;
-  saving: number;
-  combination: string[];
-};
-type Passes = { [key: string]: Pass };
+
 
 const individualTickets: IndividualTickets = { 
   Friday: {
@@ -78,13 +52,6 @@ const passes: Passes = {
   'Party Pass': { cost: 45, studentCost: 35, isAvailable: true, saving: 7, combination: ['Friday Party', 'Saturday Party', 'Sunday Party'] },
   'Full Pass': { cost: 125, studentCost: 110, isAvailable: true, saving: 77, combination: ['Friday Party', 'Saturday Classes', 'Saturday Dinner', 'Saturday Party', 'Sunday Classes', 'Sunday Party'] },
 }
-
-// const allowedCombinationSums = [
-//   ['Sunday Pass', 'Saturday Pass'],
-//   ['Party Pass', 'Class Pass'],
-//   ['Class Pass', 'Dine and Dance Pass'],
-// ];
-
 const days = ['Friday', 'Saturday', 'Sunday']
 const passTypes = ['Party', 'Classes', 'Dinner']
 
@@ -92,7 +59,6 @@ const passTypes = ['Party', 'Classes', 'Dinner']
 const cellClasses = 'border border-chillired-300 text-center py-6 px-16';
 const Pricing = () => {
   const [selectedOptions, setSelectedOptions] = useState(initialSelectedOptions);
-  // const [provisionalOptions, setProvisionalOptions] = useState({});
   const [studentDiscount, setStudentDiscount] = useState(false);
   const [priceModel, setPriceModel] = useState("cost")
   const [totalCost, setTotalCost] = useState(0);
@@ -189,7 +155,6 @@ const Pricing = () => {
     let result = new Set()
     for (let i = 0; i < n; i++) {
       for (let j = i; j < n; j++) {
-        // we have index i and j of the subarray, let's print it
         let ans = [];
         for (let k = i; k <= j; k++) {
           ans.push(arr[k]);
@@ -253,9 +218,7 @@ const Pricing = () => {
 
 
   const selectPassCombination = () => {
-    // let filteredOptions = deepCopy(selectedOptions)
-    // const orderedPassNames = optionsToPassArray(selectedOptions)//Object.keys(passes).sort((a,b) => { return passes[a].saving - passes[b].saving })
-    // console.log(orderedPassNames)
+
     const passCombinations = generateAllPassCombinations(passes)
     console.log(passCombinations)
     passCombinations.forEach((passCombination: any[]) => {
