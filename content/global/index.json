@@ -12,8 +12,8 @@
         "label": "Home"
       },
       {
-        "href": "timetable",
-        "label": "Timetable"
+        "href": "packages",
+        "label": "Passes"
       },
       {
         "href": "tickets",
