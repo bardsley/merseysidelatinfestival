@@ -46,7 +46,7 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
           {data.tagline && (
             <h2
               data-tina-field={tinaField(data, "tagline")}
-              className="relative px-3 py-1 mb-8 text-md font-bold tracking-wide title-font z-20 md:inline-block"
+              className="relative px-3 py-1 mb-8 text-md font-bold tracking-wide title-font z-20 inline-block"
             >
               {data.tagline}
               <span className="absolute w-full h-full left-0 top-0 rounded-full -z-1 bg-current opacity-7"></span>
@@ -117,7 +117,7 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
                 data.color === "primary" ? `prose-primary` : `dark:prose-dark`
               }`}
             >
-              <TinaMarkdown content={data.text2} /> {JSON.stringify(data.text2)}
+              <TinaMarkdown content={data.text2} />
             </div>
           )}
         </div>
