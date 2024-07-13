@@ -209,21 +209,21 @@ const PricingTable = ({fullPassFunction}) => {
     fullPassFunction(() => selectFullPass)
   },[])
 
-  const cellClasses = 'border border-gray-600 text-center py-2 px-4 ';
-
+  const cellClasses = 'border border-gray-600 text-center py-2 px-3 md:py-2 md:px-4 ';
+  const headerClasses = cellClasses.replaceAll('border-gray-600','border-chillired-400')
   return (
-    <div className="table-container w-full flex justify-center flex-col pt-12 max-w-6xl lg:mx-auto mx-3 col-span-5">
+    <div className="table-container w-full flex justify-center flex-col md:pt-12 max-w-6xl lg:mx-auto md:mx-3 col-span-5 text-xs md:text-base">
     
     
     
-    <table className='option-table table-auto border-collapse border-b border-chillired-300 mr-6'>
+    <table className='option-table w-full mx-auto max-w-4xl table-auto border-collapse border-b border-ch}illired-300'>
       <thead>
-        <tr >
-          <th className={cellClasses}>
+        <tr className='bg-chillired-300 text-white border-chillired-400'>
+          <th className={headerClasses}>
             
           </th>
           {days.map((day) => (
-            <th key={day} className={cellClasses}>{day}</th> 
+            <th key={day} className={headerClasses}>{day}</th> 
           ))}
         </tr>
         <tr>
@@ -289,7 +289,7 @@ const PricingTable = ({fullPassFunction}) => {
         isSelected={studentDiscount} onSelect={togglePriceModel} studentDiscount={studentDiscount} />
       </caption>
     </table>
-    <div className='flex mx-auto max-w-2xl mt-12 mb-12 p-12 justify-start gap-12 items-start rounded border border-gray-600'>
+    <div className='flex mx-auto w-full flex-col md:flex-row justify-between max-w-2xl mt-12 mb-12 p-12 gap-12 items-start rounded border border-gray-600'>
         
     { totalCost && totalCost > 0 ? (
       <>
@@ -299,7 +299,10 @@ const PricingTable = ({fullPassFunction}) => {
           <h2 className='text-3xl font-bold'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost}</span>) : null } £{packageCost}</h2>
           { totalCost - packageCost > 0 ? (<p>Saving you £{totalCost - packageCost}!</p>) : null }
         </div>
-        <button className='bg-chillired-400 text-white rounded-lg py-6 px-12 hover:bg-chillired-700 text-nowrap'>Buy Now</button>
+        <div className='flex w-full md:w-auto flex-col md:flex-row items-center justify-center'>
+          <button className='bg-chillired-400 text-white rounded-lg py-6 px-12 hover:bg-chillired-700 text-nowrap w-full max-w-72 md:w-auto'>Buy Now</button>
+        </div>
+        
       </>
     ) : "Select options in the table above to see the suggested packages" }
     </div>

@@ -24,23 +24,39 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
   return (
     <Section color={data.color} backgroundImage={data.backgroundimage}>
       <Container
-        size="large"
+        size="medium"
         className="grid grid-cols-1 md:grid-cols-5 gap-0 md:gap-14 items-start justify-center"
       >
+        {data.image && (
+          <div
+            data-tina-field={tinaField(data.image, "src")}
+            className="relative flex-shrink-0 md:w-2/5 flex justify-center order-first md:hidden md:order-last"
+          >
+            <Image
+              className="w-full h-auto max-w-full rounded-lg mb-3"
+              style={{ objectFit: "cover" }}
+              alt={data.image.alt}
+              src={data.image.src}
+              width={500}
+              height={500}
+            />
+          </div>
+        )}
         <div className="row-start-2 md:row-start-1 md:col-span-5 text-center md:text-left ">
           {data.tagline && (
             <h2
               data-tina-field={tinaField(data, "tagline")}
-              className="relative px-3 py-1 mb-8 text-md font-bold tracking-wide title-font z-20 hidden md:inline-block"
+              className="relative px-3 py-1 mb-8 text-md font-bold tracking-wide title-font z-20 md:inline-block"
             >
               {data.tagline}
               <span className="absolute w-full h-full left-0 top-0 rounded-full -z-1 bg-current opacity-7"></span>
             </h2>
           )}
+          
           {data.headline && (
             <h3
               data-tina-field={tinaField(data, "headline")}
-              className={`w-full relative mb-10 text-5xl font-extrabold tracking-normal leading-tight title-font hidden md:block`}
+              className={`w-full relative mb-10 text-4xl md:text-5xl font-extrabold tracking-normal leading-tight title-font md:block`}
             >
               <span
                 className={`bg-clip-text text-transparent bg-gradient-to-r  ${
@@ -84,7 +100,7 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
                 className="relative flex-shrink-0 md:w-2/5 flex justify-center order-first md:order-last"
               >
                 <Image
-                  className="w-full h-auto max-w-full rounded-lg"
+                  className="w-full h-auto max-w-full rounded-lg hidden md:block"
                   style={{ objectFit: "cover" }}
                   alt={data.image.alt}
                   src={data.image.src}
