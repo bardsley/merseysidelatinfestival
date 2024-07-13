@@ -7,7 +7,7 @@ import { individualTickets,initialSelectedOptions, passes, passTypes, days, full
 import symmetricDifference from 'set.prototype.symmetricdifference'
 symmetricDifference.shim();
 
-const Pricing = () => {
+const PricingTable = ({fullPassFunction}) => {
   const [selectedOptions, setSelectedOptions] = useState(initialSelectedOptions);
   const [studentDiscount, setStudentDiscount] = useState(false);
   const [priceModel, setPriceModel] = useState("cost")
@@ -203,25 +203,18 @@ const Pricing = () => {
   useEffect(() => {
     setTotalCost(calculateTotalCost(selectedOptions))
     selectPassCombination()
-  }, [selectedOptions,priceModel])
+  }, [selectedOptions,priceModel,fullPassFunction])
+  
+  useEffect(() => {
+    fullPassFunction(() => selectFullPass)
+  },[])
 
-  const cellClasses = 'border border-chillired-300 text-center py-2 px-4 ';
+  const cellClasses = 'border border-gray-600 text-center py-2 px-4 ';
 
   return (
-    <div className="table-container w-full flex justify-center flex-col pt-12 max-w-6xl lg:mx-auto mx-3">
+    <div className="table-container w-full flex justify-center flex-col pt-12 max-w-6xl lg:mx-auto mx-3 col-span-5">
     
-    <h1 className='text-2xl font-bold'>Pass Options</h1>
-
-    <div className='rounded-md w-96 mx-auto mb-12 bg-richblack-500 border-gray-700 border text-white p-8 text-center'>
-    <h2 className='text-3xl font-bold'>Limited time deal</h2>
-    <p className=''>
-      Currently we are offering an early bird price at an incredible £125! <br/>
-      <button className={ `${packages.length == 1 && packages[0] == fullPassName ? "text-chillired-500 border border-chillired-500" : "text-white bg-chillired-500"} rounded-md p-6 mt-6 `} onClick={selectFullPass}>
-        { packages.length == 1 && packages[0] == fullPassName ? `Already selected` : `Give me the ${fullPassName}`}
-      </button>
-    </p>
     
-    </div>
     
     <table className='option-table table-auto border-collapse border-b border-chillired-300 mr-6'>
       <thead>
@@ -296,17 +289,20 @@ const Pricing = () => {
         isSelected={studentDiscount} onSelect={togglePriceModel} studentDiscount={studentDiscount} />
       </caption>
     </table>
-    
+    <div className='flex mx-auto max-w-2xl mt-12 mb-12 p-12 justify-start gap-12 items-start rounded border border-gray-600'>
+        
     { totalCost && totalCost > 0 ? (
-      <div className='mx-auto max-w-2xl pt-12 mb-12'>
-        <p>We Suggest</p>
-        <h2 className='text-2xl'>{packages.map((packageName) => `${packageName} ${passOrTicket(packageName)}`).join(', ')}</h2>
-        <h2 className='text-3xl font-bold'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost}</span>) : null } £{packageCost}</h2>
-        { totalCost - packageCost > 0 ? (<p>Saving you £{totalCost - packageCost}!</p>) : null }
-
-      </div>
-    ) : null }
-    
+      <>
+        <div className='max-w-2/3'>
+          <p>{packages.length == 1 && packages[0] == fullPassName ?  "Best deal" : "We Suggest"}</p>
+          <h2 className='text-2xl'>{packages.map((packageName) => `${packageName} ${passOrTicket(packageName)}`).join(', ')}</h2>
+          <h2 className='text-3xl font-bold'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost}</span>) : null } £{packageCost}</h2>
+          { totalCost - packageCost > 0 ? (<p>Saving you £{totalCost - packageCost}!</p>) : null }
+        </div>
+        <button className='bg-chillired-400 text-white rounded-lg py-6 px-12 hover:bg-chillired-700 text-nowrap'>Buy Now</button>
+      </>
+    ) : "Select options in the table above to see the suggested packages" }
+    </div>
     {/* <hr />
     <h2>Debug Ignore below the line</h2>
     <div className='flex'>
@@ -325,4 +321,6 @@ const Pricing = () => {
   )
 };
 
-export default Pricing; 
+export default PricingTable; 
+
+{/*  */}

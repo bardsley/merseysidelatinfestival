@@ -15,7 +15,6 @@ export default async function Page({
   console.log("PAGE:",params, data.variables);
   return (
     <Layout rawPageData={data}>
-      <h2>Testing</h2>
       <ClientPage {...data}></ClientPage>
     </Layout>
   );
