@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 import type { Template } from "tinacms";
 import { PageBlocksPricing } from "../../tina/__generated__/types";
@@ -12,6 +12,21 @@ import { fullPassName } from '../ticketing/pricingDefaults'
 
 export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
   const [fullPassSelectFunction, setFullPassSelectFunction] = useState(() => ()=>{console.log("fullPassSelectFunction not set")})
+  const packagesSuggestorRef = useRef(null);
+  const scrollToElement = () => {
+    if (packagesSuggestorRef.current) {
+      setTimeout(() => {
+        const bottom = packagesSuggestorRef.current.getBoundingClientRect().bottom
+        window && window.scrollBy({
+          top: bottom + 400,
+          behavior : "smooth"
+        })
+      },100)
+      
+    } else {
+      console.log("packagesSuggestorRef not set");
+    }
+  };
   const packages = []
   const headlineColorClasses = {
     blue: "from-blue-400 to-blue-600",
@@ -87,7 +102,8 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
               <h2 className='text-2xl md:text-3xl font-bold'>Limited time deal</h2>
               <p className=''>
                 Currently we are offering an early bird price at an incredible £125! <br/>
-                <button className={ `${packages.length == 1 && packages[0] == fullPassName ? "text-chillired-500" : "text-white bg-chillired-500 0"} border border-chillired-500 rounded-md p-6 mt-6 z-30`} onClick={() => fullPassSelectFunction()}>
+                <button className={ `${packages.length == 1 && packages[0] == fullPassName ? "text-chillired-500" : "text-white bg-chillired-500 0"} border border-chillired-500 rounded-md p-6 mt-6 z-30`} 
+                  onClick={() => {fullPassSelectFunction(); scrollToElement(); }}>
                   { packages.length == 1 && packages[0] == fullPassName ? `Already selected` : `Give me the ${fullPassName}`}
                 </button>
               </p>
@@ -102,7 +118,7 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
                 data.color === "primary" ? `prose-primary` : `dark:prose-dark`
               }`}
             >
-              <TinaMarkdown content={data.text2} /> {JSON.stringify(data.text2)}
+              <TinaMarkdown content={data.text2}/> {JSON.stringify(data.text2)}
             </div>
           )}
         </div>
@@ -113,6 +129,7 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
       <PricingTable fullPassFunction={setFullPassSelectFunction}></PricingTable>
       </Container>
     </Section>
+    <a className="block border border-gold-700 scroll-mb-40" ref={packagesSuggestorRef} id="package"></a>
     </>
     
   );
