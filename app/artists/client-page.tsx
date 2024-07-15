@@ -1,27 +1,27 @@
 "use client";
-import { format } from "date-fns";
+// import { format } from "date-fns";
 import Link from "next/link";
-import Image from "next/image";
+// import Image from "next/image";
 import React from "react";
-import { useLayout } from "../../components/layout/layout-context";
-import { BsArrowRight } from "react-icons/bs";
-import { TinaMarkdown } from "tinacms/dist/rich-text";
+// import { useLayout } from "../../components/layout/layout-context";
+// import { BsArrowRight } from "react-icons/bs";
+// import { TinaMarkdown } from "tinacms/dist/rich-text";
 import {
   ArtistConnectionQuery,
   ArtistConnectionQueryVariables,
 } from "../../tina/__generated__/types";
 import { useTina } from "tinacms/dist/react";
 
-const titleColorClasses = {
-  blue: "group-hover:text-blue-600 dark:group-hover:text-blue-300",
-  teal: "group-hover:text-teal-600 dark:group-hover:text-teal-300",
-  green: "group-hover:text-green-600 dark:group-hover:text-green-300",
-  red: "group-hover:text-red-600 dark:group-hover:text-red-300",
-  pink: "group-hover:text-pink-600 dark:group-hover:text-pink-300",
-  purple: "group-hover:text-purple-600 dark:group-hover:text-purple-300",
-  orange: "group-hover:text-orange-600 dark:group-hover:text-orange-300",
-  yellow: "group-hover:text-yellow-500 dark:group-hover:text-yellow-300",
-};
+// const titleColorClasses = {
+//   blue: "group-hover:text-blue-600 dark:group-hover:text-blue-300",
+//   teal: "group-hover:text-teal-600 dark:group-hover:text-teal-300",
+//   green: "group-hover:text-green-600 dark:group-hover:text-green-300",
+//   red: "group-hover:text-red-600 dark:group-hover:text-red-300",
+//   pink: "group-hover:text-pink-600 dark:group-hover:text-pink-300",
+//   purple: "group-hover:text-purple-600 dark:group-hover:text-purple-300",
+//   orange: "group-hover:text-orange-600 dark:group-hover:text-orange-300",
+//   yellow: "group-hover:text-yellow-500 dark:group-hover:text-yellow-300",
+// };
 interface ClientPostProps {
   data: ArtistConnectionQuery;
   variables: ArtistConnectionQueryVariables;
@@ -30,7 +30,7 @@ interface ClientPostProps {
 
 export default function ArtistClientPage(props: ClientPostProps) {
   const { data } = useTina({ ...props });
-  const { theme } = useLayout();
+  // const { theme } = useLayout();
 
   return (
     <div className="text-white grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 max-w-5xl mx-auto my-6">
