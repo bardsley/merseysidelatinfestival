@@ -11,6 +11,8 @@ import { useLayout } from "../layout/layout-context";
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
+// import Logo from '../../public/mlf-colour-full.svg';
+import Logo from '../../public/mlf.svg';
 
 const headerColor = {
   default:
