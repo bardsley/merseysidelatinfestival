@@ -10,6 +10,15 @@ const Artist: Collection = {
     router: ({ document }) => {                  
       return `/artists/${document._sys.breadcrumbs.join("/")}`;
     },
+    filename: {
+      // Example of using a custom slugify function
+      slugify: (values) => {
+        // Values is an object containing all the values of the form. In this case it is {title?: string, topic?: string}
+        return `${values?.name
+          ?.toLowerCase()
+          .replace(/ /g, '-')}`
+      },
+    },
   },
   fields: [
     {

@@ -4,10 +4,13 @@ import {
   PageBlocksFeaturesItems,
 } from "../../tina/__generated__/types";
 import { tinaField } from "tinacms/dist/react";
+import { TinaMarkdown } from "tinacms/dist/rich-text";
 import { Icon } from "../icon";
 import { Section } from "../layout/section";
 import { Container } from "../layout/container";
 import { iconSchema } from "../../tina/fields/icon";
+import DiscountCode from "../content/discountCode";
+const components = { DiscountCode }
 
 export const Feature = ({
   featuresColor,
@@ -37,13 +40,13 @@ export const Feature = ({
           {data.title}
         </h3>
       )}
-      {data.text && (
-        <p
-          data-tina-field={tinaField(data, "text")}
-          className="text-base opacity-80 leading-relaxed"
+      {data.details && (
+        <div
+          data-tina-field={tinaField(data, "details")}
+          className="prose-base leading-tight"
         >
-          {data.text}
-        </p>
+          <TinaMarkdown content={data.details} components={components}/> 
+        </div>
       )}
     </div>
   );
@@ -124,13 +127,23 @@ export const featureBlockSchema = {
           name: "title",
         },
         {
-          type: "string",
-          label: "Text",
-          name: "text",
-          ui: {
-            component: "textarea",
-          },
-        },
+          type: "rich-text",
+          label: "Details",
+          name: "details",
+          templates: [
+            {
+              name: "DiscountCode",
+              label: "Discount Code",
+              fields: [
+                {
+                  name: "code",
+                  label: "Code",
+                  type: "string",
+                }
+              ],
+            },
+          ]
+        }
       ],
     },
     {
