@@ -5,6 +5,7 @@ import Global from "./collection/global";
 import Author from "./collection/author";
 import Page from "./collection/page";
 import Artist from "./collection/artist";
+import Class from "./collection/class";
 
 const config = defineConfig({
   clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID!,
@@ -30,7 +31,7 @@ const config = defineConfig({
     outputFolder: "admin", // within the public folder
   },
   schema: {
-    collections: [Page, Global, Artist, Post, Author],
+    collections: [Page, Global, Artist, Class, Post, Author],
   },
 });
 

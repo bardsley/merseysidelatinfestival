@@ -6,6 +6,11 @@ const Artist: Collection = {
   name: "artist",
   path: "content/artists",
   format: "mdx",
+  ui: {
+    router: ({ document }) => {                  
+      return `/artists/${document._sys.breadcrumbs.join("/")}`;
+    },
+  },
   fields: [
     {
       type: "string",

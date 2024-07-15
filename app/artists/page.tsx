@@ -3,15 +3,15 @@ import client from "../../tina/__generated__/client";
 import ArtistClientPage from "./client-page";
 
 export default async function ArtistsPage() {
-  const posts = await client.queries.artistConnection();
+  const artists = await client.queries.artistConnection();
 
-  if (!posts) {
+  if (!artists) {
     return null;
   }
 
   return (
-    <Layout rawPageData={posts.data}>
-      <ArtistClientPage {...posts} />
+    <Layout rawPageData={artists.data}>
+      <ArtistClientPage {...artists} />
     </Layout>
   );
 }

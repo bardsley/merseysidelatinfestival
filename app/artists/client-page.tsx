@@ -33,7 +33,7 @@ export default function ArtistClientPage(props: ClientPostProps) {
   // const { theme } = useLayout();
 
   return (
-    <div className="text-white grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 max-w-5xl mx-auto my-6">
+    <div className="text-white grid grid-cols-2 md:grid-cols-3 gap-4 lg:grid-cols-4 max-w-5xl mx-auto my-6 w-full ">
       <h1 className="col-span-2 md:col-span2 lg:col-span-4 text-5xl font-bold">Artists</h1>
       {data?.artistConnection.edges.map((artistData,index) => {
         const artist = artistData.node;
@@ -91,15 +91,33 @@ export default function ArtistClientPage(props: ClientPostProps) {
           <Link
             key={`${artist.id}-${index}`}
             href={`/artists/` + artist._sys.breadcrumbs.join("/")}
-            className="group block rounded-md hover:z-30"
+            className="group block rounded-md relative aspect-square overflow-visible transition-colors duration-1500 ease-in-out text-richblack-600 hover:text-gold-500"
           > 
-          <img src={artist.avatar} alt={artist.name}
-            className="block rounded-full aspect-square w-full hover:scale-125
-            object-cover m-0 bg-auto bg-center bg-no-repeat overflow-hidden
-            shadow transition-scale duration-500 ease-out hover:shadow-lg hover:z-20" 
-          />
-            {/* {JSON.stringify(artist)} */}
-            </Link>
+            <img src={artist.avatar} alt={artist.name}
+              className="block rounded-full aspect-square w-full hover:scale-75 absolute
+              object-cover m-0 bg-auto bg-center bg-no-repeat overflow-hidden
+              shadow transition-all duration-500 ease-out hover:shadow-lg hover:z-30 z-20 opacity-100" 
+            />
+            <svg
+              viewBox="0 0 106 106"
+              xmlns="http://www.w3.org/2000/svg"
+              className="absolute top-0 left-0 w-full h-full z-10 fill-current "
+            >
+              <path
+                id="circlePath"
+                d="
+                  M 13, 53
+                  a 40,40 0 1,1 80,0
+                  40,40 0 1,1 -80,0
+                "
+              />
+              <text>
+                <textPath href="#circlePath" className="fill-current">
+                  {artist.name.toUpperCase()}
+                </textPath>
+              </text>
+            </svg>
+          </Link>
         )
       })}
     </div>
