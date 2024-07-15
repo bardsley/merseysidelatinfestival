@@ -3,7 +3,7 @@ import type { Collection } from "tinacms";
 
 const Artist: Collection = {
   label: "Artists",
-  name: "artists",
+  name: "artist",
   path: "content/artists",
   format: "mdx",
   fields: [

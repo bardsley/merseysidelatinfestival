@@ -12,7 +12,7 @@ export default async function Page({
     relativePath: `${params.filename}.mdx`,
   });
 
-  console.log("PAGE:",params, data.variables);
+  // console.log("PAGE:",params, data.variables);
   return (
     <Layout rawPageData={data}>
       <ClientPage {...data}></ClientPage>
