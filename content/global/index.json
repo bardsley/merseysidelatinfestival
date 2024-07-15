@@ -12,6 +12,10 @@
         "label": "Home"
       },
       {
+        "href": "accomodation",
+        "label": "Rooms"
+      },
+      {
         "href": "pricing",
         "label": "Passes"
       },

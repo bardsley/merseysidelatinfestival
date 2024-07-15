@@ -36,7 +36,7 @@ export default function NavItems({ navs }: { navs: any }) {
   const currentPath = usePathname();
   const { theme } = useLayout();
   return (
-    <ul className="flex gap-2 sm:gap-4 lg:gap-6 tracking-[.002em] -mx-4">
+    <ul className="gap-2 sm:gap-4 lg:gap-6 tracking-[.002em] -mx-4 hidden md:flex">
       {navs.map((item) => {
         return (
           <li

@@ -31,7 +31,7 @@ const config = defineConfig({
     outputFolder: "admin", // within the public folder
   },
   schema: {
-    collections: [Page, Global, Artist, Class, Post, Author],
+    collections: [Global, Page, Artist, Class, Post, Author],
   },
 });
 
