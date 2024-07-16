@@ -23,8 +23,8 @@ const lato = Lato({
 });
 
 export const metadata: Metadata = {
-  title: "Tina",
-  description: "Tina Cloud Starter",
+  title: "MLF 2024",
+  description: "Merseyside Latin Festival",
 };
 
 export default async function RootLayout({

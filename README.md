@@ -20,6 +20,9 @@ Connor
 [ ] Send Adm the SVG files
 [ ] Send me the link
 
+[ ] resend AWS access
+[ ] Document Lambda & make lambda robust
+
 Karen
 -----
 [ ] Video of dancing wide
@@ -40,85 +43,91 @@ price: 100
 chgeckout
 emails
 
-# Tina Starter 🦙
+*********************
+****  ENDPOINTS  ****
+*********************
 
-![tina-cloud-starter-demo](https://user-images.githubusercontent.com/103008/130587027-995ccc45-a852-4f90-b658-13e8e0517339.gif)
+*********************
+** send my ticket ***
+*
+* lambda function: send_ticket
+* status: functional (test data)
+* 
 
-This Next.js starter is powered by [TinaCMS](https://app.tina.io) for you and your team to visually live edit the structured content of your website. ✨
+url: https://ux66cekzyiffxqjobe3xbyuk7y0nzruu.lambda-url.eu-west-2.on.aws/?email={{email}}
 
-The content is managed through Markdown and JSON files stored in your GitHub repository, and queried through Tina GraphQL API.
+description: Makes a query of the DynamoDB of customer tickets, if the email is present will send the ticket(s) to 
+that email. If multiple entries for that email exist, customer will receive an email for each ticket. 
 
-### Features
+method: GET
 
-- [Tina Headless CMS](https://app.tina.io) for authentication, content modeling, visual editing and team management.
-- [Vercel](https://vercel.com) deployment to visually edit your site from the `/admin` route.
-- Local development workflow from the filesystem with a local GraqhQL server.
+parameters: email- The query email
 
-## Requirements
+returns:status
 
-- Git, [Node.js Active LTS](https://nodejs.org/en/about/releases/), Yarn installed for local development.
-- A [TinaCMS](https://app.tina.io) account for live editing.
+status codes: 200 OK
+405 Method Not Allowed
 
-## Local Development
+cURL example:
+curl -H "Accept: application/json" \
+'https://ux66cekzyiffxqjobe3xbyuk7y0nzruu.lambda-url.eu-west-2.on.aws/?email=connor1monaghan%40gmail.com'
 
-Install the project's dependencies:
+curl -H "Accept: application/json" \
+'https://ux66cekzyiffxqjobe3xbyuk7y0nzruu.lambda-url.eu-west-2.on.aws/?email=adam.bardsley%40gmail.com'
 
-```
-yarn install
-```
+*********************
+*** customer data ***
+*
+* lambda function: 
+* status: functional (test data)
+* 
 
-Run the project locally:
+url: https://x4xy6yutqmildatdl3qc53bnzu0bhbdf.lambda-url.eu-west-2.on.aws/
 
-```
-yarn dev
-```
+description: Retrieve the meal options of schedule options of a customer, searching the db is done only with ticket
+number which but be valid.
 
-### Local URLs
+method: GET
 
-- http://localhost:3000 : browse the website
-- http://localhost:3000/admin : connect to Tina Cloud and go in edit mode
-- http://localhost:3000/exit-admin : log out of Tina Cloud
-- http://localhost:4001/altair/ : GraphQL playground to test queries and browse the API documentation
+parameters: requested- Comma separate list of type of customer data to return. Valid options: meal, schedule
+email- The customer email
+ticketnumber- The customer ticket number
 
-### Building the Starter Locally (Using the hosted content API)
+returns:JSON of the 'meal options' entry and/or of the 'schedule options' entry
 
-Replace the `.env.example`, with `.env`
+status codes: 200 OK
+400 Ticket number does not exist
+405 Method Not Allowed
 
-```
-NEXT_PUBLIC_TINA_CLIENT_ID=<get this from the project you create at app.tina.io>
-TINA_TOKEN=<get this from the project you create at app.tina.io>
-NEXT_PUBLIC_TINA_BRANCH=<Specify the branch with Tina configured>
-```
+cURL example:
+curl -H "Accept: application/json" \
+'https://x4xy6yutqmildatdl3qc53bnzu0bhbdf.lambda-url.eu-west-2.on.aws/?requested=meal,schedule&email=connor1monaghan%40gmail.com&ticketnumber=3911997684'
 
-Build the project:
+*********************
 
-```bash
-yarn build
-```
 
-## Getting Help
+url: https://x4xy6yutqmildatdl3qc53bnzu0bhbdf.lambda-url.eu-west-2.on.aws/
 
-To get help with any TinaCMS challenges you may have:
+description: Update a customer entry in the db with the provided meal options and/or schedule. Request data must include
+at least one of 'meal_options' or 'schedule'.
 
-- Visit the [documentation](https://tina.io/docs/) to learn about Tina.
-- [Join our Discord](https://discord.gg/zumN63Ybpf) to share feedback.
-- Visit the [community forum](https://community.tinacms.org/) to ask questions.
-- Get support through the chat widget on the TinaCMS Dashboard
-- [Email us](mailto:support@tina.io) to schedule a call with our team and share more about your context and what you're trying to achieve.
-- [Search or open an issue](https://github.com/tinacms/tinacms/issues) if something is not working.
-- Reach out on Twitter at [@tina_cms](https://twitter.com/tina_cms).
+method: POST
 
-## Development tips
+parameters: email- The customer email
+ticketnumber- The customer ticket number
+meal_options- (optional) dict of meal options
+schedule- (optional) dict of schedule options
 
-### Visual Studio Code GraphQL extension
+returns:status
 
-[Install the GraphQL extension](https://marketplace.visualstudio.com/items?itemName=GraphQL.vscode-graphql) to benefit from type auto-completion.
+status codes: 200 OK
+400 Ticket number does not exist
+405 Method Not Allowed
 
-### Typescript
+cURL example:
+curl -H 'Content-Type: application/json' \
+          -d '{"email":"connor1monaghan@gmail.com", "ticket_number":1111111, "meal_options":{}}' \
+          -X POST https://x4xy6yutqmildatdl3qc53bnzu0bhbdf.lambda-url.eu-west-2.on.aws/
 
-A good way to ensure your components match the shape of your data is to leverage the auto-generated TypeScript types.
-These are rebuilt when your `tina` config changes.
 
-## LICENSE
-
-Licensed under the [Apache 2.0 license](./LICENSE).
+*********************************************************************************************************

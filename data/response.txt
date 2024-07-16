@@ -1,0 +1,7 @@
+[{"meal_options":null},{"schedule_options":null}]
+
+3911997684
+
+curl -H 'Content-Type: application/json' \
+          -d '{"email":"connor1monaghan@gmail.com", "ticket_number":3911997684, "schedule":{}' \
+          -X POST https://x4xy6yutqmildatdl3qc53bnzu0bhbdf.lambda-url.eu-west-2.on.aws/
