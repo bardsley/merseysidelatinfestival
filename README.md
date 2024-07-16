@@ -11,6 +11,8 @@ Adam
 [ ] Add see through option for a section
 [ ] Add title to features section
 [ ] Disclaimer on food choices
+[ ] Default prose styles e.g. <article class="prose prose-img:rounded-xl prose-headings:underline prose-a:text-blue-600">{{ markdown }}</article>
+[X] Hydration error in production
  
 Connor
 ------  

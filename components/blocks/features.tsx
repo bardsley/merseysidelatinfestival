@@ -43,7 +43,7 @@ export const Feature = ({
       {data.details && (
         <div
           data-tina-field={tinaField(data, "details")}
-          className="prose-base leading-tight"
+          className="prose-base leading-tight text-justify"
         >
           <TinaMarkdown content={data.details} components={components}/> 
         </div>
@@ -56,7 +56,7 @@ export const Features = ({ data }: { data: PageBlocksFeatures }) => {
   return (
     <Section color={data.color}>
       {data.title && (
-        <Container className={`flex flex-wrap gap-x-10 gap-y-2 text-left`} size="small">
+        <Container className={`flex flex-wrap gap-x-10 gap-y-2 justify-center md:justify-start text-left`} size="small">
         <h2
           data-tina-field={tinaField(data, "title")}
           className="text-4xl font-bold title-font"
@@ -68,7 +68,7 @@ export const Features = ({ data }: { data: PageBlocksFeatures }) => {
       
       <Container
         className={`flex flex-wrap gap-x-10 gap-y-8 text-left`}
-        size={data.title ? "small" : "medium" }
+        size={data.title ? "small" : "small" }
       >
         {data.items &&
           data.items.map(function (block, i) {
@@ -96,6 +96,9 @@ export const featureBlockSchema = {
     previewSrc: "/blocks/features.png",
     defaultItem: {
       items: [defaultFeature, defaultFeature, defaultFeature],
+    },
+    itemProps: (item) => {
+      return { label: `Features - ${item?.title || "No Title"}` };
     },
   },
   fields: [
