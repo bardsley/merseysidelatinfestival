@@ -61,7 +61,7 @@ export default function Header() {
               /> */}
               <Logo className="w-12 h-12"></Logo>
               {" "}
-              <span data-tina-field={tinaField(header, "name")} className="ml-2 hidden md:inline">
+              <span data-tina-field={tinaField(header, "name")} className="ml-2 hidden xs:inline">
                 {header.name}
               </span>
             </Link>
@@ -85,12 +85,12 @@ export default function Header() {
             "to-transparent bottom-0 left-4 right-4 -z-1 opacity-20"
           )}
         />
-        <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="2xl:hidden">
+        <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="2xl:hidden border-l-chillired-300">
          <div className="fixed inset-0 z-10" />
-         <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-richblack-500 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+         <DialogPanel className="shadow-2xl shadow-black  fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-richblack-500 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
            <div className="flex items-center justify-between">
              <a href="#" className="-m-1.5 p-1.5">
-               <span className="sr-only">Merseyside Latin festival</span>
+               <span className="sr-only">{header.name}</span>
                <Logo className="w-12 h-12"></Logo>
              </a>
              <button
