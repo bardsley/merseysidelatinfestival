@@ -4,15 +4,26 @@ import { redirect } from 'next/navigation'
 
 export async function POST(request: Request) {
   const data = await request.formData()
-  const ticket = data.get('ticket').toString()
-  console.log("DATA:",data)
-  if(ticket) {
-    cookies().set('ticket', ticket, { secure: true })
-  } 
-  redirect('/attendee')
+  const newHttpMethod = request.headers.get('x-new-method')
+  let message: boolean | string = false 
+  if(newHttpMethod && newHttpMethod != 'NOCHANGE') {
+    cookies().delete('ticket')
+    message = 'logged out'
+  } else {
+    const ticket = data.get('ticket').toString()
+    const email = data.get('email').toString()
+
+    if(ticket) {
+      cookies().set('ticket', ticket, { secure: true })
+      cookies().set('email', email, { secure: true })
+    } 
+  }
+  redirect(`/preferences${ message ? `?message=${message}` : ''}`)
+  
 }
 
-export async function DELETE(request: Request) {
+export async function DELETE() {
+  console.log("DELETE method")
   cookies().delete('ticket')
-  redirect('/attendee?message=logged%20;out')
+  redirect('/preferences?message=logged%20;out')
 }

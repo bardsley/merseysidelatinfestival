@@ -12,16 +12,16 @@
         "label": "Home"
       },
       {
-        "href": "accomodation",
-        "label": "Rooms"
-      },
-      {
         "href": "pricing",
         "label": "Passes"
       },
       {
+        "href": "accomodation",
+        "label": "Rooms"
+      },
+      {
         "href": "tickets",
-        "label": "Tickets"
+        "label": "Early Bird"
       },
       {
         "href": "artists",
