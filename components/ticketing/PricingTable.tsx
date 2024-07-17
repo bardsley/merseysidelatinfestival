@@ -5,7 +5,10 @@ import { ICellProps } from './Cell';
 import { SelectedOptions } from './pricingTypes'
 import { individualTickets,initialSelectedOptions, passes, passTypes, days, fullPassName } from './pricingDefaults'
 import symmetricDifference from 'set.prototype.symmetricdifference'
+import difference from 'set.prototype.difference'
 symmetricDifference.shim();
+difference.shim();
+
 
 const PricingTable = ({fullPassFunction}:{fullPassFunction:Function}) => {
   const [selectedOptions, setSelectedOptions] = useState(initialSelectedOptions);
