@@ -4,7 +4,7 @@ import TicketCheck from "./ticketcheck"
 import { BiAlarmExclamation, BiCheckCircle } from "react-icons/bi";
 
 export default function ClientForm(props) {
-  const {hasCookie, ticket, email} = props
+  const {hasCookie, ticket } = props
 
   const params = useSearchParams()
   const message = params.get('message')
