@@ -28,7 +28,8 @@ export default function ClientForm(props) {
 
   useEffect(() => {
     if(ticket && email) {
-        const fetchURL = `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/api/preferences?email=${email.value}&ticket_number=${ticket.value}`
+      console.log("ENV",process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL)
+        const fetchURL = `//${process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL}/api/preferences?email=${email.value}&ticket_number=${ticket.value}`
         console.log(fetchURL)
         fetch(fetchURL, {method: "GET",}).then(res => {
         res.json().then(data => {
