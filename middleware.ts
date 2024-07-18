@@ -18,12 +18,12 @@ export function middleware(request: NextRequest) {
       headers: requestHeaders,
     },
   })
-  console.log(response)
+  // console.log(response)
   // request.method = method ? method : request.method
   return response
 }
  
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: '/api/:path*',
+  matcher: '/api/session',
 }

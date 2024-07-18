@@ -16,14 +16,9 @@ export async function POST(request: Request) {
     if(ticket) {
       cookies().set('ticket', ticket, { secure: true })
       cookies().set('email', email, { secure: true })
+      
     } 
   }
   redirect(`/preferences${ message ? `?message=${message}` : ''}`)
   
-}
-
-export async function DELETE() {
-  console.log("DELETE method")
-  cookies().delete('ticket')
-  redirect('/preferences?message=logged%20;out')
 }

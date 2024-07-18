@@ -180,26 +180,26 @@ const PricingTable = ({fullPassFunction}:{fullPassFunction:Function}) => {
 
   const selectPassCombination = () => {
 
-    // const passCombinations = generateAllPassCombinations(passes)
-    // console.log(passCombinations)
-    // passCombinations.forEach((passCombination: any[]) => {
-      // const packagePrice = priceForPassCombination(passCombination,priceModel)
-      // const tickePrice = priceForIndividualItems(itemsNotCovered(optionsToPassArray(selectedOptions),itemsFromPassCombination(passCombination)))
-      // const combinedPrice = packagePrice + tickePrice
+    const passCombinations = generateAllPassCombinations(passes)
+    console.log(passCombinations)
+    passCombinations.forEach((passCombination: any[]) => {
+      const packagePrice = priceForPassCombination(passCombination,priceModel)
+      const tickePrice = priceForIndividualItems(itemsNotCovered(optionsToPassArray(selectedOptions),itemsFromPassCombination(passCombination)))
+      const combinedPrice = packagePrice + tickePrice
       // const passCombination = Array.from(passCombinations.values())[0]
-      // console.log(`${passCombination.join(' / ')} , £${packagePrice} + £${tickePrice} = £${combinedPrice}
-      //   - provides    (${itemsFromPassCombination(passCombination).join(',')})
-      //   - wanted      (${optionsToPassArray(selectedOptions)})
-      //   - individuals (${itemsNotCovered(optionsToPassArray(selectedOptions),itemsFromPassCombination(passCombination))})
-      //   `
-      // )
-    // })
-    // console.log('-------')
+      console.log(`${passCombination.join(' / ')} , £${packagePrice} + £${tickePrice} = £${combinedPrice}
+        - provides    (${itemsFromPassCombination(passCombination).join(',')})
+        - wanted      (${optionsToPassArray(selectedOptions)})
+        - individuals (${itemsNotCovered(optionsToPassArray(selectedOptions),itemsFromPassCombination(passCombination))})
+        `
+      )
+    })
+    console.log('-------')
     const {price: suggestedCost, options: suggestedPackages} = getBestCombination(selectedOptions)
     console.log(`Suggested packages: ${suggestedPackages.join(', ')} - £${suggestedCost}`)
     setPackageCost(suggestedCost)
     setPackages(suggestedPackages)
-
+    console.log(generateAllSubArrays(['a','b','c','d','e','f','g','h']))
   }
 
   useEffect(() => {

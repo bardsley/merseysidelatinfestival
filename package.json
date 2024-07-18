@@ -4,7 +4,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "dev": "tinacms dev -c \"next dev\"",
+    "dev": "tinacms dev -c \"set NODE_DEBUG=http && next dev\"",
     "build": "tinacms build && next build",
     "start": "tinacms build && next start",
     "export": "npm run build && next export",
