@@ -5,21 +5,6 @@ import power from 'power-set'
 const generateAllPassCombinations = (passes) => {
     
   const passTitles = Object.keys(passes).filter((item) => { return item != fullPassName})
-  // const passCombinations = [
-  //   [
-  //       "Saturday Pass",
-  //       "Sunday Pass",
-  //       "Class Pass",
-  //       "Dine and Dance Pass",
-  //       "Party Pass"
-  //   ],
-  //   [
-  //       "Saturday Pass",
-  //       "Sunday Pass",
-  //       "Class Pass",
-  //       "Dine and Dance Pass"
-  //   ],
-  // ]
   const passCombinations = power(passTitles)
   // console.log(passCombinations)
   // passCombinations.forEach((passCombination: any[]) => {
@@ -34,7 +19,7 @@ const generateAllPassCombinations = (passes) => {
   //     `
   //   )
   // })
-  console.log('---PassCombinatiuon Generated---')
+  console.log('---PassCombination Generated---')
   return [[],...passCombinations, [fullPassName]]
 }
 const calculateTotalCost = (evaluatedOptions,priceModel) => {
