@@ -28,9 +28,9 @@ export default function ClientForm(props) {
 
   useEffect(() => {
     if(ticket && email) {
-        fetch(`http://localhost:3000/api/preferences?email=${email.value}&ticket_number=${ticket.value}`, {
-        method: "GET",
-      }).then(res => {
+        const fetchURL = `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/api/preferences?email=${email.value}&ticket_number=${ticket.value}`
+        console.log(fetchURL)
+        fetch(fetchURL, {method: "GET",}).then(res => {
         res.json().then(data => {
           data.error ? setPreferences(data.error) : setPreferences(data[0].meal_options)
         })
