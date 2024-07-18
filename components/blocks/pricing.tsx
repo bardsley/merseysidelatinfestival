@@ -9,7 +9,6 @@ import { Section } from "../layout/section";
 import { Container } from "../layout/container";
 import { Actions } from "./actions";
 import { fullPassName } from '../ticketing/pricingDefaults'
-import { passCombinations } from '../ticketing/pricingUtilities'
 
 
 export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
