@@ -9,6 +9,8 @@ import { Section } from "../layout/section";
 import { Container } from "../layout/container";
 import { Actions } from "./actions";
 import { fullPassName } from '../ticketing/pricingDefaults'
+import { passCombinations } from '../ticketing/pricingUtilities'
+
 
 export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
   const [fullPassSelectFunction, setFullPassSelectFunction] = useState(() => ()=>{console.log("fullPassSelectFunction not set")})
@@ -126,7 +128,7 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
     </Section>
     <Section>
       <Container>
-      <PricingTable fullPassFunction={setFullPassSelectFunction}></PricingTable>
+      <PricingTable fullPassFunction={setFullPassSelectFunction} passCombinations={passCombinations}></PricingTable>
       </Container>
     </Section>
     <a className="block border border-gold-700 scroll-mb-40" ref={packagesSuggestorRef} id="package"></a>

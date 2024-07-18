@@ -9414,6 +9414,11 @@ postcss@^8.3.11, postcss@^8.3.3, postcss@^8.4.14, postcss@^8.4.23, postcss@^8.4.
     picocolors "^1.0.1"
     source-map-js "^1.2.0"
 
+power-set@^1.1.8:
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/power-set/-/power-set-1.1.8.tgz#a0bdcdcc3ae53e288da2135ac4a67fb1661e3d44"
+  integrity sha512-JLU/X7IlaQy6Q+uGTPoPan7r4frzfeUXp8cUQ9tXBQKias+4cYmzg3by5111RUAvugtIAKL2IAAl9+bSrB14ww==
+
 prebuild-install@^7.1.1:
   version "7.1.2"
   resolved "https://registry.yarnpkg.com/prebuild-install/-/prebuild-install-7.1.2.tgz#a5fd9986f5a6251fbc47e1e5c65de71e68c0a056"
