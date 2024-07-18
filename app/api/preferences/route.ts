@@ -6,7 +6,7 @@ export async function POST(request: Request) {
   const data = await request.formData()
   const ticket = cookies().get('ticket')
   const email = cookies().get('email')
-  const courseInfo = Array.from(data.entries()).filter((item,index)=>{ return /course/.test(item[0]) ? true : false }).map((item)=>{ return parseInt(item[1].toString()) })
+  const courseInfo = Array.from(data.entries()).filter((item)=>{ return /course/.test(item[0]) ? true : false }).map((item)=>{ return parseInt(item[1].toString()) })
 
   const apiRequestBody = JSON.stringify({
     ticket_number: parseInt(ticket.value),
