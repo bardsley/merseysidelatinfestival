@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import Cell from './Cell';
 import { ICellProps } from './Cell';
-import { SelectedOptions } from './pricingTypes'
 import { individualTickets,initialSelectedOptions, passes, passTypes, days, fullPassName } from './pricingDefaults'
 import { calculateTotalCost, passOrTicket, isAllDayOptions, isAllPassOptions, getBestCombination } from './pricingUtilities'
 import symmetricDifference from 'set.prototype.symmetricdifference'
@@ -11,7 +10,7 @@ symmetricDifference.shim();
 difference.shim();
 
 
-const PricingTable = ({fullPassFunction, passCombinations}:{fullPassFunction:Function, passCombinations:string[]}) => {
+const PricingTable = ({fullPassFunction}:{fullPassFunction:Function}) => {
   const [selectedOptions, setSelectedOptions] = useState(initialSelectedOptions);
   const [studentDiscount, setStudentDiscount] = useState(false);
   const [priceModel, setPriceModel] = useState("cost")

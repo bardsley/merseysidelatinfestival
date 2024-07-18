@@ -2,7 +2,6 @@ import Layout from "../../components/layout/layout";
 import {Container} from "../../components/layout/container";
 import ClientForm from "./client-form";
 import { cookies } from "next/headers"
-import { useEffect } from "react";
 
 export default async function PreferencesPage() {
   const cookiesStore = cookies()

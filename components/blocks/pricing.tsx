@@ -128,7 +128,7 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
     </Section>
     <Section>
       <Container>
-      <PricingTable fullPassFunction={setFullPassSelectFunction} passCombinations={passCombinations}></PricingTable>
+      <PricingTable fullPassFunction={setFullPassSelectFunction}></PricingTable>
       </Container>
     </Section>
     <a className="block border border-gold-700 scroll-mb-40" ref={packagesSuggestorRef} id="package"></a>

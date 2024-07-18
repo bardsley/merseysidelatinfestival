@@ -3,8 +3,7 @@ import { useSearchParams } from "next/navigation"
 import TicketCheck from "./ticketcheck"
 import { BiAlarmExclamation, BiCheckCircle } from "react-icons/bi";
 import { TicketIcon } from '@heroicons/react/24/solid'
-import { Fragment, useEffect, useState } from "react";
-import { Meow_Script } from "next/font/google";
+import { useEffect, useState } from "react";
 
 export default function ClientForm(props) {
   const {hasCookie, ticket, email } = props
