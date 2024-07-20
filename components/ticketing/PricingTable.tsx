@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Cell from './Cell';
 import { ICellProps } from './Cell';
-import { individualTickets,initialSelectedOptions, passes, passTypes, days, fullPassName } from './pricingDefaults'
+import { individualTickets,initialSelectedOptions, passTypes, days, fullPassName } from './pricingDefaults'
 import { calculateTotalCost, passOrTicket, getBestCombination } from './pricingUtilities'
 import PassCards from './passes'
 import symmetricDifference from 'set.prototype.symmetricdifference'
