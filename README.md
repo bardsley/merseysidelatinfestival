@@ -14,9 +14,10 @@ Adam
 [ ] Default prose styles e.g. <article class="prose prose-img:rounded-xl prose-headings:underline prose-a:text-blue-600">{{ markdown }}</article>
 [X] Hydration error in production
 [ ] Reverse artist video animation 
-[ ] Student isn't coming through 
+[x] Student isn't coming through 
 [ ] Way to hide pages
-[ ] Passes card at top
+[x] Passes card at top
+[x] Student Saving in passes
 
 Connor
 ------  

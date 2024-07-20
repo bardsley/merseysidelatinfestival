@@ -27,7 +27,8 @@ const calculateTotalCost = (evaluatedOptions,priceModel) => {
   Object.keys(evaluatedOptions).forEach((day) => {
     Object.keys(evaluatedOptions[day]).forEach((passType) => {
       if (evaluatedOptions[day][passType]) {
-        total += individualTickets && individualTickets[day] && individualTickets[day][passType]? individualTickets[day][passType][priceModel] : 0
+        // total += individualTickets && individualTickets[day] && individualTickets[day][passType]? individualTickets[day][passType][priceModel] : 0
+        total += individualTickets && individualTickets[day] && individualTickets[day][passType]? individualTickets[day][passType].cost : 0
         // console.log(day,passType,priceModel, individualTickets)
       }
     })

@@ -3,7 +3,7 @@ import { fullPassName, passes } from './pricingDefaults'
 
 
 
-export default function PassCards({setDayPass,setTypePass,setDinnerPass}) {
+export default function PassCards({setDayPass,setTypePass,setDinnerPass,priceModel}) {
   return (
     <div className="isolate overflow-hidden ">
       <div className='mb-6'>
@@ -14,7 +14,7 @@ export default function PassCards({setDayPass,setTypePass,setDinnerPass}) {
       <div className="mx-auto grid max-w-full grid-cols-1 gap-8 lg:max-w-full md:grid-cols-3 lg:grid-cols-5 mb-12">
         {Object.keys(passes).filter((item)=>item !== fullPassName).map((passName) => {
           const pass = passes[passName]
-
+          const saving = priceModel == 'studentCost' ? pass.studentSaving > 0 : pass.saving > 0
           const clickFunction = /(Saturday|Sunday)/.test(passName) 
             ? () => { setDayPass(passName.split(' ')[0],true)} 
             : passName == "Class Pass" 
@@ -34,11 +34,12 @@ export default function PassCards({setDayPass,setTypePass,setDinnerPass}) {
                 {passName}
               </h3>
               <div className="md:mt-4 flex items-baseline gap-x-2 place-content-center md:place-content-start	">
-                <span className="text-3xl font-bold tracking-tight text-white">£{pass.cost}</span>
+                <span className="text-3xl font-bold tracking-tight text-white">£{pass[priceModel]}</span>
               </div>
+              { saving ? (
               <div className='mt-0 flex items-baseline gap-x-2 place-content-center	md:place-content-start'>
-                <span className="text-base font-semibold leading-7 text-gray-300">Saving £{pass.saving}</span>
-              </div>
+                <span className="text-base font-semibold leading-7 text-gray-300">Saving £{priceModel == 'studentCost' ? pass.studentSaving : pass.saving}</span>
+              </div>) : null }
               <p className="md:mt-6 text-base leading-7 col-span-3 text-white">{pass.description}</p>
               {/* <ul role="list" className="mt-10 space-y-4 text-sm leading-6 text-gray-600">
                 {pass.combination.map((feature) => (

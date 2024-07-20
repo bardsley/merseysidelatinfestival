@@ -23,6 +23,7 @@ export type Pass = {
   studentCost: number;
   isAvailable: boolean;
   saving: number;
+  studentSaving?: number;
   combination: string[];
   description?: string;
   included?: string[];
