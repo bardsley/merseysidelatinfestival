@@ -181,12 +181,12 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
       ) : "Select options in the table above to see the suggested packages" }
       </div>
       
-      <hr />
+      {/* <hr />
       <h2>Debug Ignore below the line</h2>
       <div className='flex'>
         <pre>Selected -- {JSON.stringify(selectedOptions,null,2)}</pre>
         <pre>Provisonal--{JSON.stringify(initialSelectedOptions,null,2)}</pre>
-      </div>
+      </div> */}
       
     </div>
   )
