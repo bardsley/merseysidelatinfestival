@@ -91,7 +91,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
         <Cell option={{name: 'I am a student and will bring Student ID', cost: 0, studentCost: 0, isAvailable: true } }
           isSelected={studentDiscount} onSelect={togglePriceModel} studentDiscount={studentDiscount} />
       </div>
-
+      
       <table className='option-table w-full mx-auto max-w-4xl table-auto border-collapse border-b border-ch}illired-300'>
         <thead>
           <tr className='bg-chillired-300 text-white border-chillired-400'>
@@ -159,8 +159,12 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
             </tr>
           )})}
         </tbody>
-        <caption className='caption-bottom pt-6'>
-        <button onClick={clearOptions} className='border border-gray-300 rounded-md p-3'>Clear my choices and start again</button>
+        <caption className='caption-top pt-6'>
+          <div className='flex justify-between mb-2'>
+            <h2 className="text-xl">Your Current Selection</h2>  
+            <button onClick={clearOptions} className='border border-gray-300 rounded-md px-3 py-1'>Clear my choices</button>
+          </div>
+        
         </caption>
       </table>
       <div className='flex mx-auto w-full flex-col md:flex-row justify-between max-w-2xl mt-12 mb-12 p-12 gap-12 items-start rounded border border-gray-600'>

@@ -44,7 +44,7 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
     <>
     <Section color={data.color} backgroundImage={data.backgroundimage}>
       <Container
-        size="large"
+        size="medium"
         className="grid grid-cols-1 md:grid-cols-5 gap-0 md:gap-14 items-start justify-center"
       >
         <div className="row-start-2 md:row-start-1 md:col-span-5 text-center md:text-left ">
@@ -74,7 +74,7 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
             </h3>
           )}
           <div className="flex flex-col md:flex-row gap-6">
-            <div className="flex flex-col md:w-3/5">
+            <div className="flex flex-col md:w-1/2">
               {data.text && (
                 <div
                   data-tina-field={tinaField(data, "text")}
@@ -99,7 +99,7 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
               )}
             </div>
 
-            <div className='rounded-3xl md:w-96 max-w-96 mx-auto mb-6 md:mb-12 bg-richblack-600 border-gray-700 border text-white p-8 text-center z-30'>
+            <div className='rounded-3xl md:w-full max-w-lg mx-auto mb-6 md:mb-12 bg-richblack-600 border-gray-700 border text-white p-8 text-center z-30'>
               <h2 className='text-2xl md:text-3xl font-bold'>Limited time deal</h2>
               <p className=''>
                 Currently we are offering an early bird price at an incredible £125! <br/>
