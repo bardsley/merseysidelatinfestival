@@ -1,4 +1,4 @@
-import { CheckIcon } from '@heroicons/react/20/solid'
+// import { CheckIcon } from '@heroicons/react/20/solid'
 import { fullPassName, passes } from './pricingDefaults'
 
 
@@ -8,7 +8,7 @@ export default function PassCards({setDayPass,setTypePass,setDinnerPass}) {
     <div className="isolate overflow-hidden ">
       <div className='mb-6'>
         <h1 className='text-4xl font-bold'>Pass options</h1>
-        <p>Select your pass below or tick the items you want and we'll work it out for you</p>
+        <p>Select your pass below or tick the items you want and we&#39;ll work it out for you</p>
         
       </div>
       <div className="mx-auto grid max-w-full grid-cols-1 gap-8 lg:max-w-full md:grid-cols-3 lg:grid-cols-5 mb-12">

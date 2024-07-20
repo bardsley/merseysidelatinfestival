@@ -3,11 +3,10 @@ import React, { useState, useEffect } from 'react';
 import Cell from './Cell';
 import { ICellProps } from './Cell';
 import { individualTickets,initialSelectedOptions, passes, passTypes, days, fullPassName } from './pricingDefaults'
-import { calculateTotalCost, passOrTicket, isAllDayOptions, isAllPassOptions, getBestCombination } from './pricingUtilities'
+import { calculateTotalCost, passOrTicket, isAllPassOptions, getBestCombination } from './pricingUtilities'
 import PassCards from './passes'
 import symmetricDifference from 'set.prototype.symmetricdifference'
 import difference from 'set.prototype.difference'
-import { set } from 'date-fns';
 symmetricDifference.shim();
 difference.shim();
 
@@ -113,14 +112,14 @@ const PricingTable = ({fullPassFunction}:{fullPassFunction:Function}) => {
       <tbody>
         {passTypes.map((passType) => {
           const passOption = passType === 'Party'? passes['Party Pass'] : passType === 'Classes' ? passes['Class Pass'] : {cost: 0, studentCost: 0, isAvailable: false}
-          const cellProps = {
-            isSelected: isAllPassOptions(selectedOptions,passType),
-            onSelect: setTypePass,
-            studentDiscount: priceModel === "studentCost",
-            passType: passType,
-            option: { name:'', cost: passOption['cost'], studentCost: passOption['studentCost'], isAvailable: passOption['isAvailable'] }
+          // const cellProps = {
+          //   isSelected: isAllPassOptions(selectedOptions,passType),
+          //   onSelect: setTypePass,
+          //   studentDiscount: priceModel === "studentCost",
+          //   passType: passType,
+          //   option: { name:'', cost: passOption['cost'], studentCost: passOption['studentCost'], isAvailable: passOption['isAvailable'] }
 
-          } as ICellProps
+          // } as ICellProps
           return (
           <tr key={passType}>
             <td className={toggleCellClasses}>
