@@ -24,15 +24,17 @@ const generateAllPassCombinations = (passes) => {
 }
 const calculateTotalCost = (evaluatedOptions,priceModel) => {
   let total = 0;
-  Object.keys(evaluatedOptions).forEach((day) => {
-    Object.keys(evaluatedOptions[day]).forEach((passType) => {
-      if (evaluatedOptions[day][passType]) {
-        // total += individualTickets && individualTickets[day] && individualTickets[day][passType]? individualTickets[day][passType][priceModel] : 0
-        total += individualTickets && individualTickets[day] && individualTickets[day][passType]? individualTickets[day][passType].cost : 0
-        // console.log(day,passType,priceModel, individualTickets)
-      }
-    })
-  })
+  if(['cost','studentCost'].includes(priceModel)) {
+    Object.keys(evaluatedOptions).forEach((day) => {
+      Object.keys(evaluatedOptions[day]).forEach((passType) => {
+        if (evaluatedOptions[day][passType]) {
+          // total += individualTickets && individualTickets[day] && individualTickets[day][passType]? individualTickets[day][passType][priceModel] : 0
+          total += individualTickets && individualTickets[day] && individualTickets[day][passType]? individualTickets[day][passType].cost : 0
+          // console.log(day,passType,priceModel, individualTickets)
+        }
+      })
+    })  
+  }
   return total
 }
 const passOrTicket = (itemName) => {
