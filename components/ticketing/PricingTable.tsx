@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Cell from './Cell';
 import { ICellProps } from './Cell';
 import { individualTickets,initialSelectedOptions, passes, passTypes, days, fullPassName } from './pricingDefaults'
-import { calculateTotalCost, passOrTicket, isAllPassOptions, getBestCombination } from './pricingUtilities'
+import { calculateTotalCost, passOrTicket, getBestCombination } from './pricingUtilities'
 import PassCards from './passes'
 import symmetricDifference from 'set.prototype.symmetricdifference'
 import difference from 'set.prototype.difference'
@@ -111,7 +111,7 @@ const PricingTable = ({fullPassFunction}:{fullPassFunction:Function}) => {
       </thead>
       <tbody>
         {passTypes.map((passType) => {
-          const passOption = passType === 'Party'? passes['Party Pass'] : passType === 'Classes' ? passes['Class Pass'] : {cost: 0, studentCost: 0, isAvailable: false}
+          // const passOption = passType === 'Party'? passes['Party Pass'] : passType === 'Classes' ? passes['Class Pass'] : {cost: 0, studentCost: 0, isAvailable: false}
           // const cellProps = {
           //   isSelected: isAllPassOptions(selectedOptions,passType),
           //   onSelect: setTypePass,
