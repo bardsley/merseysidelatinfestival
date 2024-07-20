@@ -35,7 +35,7 @@ export default function PassCards({setDayPass,setTypePass,setDinnerPass,priceMod
           const pass = passes[passName]
           const hasSaving = priceModel == 'studentCost' ? pass.studentSaving > 0 : pass.saving > 0
           const clickFunction = clickFunctionFromPassName(passName)
-          return (<PassCard passName={passName} clickFunction={clickFunction} pass={pass} priceModel={priceModel} hasASaving={hasSaving}></PassCard>)
+          return (<PassCard key={passName} passName={passName} clickFunction={clickFunction} pass={pass} priceModel={priceModel} hasASaving={hasSaving}></PassCard>)
         })}
         
       </div>
