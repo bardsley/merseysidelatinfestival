@@ -11,7 +11,7 @@ import { useLayout } from "../layout/layout-context";
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
-import Logo from '../../public/mlf-colour-full.svg';
+import Logo from '../../public/mlf-2.svg';
 
 const headerColor = {
   default:
@@ -44,8 +44,8 @@ export default function Header() {
       className={`relative overflow-hidden bg-gradient-to-b ${headerColorCss}`}
     >
       <Container size="custom" className="py-0 relative z-10 max-w-8xl">
-        <div className="flex items-center justify-between gap-6">
-          <h4 className="select-none text-lg font-bold tracking-tight my-4 transition duration-150 ease-out transform">
+        <div className="flex justify-between items-stretch gap-6">
+          <h4 className="select-none text-lg font-bold tracking-tight my-0 transition duration-150 ease-out transform">
             <Link
               href="/"
               className="flex gap-1 items-center whitespace-nowrap tracking-[.002em]"
@@ -59,10 +59,11 @@ export default function Header() {
                   style: header.icon.style,
                 }}
               /> */}
-              <Logo className="w-12 h-12"></Logo>
+              <Logo className="w-24 h-24"></Logo>
               {" "}
               <span data-tina-field={tinaField(header, "name")} className="ml-2 hidden xs:inline">
-                {header.name}
+                {header.name.replaceAll("2024", "")}
+                <span className="hidden sm:inline md:hidden lg:inline">2024</span>
               </span>
             </Link>
           </h4>

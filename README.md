@@ -13,12 +13,18 @@ Adam
 [ ] Disclaimer on food choices
 [ ] Default prose styles e.g. <article class="prose prose-img:rounded-xl prose-headings:underline prose-a:text-blue-600">{{ markdown }}</article>
 [X] Hydration error in production
- 
+[ ] Reverse artist video animation 
+[ ] Student isn't coming through 
+[ ] Way to hide pages
+[ ] Passes card at top
+
 Connor
 ------  
 [ ] Add a video of the dancing man
 [ ] Send Adm the SVG files
 [ ] Send me the link
+[ ] Email to all not selected options 
+[ ] artist ticket 99XXXXXXX
 
 [ ] resend AWS access
 [ ] Document Lambda & make lambda robust
@@ -26,6 +32,10 @@ Connor
 Karen
 -----
 [ ] Video of dancing wide
+
+When we have time
+-----------------
+[ ] Stripe integration for passes
 
 Purchasing Rules
 ----------------

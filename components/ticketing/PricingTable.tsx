@@ -4,8 +4,10 @@ import Cell from './Cell';
 import { ICellProps } from './Cell';
 import { individualTickets,initialSelectedOptions, passes, passTypes, days, fullPassName } from './pricingDefaults'
 import { calculateTotalCost, passOrTicket, isAllDayOptions, isAllPassOptions, getBestCombination } from './pricingUtilities'
+import PassCards from './passes'
 import symmetricDifference from 'set.prototype.symmetricdifference'
 import difference from 'set.prototype.difference'
+import { set } from 'date-fns';
 symmetricDifference.shim();
 difference.shim();
 
@@ -49,9 +51,17 @@ const PricingTable = ({fullPassFunction}:{fullPassFunction:Function}) => {
     setSelectedOptions({...initialOptions})
   }
   const setTypePass = (type,setTo) => {
-    // console.log(type,selectedOptions)
+    console.log(type,setTo)
+    // console.log(type,selectedOptions,individualTickets,individualTickets)
     let initialOptions = selectedOptions
     Object.keys(initialSelectedOptions).forEach((elm) => { if(individualTickets[elm][type].isAvailable) { initialOptions[elm][type] = setTo }})
+    setSelectedOptions({...initialOptions})
+  }
+
+  const setDinnerPass = (setTo) => {
+    let initialOptions = selectedOptions
+    initialOptions.Saturday.Dinner = setTo
+    initialOptions.Saturday.Party = setTo
     setSelectedOptions({...initialOptions})
   }
 
@@ -66,10 +76,11 @@ const PricingTable = ({fullPassFunction}:{fullPassFunction:Function}) => {
 
   const cellClasses = 'border border-gray-600 text-center py-2 px-3 md:py-2 md:px-4 ';
   const headerClasses = cellClasses.replaceAll('border-gray-600','border-chillired-400')
+  const toggleCellClasses = "bg-richblack-600 text-white " +  cellClasses
   return (
-    <div className="table-container w-full flex justify-center flex-col md:pt-12 max-w-6xl lg:mx-auto md:mx-3 col-span-5 text-xs md:text-base">
+    <div className="table-container w-full flex justify-center flex-col md:pt-12 max-w-full lg:mx-auto md:mx-3 col-span-5 text-xs md:text-base">
     
-    
+    <PassCards setDayPass={setDayPass} setTypePass={setTypePass} setDinnerPass={setDinnerPass}></PassCards>
     
     <table className='option-table w-full mx-auto max-w-4xl table-auto border-collapse border-b border-ch}illired-300'>
       <thead>
@@ -81,9 +92,9 @@ const PricingTable = ({fullPassFunction}:{fullPassFunction:Function}) => {
             <th key={day} className={headerClasses}>{day}</th> 
           ))}
         </tr>
-        <tr>
-          <th className={cellClasses}>Day pass</th>
-          <th></th>
+        {/* <tr>
+          <th className={toggleCellClasses}>Day pass</th>
+          <th className={toggleCellClasses}></th>
           {['Saturday','Sunday'].map((day) => { 
             const cellProps = {
               isSelected: isAllDayOptions(selectedOptions,day), 
@@ -93,11 +104,11 @@ const PricingTable = ({fullPassFunction}:{fullPassFunction:Function}) => {
               option: { name:'', cost: passes[`${day} Pass`]['cost'], studentCost: passes[`${day} Pass`]['studentCost'], isAvailable: passes[`${day} Pass`]['isAvailable'] }
             } as ICellProps
             return (
-            <th key={`${day}-full`} className={cellClasses}>
+            <th key={`${day}-full`} className={toggleCellClasses}>
               <Cell {...cellProps} />
             </th>
           )})}
-        </tr> 
+        </tr>  */}
       </thead>
       <tbody>
         {passTypes.map((passType) => {
@@ -112,9 +123,9 @@ const PricingTable = ({fullPassFunction}:{fullPassFunction:Function}) => {
           } as ICellProps
           return (
           <tr key={passType}>
-            <td className={cellClasses}>
+            <td className={toggleCellClasses}>
               {passType}
-              <Cell {...cellProps} /> 
+              {/* <Cell {...cellProps} />  */}
 
             </td>
             {days.map((day) => {

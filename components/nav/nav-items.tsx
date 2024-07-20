@@ -19,6 +19,8 @@ const activeItemClasses = {
     "border-b-3 border-orange-200 text-orange-700 dark:text-orange-300 font-medium dark:border-orange-700",
   yellow:
     "border-b-3 border-yellow-300 text-yellow-700 dark:text-yellow-300 font-medium dark:border-yellow-600",
+  merseyside: 
+    "border-b-3 border-yellow-300 text-yellow-700 dark:text-yellow-300 font-medium dark:border-yellow-600"
 };
 
 const activeBackgroundClasses = {
@@ -36,7 +38,7 @@ export default function NavItems({ navs }: { navs: any }) {
   const currentPath = usePathname();
   const { theme } = useLayout();
   return (
-    <ul className="gap-2 sm:gap-4 lg:gap-6 tracking-[.002em] -mx-4 hidden md:flex">
+    <ul className="gap-2 sm:gap-4 lg:gap-6 tracking-[.002em] -mx-4 hidden md:flex items-stretch">
       {navs.map((item) => {
         return (
           <li
@@ -50,7 +52,7 @@ export default function NavItems({ navs }: { navs: any }) {
             <Link
               data-tina-field={tinaField(item, "label")}
               href={`/${item.href}`}
-              className={`relative select-none hover:text-gold-400	text-base inline-block tracking-wide transition duration-150 ease-out hover:opacity-100 py-8 px-4`}
+              className={`relative select-none hover:text-gold-400	text-base inline-block tracking-wide transition duration-150 ease-out hover:opacity-100 py-8 px-1 lg:px-4 whitespace-nowrap`}
             >
               {item.label}
               {currentPath === `/${item.href}` && (

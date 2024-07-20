@@ -28,9 +28,7 @@ export default function ClientForm(props) {
 
   useEffect(() => {
     if(ticket && email) {
-      console.log("ENV",process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL)
         const fetchURL = `//${process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL}/api/preferences?email=${email.value}&ticket_number=${ticket.value}`
-        console.log(fetchURL)
         fetch(fetchURL, {method: "GET",}).then(res => {
         res.json().then(data => {
           data.error ? setPreferences(data.error) : setPreferences(data[0].meal_options)

@@ -24,5 +24,7 @@ export type Pass = {
   isAvailable: boolean;
   saving: number;
   combination: string[];
+  description?: string;
+  included?: string[];
 };
 export type Passes = { [key: string]: Pass };

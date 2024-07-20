@@ -44,7 +44,7 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
     <>
     <Section color={data.color} backgroundImage={data.backgroundimage}>
       <Container
-        size="small"
+        size="large"
         className="grid grid-cols-1 md:grid-cols-5 gap-0 md:gap-14 items-start justify-center"
       >
         <div className="row-start-2 md:row-start-1 md:col-span-5 text-center md:text-left ">
@@ -126,7 +126,7 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
       </Container>
     </Section>
     <Section>
-      <Container>
+      <Container size='medium' width="huge">
       <PricingTable fullPassFunction={setFullPassSelectFunction}></PricingTable>
       </Container>
     </Section>
