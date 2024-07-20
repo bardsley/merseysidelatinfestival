@@ -43,7 +43,7 @@ export const passes: Passes = {
   'Class Pass': { cost: 95, studentCost: 85, isAvailable: true, saving: 15, studentSaving: 25,combination: ['Saturday Classes', 'Sunday Classes'], description: "All the classes for the weekend"},
   'Dine and Dance Pass': { cost: 60, studentCost: 55, isAvailable: true, saving: 2, studentSaving: 7, combination: ['Saturday Dinner', 'Saturday Party'],  description: "Saturday evening is covered including your food" },
   'Party Pass': { cost: 45, studentCost: 35, isAvailable: true, saving: 7, studentSaving: 17, combination: ['Friday Party', 'Saturday Party', 'Sunday Party'], description: "Party away every single night, the ultimate party weekend" },
-  'Early Bird Full Pass': { cost: 125, studentCost: 110, isAvailable: true, saving: 77, studentSaving: 45, combination: ['Friday Party', 'Saturday Classes', 'Saturday Dinner', 'Saturday Party', 'Sunday Classes', 'Sunday Party'],  description: "Everything!" },
+  'Early Bird Full Pass': { cost: 125, studentCost: 110, isAvailable: true, saving: 77, studentSaving: 45, combination: ['Friday Party', 'Saturday Classes', 'Saturday Dinner', 'Saturday Party', 'Sunday Classes', 'Sunday Party'],  description: "Everything the festival has at the best rate! If you're looking for the best deal this is it" },
 }
 
 export const fullPassName = Object.keys(passes).at(-1)

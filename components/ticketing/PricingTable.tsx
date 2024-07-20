@@ -5,14 +5,15 @@ import { ICellProps } from './Cell';
 import { individualTickets,initialSelectedOptions, passTypes, days, fullPassName } from './pricingDefaults'
 import { calculateTotalCost, passOrTicket, getBestCombination } from './pricingUtilities'
 import PassCards from './passes'
+import { deepCopy } from '../../lib/useful'
 import symmetricDifference from 'set.prototype.symmetricdifference'
 import difference from 'set.prototype.difference'
 symmetricDifference.shim();
 difference.shim();
 
 
-const PricingTable = ({fullPassFunction}:{fullPassFunction:Function}) => {
-  const [selectedOptions, setSelectedOptions] = useState(initialSelectedOptions);
+const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Function,scrollToElement:Function}) => {
+  const [selectedOptions, setSelectedOptions] = useState(deepCopy(initialSelectedOptions));
   const [studentDiscount, setStudentDiscount] = useState(false);
   const [priceModel, setPriceModel] = useState("cost")
   const [totalCost, setTotalCost] = useState(0);
@@ -64,6 +65,11 @@ const PricingTable = ({fullPassFunction}:{fullPassFunction:Function}) => {
     setSelectedOptions({...initialOptions})
   }
 
+  const clearOptions = () => {
+    console.log("Options reset to: ", initialSelectedOptions)
+    setSelectedOptions(deepCopy(initialSelectedOptions))
+  }
+
   useEffect(() => {
     setTotalCost(calculateTotalCost(selectedOptions,priceModel))
     selectPassCombination()
@@ -79,116 +85,109 @@ const PricingTable = ({fullPassFunction}:{fullPassFunction:Function}) => {
   return (
     <div className="table-container w-full flex justify-center flex-col md:pt-12 max-w-full lg:mx-auto md:mx-3 col-span-5 text-xs md:text-base">
     
-    <PassCards setDayPass={setDayPass} setTypePass={setTypePass} setDinnerPass={setDinnerPass} priceModel={priceModel}></PassCards>
-    
-    <div className='mb-12'>
-      <Cell option={{name: 'I am a student and will bring Student ID', cost: 0, studentCost: 0, isAvailable: true } }
-        isSelected={studentDiscount} onSelect={togglePriceModel} studentDiscount={studentDiscount} />
-    </div>
+      <PassCards setDayPass={setDayPass} setTypePass={setTypePass} setDinnerPass={setDinnerPass} priceModel={priceModel} scrollToElement={scrollToElement} selectFullPass={selectFullPass}></PassCards>
+      
+      <div className='mb-12'>
+        <Cell option={{name: 'I am a student and will bring Student ID', cost: 0, studentCost: 0, isAvailable: true } }
+          isSelected={studentDiscount} onSelect={togglePriceModel} studentDiscount={studentDiscount} />
+      </div>
 
-    <table className='option-table w-full mx-auto max-w-4xl table-auto border-collapse border-b border-ch}illired-300'>
-      <thead>
-        <tr className='bg-chillired-300 text-white border-chillired-400'>
-          <th className={headerClasses}>
-            
-          </th>
-          {days.map((day) => (
-            <th key={day} className={headerClasses}>{day}</th> 
-          ))}
-        </tr>
-        {/* <tr>
-          <th className={toggleCellClasses}>Day pass</th>
-          <th className={toggleCellClasses}></th>
-          {['Saturday','Sunday'].map((day) => { 
-            const cellProps = {
-              isSelected: isAllDayOptions(selectedOptions,day), 
-              onSelect: setDayPass,
-              studentDiscount: priceModel === "studentCost",
-              day: day,
-              option: { name:'', cost: passes[`${day} Pass`]['cost'], studentCost: passes[`${day} Pass`]['studentCost'], isAvailable: passes[`${day} Pass`]['isAvailable'] }
-            } as ICellProps
-            return (
-            <th key={`${day}-full`} className={toggleCellClasses}>
-              <Cell {...cellProps} />
+      <table className='option-table w-full mx-auto max-w-4xl table-auto border-collapse border-b border-ch}illired-300'>
+        <thead>
+          <tr className='bg-chillired-300 text-white border-chillired-400'>
+            <th className={headerClasses}>
+              
             </th>
-          )})}
-        </tr>  */}
-      </thead>
-      <tbody>
-        {passTypes.map((passType) => {
-          // const passOption = passType === 'Party'? passes['Party Pass'] : passType === 'Classes' ? passes['Class Pass'] : {cost: 0, studentCost: 0, isAvailable: false}
-          // const cellProps = {
-          //   isSelected: isAllPassOptions(selectedOptions,passType),
-          //   onSelect: setTypePass,
-          //   studentDiscount: priceModel === "studentCost",
-          //   passType: passType,
-          //   option: { name:'', cost: passOption['cost'], studentCost: passOption['studentCost'], isAvailable: passOption['isAvailable'] }
-
-          // } as ICellProps
-          return (
-          <tr key={passType}>
-            <td className={toggleCellClasses}>
-              {passType}
-              {/* <Cell {...cellProps} />  */}
-
-            </td>
-            {days.map((day) => {
+            {days.map((day) => (
+              <th key={day} className={headerClasses}>{day}</th> 
+            ))}
+          </tr>
+          {/* <tr>
+            <th className={toggleCellClasses}>Day pass</th>
+            <th className={toggleCellClasses}></th>
+            {['Saturday','Sunday'].map((day) => { 
               const cellProps = {
-                option: individualTickets[day][passType],
-                isSelected: selectedOptions[day][passType],
-                onSelect: setIndividualOption,
+                isSelected: isAllDayOptions(selectedOptions,day), 
+                onSelect: setDayPass,
                 studentDiscount: priceModel === "studentCost",
                 day: day,
-                passType: passType,
+                option: { name:'', cost: passes[`${day} Pass`]['cost'], studentCost: passes[`${day} Pass`]['studentCost'], isAvailable: passes[`${day} Pass`]['isAvailable'] }
               } as ICellProps
               return (
-              
-                individualTickets[day][passType].isAvailable ? (
-                  <td key={`${day}-${passType}`} className={cellClasses}>
-                  {selectedOptions[day][passType]}
-                  <Cell {...cellProps} />  
-                </td>
-                ) : <td key={`${day}-${passType}`} className={cellClasses}></td>
+              <th key={`${day}-full`} className={toggleCellClasses}>
+                <Cell {...cellProps} />
+              </th>
             )})}
-          </tr>
-        )})}
-      </tbody>
-      <caption className='caption-bottom pt-6'>
-        
-        
-      </caption>
-    </table>
-    <div className='flex mx-auto w-full flex-col md:flex-row justify-between max-w-2xl mt-12 mb-12 p-12 gap-12 items-start rounded border border-gray-600'>
-        
-    { totalCost && totalCost > 0 ? (
-      <>
-        <div className='max-w-2/3'>
-          <p>{packages.length == 1 && packages[0] == fullPassName ?  "Best deal" : "Best option for you"}</p>
-          <h2 className='text-2xl'>{packages.map((packageName) => `${packageName} ${passOrTicket(packageName)}`).join(', ')}</h2>
-          <h2 className='text-3xl font-bold'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost}</span>) : null } £{packageCost}</h2>
-          { totalCost - packageCost > 0 ? (<p>Saving you £{totalCost - packageCost} on the full cost of those options!</p>) : null }
-        </div>
-        <div className='flex w-full md:w-auto flex-col md:flex-row items-center justify-center'>
-          <button className='bg-chillired-400 text-white rounded-lg py-6 px-12 hover:bg-chillired-700 text-nowrap w-full max-w-72 md:w-auto'>Buy Now</button>
-        </div>
-        
-      </>
-    ) : "Select options in the table above to see the suggested packages" }
-    </div>
-    {/* <hr />
-    <h2>Debug Ignore below the line</h2>
-    <div className='flex'>
+          </tr>  */}
+        </thead>
+        <tbody>
+          {passTypes.map((passType) => {
+            // const passOption = passType === 'Party'? passes['Party Pass'] : passType === 'Classes' ? passes['Class Pass'] : {cost: 0, studentCost: 0, isAvailable: false}
+            // const cellProps = {
+            //   isSelected: isAllPassOptions(selectedOptions,passType),
+            //   onSelect: setTypePass,
+            //   studentDiscount: priceModel === "studentCost",
+            //   passType: passType,
+            //   option: { name:'', cost: passOption['cost'], studentCost: passOption['studentCost'], isAvailable: passOption['isAvailable'] }
+
+            // } as ICellProps
+            return (
+            <tr key={passType}>
+              <td className={toggleCellClasses}>
+                {passType}
+                {/* <Cell {...cellProps} />  */}
+
+              </td>
+              {days.map((day) => {
+                const cellProps = {
+                  option: individualTickets[day][passType],
+                  isSelected: selectedOptions[day][passType],
+                  onSelect: setIndividualOption,
+                  studentDiscount: priceModel === "studentCost",
+                  day: day,
+                  passType: passType,
+                } as ICellProps
+                return (
+                
+                  individualTickets[day][passType].isAvailable ? (
+                    <td key={`${day}-${passType}`} className={cellClasses}>
+                    {selectedOptions[day][passType]}
+                    <Cell {...cellProps} />  
+                  </td>
+                  ) : <td key={`${day}-${passType}`} className={cellClasses}></td>
+              )})}
+            </tr>
+          )})}
+        </tbody>
+        <caption className='caption-bottom pt-6'>
+        <button onClick={clearOptions} className='border border-gray-300 rounded-md p-3'>Clear my choices and start again</button>
+        </caption>
+      </table>
+      <div className='flex mx-auto w-full flex-col md:flex-row justify-between max-w-2xl mt-12 mb-12 p-12 gap-12 items-start rounded border border-gray-600'>
+          
+      { totalCost && totalCost > 0 ? (
+        <>
+          <div className='max-w-2/3'>
+            <p>{packages.length == 1 && packages[0] == fullPassName ?  "Best deal" : "Best option for you"}</p>
+            <h2 className='text-2xl'>{packages.map((packageName) => `${packageName} ${passOrTicket(packageName)}`).join(', ').replace('Saturday Dinner Ticket','Dinner Ticket')}</h2>
+            <h2 className='text-3xl font-bold'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost}</span>) : null } £{packageCost}</h2>
+            { totalCost - packageCost > 0 ? (<p>Saving you £{totalCost - packageCost} on the full cost of those options!</p>) : null }
+          </div>
+          <div className='flex w-full md:w-auto flex-col md:flex-row items-center justify-center'>
+            <button className='bg-chillired-400 text-white rounded-lg py-6 px-12 hover:bg-chillired-700 text-nowrap w-full max-w-72 md:w-auto'>Buy Now</button>
+          </div>
+          
+        </>
+      ) : "Select options in the table above to see the suggested packages" }
+      </div>
       
-    <pre>Selected 
---
-
-      {JSON.stringify(selectedOptions,null,2)}</pre>
-    <pre>Provisonal
-      --
-
-      {JSON.stringify(provisionalOptions,null,2)}</pre>
-    </div> */}
-    
+      <hr />
+      <h2>Debug Ignore below the line</h2>
+      <div className='flex'>
+        <pre>Selected -- {JSON.stringify(selectedOptions,null,2)}</pre>
+        <pre>Provisonal--{JSON.stringify(initialSelectedOptions,null,2)}</pre>
+      </div>
+      
     </div>
   )
 };
