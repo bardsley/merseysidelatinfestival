@@ -21,14 +21,14 @@ Adam
 
 Connor
 ------  
-[ ] Add a video of the dancing man
-[ ] Send Adm the SVG files
-[ ] Send me the link
-[ ] Email to all not selected options 
-[ ] artist ticket 99XXXXXXX
+- [ ] Add a video of the dancing man
+- [ ] Send Adm the SVG files
+- [x] Send me the link (for picture frame?) https://www.twibbonize.com
+- [ ] Email to all not selected meal options 
+- [ ] artist ticket 99XXXXXXX
 
-[ ] resend AWS access
-[ ] Document Lambda & make lambda robust
+- [x] resend AWS access
+- [ ] Document Lambda & make lambda robust
 
 Karen
 -----
@@ -53,6 +53,39 @@ price: 100
 
 chgeckout
 emails
+
+Data Structures
+===============
+meal data
+---------
+This is how the data will be stored in db. 
+
+TBD: Send in this structure in the checkout link request as below. Otherwise just process it in the request and store in db like this. (The former is better.)
+```jsonc
+{
+  'choices': [1,0,1], 
+  'dietary_requirements':{
+    'selected':["nut allergy", "gluten free", ...], // list of requirements selected from a list
+    'other': "Some specific additional dietary requirement"
+  },
+  'seating_preference': [12345, 12678, ...] // list of ticket numbers of people they want to sit with
+}
+```
+request checkout 
+-----------------
+```jsonc
+{
+  'name': "John Doe",
+  'email': "john_doe@example.com",
+  'number_of_tickets': 1,
+  'meal': {}, //meal data format (see above)
+  'line_items': [
+    {'name': "Party Pass", 'stripe_product_id': "prod_QQTrga8mShkzyo", 'access': [1,0,0,1,0,1]},
+    {'name': "Saturday-Dinner", 'stripe_product_id': "prod_QQUJ8m2jrR6toK", 'access': [0,0,1,0,0,0]}
+  ],
+  'price':100
+}
+```
 
 *********************
 ****  ENDPOINTS  ****
