@@ -9,6 +9,8 @@ import { FaFacebookSquare, FaYoutube } from "react-icons/fa";
 import { AiFillInstagram } from "react-icons/ai";
 import { format } from "date-fns";
 import {locations } from '../../../tina/collection/options'
+import { useSearchParams } from "next/navigation";
+
 interface ArtistClientPageProps {
   data: {
     artist: ArtistQuery["artist"];
@@ -25,6 +27,8 @@ export default function ArtistClientPage(props: ArtistClientPageProps) {
   const { data } = useTina({...props});
   const { artist } = data;
   const classes = props.classes
+  const searchParams = useSearchParams()
+  const draft = searchParams.get('draft')
 
   const cellClassNames = "p-3 align-top border border-gray-600";
   const headClassNames = "p-3 text-left"
@@ -40,7 +44,7 @@ export default function ArtistClientPage(props: ArtistClientPageProps) {
           <div className="prose-base text-white" data-tina-field={tinaField(data.artist, "about")}>
             <TinaMarkdown  content={artist.about} />
           </div>
-          {classes && classes.length > 0 && (
+          {draft && classes && classes.length > 0 && ( //TODO This needs removing once we hvae classes beign set as live or draft
           <>
             <h2 className="text-2xl mt-4">Classes</h2>
             <table className="text-lg mb-2">

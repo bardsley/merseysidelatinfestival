@@ -10,6 +10,7 @@ import NavItems from "./nav-items";
 import { useLayout } from "../layout/layout-context";
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useRouter, usePathname  } from 'next/navigation'
 
 import Logo from '../../public/mlf-2.svg';
 
@@ -33,12 +34,14 @@ export default function Header() {
   const { globalSettings, theme } = useLayout();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const header = globalSettings.header;
+  const router = useRouter()
+  const pathname = usePathname()
 
   const headerColorCss =
     header.color === "primary"
       ? headerColor.primary[theme.color]
       : headerColor.default;
-
+  const origPath = pathname
   return (
     <div
       className={`relative overflow-hidden bg-gradient-to-b ${headerColorCss}`}
@@ -49,6 +52,7 @@ export default function Header() {
             <Link
               href="/"
               className="flex gap-1 items-center whitespace-nowrap tracking-[.002em]"
+              
             >
               {/* <Icon
                 tinaField={tinaField(header, "icon")}
@@ -59,7 +63,9 @@ export default function Header() {
                   style: header.icon.style,
                 }}
               /> */}
-              <Logo className="w-24 h-24"></Logo>
+              <Logo className="w-24 h-24" onDragLeave={() => {
+                router.push(`${origPath}?draft=yup`)
+              }}></Logo>
               {" "}
               <span data-tina-field={tinaField(header, "name")} className="ml-2 hidden xs:inline">
                 {header.name.replaceAll("2024", "")}

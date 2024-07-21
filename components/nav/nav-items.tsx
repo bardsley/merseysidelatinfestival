@@ -42,7 +42,6 @@ export default function NavItems({ navs }: { navs: any }) {
   const draft = searchParams.get('draft')
 
   const filteredNavs = draft ? navs : navs.filter((item)=>{return item.visible})
-  console.log("Filtered:",filteredNavs)
   return (
     <ul className="gap-2 sm:gap-4 lg:gap-6 tracking-[.002em] -mx-4 hidden md:flex items-stretch">
       {filteredNavs.map((item) => {

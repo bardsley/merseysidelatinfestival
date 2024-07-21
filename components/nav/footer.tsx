@@ -7,12 +7,15 @@ import { Container } from "../layout/container";
 import { FaFacebookF, FaGithub, FaTwitter } from "react-icons/fa";
 import { AiFillInstagram } from "react-icons/ai";
 import { useLayout } from "../layout/layout-context";
+import { useSearchParams } from "next/navigation";
 // import { RawRenderer } from "../raw-renderer";
 
 export default function Footer() {
   // const { theme, globalSettings, pageData } = useLayout();
   const { theme, globalSettings } = useLayout();
   const footer = globalSettings?.footer;
+  const searchParams = useSearchParams()
+  const draft = searchParams.get('draft')
 
   const socialIconClasses = "h-7 w-auto";
   const socialIconColorClasses = {
@@ -115,6 +118,7 @@ export default function Footer() {
               </a>
             )}
           </div>
+          {draft ? (<a className="block" href="/">Hide Draft</a>) : null}
           {/* <RawRenderer parentColor={footer.color} rawData={pageData} /> */}
         </div>
         <div
