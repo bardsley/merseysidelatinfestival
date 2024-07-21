@@ -91,17 +91,17 @@ export default function ArtistClientPage(props: ClientPostProps) {
           <Link
             key={`${artist.id}-${index}`}
             href={`/artists/` + artist._sys.breadcrumbs.join("/")}
-            className="group block rounded-md relative aspect-square overflow-visible transition-colors duration-1500 ease-in-out text-richblack-600 hover:text-gold-500"
+            className="group block rounded-md relative aspect-square overflow-visible transition-colors duration-1500 ease-in-out text-white hover:text-gold-700"
           > 
             <img src={artist.avatar} alt={artist.name}
-              className="block rounded-full aspect-square w-full hover:scale-75 absolute
+              className="block rounded-full aspect-square w-full scale-75 hover:scale-100 absolute
               object-cover m-0 bg-auto bg-center bg-no-repeat overflow-hidden
-              shadow transition-all duration-500 ease-out hover:shadow-lg hover:z-30 z-20 opacity-100" 
+              shadow transition-all duration-500 ease-out delay-150 hover:shadow-lg hover:z-0 z-20 opacity-100" 
             />
             <svg
               viewBox="0 0 106 106"
               xmlns="http://www.w3.org/2000/svg"
-              className="absolute top-0 left-0 w-full h-full z-10 fill-current "
+              className="absolute top-0 left-0 w-full h-full z-10 fill-transparent"
             >
               <path
                 id="circlePath"
@@ -112,7 +112,7 @@ export default function ArtistClientPage(props: ClientPostProps) {
                 "
               />
               <text>
-                <textPath href="#circlePath" className="fill-current">
+                <textPath href="#circlePath" className="fill-current leading-6 font-black tracking-tighter">
                   {artist.name.toUpperCase()}
                 </textPath>
               </text>
