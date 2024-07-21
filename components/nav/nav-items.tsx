@@ -40,10 +40,12 @@ export default function NavItems({ navs }: { navs: any }) {
   const { theme } = useLayout();
   const searchParams = useSearchParams()
   const draft = searchParams.get('draft')
+  // const draft = true
 
   const filteredNavs = draft ? navs : navs.filter((item)=>{return item.visible})
   return (
     <ul className="gap-2 sm:gap-4 lg:gap-6 tracking-[.002em] -mx-4 hidden md:flex items-stretch">
+      {draft ? (<li><a className="block text-xs" href="/">Hide Draft</a></li>) : null}
       {filteredNavs.map((item) => {
         return (
           <li

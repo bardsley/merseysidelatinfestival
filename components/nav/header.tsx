@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import { useState } from 'react'
 import Link from "next/link";
 import { Container } from "../layout/container";
@@ -73,7 +73,10 @@ export default function Header() {
               </span>
             </Link>
           </h4>
-          <NavItems navs={header.nav} />
+          <Suspense>
+            <NavItems navs={header.nav} />
+          </Suspense>
+          
           <button 
             type="button"
             onClick={() => setMobileMenuOpen(true)}
