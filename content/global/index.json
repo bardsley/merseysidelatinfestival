@@ -9,7 +9,8 @@
     "nav": [
       {
         "href": "home",
-        "label": "Home"
+        "label": "Home",
+        "visible": true
       },
       {
         "href": "meal",
@@ -17,11 +18,13 @@
       },
       {
         "href": "tickets",
-        "label": "Early Bird"
+        "label": "Early Bird",
+        "visible": true
       },
       {
         "href": "accomodation",
-        "label": "Rooms"
+        "label": "Rooms",
+        "visible": true
       },
       {
         "href": "pricing",
@@ -29,7 +32,8 @@
       },
       {
         "href": "artists",
-        "label": "Artists"
+        "label": "Artists",
+        "visible": true
       }
     ]
   },

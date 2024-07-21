@@ -56,6 +56,11 @@ const Global: Collection = {
               label: "Label",
               name: "label",
             },
+            {
+              type: "boolean",
+              label: "Public",
+              name: "visible",
+            },
           ],
         },
       ],

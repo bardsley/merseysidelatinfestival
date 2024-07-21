@@ -5,6 +5,7 @@ import NavActive from "./nav-active";
 import { tinaField } from "tinacms/dist/react";
 import Link from "next/link";
 import { useLayout } from "../layout/layout-context";
+import { useSearchParams } from 'next/navigation'
 
 const activeItemClasses = {
   blue: "border-b-3 border-blue-200 text-blue-700 dark:text-blue-300 font-medium dark:border-blue-700",
@@ -37,12 +38,18 @@ const activeBackgroundClasses = {
 export default function NavItems({ navs }: { navs: any }) {
   const currentPath = usePathname();
   const { theme } = useLayout();
+  const searchParams = useSearchParams()
+  const draft = searchParams.get('draft')
+
+  const filteredNavs = draft ? navs : navs.filter((item)=>{return item.visible})
+  console.log("Filtered:",filteredNavs)
   return (
     <ul className="gap-2 sm:gap-4 lg:gap-6 tracking-[.002em] -mx-4 hidden md:flex items-stretch">
-      {navs.map((item) => {
+      {filteredNavs.map((item) => {
         return (
           <li
             key={item.href}
+            data-hidden={item.visible || "false"}
             className={
               currentPath === `/${item.href}`
                 ? activeItemClasses[theme.color]
@@ -50,8 +57,8 @@ export default function NavItems({ navs }: { navs: any }) {
             }
           >
             <Link
-              data-tina-field={tinaField(item, "label")}
-              href={`/${item.href}`}
+              data-tina-field={tinaField(item, "label")} 
+              href={`/${item.href}${draft ? "?draft=yup" : ''}`}
               className={`relative select-none hover:text-gold-400	text-base inline-block tracking-wide transition duration-150 ease-out hover:opacity-100 py-8 px-1 lg:px-4 whitespace-nowrap`}
             >
               {item.label}
