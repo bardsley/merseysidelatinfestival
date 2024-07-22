@@ -13,7 +13,7 @@ export default async function SignagePage({
 
   return (
     <Layout rawPageData={data}>
-      <h1 className="text-5xl">Hello</h1>
+      <h1 className="text-5xl">Hello {params.filename}</h1>
     </Layout>
   );
 }
