@@ -44,34 +44,36 @@ export default function NavItems({ navs }: { navs: any }) {
 
   const filteredNavs = draft ? navs : navs.filter((item)=>{return item.visible})
   return (
-    <ul className="gap-2 sm:gap-4 lg:gap-6 tracking-[.002em] -mx-4 hidden md:flex items-stretch">
-      {draft ? (<li><a className="block text-xs" href="/">Hide Draft</a></li>) : null}
-      {filteredNavs.map((item) => {
-        return (
-          <li
-            key={item.href}
-            data-hidden={item.visible || "false"}
-            className={
-              currentPath === `/${item.href}`
-                ? activeItemClasses[theme.color]
-                : ""
-            }
-          >
-            <Link
-              data-tina-field={tinaField(item, "label")} 
-              href={`/${item.href}${draft ? "?draft=yup" : ''}`}
-              className={`relative select-none hover:text-gold-400	text-base inline-block tracking-wide transition duration-150 ease-out hover:opacity-100 py-8 px-1 lg:px-4 whitespace-nowrap`}
+    <>
+      {draft ? (<a className="block text-xs bg-chillired-800 text-white w-96 text-center rounded-b-md absolute right-0 z-50" href="/">Currently showing Draft Content, Click to Hide</a>) : null}
+      <ul className="gap-2 sm:gap-4 lg:gap-6 tracking-[.002em] -mx-4 hidden md:flex items-stretch">
+        {filteredNavs.map((item) => {
+          return (
+            <li
+              key={item.href}
+              data-hidden={item.visible || "false"}
+              className={
+                currentPath === `/${item.href}`
+                  ? activeItemClasses[theme.color]
+                  : ""
+              }
             >
-              {item.label}
-              {currentPath === `/${item.href}` && (
-                <NavActive
-                  backgroundColor={activeBackgroundClasses[theme.color]}
-                />
-              )}
-            </Link>
-          </li>
-        );
-      })}
-    </ul>
+              <Link
+                data-tina-field={tinaField(item, "label")} 
+                href={`/${item.href}${draft ? "?draft=yup" : ''}`}
+                className={`relative select-none hover:text-gold-400	text-base inline-block tracking-wide transition duration-150 ease-out hover:opacity-100 py-8 px-1 lg:px-4 whitespace-nowrap`}
+              >
+                {item.label}
+                {currentPath === `/${item.href}` && (
+                  <NavActive
+                    backgroundColor={activeBackgroundClasses[theme.color]}
+                  />
+                )}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </>
   );
 }
