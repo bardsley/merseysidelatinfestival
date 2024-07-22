@@ -78,15 +78,35 @@ request checkout
   'name': "John Doe",
   'email': "john_doe@example.com",
   'number_of_tickets': 1,
-  'meal': {}, //meal data format (see above)
   'line_items': [
     {'name': "Party Pass", 'stripe_product_id': "prod_QQTrga8mShkzyo", 'access': [1,0,0,1,0,1]},
     {'name': "Saturday-Dinner", 'stripe_product_id': "prod_QQUJ8m2jrR6toK", 'access': [0,0,1,0,0,0]}
   ],
-  'price':100
+  'meal': {}, //meal data format (optional)
+  'promo_code': "promo_******" // (optional)
 }
 ```
-
+dyanamodb table
+---------------
+```jsonc
+{
+  'email': "john_doe@example.com",      
+  'ticket_number': 123456789,
+  'full_name': "John Doe",
+  'line_items': {
+    'amount_total': 4500,
+    'description': 'Party Pass'
+  },
+  'access': [1,0,0,1,0,1],
+  'schedule': {
+    // tbd
+  },
+  'meal_options':{
+    // meal data format (see above)
+  },
+  'ticket_used': "", // time/date of ticket being scanned
+}
+```
 *********************
 ****  ENDPOINTS  ****
 *********************
