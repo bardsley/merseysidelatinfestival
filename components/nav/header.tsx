@@ -68,7 +68,8 @@ export default function Header() {
               }}></Logo>
               {" "}
               <span data-tina-field={tinaField(header, "name")} className="ml-2 hidden xs:inline">
-                {header.name.replaceAll("2024", "")}
+                
+                {header.name.replace("2024", "")}
                 <span className="hidden sm:inline md:hidden lg:inline">2024</span>
               </span>
             </Link>
