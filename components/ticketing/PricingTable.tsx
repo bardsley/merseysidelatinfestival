@@ -26,11 +26,13 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
   }
 
   const selectFullPass = () => {
-    setSelectedOptions({
-      Friday: { Party: true, Classes: false, Dinner: false },
-      Saturday: { Party: true, Classes: true, Dinner: true },
-      Sunday: { Party: true, Classes: true, Dinner: false },
+    let initialOptions = selectedOptions
+    days.forEach((day) => {
+      passTypes.forEach((passType) => {
+        initialOptions[day][passType] = individualTickets[day][passType].isAvailable ? true : false
+      })
     })
+    setSelectedOptions({...initialOptions})
   }
   const selectPassCombination = () => {
     const {price: suggestedCost, options: suggestedPackages} = getBestCombination(selectedOptions,priceModel)
@@ -60,8 +62,8 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
 
   const setDinnerPass = (setTo) => {
     let initialOptions = selectedOptions
-    initialOptions.Saturday.Dinner = setTo
-    initialOptions.Saturday.Party = setTo
+    initialOptions.Saturday.Dinner = individualTickets.Saturday.Dinner.isAvailable ? setTo : false
+    initialOptions.Saturday.Party = individualTickets.Saturday.Party.isAvailable ? setTo : false
     setSelectedOptions({...initialOptions})
   }
 
@@ -185,12 +187,12 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
       ) : "Select options in the table above to see the suggested packages" }
       </div>
       
-      {/* <hr />
+      <hr />
       <h2>Debug Ignore below the line</h2>
       <div className='flex'>
         <pre>Selected -- {JSON.stringify(selectedOptions,null,2)}</pre>
-        <pre>Provisonal--{JSON.stringify(initialSelectedOptions,null,2)}</pre>
-      </div> */}
+        <pre>Initial--{JSON.stringify(initialSelectedOptions,null,2)}</pre>
+      </div>
       
     </div>
   )
