@@ -28,9 +28,11 @@ def get_ticket(ticket_number, email):
     else:
         return response['Items'][0]
 
-def err(msg:str, code=400, log=None):
-    log = log if log else msg
-    logger.error(log)
+def err(msg:str, code=400, logmsg=None, **kwargs):
+    logmsg = logmsg if logmsg else msg
+    logger.error(logmsg)
+    for k in kwargs:
+        logger.error(k+":"+kwargs[k])
     return {
         'statusCode': code, 
         'body': json.dumps({'error': msg})
@@ -47,7 +49,7 @@ def post(event):
         data = json.loads(event['body'])
     except (TypeError, JSONDecodeError) as e:
         logger.error(e)
-        return err("An error has occured with the input you have provied.")
+        return err("An error has occured with the input you have provied.", event_body=event['body'])
     
     # get the ticket entry from db send error is not exist or not match
     # used to check meal option is included and raise error if it is being set and not part of ticket
@@ -76,7 +78,7 @@ def post(event):
     # (meal_options, schedule) are both formatted as JSON
     if 'meal_options' in data:
         # return an error if the meal option is not included in this ticket
-        if ticket_entry['access'][2] < 1: return err("Attempting to get meal options for a ticket which does not include dinner.")
+        if ticket_entry['access'][2] < 1: return err("Attempting to set meal options for a ticket which does not include dinner.")
 
         logger.info(f"-SET MEAL OPTIONS:, {data['meal_options']}")
         UpdateExp += ", meal_options = :val1"

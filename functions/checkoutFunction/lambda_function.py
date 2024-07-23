@@ -3,8 +3,22 @@ import json
 from pprint import pprint
 from stripe.error import InvalidRequestError
 import os
+import logging
+from json.decoder import JSONDecodeError
+logger = logging.getLogger()
+logger.setLevel("INFO")
 
 stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
+
+def err(msg:str, code=400, logmsg=None, **kwargs):
+    logmsg = logmsg if logmsg else msg
+    logger.error(logmsg)
+    for k in kwargs:
+        logger.error(k+":"+kwargs[k])
+    return {
+        'statusCode': code, 
+        'body': json.dumps({'error': msg})
+        }
 
 def check_products(line_items):
     return
@@ -30,16 +44,22 @@ def lambda_handler(event, context):
                 ],
                 'price':100,
                 'meal': {}, //meal data format (optional)
-                'promo_code': "promo_******"
+                'promo_code': "promo_******" //(optional)
             }
 
-        #TODO: check that the request containts the required parameters 
-        #TODO: double check the requested products do not conflict
+        #TODO check the format of meal is correct
         #TODO: handle multiple quantity
-        #TODO: change meal to handle being none instead of trying to set it if it does not exist
     '''
 
-    data = json.loads(event['body'])
+    logger.info('## NEW REQUEST')
+
+    try:
+        data = json.loads(event['body'])
+    except (TypeError, JSONDecodeError) as e:
+        return err("An error has occured with the input you have provied.", event_body=event['body'])
+
+    if ('name' not in data) or ('email' not in data) or ('number_of_tickets' not in data) or ('line_items' not in data) or ('price' not in data):
+        return err("Input does not containt the expected values.", event_data=data)
 
     # create the custom field for the name and set default text
     custom_fields = [{
@@ -50,17 +70,21 @@ def lambda_handler(event, context):
     }]
 
     line_items = []
+    total_access = [0,0,0,0,0,0]
     
     # make the line items into format for stripe api
     #TODO Make one call to get products
     for item in data['line_items']:
         try:
             prod = stripe.Product.retrieve(item['stripe_product_id'])
-            line_items.append({'price':prod['default_price'], 'quantity':1})
+            line_items.append({'price':prod['default_price'], 'quantity':data['number_of_tickets']})
+            total_access = [sum(i) for i in zip(total_access, item['access'])]
         except InvalidRequestError as e:
             # if error occurs with stripe here it is probaly that the product does not exist
-            response = {'statusCode':400, 'body':json.dumps({'message':'Product does not exist.', 'error':e.error})}
-            return response
+            return err("An error occured when trying to retrieve the requested product", errmsg=e.error)
+
+    if not all(i <=1 for i in total_access):
+        return err("An error has occured with your selection, there are conflicting items.", log="Pass selection conlfict.", access=str(total_access))
 
     # the input params to generate the checkout session
     kwargs = {
@@ -72,49 +96,29 @@ def lambda_handler(event, context):
         'mode':"payment"
         }
         
+    # if the ticket includes dinner then meal options must be provided
+    # if ticket does not include dinner but meal provided send and error
+    if (total_access[2] > 0):
+        if 'meal' not in data:
+            return err("This checkout includes dinner but the prefences are not provided.")
+        if data['meal']:
+            kwargs['metadata'] = {'meal': json.dumps(data['meal'])} 
+        else: 
+            return err("This checkout includes dinner but the prefences are not provided.")
+    elif (total_access[2] < 1) and ('meal' in data):
+        if data['meal']:
+            return  err("This checkout does not include dinner but the prefences have been provided.")
+    
     # if there is a promo code included then apply it to the cart
     #TODO check validity of the code and handle any other errors (not exist, not apply to that product)
-    if data['promo_code'] is not None: kwargs['discounts'] = [{'promotion_code':data['promo_code']}]
-
-    # if the ticket includes dinner then meal options must be provided
-    #? assert meal options if dinner is included
-    if data['meal'] is not None: kwargs['metadata'] = {'meal': json.dumps(data['meal'])}
+    if 'promo_code' in data:
+        if data['promo_code']: kwargs['discounts'] = [{'promotion_code':data['promo_code']}]
 
     # create the stripe checkout session and put the checkout url in the response body
     try:
         cs = stripe.checkout.Session.create(**kwargs)
-        response = {'statusCode':200, 'body':json.dumps({'cs_url':cs['url']})}
+        return {'statusCode':200, 'body':json.dumps({'cs_url':cs['url']})}
     except InvalidRequestError as e:
         # catch an error here if creation fails
         # could be client error but also a server error
-        response = {'statusCode':400, 'body':json.dumps({'message':'An error has occured ', 'error':e.error})}
-
-    # if a response hasn't been set already then something has gone wrong with the code
-    if response is None: response = {'statusCode':500, 'body':json.dumps({'message':'Something went wrong with the server'})}
-    return response
-
-
-# if __name__ == "__main__":
-    
-#     meal = {
-#         'choices': [1,0,1], 
-#         'dietary_requirements':{
-#             'selected':["nut allergy", "gluten free"], 
-#             'other': "Some specific additional dietary requirement"
-#         },
-#         'seating_preference': [12345, 12678]
-#     }
-
-#     event = {
-#         'name': "John Doe",
-#         'email': "john_doe@example.com",
-#         'number_of_tickets': 1,
-#         'meal': meal,
-#         'line_items': [
-#             {'name': "Party Pass", 'stripe_product_id': "prod_QQTrga8mShkzyo", 'access': [1,0,0,1,0,1]},
-#             {'name': "Saturday-Dinner", 'stripe_product_id': "prod_QQUJ8m2jrR6toK", 'access': [0,0,1,0,0,0]}
-#         ],
-#         'price':100,
-#         'promo_code': "promo_1Pf6pnEWkmdeWsQP2Tyg5w2l"
-#     }
-#     print(lambda_handler({'body':json.dumps(event)}, None))
+        return err("An error has occured.", log=e.error)
