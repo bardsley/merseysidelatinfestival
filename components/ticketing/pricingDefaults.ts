@@ -48,5 +48,5 @@ export const passes: Passes = {
 
 export const fullPassName = Object.keys(passes).at(-1)
 export const days = ['Friday', 'Saturday', 'Sunday']
-export const passTypes = ['Party', 'Classes', 'Dinner']
+export const passTypes = Object.keys(individualTickets['Saturday']).filter((item) => individualTickets['Saturday'][item].isAvailable) //['Party', 'Classes', 'Dinner']
 

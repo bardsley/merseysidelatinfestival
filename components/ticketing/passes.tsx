@@ -18,7 +18,9 @@ export default function PassCards({setDayPass,setTypePass,setDinnerPass,priceMod
       return () => { setDinnerPass(true); scrollToElement()}
     }
   }  
-  
+
+  const passToDisplay = Object.keys(passes).filter((item) => passes[item].isAvailable).filter((item)=>item !== fullPassName)
+  const dynamicColClasses = `md:grid-cols-3 lg:grid-cols-${passToDisplay.length}`
   return (
     <div className="isolate overflow-hidden ">
       <div className='mb-6'>
@@ -26,12 +28,12 @@ export default function PassCards({setDayPass,setTypePass,setDinnerPass,priceMod
         <p>Select your pass below or tick the items you want and we&#39;ll work it out for you</p>
         
       </div>
-      <div className="mx-auto grid max-w-full grid-cols-1 gap-8 lg:max-w-full md:grid-cols-3 lg:grid-cols-5 mb-12">
+      <div className={`mx-auto grid max-w-full grid-cols-1 gap-8 lg:max-w-full mb-12 ${dynamicColClasses}`}>
 
       
       <PassCard passName={fullPassName} clickFunction={() => { selectFullPass(); scrollToElement('fullPass')}} pass={passes[fullPassName]} priceModel={priceModel} hasASaving={true}></PassCard>
 
-        {Object.keys(passes).filter((item)=>item !== fullPassName).map((passName) => {
+        {passToDisplay.map((passName) => {
           const pass = passes[passName]
           const hasSaving = priceModel == 'studentCost' ? pass.studentSaving > 0 : pass.saving > 0
           const clickFunction = clickFunctionFromPassName(passName)

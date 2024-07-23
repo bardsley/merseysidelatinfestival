@@ -18,6 +18,10 @@ Adam
 [ ] Way to hide pages
 [x] Passes card at top
 [x] Student Saving in passes
+[ ] Make star in small logo smaller
+[ ] Big logo, lineup angles, texture on cut a dn a is too big
+[ ] Understand why github has a failing action
+[x] deal with isAvailable changes
 
 Connor
 ------  
@@ -37,6 +41,19 @@ Karen
 When we have time
 -----------------
 [ ] Stripe integration for passes
+
+
+Last Meeting
+------------
+Draft Mode ✔️
+Singage Dashboard ✔️
+Screens ✔️
+Git ✔️
+Logo ✔️
+Meal options ✔️
+Preview deployments ✔️
+
+
 
 Purchasing Rules
 ----------------
