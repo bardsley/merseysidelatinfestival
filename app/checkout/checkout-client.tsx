@@ -10,6 +10,7 @@ type fieldEntry = {name: string, label?: string, placeholder?: string, type?: st
 
 export default function CheckoutClient() {
   const [preferences, setPreferences] = useState(false as boolean | string | any[])
+  const [selectedOptions, setSelectedOptions] = useState({} as any)
 
   const yourDetailsFields: fieldEntry[] = [
     {name: 'name', placeholder: "John Doe", width: "w-80", label: "Full Name"},
@@ -18,6 +19,7 @@ export default function CheckoutClient() {
   ]
 
   useEffect(() => {
+    setSelectedOptions(JSON.parse(localStorage.getItem("selectedOptions")))
     console.log(JSON.parse(localStorage.getItem("selectedOptions")))
   },[])
 
@@ -27,7 +29,9 @@ export default function CheckoutClient() {
         <h1 className="text-3xl font-bold text-white">Checkout</h1>
         <p>Nearly there! We just need a few details from you (and some money of course) and you'll be all booked in.</p>
       </div>
-
+      <div>
+        {JSON.stringify()}
+      </div>
       <h2 className="text-xl flex items-center -ml-16 ">
         <Icon data={{name: "BiUser", color: "blue", style: "circle", size: "medium"}} className="mr-4"></Icon>
         Your details
@@ -67,12 +71,13 @@ export default function CheckoutClient() {
       
 
      
-      <h2 className="text-xl flex items-center -ml-16 mt-6">
+      {selectedOptions && selectedOptions['Saturday'] && selectedOptions['Saturday']['Dinner'] ? (<><h2 className="text-xl flex items-center -ml-16 mt-6">
         <Icon data={{name: "BiBowlHot", color: "red", style: "circle", size: "medium"}} className="mr-4"></Icon>
         Dinner Preferences
       </h2>
       <p className="text-sm">If you don't know the answer to some of these things you can always update preferences later</p>
       <MealPreferences preferences={preferences} setPreferences={setPreferences}></MealPreferences>
+      </>) : null }
 
     </Container>
   )
