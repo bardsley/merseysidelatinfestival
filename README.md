@@ -22,6 +22,7 @@ Adam
 [ ] Big logo, lineup angles, texture on cut a dn a is too big
 [ ] Understand why github has a failing action
 [x] deal with isAvailable changes
+[x] Proect Main branch
 
 Connor
 ------  
