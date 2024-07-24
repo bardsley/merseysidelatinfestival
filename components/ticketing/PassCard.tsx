@@ -7,7 +7,7 @@ export const PassCard = ({passName, clickFunction, pass, priceModel, hasASaving}
     <div
       onClick={clickFunction}
       key={passName}
-      className={`flex flex-col justify-between rounded-3xl bg-richblack-600 p-6 md:p-10 shadow-xl ring-1 ring-gray-900/10  text-white hover:border border-white cursor-pointer ${cardWidthClasses}`}
+      className={`flex flex-col justify-between rounded-3xl bg-richblack-600 p-6 md:p-10 shadow-xl ring-1 ring-gray-900/10  text-white border border-richblack-500 hover:border-white cursor-pointer ${cardWidthClasses}`}
     >
       <div className={`grid grid-cols-3 gap-2 md:flex flex-wrap md:flex-nowrap md:justify-between h-full ${cardWidthClasses}`}>
 
