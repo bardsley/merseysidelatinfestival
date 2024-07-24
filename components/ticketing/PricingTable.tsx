@@ -1,10 +1,12 @@
 'use client'
 import React, { useState, useEffect } from 'react';
+import { useFormStatus } from "react-dom"
 import Cell from './Cell';
 import { ICellProps } from './Cell';
 import { individualTickets,initialSelectedOptions, passTypes, days, fullPassName } from './pricingDefaults'
 import { calculateTotalCost, passOrTicket, getBestCombination } from './pricingUtilities'
 import PassCards from './passes'
+import { redirect,useRouter } from 'next/navigation'
 import { deepCopy } from '../../lib/useful'
 import symmetricDifference from 'set.prototype.symmetricdifference'
 import difference from 'set.prototype.difference'
@@ -19,6 +21,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
   const [totalCost, setTotalCost] = useState(0);
   const [packages,setPackages] = useState([])
   const [packageCost, setPackageCost] = useState(0)
+  const router = useRouter()
 
   const togglePriceModel = () => {
     setPriceModel(priceModel === "cost"? "studentCost" : "cost")
@@ -69,6 +72,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
 
   const clearOptions = () => {
     console.log("Options reset to: ", initialSelectedOptions)
+    localStorage.removeItem("selectedOptions")
     setSelectedOptions(deepCopy(initialSelectedOptions))
   }
 
@@ -81,6 +85,27 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
     fullPassFunction(() => selectFullPass)
   },[])
 
+  useEffect(() => {
+    const storedOptions = localStorage.getItem("selectedOptions")
+    if(storedOptions) { setSelectedOptions(JSON.parse(storedOptions)) }
+  },[])
+
+  function CheckoutButton() {
+    const { pending } = useFormStatus();
+    return (
+      <button type="submit" disabled={pending} 
+        className='bg-chillired-400 text-white rounded-lg py-6 px-12 hover:bg-chillired-700 text-nowrap w-full max-w-72 md:w-auto'>
+        {pending ? "Checking Out..." : "Buy Now"}
+      </button>
+
+    );
+  }
+
+  async function checkout() {
+    localStorage.setItem("selectedOptions", JSON.stringify(selectedOptions))
+    router.push("/checkout") //TODO This 100% needs a check for errors
+  }
+  
   const cellClasses = 'border border-gray-600 text-center py-2 px-3 md:py-2 md:px-4 ';
   const headerClasses = cellClasses.replaceAll('border-gray-600','border-chillired-400')
   const toggleCellClasses = "bg-richblack-600 text-white " +  cellClasses
@@ -164,7 +189,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
         <caption className='caption-top pt-6'>
           <div className='flex justify-between mb-2'>
             <h2 className="text-xl">Your Current Selection</h2>  
-            <button onClick={clearOptions} className='border border-gray-300 rounded-md px-3 py-1'>Clear my choices</button>
+            <button onClick={clearOptions} id="clear-form" className='border border-gray-300 rounded-md px-3 py-1'>Clear my choices</button>
           </div>
         
         </caption>
@@ -179,20 +204,20 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
             <h2 className='text-3xl font-bold'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost}</span>) : null } £{packageCost}</h2>
             { totalCost - packageCost > 0 ? (<p>Saving you £{totalCost - packageCost} on the full cost of those options!</p>) : null }
           </div>
-          <div className='flex w-full md:w-auto flex-col md:flex-row items-center justify-center'>
-            <button className='bg-chillired-400 text-white rounded-lg py-6 px-12 hover:bg-chillired-700 text-nowrap w-full max-w-72 md:w-auto'>Buy Now</button>
-          </div>
+          <form action={checkout} className='flex w-full md:w-auto flex-col md:flex-row items-center justify-center'>
+          <CheckoutButton></CheckoutButton>
+          </form>
           
         </>
       ) : "Select options in the table above to see the suggested packages" }
       </div>
       
-      <hr />
+      {/* <hr />
       <h2>Debug Ignore below the line</h2>
       <div className='flex'>
         <pre>Selected -- {JSON.stringify(selectedOptions,null,2)}</pre>
         <pre>Initial--{JSON.stringify(initialSelectedOptions,null,2)}</pre>
-      </div>
+      </div> */}
       
     </div>
   )

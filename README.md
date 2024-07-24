@@ -2,6 +2,9 @@
 
 TODO
 ======
+Next Chat
+- [ ] Should we store last checkout if not completed?
+- [ ] Benefits of recalculating passes etc based on options on post checkout vs passing them into the checkout and along to API?
 
 Adam
 ----
