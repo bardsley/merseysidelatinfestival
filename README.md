@@ -5,24 +5,24 @@ TODO
 
 Adam
 ----
-[ ] Merseyside small logo
-[ ] Optimise images
-[ ] Video of dancing for hero
-[ ] Add see through option for a section
-[ ] Add title to features section
-[ ] Disclaimer on food choices
-[ ] Default prose styles e.g. <article class="prose prose-img:rounded-xl prose-headings:underline prose-a:text-blue-600">{{ markdown }}</article>
-[X] Hydration error in production
-[ ] Reverse artist video animation 
-[x] Student isn't coming through 
-[ ] Way to hide pages
-[x] Passes card at top
-[x] Student Saving in passes
-[ ] Make star in small logo smaller
-[ ] Big logo, lineup angles, texture on cut a dn a is too big
-[ ] Understand why github has a failing action
-[x] deal with isAvailable changes
-[X] Proect Main branch - Can't commit directly into main have to PR
+- [ ] Merseyside small logo
+- [ ] Optimise images
+- [ ] Video of dancing for hero
+- [x] Add see through option for a section
+- [ ] Add title to features section
+- [ ] Disclaimer on food choices
+- [ ] Default prose styles e.g. <article class="prose prose-img:rounded-xl prose-headings:underline prose-a:text-blue-600">{{ markdown }}</article>
+- [X] Hydration error in production
+- [x] Reverse artist video animation 
+- [x] Student isn't coming through 
+- [x] Way to hide pages
+- [x] Passes card at top
+- [x] Student Saving in passes
+- [x] Make star in small logo smaller
+- [x] Big logo, lineup angles, texture on cut a dn a is too big
+- [x] Understand why github has a failing action
+- [x] deal with isAvailable changes
+- [X] Proect Main branch - Can't commit directly into main have to PR
 
 Connor
 ------  
@@ -37,22 +37,21 @@ Connor
 
 Karen
 -----
-[ ] Video of dancing wide
+- [ ] Video of dancing wide
 
 When we have time
 -----------------
-[ ] Stripe integration for passes
-
+- [ ] Stripe integration for passes
 
 Last Meeting
 ------------
-Draft Mode ✔️
-Singage Dashboard ✔️
-Screens ✔️
-Git ✔️
-Logo ✔️
-Meal options ✔️
-Preview deployments ✔️
+- Draft Mode ✔️
+- Singage Dashboard ✔️
+- Screens ✔️
+- Git ✔️
+- Logo ✔️
+- Meal options ✔️
+- Preview deployments ✔️
 
 
 
