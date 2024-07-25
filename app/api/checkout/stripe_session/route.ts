@@ -10,16 +10,7 @@ export async function POST(request: NextRequest) {
       quantity: 1
     }
   })
-  const lineItems2 = [
-      {
-        // Provide the exact Price ID (for example, pr_1234) of
-        // the product you want to sell
-        price: 'price_1PZdG3EWkmdeWsQPrtrfrxtL',
-        quantity: 1,
-      },
-    ]
-  console.log("lineItems:",lineItems1, lineItems2)
-
+  console.log("lineItems:",lineItems1)
   try {
     // Create Checkout Sessions from body params.
     const session = await stripe.checkout.sessions.create({
@@ -32,7 +23,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({clientSecret: session.client_secret});
   } catch (err) {
-    return NextResponse.json(err.message, {status: err.statusCode || 500});
+    return NextResponse.json({error: err.message}, {status: err.statusCode || 500});
   }
 }
 
