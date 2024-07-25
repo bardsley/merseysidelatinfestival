@@ -1,20 +1,20 @@
 import React from 'react';
 import { fullPassName } from './pricingDefaults';
 
-export const PassCard = ({passName, clickFunction, pass, priceModel, hasASaving}) => {
+export const PassCard = ({passName, clickFunction, pass, priceModel, hasASaving, selected}) => {
   const cardWidthClasses = passName === fullPassName ? 'col-span-full' : 'md:flex-col'
   return (
     <div
       onClick={clickFunction}
       key={passName}
-      className={`flex flex-col justify-between rounded-3xl bg-richblack-600 p-6 md:p-10 shadow-xl ring-1 ring-gray-900/10  text-white border border-richblack-500 hover:border-white cursor-pointer ${cardWidthClasses}`}
+      className={`relative flex flex-col justify-between rounded-3xl bg-richblack-600 p-6 md:p-10 shadow-xl ring-1 ring-gray-900/10  text-white border border-richblack-500 hover:border-white cursor-pointer ${cardWidthClasses}`}
     >
       <div className={`grid grid-cols-3 gap-2 md:flex flex-wrap md:flex-nowrap md:justify-between h-full ${cardWidthClasses}`}>
 
         <div className='col-span-2'>
           
           <h3 id={passName} className="text-xl md:text-base leading-7 text-chillired-800 font-black uppercase w-full md:w-auto col-span-2 m-h-12">
-            {passName}
+            {passName} {selected ? ' - Selected' : ''}
           </h3>
           
           <p className="mt-2 text-sm md:text-base leading-7 col-span-3 text-white">
@@ -40,6 +40,10 @@ export const PassCard = ({passName, clickFunction, pass, priceModel, hasASaving}
         
         
       </div>
+      { selected ? <div className='w-full h-full opacity-90 bg-richblack-700 absolute left-0 top-0 rounded-3xl flex flex-col items-center justify-center'>
+        <h2 className='font-bold text-3xl'>Currently Selected</h2>
+        <p>This is the best deal for your choices</p>
+      </div> : null }
     </div>
   );
 };

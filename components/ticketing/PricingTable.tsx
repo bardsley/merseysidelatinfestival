@@ -28,11 +28,11 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
     setStudentDiscount(priceModel === "cost" ? true : false) //! This looks backwards but priceModel hasn't changed yet
   }
 
-  const selectFullPass = () => {
+  const selectFullPass = (setTo) => {
     let initialOptions = selectedOptions
     days.forEach((day) => {
       passTypes.forEach((passType) => {
-        initialOptions[day][passType] = individualTickets[day][passType].isAvailable ? true : false
+        initialOptions[day][passType] = individualTickets[day][passType].isAvailable ? setTo : false
       })
     })
     setSelectedOptions({...initialOptions})
@@ -56,7 +56,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
     setSelectedOptions({...initialOptions})
   }
   const setTypePass = (type,setTo) => {
-    console.log(type,setTo)
+    // console.log(type,setTo)
     // console.log(type,selectedOptions,individualTickets,individualTickets)
     let initialOptions = selectedOptions
     Object.keys(initialSelectedOptions).forEach((elm) => { if(individualTickets[elm][type].isAvailable) { initialOptions[elm][type] = setTo }})
@@ -112,7 +112,15 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
   return (
     <div className="table-container w-full flex justify-center flex-col md:pt-12 max-w-full lg:mx-auto md:mx-3 col-span-5 text-xs md:text-base">
     
-      <PassCards setDayPass={setDayPass} setTypePass={setTypePass} setDinnerPass={setDinnerPass} priceModel={priceModel} scrollToElement={scrollToElement} selectFullPass={selectFullPass}></PassCards>
+      <PassCards 
+        selected={packages} 
+        setDayPass={setDayPass} 
+        setTypePass={setTypePass} 
+        setDinnerPass={setDinnerPass} 
+        priceModel={priceModel} 
+        scrollToElement={scrollToElement} 
+        shouldScroll={packages.length == 0}
+        selectFullPass={selectFullPass}></PassCards>
       
       <div className='mb-12'>
         <Cell option={{name: 'I am a student and will bring Student ID', cost: 0, studentCost: 0, isAvailable: true } }
@@ -129,41 +137,14 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
               <th key={day} className={headerClasses}>{day}</th> 
             ))}
           </tr>
-          {/* <tr>
-            <th className={toggleCellClasses}>Day pass</th>
-            <th className={toggleCellClasses}></th>
-            {['Saturday','Sunday'].map((day) => { 
-              const cellProps = {
-                isSelected: isAllDayOptions(selectedOptions,day), 
-                onSelect: setDayPass,
-                studentDiscount: priceModel === "studentCost",
-                day: day,
-                option: { name:'', cost: passes[`${day} Pass`]['cost'], studentCost: passes[`${day} Pass`]['studentCost'], isAvailable: passes[`${day} Pass`]['isAvailable'] }
-              } as ICellProps
-              return (
-              <th key={`${day}-full`} className={toggleCellClasses}>
-                <Cell {...cellProps} />
-              </th>
-            )})}
-          </tr>  */}
         </thead>
         <tbody>
           {passTypes.map((passType) => {
-            // const passOption = passType === 'Party'? passes['Party Pass'] : passType === 'Classes' ? passes['Class Pass'] : {cost: 0, studentCost: 0, isAvailable: false}
-            // const cellProps = {
-            //   isSelected: isAllPassOptions(selectedOptions,passType),
-            //   onSelect: setTypePass,
-            //   studentDiscount: priceModel === "studentCost",
-            //   passType: passType,
-            //   option: { name:'', cost: passOption['cost'], studentCost: passOption['studentCost'], isAvailable: passOption['isAvailable'] }
 
-            // } as ICellProps
             return (
             <tr key={passType}>
               <td className={toggleCellClasses}>
                 {passType}
-                {/* <Cell {...cellProps} />  */}
-
               </td>
               {days.map((day) => {
                 const cellProps = {
@@ -212,12 +193,14 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
       ) : "Select options in the table above to see the suggested packages" }
       </div>
       
-      {/* <hr />
+      { process.env.NODE_ENV == 'development' ? <>
+      <hr />
       <h2>Debug Ignore below the line</h2>
       <div className='flex'>
         <pre>Selected -- {JSON.stringify(selectedOptions,null,2)}</pre>
-        <pre>Initial--{JSON.stringify(initialSelectedOptions,null,2)}</pre>
-      </div> */}
+        <pre>Packages--{JSON.stringify(packages,null,2)}</pre>
+      </div>
+      </> : null }
       
     </div>
   )
