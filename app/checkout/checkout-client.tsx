@@ -1,16 +1,18 @@
 'use client'
 import { useEffect, useState } from "react";
-
+import {getBestCombination,priceIds } from "../../components/ticketing/pricingUtilities"
 import MealPreferences from "../../components/preferences/MealPreferences"
 import {Container} from "../../components/layout/container"
 import {Icon} from "../../components/icon"
 import { ExclamationCircleIcon } from '@heroicons/react/20/solid'
+import StripeForm from "./stripe"
 
 type fieldEntry = {name: string, label?: string, placeholder?: string, type?: string, value?: string | number, error?: string, width?: string  }
 
 export default function CheckoutClient() {
   const [preferences, setPreferences] = useState(false as boolean | string | any[])
   const [selectedOptions, setSelectedOptions] = useState({} as any)
+  const [stripeProducts,setStripeProducts] = useState(false as boolean | string[])
 
   const yourDetailsFields: fieldEntry[] = [
     {name: 'name', placeholder: "John Doe", width: "w-80", label: "Full Name"},
@@ -19,18 +21,26 @@ export default function CheckoutClient() {
   ]
 
   useEffect(() => {
-    setSelectedOptions(JSON.parse(localStorage.getItem("selectedOptions")))
-    console.log(JSON.parse(localStorage.getItem("selectedOptions")))
+    const loadedOptions = JSON.parse(localStorage.getItem("selectedOptions"))
+    setSelectedOptions(loadedOptions)
+    console.log("Loaded Options",loadedOptions)
   },[])
 
+  useEffect(() => {
+    const bestCombo = getBestCombination(selectedOptions,'cost')
+    console.log("Best Combo",bestCombo)
+    const allPassAndTicketPriceIds = priceIds()
+    console.log("All Pass and Ticket Price Ids",allPassAndTicketPriceIds)
+    const selectedPassPriceIds = bestCombo.options.map(pass => allPassAndTicketPriceIds[pass])
+    console.log("Selected Pass Price Ids",selectedPassPriceIds)
+    setStripeProducts(selectedPassPriceIds)
+  },[selectedOptions])
+
   return (
-    <Container size="small" width="small" className=" text-white">
+    <Container size="small" width="large" className=" text-white w-full">
       <div className="intro mb-6">
         <h1 className="text-3xl font-bold text-white">Checkout</h1>
-        <p>Nearly there! We just need a few details from you (and some money of course) and you'll be all booked in.</p>
-      </div>
-      <div>
-        {JSON.stringify()}
+        <p>Nearly there! We just need a few details from you (and some money of course) and you&apos;ll be all booked in.</p>
       </div>
       <h2 className="text-xl flex items-center -ml-16 ">
         <Icon data={{name: "BiUser", color: "blue", style: "circle", size: "medium"}} className="mr-4"></Icon>
@@ -75,10 +85,11 @@ export default function CheckoutClient() {
         <Icon data={{name: "BiBowlHot", color: "red", style: "circle", size: "medium"}} className="mr-4"></Icon>
         Dinner Preferences
       </h2>
-      <p className="text-sm">If you don't know the answer to some of these things you can always update preferences later</p>
+      <p className="text-sm">If you don&apos;t know the answer to some of these things you can always update preferences later</p>
       <MealPreferences preferences={preferences} setPreferences={setPreferences}></MealPreferences>
       </>) : null }
 
+      {stripeProducts && typeof stripeProducts === "object" && stripeProducts.length > 0 ? <StripeForm products={stripeProducts}></StripeForm> : null}
     </Container>
   )
 
