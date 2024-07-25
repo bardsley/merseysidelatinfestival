@@ -55,7 +55,7 @@ export default function CheckoutClient() {
     
       {yourDetailsFields.map((field) => {
           const statusClass = field.error ? "text-red-900 ring-red-300 placeholder:text-red-300 focus:ring-red-500" : ""
-          const otherClass = field.width ? field.width : "w-64"
+          const otherClass = field.width ? field.width : "w-40 md:w-64 max-w-full"
          return (
           <div className="mt-3" key={field.name}>
             { field.type && field.type == 'hidden' ? null 
@@ -78,7 +78,7 @@ export default function CheckoutClient() {
                 onFocus={() => {
                   if(field.name == 'email') { setUserData({...userData, [field.name]: null}) }
                 }}
-                className={`block rounded-md border-0 py-1.5 pr-10 ring-1 ring-inset focus:ring-2 focus:ring-inset text-gray-900 sm:text-sm sm:leading-6 ${statusClass} ${otherClass}`}
+                className={`block rounded-md border-0 py-1.5 pr-10 ring-1 ring-inset focus:ring-2 focus:ring-inset text-gray-900 sm:text-sm sm:leading-6 max-w-full ${statusClass} ${otherClass}`}
               />
               { field.error ? <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                 <ExclamationCircleIcon aria-hidden="true" className="h-5 w-5 text-red-500" />

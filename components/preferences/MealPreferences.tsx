@@ -13,17 +13,17 @@ const MealPreferences = ({preferences,setPreferences}) =>{
   const [showAdditionalDiet,setShowAdditionalDiet] = useState(false)
   return (
     <>
-      <fieldset className="my-6">
+      <fieldset className="my-6 max-w-full">
         <legend className="text-base font-semibold leading-6 text-white">Course</legend>
         <div className="mt-4 divide-y divide-gray-700 border-b border-t border-gray-700">
           {courses.map((course, courseIdx) => (
-            <div key={courseIdx} className="relative flex items-start py-4">
-              <div className="min-w-0 flex-1 text-sm leading-6">
-                <span className="select-none font-medium text-white">
+            <div key={courseIdx} className="relative flex items-center md:items-start justify-between w-full py-4 flex-wrap md:flex-nowrap">
+              <div className="min-w-0 text-sm leading-6 w-full md:w-auto ">
+                <span className="select-none  text-white font-bold md:font-medium">
                   {course.name}
                 </span>
               </div>
-              <div className="ml-3 flex h-6 items-center gap-5">
+              <div className="ml-3 flex flex-1 h-6 items-center justify-end gap-5">
                 {course.options.map((option,optionIdx) => {
                   return (
                     <div key={`c${courseIdx}-${optionIdx}`} className="flex items-center gap-2 w-36 justify-end">
@@ -49,8 +49,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
           ))}
         </div>
       </fieldset>
-          {JSON.stringify(preferences)}
-      <fieldset className='my-6'>
+      <fieldset className='my-6 max-w-full w-full'>
         <legend className="text-base font-semibold leading-6 text-white">Other Specific Dietary Requirements</legend>
         <p className='mb-3 text-sm'>Please note the food choices above, {veganChoices.join(', ').toLowerCase()} are vegan</p>
 
@@ -59,7 +58,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
             const showAdditional = event.target.value == 'other' ? true : false
             setShowAdditionalDiet(showAdditional)
           }}
-          className="mt-2 block w-96 rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+          className="my-2 block rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
 
           {dietaryRequirements.map((diet) => {
             return (
@@ -75,12 +74,12 @@ const MealPreferences = ({preferences,setPreferences}) =>{
             id="comment"
             name="comment"
             rows={2}
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            className="block w-full max-w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             placeholder='Please add details here'
           />
         </div>
         )
-          : (<p className='font-sm font-light text-gray-150'>Select other if you need to provide more information</p>) }
+          : (<p className='font-sm font-light text-gray-300'>Select other if you need to provide more information</p>) }
 
       </fieldset>
       
@@ -98,7 +97,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           />
         </div>
-        <p id="seating-preference" className="mt-2 text-sm text-gray-500">
+        <p id="seating-preference" className="mt-2 text-sm text-gray-300">
         Whilst we will endeavour to match everyone who sets a preference this cannot be guaranteed
         </p>
       </div>
