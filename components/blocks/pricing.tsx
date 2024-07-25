@@ -12,7 +12,7 @@ import { fullPassName } from '../ticketing/pricingDefaults'
 
 
 export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
-  const [fullPassSelectFunction, setFullPassSelectFunction] = useState(() => ()=>{console.log("fullPassSelectFunction not set")})
+  const [fullPassSelectFunction, setFullPassSelectFunction] = useState(() => (setTo)=>{console.log("fullPassSelectFunction not set",setTo)})
   const packagesSuggestorRef = useRef(null);
   const scrollToElement = () => {
     if (packagesSuggestorRef.current) {
