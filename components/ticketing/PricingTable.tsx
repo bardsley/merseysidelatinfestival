@@ -6,7 +6,7 @@ import { ICellProps } from './Cell';
 import { individualTickets,initialSelectedOptions, passTypes, days, fullPassName } from './pricingDefaults'
 import { calculateTotalCost, passOrTicket, getBestCombination } from './pricingUtilities'
 import PassCards from './passes'
-import { redirect,useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { deepCopy } from '../../lib/useful'
 import symmetricDifference from 'set.prototype.symmetricdifference'
 import difference from 'set.prototype.difference'

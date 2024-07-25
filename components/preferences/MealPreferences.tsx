@@ -1,4 +1,3 @@
-import { Textarea } from '@headlessui/react'
 import React, { useState} from 'react'
 
 const courses = [
