@@ -99,7 +99,7 @@ export default function CheckoutClient() {
       
     </Container>
     
-    <Container width="custom" padding="tight" className="rounded-3xl border border-richblack-700 w-[1200px] bg-richblack-500 py-20 px-0 text-white flex flex-col items-center justify-center">
+    <Container width="custom" padding="tight" className="rounded-3xl border border-richblack-700 max-w-full w-[1200px] bg-richblack-500 py-0 md:py-20 px-3 md:px-0 text-center text-white flex flex-col items-center justify-center">
     {dinnerInfoProvided && userData.email && stripeReady ?
       <StripeForm email={userData.email} products={stripeProducts}></StripeForm>
       : <><h2 className="text-2xl">Not Ready for payment</h2><p>Payment form will load once you have finished editing the above information</p></>}
