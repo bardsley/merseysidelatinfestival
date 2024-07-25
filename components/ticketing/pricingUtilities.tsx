@@ -44,7 +44,7 @@ const optionsToPassArray = (options) => { // max 2 level
   const keys = Object.keys(options)
   return keys.flatMap((key) => {
     return Object.keys(options[key]).map((subkey) => {
-      return options[key][subkey] === true || options[key][subkey].isAvailable ? `${key} ${subkey}` : null
+      return options[key][subkey] && (options[key][subkey] === true || options[key][subkey].isAvailable) ? `${key} ${subkey}` : null
     })
   }).filter(Boolean)
 }
