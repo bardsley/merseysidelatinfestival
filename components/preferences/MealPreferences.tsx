@@ -37,7 +37,9 @@ const MealPreferences = ({preferences,setPreferences}) =>{
                       defaultChecked={preferences && preferences[courseIdx] == optionIdx}
                       // checked={preferences[courseIdx] == optionIdx}
                       className="h-4 w-4 rounded-full border-gray-700 text-indigo-600 focus:ring-indigo-600"
-                      onChange={() => setPreferences([...preferences.slice(0,courseIdx),optionIdx,...preferences.slice(courseIdx+1)])}
+                      onChange={() => setPreferences([...preferences.slice(0,courseIdx),optionIdx,...preferences.slice(courseIdx+1)])
+                        
+                      }
                     />
                     </div>
                   )
@@ -48,7 +50,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
           ))}
         </div>
       </fieldset>
-
+          {JSON.stringify(preferences)}
       <fieldset className='my-6'>
         <legend className="text-base font-semibold leading-6 text-white">Other Specific Dietary Requirements</legend>
         <p className='mb-3 text-sm'>Please note the food choices above, {veganChoices.join(', ').toLowerCase()} are vegan</p>

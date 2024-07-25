@@ -1,28 +1,34 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 import { NextRequest, NextResponse } from 'next/server'
 
+
 export async function POST(request: NextRequest) {
-  // const price_id = "price_1PZdG3EWkmdeWsQPrtrfrxtL"
   const data = await request.json()
-  const lineItems1 = data.map((priceId)=>{
+  const lineItems = data.products.map((priceId)=>{
     return {
       price: priceId,
       quantity: 1
     }
   })
-  console.log("lineItems:",lineItems1)
+  const checkoutSessionObject = {
+    ui_mode: 'embedded',
+    line_items: lineItems,
+    mode: 'payment',
+    customer_email: data.email,
+    return_url:
+      `${request.headers.get("origin")}/return?session_id={CHECKOUT_SESSION_ID}`,
+  }
+
+
+
+  console.log("lineItems:",lineItems)
   try {
     // Create Checkout Sessions from body params.
-    const session = await stripe.checkout.sessions.create({
-      ui_mode: 'embedded',
-      line_items: lineItems1,
-      mode: 'payment',
-      return_url:
-        `${request.headers.get("origin")}/return?session_id={CHECKOUT_SESSION_ID}`,
-    });
-
+    const session = await stripe.checkout.sessions.create(checkoutSessionObject);
+    console.log("session:",session)
     return NextResponse.json({clientSecret: session.client_secret});
   } catch (err) {
+    console.log("Stripe Error:",err)
     return NextResponse.json({error: err.message}, {status: err.statusCode || 500});
   }
 }
