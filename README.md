@@ -3,7 +3,7 @@
 TODO
 ======
 Next Chat
-- [ ] Should we store last checkout if not completed?
+- [ ] Should we store last checkout if not completed? Yes
 - [ ] Benefits of recalculating passes etc based on options on post checkout vs passing them into the checkout and along to API?
 
 Adam
@@ -26,7 +26,7 @@ Adam
 - [x] Understand why github has a failing action
 - [x] deal with isAvailable changes
 - [x] Proect Main branch - Can't commit directly into main have to PR
-- [ ] Passes not available tdon't get auto triggered e.g dinner pass nbot available select options
+- [x] Passes not available tdon't get auto triggered e.g dinner pass nbot available select options
 - [ ] Allow change name / email.
 
 Connor

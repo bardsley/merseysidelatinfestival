@@ -4,7 +4,7 @@ import power from 'power-set'
 
 const generateAllPassCombinations = (passes) => {
     
-  const passTitles = Object.keys(passes).filter((item) => { return item != fullPassName})
+  const passTitles = Object.keys(passes).filter((item) => { return item != fullPassName && passes[item].isAvailable })
   const passCombinations = power(passTitles)
   // console.log(passCombinations)
   // passCombinations.forEach((passCombination: any[]) => {
