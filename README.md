@@ -25,7 +25,9 @@ Adam
 - [x] Big logo, lineup angles, texture on cut a dn a is too big
 - [x] Understand why github has a failing action
 - [x] deal with isAvailable changes
-- [X] Proect Main branch - Can't commit directly into main have to PR
+- [x] Proect Main branch - Can't commit directly into main have to PR
+- [ ] Passes not available tdon't get auto triggered e.g dinner pass nbot available select options
+- [ ] Allow change name / email.
 
 Connor
 ------  
@@ -34,9 +36,10 @@ Connor
 - [x] Send me the link (for picture frame?) https://www.twibbonize.com
 - [ ] Email to all not selected meal options 
 - [ ] artist ticket 99XXXXXXX
-
+- [ ] Explore discount code functionality
 - [x] resend AWS access
 - [ ] Document Lambda & make lambda robust
+- [ ] Allow change name / email.
 
 Karen
 -----

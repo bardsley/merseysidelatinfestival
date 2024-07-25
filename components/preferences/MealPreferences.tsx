@@ -51,7 +51,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
 
       <fieldset className='my-6'>
         <legend className="text-base font-semibold leading-6 text-white">Other Specific Dietary Requirements</legend>
-        <p className='mb-3 text-sm'>Please note the food choices above {veganChoices.join(', ').toLowerCase()} are vegan</p>
+        <p className='mb-3 text-sm'>Please note the food choices above, {veganChoices.join(', ').toLowerCase()} are vegan</p>
 
         <select name="dietary-requirements" id="dietary-requirements" defaultValue="None"
           onChange={(event) => {
