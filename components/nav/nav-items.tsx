@@ -40,8 +40,6 @@ export default function NavItems({ navs }: { navs: any }) {
   const { theme } = useLayout();
   const searchParams = useSearchParams()
   const draft = searchParams.get('draft')
-  // const draft = true
-
   const filteredNavs = draft ? navs : navs.filter((item)=>{return item.visible})
   return (
     <>
