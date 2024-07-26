@@ -143,6 +143,14 @@ export default function Footer() {
           )}
         />
       </Container>
+      { process.env.NODE_ENV == 'development' ? <>
+      <hr />
+      <h2>Debug Ignore below the line</h2>
+      <div className='flex'>
+        <pre>Footer -- {JSON.stringify(footer,null,2)}</pre>
+        
+      </div>
+      </> : null }
     </footer>
   );
 }
