@@ -104,6 +104,11 @@ const Global: Collection = {
               label: "Github",
               name: "github",
             },
+            {
+              type: "string",
+              label: "Yotuube",
+              name: "youtube",
+            },
           ],
         },
       ],
