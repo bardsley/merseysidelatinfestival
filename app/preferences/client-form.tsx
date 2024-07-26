@@ -62,7 +62,7 @@ export default function ClientForm(props) {
             <MealPreferences preferences={preferences} setPreferences={setPreferences}></MealPreferences>
               <button className="py-3 px-4 bg-chillired-500 rounded-lg">Save Preferences</button>
             </form>
-          ) : preferences ? preferences : (<div>Loading Preferences... [{JSON.stringify(preferences)}]</div>) }
+          ) : preferences ? preferences : (<div>Loading Preferences...</div>) }
         </>
       )
   } else {
