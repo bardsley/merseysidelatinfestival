@@ -1,9 +1,9 @@
-name: Deploy Python Lambda
+name: Deploy Python Lambdas to Dev Namespace
 
 on:
   push:
     branches:
-      - main
+      - develop
     paths:
       - '**.py' # Change to the file extension of the language that you are using.
 
@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 jobs:
-  checkout_complete:
+  updateDevRecieveStripeUpdate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -20,7 +20,7 @@ jobs:
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: eu-west-2
-          role-to-assume: arn:aws:iam::645491919786:role/github-oidc-auth-Role-1Clxiy7epYeK
+          role-to-assume: arn:aws:iam::645491919786:role/github-aws-credentials-mlf24-Role-s5Siu9i8MPJB
 
-      - run: zip -jr checkout_complete.zip ./functions/checkout_complete/
-      - run: aws lambda update-function-code --function-name=checkout_complete --zip-file=fileb://checkout_complete.zip
+      - run: zip -jr devRecieveStripeUpdate.zip ./functions/recieveStripeUpdate/
+      - run: aws lambda update-function-code --function-name=dev-recieveStripeUpdate --zip-file=fileb://devRecieveStripeUpdate.zip
