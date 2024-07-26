@@ -6,6 +6,7 @@ export const Container = ({
   size = "medium",
   width = "large",
   className = "",
+  padding = `default`,
   ...props
 }) => {
   const verticalPadding = {
@@ -22,12 +23,16 @@ export const Container = ({
     huge: "max-w-8xl",
     custom: "",
   };
+  const paddingClass = {
+    default: 'mx-auto px-4 md:px-8',
+    tight: 'mx-auto px-0 md:px-0',
+  }
 
   return (
     <div
       className={cn(
         widthClass[width],
-        `mx-auto px-4 md:px-8`,
+        paddingClass[padding],
         verticalPadding[size],
         className
       )}

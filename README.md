@@ -2,26 +2,32 @@
 
 TODO
 ======
+Next Chat
+- [ ] Should we store last checkout if not completed? Yes
+- [ ] Benefits of recalculating passes etc based on options on post checkout vs passing them into the checkout and along to API?
 
 Adam
 ----
-[ ] Merseyside small logo
-[ ] Optimise images
-[ ] Video of dancing for hero
-[ ] Add see through option for a section
-[ ] Add title to features section
-[ ] Disclaimer on food choices
-[ ] Default prose styles e.g. <article class="prose prose-img:rounded-xl prose-headings:underline prose-a:text-blue-600">{{ markdown }}</article>
-[X] Hydration error in production
-[ ] Reverse artist video animation 
-[x] Student isn't coming through 
-[ ] Way to hide pages
-[x] Passes card at top
-[x] Student Saving in passes
-[ ] Make star in small logo smaller
-[ ] Big logo, lineup angles, texture on cut a dn a is too big
-[ ] Understand why github has a failing action
-[x] deal with isAvailable changes
+- [ ] Merseyside small logo
+- [ ] Optimise images
+- [ ] Video of dancing for hero
+- [x] Add see through option for a section
+- [ ] Add title to features section
+- [ ] Disclaimer on food choices
+- [ ] Default prose styles e.g. <article class="prose prose-img:rounded-xl prose-headings:underline prose-a:text-blue-600">{{ markdown }}</article>
+- [X] Hydration error in production
+- [x] Reverse artist video animation 
+- [x] Student isn't coming through 
+- [x] Way to hide pages
+- [x] Passes card at top
+- [x] Student Saving in passes
+- [x] Make star in small logo smaller
+- [x] Big logo, lineup angles, texture on cut a dn a is too big
+- [x] Understand why github has a failing action
+- [x] deal with isAvailable changes
+- [x] Proect Main branch - Can't commit directly into main have to PR
+- [x] Passes not available tdon't get auto triggered e.g dinner pass nbot available select options
+- [ ] Allow change name / email.
 
 Connor
 ------  
@@ -30,28 +36,28 @@ Connor
 - [x] Send me the link (for picture frame?) https://www.twibbonize.com
 - [ ] Email to all not selected meal options 
 - [ ] artist ticket 99XXXXXXX
-
+- [ ] Explore discount code functionality
 - [x] resend AWS access
 - [ ] Document Lambda & make lambda robust
+- [ ] Allow change name / email.
 
 Karen
 -----
-[ ] Video of dancing wide
+- [ ] Video of dancing wide
 
 When we have time
 -----------------
-[ ] Stripe integration for passes
-
+- [ ] Stripe integration for passes
 
 Last Meeting
 ------------
-Draft Mode ✔️
-Singage Dashboard ✔️
-Screens ✔️
-Git ✔️
-Logo ✔️
-Meal options ✔️
-Preview deployments ✔️
+- Draft Mode ✔️
+- Singage Dashboard ✔️
+- Screens ✔️
+- Git ✔️
+- Logo ✔️
+- Meal options ✔️
+- Preview deployments ✔️
 
 
 

@@ -12,7 +12,7 @@ import { fullPassName } from '../ticketing/pricingDefaults'
 
 
 export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
-  const [fullPassSelectFunction, setFullPassSelectFunction] = useState(() => ()=>{console.log("fullPassSelectFunction not set")})
+  const [fullPassSelectFunction, setFullPassSelectFunction] = useState(() => (setTo)=>{console.log("fullPassSelectFunction not set",setTo)})
   const packagesSuggestorRef = useRef(null);
   const scrollToElement = () => {
     if (packagesSuggestorRef.current) {
@@ -104,7 +104,7 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
               <p className=''>
                 Currently we are offering an early bird price at an incredible £125! <br/>
                 <button className={ `${packages.length == 1 && packages[0] == fullPassName ? "text-chillired-500" : "text-white bg-chillired-500 0"} text-xl border border-chillired-500 rounded-md p-6 mt-6 z-30`} 
-                  onClick={() => {fullPassSelectFunction(); scrollToElement(); }}>
+                  onClick={() => {fullPassSelectFunction(true); scrollToElement(); }}>
                   { packages.length == 1 && packages[0] == fullPassName ? `Already selected` : `Give me the ${fullPassName}`}
                 </button>
               </p>
