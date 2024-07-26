@@ -20,7 +20,7 @@ event = {
         {'name': "Saturday-Dinner", 'stripe_product_id': "prod_QQUJ8m2jrR6toK", 'access': [0,0,1,0,0,0]}
     ],
     'price':100,
-    'promo_code': "promo_1Pf6pnEWkmdeWsQP2Tyg5w2l"
+    # 'promo_code': "promo_1Pf6pnEWkmdeWsQP2Tyg5w2l"
 }
 
 print(lambda_handler({'body':json.dumps(event)}, None))

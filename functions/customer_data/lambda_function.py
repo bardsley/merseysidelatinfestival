@@ -7,10 +7,10 @@ from json.decoder import JSONDecodeError
 logger = logging.getLogger()
 logger.setLevel("INFO")
 
-#* This is not required for deployment only needed for local testing 
-logging.basicConfig()
-profile_name='AdministratorAccess-645491919786'
-boto3.setup_default_session(profile_name=profile_name)
+# #* This is not required for deployment only needed for local testing 
+# logging.basicConfig()
+# profile_name='AdministratorAccess-645491919786'
+# boto3.setup_default_session(profile_name=profile_name)
 
 db = boto3.resource('dynamodb')
 table = db.Table('mlf24_db')
@@ -47,6 +47,7 @@ def post(event):
     # get data and check if it is proper JSON return error if not
     try:
         data = json.loads(event['body'])
+        logger.info(data)
     except (TypeError, JSONDecodeError) as e:
         logger.error(e)
         return err("An error has occured with the input you have provied.", event_body=event['body'])
@@ -54,14 +55,10 @@ def post(event):
     # get the ticket entry from db send error is not exist or not match
     # used to check meal option is included and raise error if it is being set and not part of ticket
     #? when setting meal options could access be sent with the request from client to save ddb call?
-    try:
-        ticket_entry = get_ticket(ticket_number, email)
-    except ValueError as e:
-        return err(e)
     
     # check that one or both options are set which is required to proceed return error if not
-    if ('meal_options' not in data) or ('schedule' not in data):
-        return err("Must provide one or both of (meal_options, schedule).")
+    if ('preferences' not in data) and ('schedule' not in data):
+        return err("Must provide one or both of (preferences, schedule). ")
 
     # check that ticket number and email are both set return error if not
     if ('ticket_number' not in data) and ('email' not in data):
@@ -70,19 +67,24 @@ def post(event):
         ticket_number = int(data['ticket_number'])
         email = data['email']
     
+    try:
+        ticket_entry = get_ticket(ticket_number, email)
+    except ValueError as e:
+        return err(e)
+        
     # empty variables to be set according to what options are slected (meal_options, schedule)
     UpdateExp   = ""
     ExpAttrVals = {}
 
     # append to the ddb update expression the options which are selected and set the values 
     # (meal_options, schedule) are both formatted as JSON
-    if 'meal_options' in data:
+    if 'preferences' in data:
         # return an error if the meal option is not included in this ticket
         if ticket_entry['access'][2] < 1: return err("Attempting to set meal options for a ticket which does not include dinner.")
 
-        logger.info(f"-SET MEAL OPTIONS:, {data['meal_options']}")
+        logger.info(f"-SET MEAL OPTIONS:, {data['preferences']}")
         UpdateExp += ", meal_options = :val1"
-        ExpAttrVals[':val1'] = json.dumps(data['meal_options'])
+        ExpAttrVals[':val1'] = data['preferences']
     if 'schedule' in data:
         logger.info(f"-SET SCHEDULE OPTIONS:, {data['schedule']}")
         UpdateExp += ", schedule = :val2"
@@ -136,7 +138,7 @@ def get(event):
         # check that the meal is included in this ticket, if not return error
         if ticket_entry['access'][2] < 1: return err("Attempting to get meal options for a ticket which does not include dinner.")
         
-        response_items.append({'meal_options':ticket_entry['meal_options']})
+        response_items.append({'preferences':ticket_entry['meal_options']})
     if 'schedule' in event['queryStringParameters']['requested']:
         response_items.append({'schedule_options':ticket_entry['schedule']})
     return {
