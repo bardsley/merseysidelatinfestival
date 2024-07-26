@@ -146,12 +146,10 @@ export default function CheckoutClient() {
         : <div className="text-center"><h2 className="text-2xl">Not Ready for payment</h2><p>Payment form will load once you have finished editing the above information</p></div>
       }
     </Container>
-
     { process.env.NODE_ENV == 'development' ? <>
       <hr />
       <h2>Debug Ignore below the line</h2>
       <div className='flex'>
-        <pre>Preferences -- {JSON.stringify(preferences,null,2)}</pre>
         <pre>userData -- {JSON.stringify(userData,null,2)}</pre>
       </div>
       </> : null }
