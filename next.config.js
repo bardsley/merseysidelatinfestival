@@ -24,8 +24,8 @@ module.exports = {
         destination: "/home",
       },
       {
-        source: "/admin/content",
-        destination: "/admin/content/index.html",
+        source: "/admin",
+        destination: "/admin/index.html",
       },
     ];
   },
