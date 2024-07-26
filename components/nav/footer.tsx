@@ -4,7 +4,7 @@ import { cn } from "../../lib/utils";
 import { Container } from "../layout/container";
 // import Link from "next/link";
 // import { Icon } from "../icon";
-import { FaFacebookF, FaGithub, FaTwitter } from "react-icons/fa";
+import { FaFacebookF, FaGithub, FaTwitter, FaYoutube } from "react-icons/fa";
 import { AiFillInstagram } from "react-icons/ai";
 import { useLayout } from "../layout/layout-context";
 // import { RawRenderer } from "../raw-renderer";
@@ -115,6 +115,21 @@ export default function Footer() {
                 />
               </a>
             )}
+            {footer.social && footer.social.youtube && (
+              <a
+                className="inline-block opacity-80 hover:opacity-100 transition ease-out duration-150"
+                href={footer.social.youtube}
+                target="_blank"
+              >
+                <FaYoutube
+                  className={`${socialIconClasses} ${
+                    socialIconColorClasses[
+                      footer.color === "primary" ? "primary" : theme.color
+                    ]
+                  }`}
+                />
+              </a>
+            )}
           </div>
           {/* <RawRenderer parentColor={footer.color} rawData={pageData} /> */}
         </div>
@@ -128,6 +143,14 @@ export default function Footer() {
           )}
         />
       </Container>
+      { process.env.NODE_ENV == 'development' ? <>
+      <hr />
+      <h2>Debug Ignore below the line</h2>
+      <div className='flex'>
+        <pre>Footer -- {JSON.stringify(footer,null,2)}</pre>
+        
+      </div>
+      </> : null }
     </footer>
   );
 }

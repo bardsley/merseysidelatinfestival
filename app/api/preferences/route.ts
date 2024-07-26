@@ -35,11 +35,11 @@ export async function GET(request: NextRequest) {
   const email = params.get('email') 
   const ticket = params.get('ticket_number')
   const apiRequest = `https://x4xy6yutqmildatdl3qc53bnzu0bhbdf.lambda-url.eu-west-2.on.aws/?requested=meal&email=${email}&ticketnumber=${ticket}`
-  console.log("-> Conor: ",apiRequest)
+  // console.log("-> Conor: ",apiRequest)
   const apiResponse = await fetch(apiRequest, { method: 'GET',  headers: { 'Content-Type': 'application/json' }})
   // const data = apiResponse.ok ? await apiResponse.json() : await apiResponse.text()
   const data = await apiResponse.json()
-  console.log("<- Conor",data, apiResponse.statusText, apiResponse.status)
+  // console.log("<- Conor",data, apiResponse.statusText, apiResponse.status)
   // const responseData = apiResponse.ok ? data : { message: data }
   // console.log("API Response",responseData)
   return  Response.json(data)

@@ -4,7 +4,7 @@ import power from 'power-set'
 
 const generateAllPassCombinations = (passes) => {
     
-  const passTitles = Object.keys(passes).filter((item) => { return item != fullPassName})
+  const passTitles = Object.keys(passes).filter((item) => { return item != fullPassName && passes[item].isAvailable })
   const passCombinations = power(passTitles)
   // console.log(passCombinations)
   // passCombinations.forEach((passCombination: any[]) => {
@@ -44,7 +44,7 @@ const optionsToPassArray = (options) => { // max 2 level
   const keys = Object.keys(options)
   return keys.flatMap((key) => {
     return Object.keys(options[key]).map((subkey) => {
-      return options[key][subkey] === true || options[key][subkey].isAvailable ? `${key} ${subkey}` : null
+      return options[key][subkey] && (options[key][subkey] === true || options[key][subkey].isAvailable) ? `${key} ${subkey}` : null
     })
   }).filter(Boolean)
 }
@@ -119,3 +119,23 @@ const getBestCombination = (options,priceModel) => {
 export const passCombinations = generateAllPassCombinations(passes)
 
 export { calculateTotalCost, passOrTicket, optionsToPassArray, availableOptionsForDay, isAllDayOptions, isAllPassOptions, priceForPassCombination, itemsFromPassCombination, priceForIndividualItems, itemsNotCovered, getBestCombination }
+
+const getTicketPriceIds = () => {
+  const ticketNames = Object.keys(individualTickets).reduce((returnObj,day) => {
+    const keys = Object.keys(individualTickets[day])
+    return {...returnObj, ...keys.reduce((returnObj,key) => {
+      // [`${day} ${key}`
+      return individualTickets[day][key].priceId ? {...returnObj, [`${day} ${key}`]: `${individualTickets[day][key].priceId}`} : returnObj
+    },{})}
+  },{}
+)
+  return ticketNames
+}
+
+export const priceIds = () => {
+  const passPriceIds = Object.keys(passes).reduce((returnObj,key) => { 
+    return {...returnObj, [key]: passes[key].priceId}
+  },{})
+  const ticketPriceIds = getTicketPriceIds()
+  return {...passPriceIds,...ticketPriceIds}
+}
