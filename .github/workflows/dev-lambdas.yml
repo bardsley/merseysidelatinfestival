@@ -1,0 +1,26 @@
+name: Deploy Python Lambda
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.py' # Change to the file extension of the language that you are using.
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  checkout_complete:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: unfor19/install-aws-cli-action@v1
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-west-2
+          role-to-assume: arn:aws:iam::645491919786:role/github-oidc-auth-Role-1Clxiy7epYeK
+
+      - run: zip -jr checkout_complete.zip ./functions/checkout_complete/
+      - run: aws lambda update-function-code --function-name=checkout_complete --zip-file=fileb://checkout_complete.zip
