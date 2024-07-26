@@ -1,4 +1,4 @@
-import React, { useState} from 'react'
+import React from 'react'
 
 const courses = [
   { name: "Starter", options: ["Vegan Tart", "Meat on Toast"]},
@@ -10,7 +10,6 @@ const dietaryRequirements = ["None","Vegan","Gluten free","Lactose free","Nut al
 const veganChoices = Object.keys(courses).map((key) => courses[key].options[0])
 const MealPreferences = ({preferences,setPreferences}) =>{
 
-  const [showAdditionalDiet,setShowAdditionalDiet] = useState(false)
   return (
     <>
       <fieldset className="my-6 max-w-full">
@@ -33,10 +32,10 @@ const MealPreferences = ({preferences,setPreferences}) =>{
                       name={`course-${courseIdx}`}
                       type="radio"
                       value={optionIdx}
-                      defaultChecked={preferences && preferences[courseIdx] == optionIdx}
+                      defaultChecked={preferences && preferences.choices && preferences.choices[courseIdx] == optionIdx}
                       // checked={preferences[courseIdx] == optionIdx}
                       className="h-4 w-4 rounded-full border-gray-700 text-indigo-600 focus:ring-indigo-600"
-                      onChange={() => setPreferences([...preferences.slice(0,courseIdx),optionIdx,...preferences.slice(courseIdx+1)])
+                      onChange={() => setPreferences({...preferences, choices:[...preferences.choices.slice(0,courseIdx),optionIdx,...preferences.choices.slice(courseIdx+1)]})
                         
                       }
                     />
@@ -53,10 +52,11 @@ const MealPreferences = ({preferences,setPreferences}) =>{
         <legend className="text-base font-semibold leading-6 text-white">Other Specific Dietary Requirements</legend>
         <p className='mb-3 text-sm'>Please note the food choices above, {veganChoices.join(', ').toLowerCase()} are vegan</p>
 
-        <select name="dietary-requirements" id="dietary-requirements" defaultValue="None"
+        <select name="dietary-requirements" id="dietary-requirements" defaultValue={preferences.dietary_requirements.selected}
           onChange={(event) => {
-            const showAdditional = event.target.value == 'other' ? true : false
-            setShowAdditionalDiet(showAdditional)
+            // const showAdditional = event.target.value == 'other' ? true : false
+            // setShowAdditionalDiet(showAdditional)
+            setPreferences({...preferences, dietary_requirements: {...preferences.dietary_requirements, selected: event.target.value}})
           }}
           className="my-2 block rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
 
@@ -68,12 +68,16 @@ const MealPreferences = ({preferences,setPreferences}) =>{
 
         </select>
 
-        { showAdditionalDiet ? (
+        { preferences.dietary_requirements.selected == 'other' ? (
           <div className="mt-2">
           <textarea
-            id="comment"
-            name="comment"
+            id="other"
+            name="other"
+            defaultValue = {preferences.dietary_requirements.other}
             rows={2}
+            onChange={(event) => {
+              setPreferences({...preferences, dietary_requirements: {...preferences.dietary_requirements, other: event.target.value}})
+            }}
             className="block w-full max-w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             placeholder='Please add details here'
           />
@@ -89,11 +93,15 @@ const MealPreferences = ({preferences,setPreferences}) =>{
         </label>
         <div className="mt-2">
           <input
-            id="seating"
-            name="seating"
+            id="seating_preference"
+            name="seating_preference"
             type="text"
             placeholder="171653467, 12987619"
             aria-describedby="seating-preference"
+            defaultValue = {preferences.seating_preference.join(', ')}
+            onChange={(event) => {
+              setPreferences({...preferences, seating_preference: event.target.value.split(',')})
+            }}
             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           />
         </div>
@@ -102,6 +110,13 @@ const MealPreferences = ({preferences,setPreferences}) =>{
         </p>
       </div>
       
+      {/* { process.env.NODE_ENV == 'development' ? <>
+      <hr />
+      <h2>Debug Ignore below the line</h2>
+      <div className='flex'>
+        <pre>Preferences -- {JSON.stringify(preferences,null,2)}</pre>
+      </div>
+      </> : null } */}
     </>
   )
 }

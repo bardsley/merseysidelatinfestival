@@ -8,7 +8,7 @@ import MealPreferences from "../../components/preferences/MealPreferences"
 
 export default function ClientForm(props) {
   const {hasCookie, ticket, email } = props
-  const [preferences, setPreferences] = useState(false as boolean | string | any[])
+  const [preferences, setPreferences] = useState(false as boolean | string | any)
   const [messageShown, setMessageShown] = useState(true)
   const params = useSearchParams()
   
@@ -28,7 +28,8 @@ export default function ClientForm(props) {
         const fetchURL = `//${process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL}/api/preferences?email=${email.value}&ticket_number=${ticket.value}`
         fetch(fetchURL, {method: "GET",}).then(res => {
         res.json().then(data => {
-          data.error ? setPreferences(data.error) : setPreferences(data[0].meal_options)
+          console.log("Preferences",data)
+          data.error ? setPreferences(data.error) : setPreferences(data.preferences)
         })
       })
     }

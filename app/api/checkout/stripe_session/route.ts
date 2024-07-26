@@ -4,22 +4,32 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
   const data = await request.json()
+  const userData = data.userData
+  const attendee = {
+    name: userData.name,
+    phone: userData.phone,
+  }
+  const preferences = data.preferences
   const lineItems = data.products.map((priceId)=>{
     return {
       price: priceId,
-      quantity: 1
+      quantity: 1 //TODO This should come from the client eventually
     }
   })
   const checkoutSessionObject = {
     ui_mode: 'embedded',
     line_items: lineItems,
     mode: 'payment',
-    customer_email: data.email,
+    customer_email: userData.email,
+    // phone_number_collection: { enabled: true},
+    metadata: {
+      attendee: JSON.stringify(attendee),
+      preferences: JSON.stringify(preferences),
+    },
+    allow_promotion_codes: true,
     return_url:
       `${request.headers.get("origin")}/return?session_id={CHECKOUT_SESSION_ID}`,
   }
-
-
 
   console.log("lineItems:",lineItems)
   try {

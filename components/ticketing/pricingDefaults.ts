@@ -3,8 +3,8 @@ import {IndividualTickets, Passes } from './pricingTypes'
 export const individualTickets: IndividualTickets = { 
   Friday: {
     Party: { cost: 15, studentCost: 10, isAvailable: true, priceId: 'price_1PZdG3EWkmdeWsQPrtrfrxtL' },
-    Classes: { cost: 0, studentCost: 0, isAvailable: false },
-    Dinner: { cost: 0, studentCost: 0, isAvailable: false }
+    // Classes: { cost: 0, studentCost: 0, isAvailable: false },
+    // Dinner: { cost: 0, studentCost: 0, isAvailable: false }
   },
   Saturday: {
     Party: { cost: 22, studentCost: 15, isAvailable: true, priceId: 'price_1PZdGnEWkmdeWsQPSM32DRS0' },
@@ -14,15 +14,15 @@ export const individualTickets: IndividualTickets = {
   Sunday: {
     Party: { cost: 15, studentCost: 10, isAvailable: true, priceId: 'price_1PZdHNEWkmdeWsQPMx12ez1O' },
     Classes: { cost: 55, studentCost: 45, isAvailable: true, priceId: 'price_1PZdKcEWkmdeWsQPuTOfpu9Y'},
-    Dinner: { cost: 0, studentCost: 0, isAvailable: false }
+    // Dinner: { cost: 0, studentCost: 0, isAvailable: false }
   }
 }
 
 export const initialSelectedOptions = {
   Friday: {
     Party: false,
-    Classes: false,
-    Dinner: false
+    // Classes: false,
+    // Dinner: false
   },
   Saturday: {
     Party: false,
@@ -32,7 +32,7 @@ export const initialSelectedOptions = {
   Sunday: {
     Party: false,
     Classes: false,
-    Dinner: false
+    // Dinner: false
   }
 }
 

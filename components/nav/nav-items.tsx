@@ -6,6 +6,7 @@ import { tinaField } from "tinacms/dist/react";
 import Link from "next/link";
 import { useLayout } from "../layout/layout-context";
 import { useSearchParams } from 'next/navigation'
+// import { CartIcon } from "./checkout-icon";
 
 const activeItemClasses = {
   blue: "border-b-3 border-blue-200 text-blue-700 dark:text-blue-300 font-medium dark:border-blue-700",
@@ -33,6 +34,7 @@ const activeBackgroundClasses = {
   purple: "text-purple-500",
   orange: "text-orange-500",
   yellow: "text-yellow-500",
+  merseyside: "text-yellow-500"
 };
 
 export default function NavItems({ navs }: { navs: any }) {
@@ -44,7 +46,8 @@ export default function NavItems({ navs }: { navs: any }) {
   return (
     <>
       {draft ? (<a className="block text-xs bg-chillired-800 text-white w-96 text-center rounded-b-md absolute right-0 z-50" href="/">Currently showing Draft Content, Click to Hide</a>) : null}
-      <ul className="gap-2 sm:gap-4 lg:gap-6 tracking-[.002em] -mx-4 hidden md:flex items-stretch">
+      <ul suppressHydrationWarning className="gap-2 sm:gap-4 lg:gap-6 tracking-[.002em] -mx-4 hidden md:flex items-stretch">
+        
         {filteredNavs.map((item) => {
           return (
             <li
@@ -71,6 +74,10 @@ export default function NavItems({ navs }: { navs: any }) {
             </li>
           );
         })}
+        {/* <li suppressHydrationWarning>
+          <CartIcon />
+        </li> */}
+        
       </ul>
     </>
   );
