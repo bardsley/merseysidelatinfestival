@@ -38,7 +38,7 @@ const Global: Collection = {
           list: true,
           ui: {
             itemProps: (item) => {
-              return { label: item?.label };
+              return { label: `${item?.label} - ${item.visible ? "live" : "draft"}`  };
             },
             defaultItem: {
               href: "home",

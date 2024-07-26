@@ -14,6 +14,8 @@ export default function CheckoutClient() {
   const [selectedOptions, setSelectedOptions] = useState({} as any)
   const [stripeProducts,setStripeProducts] = useState(false as boolean | string[])
   const [userData, setUserData] = useState(false as any)
+  const [steps, setSteps] = useState({details: false, meal: false, payment: false})
+  const [bestCombo,setBestCombo] = useState({price:0, options: []})
 
   const yourDetailsFields: fieldEntry[] = [
     {name: 'name', placeholder: "Johnn Salsa", width: "w-80", label: "Full Name"},
@@ -28,83 +30,117 @@ export default function CheckoutClient() {
   },[])
 
   useEffect(() => {
-    const bestCombo = getBestCombination(selectedOptions,'cost')
+    const calculatedBestCombo = getBestCombination(selectedOptions,'cost')
+    setBestCombo(calculatedBestCombo)
     console.log("Best Combo",bestCombo)
+  },[selectedOptions])
+
+  useEffect(() => {
     const allPassAndTicketPriceIds = priceIds()
     console.log("All Pass and Ticket Price Ids",allPassAndTicketPriceIds)
     const selectedPassPriceIds = bestCombo.options.map(pass => allPassAndTicketPriceIds[pass])
     console.log("Selected Pass Price Ids",selectedPassPriceIds)
     setStripeProducts(selectedPassPriceIds)
-  },[selectedOptions])
+  },[bestCombo])
 
   const dinnerInfoRequired = selectedOptions && selectedOptions['Saturday'] && selectedOptions['Saturday']['Dinner']
   const stripeReady = stripeProducts && typeof stripeProducts === "object" && stripeProducts.length > 0
   const dinnerInfoProvided = (!dinnerInfoRequired || (preferences && preferences.every((choice) => choice >= 0)))
   return (
-    <>
-    <Container size="small" width="medium" className=" text-white w-full">
-      <div className="intro mb-6">
+    <div className="">
+      <Container size="small" width="medium" className=" text-white w-full py-0">
+      <div className="intro">
         <h1 className="text-3xl font-bold text-white">Checkout</h1>
         <p>Nearly there! We just need a few details from you (and some money of course) and you&apos;ll be all booked in.</p>
       </div>
-      <h2 className="text-xl flex items-center -ml-16 ">
-        <Icon data={{name: "BiUser", color: "blue", style: "circle", size: "medium"}} className="mr-4"></Icon>
-        Your details
+      </Container>
+
+      <Container size="small" width="medium" className=" text-white w-full rounded-3xl border border-richblack-700 bg-richblack-500 py-6 transition-all	">
+        <h2 className="text-xl flex items-center -ml-14 ">
+          <Icon data={{name: "BiCart", color: "purple", style: "circle", size: "medium"}} className="mr-2 border border-richblack-700"></Icon>
+          Passes selected
+        </h2>
+        {bestCombo.options.join(', ')} : £{bestCombo.price}
+      </Container>
+
+      <Container size="small" width="medium" className=" text-white w-full rounded-3xl border border-richblack-700 bg-richblack-500 py-6 transition-all	">
+      <h2 className="text-xl flex items-center -ml-14 ">
+        <Icon data={{name: "BiUser", color: "blue", style: "circle", size: "medium"}} className="mr-2 border border-richblack-700"></Icon>
+        Attendee details
       </h2>
-      <p className="text-sm">These ones should be relatively easy to fill out</p>
-    
-      {yourDetailsFields.map((field) => {
-          const statusClass = field.error ? "text-red-900 ring-red-300 placeholder:text-red-300 focus:ring-red-500" : ""
-          const otherClass = field.width ? field.width : "w-40 md:w-64 max-w-full"
-         return (
-          <div className="mt-3" key={field.name}>
-            { field.type && field.type == 'hidden' ? null 
-            : <label htmlFor="email" className="block text-sm font-medium leading-6 text-white capitalize">
-                {field.label || field.name }
-              </label>
-            }
-              
-            <div className="relative mt-2 rounded-md shadow-sm">
-              <input
-                id={field.name}
-                name={field.name}
-                type={field.type || "text"}
-                placeholder={field.placeholder || null}
-                aria-invalid="true"
-                aria-describedby={`${field.name}-error`}
-                onBlur={(e) => {
-                  setUserData({...userData, [field.name]: e.target.value})
-                }}
-                onFocus={() => {
-                  if(field.name == 'email') { setUserData({...userData, [field.name]: null}) }
-                }}
-                className={`block rounded-md border-0 py-1.5 pr-10 ring-1 ring-inset focus:ring-2 focus:ring-inset text-gray-900 sm:text-sm sm:leading-6 max-w-full ${statusClass} ${otherClass}`}
-              />
-              { field.error ? <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                <ExclamationCircleIcon aria-hidden="true" className="h-5 w-5 text-red-500" />
-              </div> : null }
-            </div>
-            {field.error ? <p id={`${field.name}-error`} className="mt-2 text-sm text-red-600">Not a valid email address.</p> : null }
-          </div>
-        )
-      })}
-      
-      {dinnerInfoRequired ? (<><h2 className="text-xl flex items-center -ml-16 mt-6">
-        <Icon data={{name: "BiBowlHot", color: "red", style: "circle", size: "medium"}} className="mr-4"></Icon>
+      { steps.details ? (
+          <>
+            Name: {userData.name} <br/>
+            Email: {userData.email}<br/>
+            <button className="mt-3 border px-6 py-1 border-white rounded-md" onClick={() => setSteps({...steps,details:false})}>Edit</button>
+          </>) :
+          (<>
+            <p className="text-sm">These ones should be relatively easy to fill out</p>
+          
+            {yourDetailsFields.map((field) => {
+                const statusClass = field.error ? "text-red-900 ring-red-300 placeholder:text-red-300 focus:ring-red-500" : ""
+                const otherClass = field.width ? field.width : "w-40 md:w-64 max-w-full"
+              return (
+                <div className="mt-3" key={field.name}>
+                  { field.type && field.type == 'hidden' ? null 
+                  : <label htmlFor="email" className="block text-sm font-medium leading-6 text-white capitalize">
+                      {field.label || field.name }
+                    </label>
+                  }
+                    
+                  <div className="relative mt-2 rounded-md shadow-sm">
+                    <input
+                      id={field.name}
+                      name={field.name}
+                      type={field.type || "text"}
+                      placeholder={field.placeholder || null}
+                      defaultValue={userData[field.name] || null}
+                      aria-invalid="true"
+                      aria-describedby={`${field.name}-error`}
+                      onBlur={(e) => {
+                        setUserData({...userData, [field.name]: e.target.value})
+                      }}
+                      className={`block rounded-md border-0 py-1.5 pr-10 ring-1 ring-inset focus:ring-2 focus:ring-inset text-gray-900 sm:text-sm sm:leading-6 max-w-full ${statusClass} ${otherClass}`}
+                    />
+                    { field.error ? <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                      <ExclamationCircleIcon aria-hidden="true" className="h-5 w-5 text-red-500" />
+                    </div> : null }
+                  </div>
+                  {field.error ? <p id={`${field.name}-error`} className="mt-2 text-sm text-red-600">Not a valid email address.</p> : null }
+                </div>
+              )
+            })}
+
+            <button className="bg-chillired-400 px-6 py-2 rounded" onClick={() => setSteps({...steps,details:true})}>Continue</button>
+          </>)
+      }
+    </Container>
+    {dinnerInfoRequired ? (
+    <Container size="small" width="medium" className=" text-white w-full rounded-3xl border border-richblack-700 bg-richblack-500 pb-6">
+      <><h2 className="text-xl flex items-center -ml-14 mt-6">
+        <Icon data={{name: "BiBowlHot", color: "red", style: "circle", size: "medium"}} className="mr-2"></Icon>
         Dinner Preferences
       </h2>
+      { steps.details && !steps.meal ? <>
       <p className="text-sm">If you don&apos;t know the answer to some of these things you can always update preferences later</p>
       <MealPreferences preferences={preferences} setPreferences={setPreferences}></MealPreferences>
-      </>) : dinnerInfoRequired ? null : <button className="mt-3 rounded-md bg-chillired-600 px-6 py-3">{"Load Payment"}</button> }
-      
-    </Container>
+      <button className="bg-chillired-400 px-6 py-2 rounded" onClick={() => setSteps({...steps,meal:true})}>Continue</button>
+      </> : steps.meal ? (<><p>Meal details entered</p><button className="mt-3 border px-6 py-1 border-white rounded-md" onClick={() => setSteps({...steps,meal:false})}>Edit</button></>) : "Complete attendee details first " }
+       </>
+    </Container>) : null }
     
-    <Container width="custom" padding="tight" className="rounded-3xl border border-richblack-700 max-w-full w-[1200px] bg-richblack-500 py-0 md:py-20 px-3 md:px-0 text-center text-white flex flex-col items-center justify-center">
-    {dinnerInfoProvided && userData.email && stripeReady ?
-      <StripeForm email={userData.email} products={stripeProducts}></StripeForm>
-      : <><h2 className="text-2xl">Not Ready for payment</h2><p>Payment form will load once you have finished editing the above information</p></>}
-    </Container> 
-    </>
+    <Container size="small" width="medium" className=" text-white w-full rounded-3xl border border-richblack-700 bg-richblack-500 py-0 md:pt-6 md:pb-16 px-3 md:px-0 flex flex-col ">
+      <h2 className="text-xl flex items-center -ml-6">
+      <Icon data={{name: "BiPound", color: "green", style: "circle", size: "medium"}} className="mr-4 border border-richblack-700"></Icon>
+        Payment
+      </h2>
+      {dinnerInfoProvided && userData.email && stripeReady && steps.details && steps.meal ?
+        <StripeForm email={userData.email} products={stripeProducts}></StripeForm>
+        : <div className="text-center"><h2 className="text-2xl">Not Ready for payment</h2><p>Payment form will load once you have finished editing the above information</p></div>
+      }
+    </Container>
+
+    </div>
     
   )
 
