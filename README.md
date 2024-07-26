@@ -29,7 +29,9 @@ Adam
 - [x] Passes not available tdon't get auto triggered e.g dinner pass nbot available select options
 - [ ] Allow change name / email.
 - [ ] Studewnt banner on purchase card
-- [ ] resp[]
+- [ ] Preferences Page
+- [ ] Return page from checkout
+
 Connor
 ------  
 - [ ] Add a video of the dancing man
