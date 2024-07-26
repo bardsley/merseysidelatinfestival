@@ -40,25 +40,8 @@ def get_ticket_number():
     return ticketnumber
 
 # put the corresponding data into the dynamodb table
-def update_ddb(data):
-    # create line items dict
-    line_items = []
-    for item in data[3]:
-        line_items.append({
-            'description':item['description'],
-            'amount_total':item['amount_total']
-        })
-
-    table.put_item(Item={
-        'email': data[0],      
-        'ticket_number': data[1],
-        'full_name':data[2],
-        'line_items': line_items,
-        'access':data[4],
-        'schedule': data[5],
-        'meal_options':data[6],
-        'ticket_used': data[7]
-    })
+def update_ddb(Item):
+    table.put_item(Item=Item)
     return
 
 # Main function to handle the event
@@ -73,12 +56,12 @@ def lambda_handler(event, context):
         CHECKOUT_SESSION_ID = ev_data['data']['object']['id']
                   
         # retrieve the full checkout session including the line items
+        #! catch error is checkout session does not exist
         response = stripe.checkout.Session.retrieve(CHECKOUT_SESSION_ID, expand=['line_items', 'line_items.data.price.product'])
 
         # process the line items and get the string of items purchased for gsheet
         access, _pass_type = process_line_items(response['line_items'])
 
-        full_name = response['custom_fields'][0]['text']['value']
         pass_type = _pass_type # will be a comma-seperate list of passes bought including if just an individual option
         
         payment_method  = 'Stripe' # the only method captured by this webhook
@@ -87,8 +70,10 @@ def lambda_handler(event, context):
         payout_estimate = amount-0.2-(amount*0.015) # estimate how much the payout will be
 
         # customer information to keep
-        email = response['customer_details']['email']
-        phone = response['customer_details']['phone']
+        ateendee_details = json.loads(response['metadata']['attendee'])
+        full_name = ateendee_details['name']
+        email     = response['customer_email']
+        phone     = ateendee_details['phone']
         
         purchase_date = str(datetime.datetime.utcfromtimestamp(response['created']))
         cs_id = CHECKOUT_SESSION_ID
@@ -102,7 +87,7 @@ def lambda_handler(event, context):
         Sunday_Party     = access[5]
 
         ticket_used = ''
-        meal           = response['metadata']['meal']
+        meal = json.loads(response['metadata']['preferences']) if 'preferences' in response['metadata'] else None
 
         # Put the information into the gsheet
         update_gs([full_name,
@@ -119,26 +104,30 @@ def lambda_handler(event, context):
                    Friday_Party, Saturday_Classes, Saturday_Dinner, Saturday_Party, Sunday_Classes, Sunday_Party,
                    ticket_used])
         
+        line_items = []
+        for item in response['line_items']:
+            line_items.append({
+                'prod_id':item['id'],
+                'description':item['description'],
+                'amount_total':item['amount_total']
+            })
+        
         # put the information into dynamodb table
-        update_ddb([email,
-                    ticket_number,
-                    full_name,
-                    response['line_items'],
-                    access,
-                    None,   # set meal_options and schedule to none as this information not collected at checkout
-                    meal,
-                    ticket_used])
+        update_ddb(Item={
+                'email': email,      
+                'ticket_number': ticket_number,
+                'full_name':full_name,
+                'line_items': line_items,
+                'access':access,
+                'schedule': None,
+                'meal_options':meal,
+                'ticket_used': ticket_used
+        })
         
         # send the email with these details
         sendemail(full_name,
                   email,
                   ticket_number,
                   response['line_items'])
-
-        # sendemail(response['custom_fields'][0]['text']['value'], 
-        #     response['customer_details']['email'],
-        #     ticket_number,
-        #     response['line_items']['data'][0]['description'],
-        #     1, price_as_str) 
             
     return True

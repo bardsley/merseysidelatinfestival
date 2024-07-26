@@ -16,9 +16,14 @@ export async function POST(request: Request) {
     if(ticket) {
       cookies().set('ticket', ticket, { secure: true })
       cookies().set('email', email, { secure: true })
-      
-    } 
+    } else {
+      const apiRequestUrl = `https://ux66cekzyiffxqjobe3xbyuk7y0nzruu.lambda-url.eu-west-2.on.aws?email=${email}`
+      const apiResponse = await fetch(apiRequestUrl, { method: 'GET',  headers: { 'Content-Type': 'application/json' }})
+      console.log("apiResponse", apiResponse)
+      message = `An email will be sent to ${email} if this has and tickets associated to it`
+    }
+
   }
-  redirect(`/preferences${ message ? `?message=${message}` : ''}`)
+  redirect(`/preferences${ message ? `?message=${message}&messageType=good` : ''}`)
   
 }

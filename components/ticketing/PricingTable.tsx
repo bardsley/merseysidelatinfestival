@@ -32,7 +32,9 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
     let initialOptions = selectedOptions
     days.forEach((day) => {
       passTypes.forEach((passType) => {
-        initialOptions[day][passType] = individualTickets[day][passType].isAvailable ? setTo : false
+        if(individualTickets[day][passType] && individualTickets[day][passType].isAvailable) {
+          initialOptions[day][passType] = setTo
+        }
       })
     })
     setSelectedOptions({...initialOptions})
@@ -52,14 +54,14 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
   const setDayPass = (day,setTo) => {
     // console.log(day,selectedOptions)
     let initialOptions = selectedOptions
-    Object.keys(initialSelectedOptions[day]).forEach((elm) => { if(individualTickets[day][elm].isAvailable) { initialOptions[day][elm] = setTo } })
+    Object.keys(initialSelectedOptions[day]).forEach((elm) => { if(individualTickets[day][elm] && individualTickets[day][elm].isAvailable) { initialOptions[day][elm] = setTo } })
     setSelectedOptions({...initialOptions})
   }
   const setTypePass = (type,setTo) => {
     // console.log(type,setTo)
     // console.log(type,selectedOptions,individualTickets,individualTickets)
     let initialOptions = selectedOptions
-    Object.keys(initialSelectedOptions).forEach((elm) => { if(individualTickets[elm][type].isAvailable) { initialOptions[elm][type] = setTo }})
+    Object.keys(initialSelectedOptions).forEach((elm) => { if(individualTickets[elm][type] && individualTickets[elm][type].isAvailable) { initialOptions[elm][type] = setTo }})
     setSelectedOptions({...initialOptions})
   }
 
@@ -157,7 +159,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
                 } as ICellProps
                 return (
                 
-                  individualTickets[day][passType].isAvailable ? (
+                  individualTickets[day][passType] && individualTickets[day][passType].isAvailable ? (
                     <td key={`${day}-${passType}`} className={cellClasses}>
                     {selectedOptions[day][passType]}
                     <Cell {...cellProps} />  

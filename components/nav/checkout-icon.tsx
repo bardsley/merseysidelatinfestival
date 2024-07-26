@@ -17,11 +17,12 @@ const countCart = (cart) => {
 }
 
 export const CartIcon = () => {
+  
   const [cart] = useState(() => {
     // getting stored value
-    const saved = localStorage.getItem("selectedOptions");
-    const initialValue = JSON.parse(saved);
-    return initialValue || false;
+    // const saved = ?  : JSON.stringify(false)
+    const initialValue =  typeof window!== "undefined" ? JSON.parse(localStorage.getItem("selectedOptions")) : 0;
+    return initialValue || 0;
   });
 
   useEffect(() => {
@@ -30,13 +31,13 @@ export const CartIcon = () => {
     }
   }, [cart]); 
 
-  return (
-    <Link href="/checkout" 
+  return cart ? (
+    <Link href="/checkout" suppressHydrationWarning
       className={`relative select-none hover:text-gold-400 text-base inline-block tracking-wide transition duration-150 ease-out hover:opacity-100 py-7 px-1 lg:px-2 whitespace-nowrap`}
     >
-      <span className="sr-only">Checkout</span>
+      <span suppressHydrationWarning className="sr-only">Checkout</span>
       <Icon data={{name: "BiCartAlt", color: "white", style: "regular", size: "medium"}} className="w-8 h-8"></Icon>
-      <span className="absolute right-0 bottom-1/2 rounded-full bg-chillired-700 w-6 h-6 flex items-center justify-center">{JSON.stringify(countCart(cart))}</span>
+      <span suppressHydrationWarning className="absolute right-0 bottom-1/2 rounded-full bg-chillired-700 w-6 h-6 flex items-center justify-center"  >{countCart(cart)}</span>
     </Link>
-  )
+  ) : null
  }
