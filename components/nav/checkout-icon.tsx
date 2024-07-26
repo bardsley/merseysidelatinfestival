@@ -30,7 +30,7 @@ export const CartIcon = () => {
     }
   }, [cart]); 
 
-  return (
+  return cart ? (
     <Link href="/checkout" 
       className={`relative select-none hover:text-gold-400 text-base inline-block tracking-wide transition duration-150 ease-out hover:opacity-100 py-7 px-1 lg:px-2 whitespace-nowrap`}
     >
@@ -38,5 +38,5 @@ export const CartIcon = () => {
       <Icon data={{name: "BiCartAlt", color: "white", style: "regular", size: "medium"}} className="w-8 h-8"></Icon>
       <span className="absolute right-0 bottom-1/2 rounded-full bg-chillired-700 w-6 h-6 flex items-center justify-center">{JSON.stringify(countCart(cart))}</span>
     </Link>
-  )
+  ) : null
  }
