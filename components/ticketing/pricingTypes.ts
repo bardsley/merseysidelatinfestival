@@ -6,8 +6,8 @@ export type Ticket = {
 };
 export type DayTickets = {
   Party: Ticket;
-  Classes: Ticket;
-  Dinner: Ticket;
+  Classes?: Ticket;
+  Dinner?: Ticket;
 };
 export type IndividualTickets = {
   Friday: DayTickets;

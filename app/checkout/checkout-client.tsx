@@ -10,7 +10,7 @@ import StripeForm from "./stripe"
 type fieldEntry = {name: string, label?: string, placeholder?: string, type?: string, value?: string | number, error?: string, width?: string  }
 
 export default function CheckoutClient() {
-  const [preferences, setPreferences] = useState([-1,-1,-1])
+  const [preferences, setPreferences] = useState({choices: [-1,-1,-1], dietary_requirements : { selected: [], other: ""}, seating_preference: []})
   const [selectedOptions, setSelectedOptions] = useState({} as any)
   const [stripeProducts,setStripeProducts] = useState(false as boolean | string[])
   const [userData, setUserData] = useState(false as any)
@@ -20,8 +20,15 @@ export default function CheckoutClient() {
   const yourDetailsFields: fieldEntry[] = [
     {name: 'name', placeholder: "Johnn Salsa", width: "w-80", label: "Full Name"},
     {name: 'email', placeholder: "johnny@salsa.com", type: "email", width: "w-96"},
+    {name: 'phone', placeholder: "0770912781367", width: "w-96"},
     {name: 'number_of_tickets', value: 1, type: "hidden"},
   ]
+
+  const nextStep = (step) => {
+    const newSteps = {...steps}
+    newSteps[step] = true
+    setSteps(newSteps)
+  }
 
   useEffect(() => {
     const loadedOptions = JSON.parse(localStorage.getItem("selectedOptions"))
@@ -45,7 +52,7 @@ export default function CheckoutClient() {
 
   const dinnerInfoRequired = selectedOptions && selectedOptions['Saturday'] && selectedOptions['Saturday']['Dinner']
   const stripeReady = stripeProducts && typeof stripeProducts === "object" && stripeProducts.length > 0
-  const dinnerInfoProvided = (!dinnerInfoRequired || (preferences && preferences.every((choice) => choice >= 0)))
+  const dinnerInfoProvided = (!dinnerInfoRequired || (preferences && preferences.choices && preferences.choices.every((choice) => choice >= 0)))
   return (
     <div className="">
       <Container size="small" width="medium" className=" text-white w-full py-0">
@@ -111,7 +118,7 @@ export default function CheckoutClient() {
               )
             })}
 
-            <button className="bg-chillired-400 px-6 py-2 rounded" onClick={() => setSteps({...steps,details:true})}>Continue</button>
+            <button className="bg-chillired-400 px-6 py-2 rounded" onClick={() => nextStep('details')}>Continue</button>
           </>)
       }
     </Container>
@@ -125,21 +132,29 @@ export default function CheckoutClient() {
       <p className="text-sm">If you don&apos;t know the answer to some of these things you can always update preferences later</p>
       <MealPreferences preferences={preferences} setPreferences={setPreferences}></MealPreferences>
       <button className="bg-chillired-400 px-6 py-2 rounded" onClick={() => setSteps({...steps,meal:true})}>Continue</button>
-      </> : steps.meal ? (<><p>Meal details entered</p><button className="mt-3 border px-6 py-1 border-white rounded-md" onClick={() => setSteps({...steps,meal:false})}>Edit</button></>) : "Complete attendee details first " }
+      </> : steps.meal ? (<><p>Meal details entered</p><button className="mt-3 border px-6 py-1 border-white rounded-md" onClick={() => nextStep("meal")}>Edit</button></>) : "Complete attendee details first " }
        </>
     </Container>) : null }
     
     <Container size="small" width="medium" className=" text-white w-full rounded-3xl border border-richblack-700 bg-richblack-500 py-0 md:pt-6 md:pb-16 px-3 md:px-0 flex flex-col ">
       <h2 className="text-xl flex items-center -ml-6">
-      <Icon data={{name: "BiPound", color: "green", style: "circle", size: "medium"}} className="mr-4 border border-richblack-700"></Icon>
+      <Icon data={{name: "BiPound", color: "green", style: "circle", size: "medium"}} className="mr-2 border border-richblack-700"></Icon>
         Payment
       </h2>
-      {dinnerInfoProvided && userData.email && stripeReady && steps.details && steps.meal ?
-        <StripeForm email={userData.email} products={stripeProducts}></StripeForm>
+      {dinnerInfoProvided && userData.email && stripeReady && steps.details && ( steps.meal || !dinnerInfoRequired)  ?
+        <StripeForm userData={userData} preferences={preferences} products={stripeProducts}></StripeForm>
         : <div className="text-center"><h2 className="text-2xl">Not Ready for payment</h2><p>Payment form will load once you have finished editing the above information</p></div>
       }
     </Container>
 
+    { process.env.NODE_ENV == 'development' ? <>
+      <hr />
+      <h2>Debug Ignore below the line</h2>
+      <div className='flex'>
+        <pre>Preferences -- {JSON.stringify(preferences,null,2)}</pre>
+        <pre>userData -- {JSON.stringify(userData,null,2)}</pre>
+      </div>
+      </> : null }
     </div>
     
   )

@@ -28,7 +28,8 @@ Adam
 - [x] Proect Main branch - Can't commit directly into main have to PR
 - [x] Passes not available tdon't get auto triggered e.g dinner pass nbot available select options
 - [ ] Allow change name / email.
-
+- [ ] Studewnt banner on purchase card
+- [ ] resp[]
 Connor
 ------  
 - [ ] Add a video of the dancing man

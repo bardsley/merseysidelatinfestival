@@ -36,7 +36,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
                       defaultChecked={preferences && preferences[courseIdx] == optionIdx}
                       // checked={preferences[courseIdx] == optionIdx}
                       className="h-4 w-4 rounded-full border-gray-700 text-indigo-600 focus:ring-indigo-600"
-                      onChange={() => setPreferences([...preferences.slice(0,courseIdx),optionIdx,...preferences.slice(courseIdx+1)])
+                      onChange={() => setPreferences({...preferences, choices:[...preferences.choices.slice(0,courseIdx),optionIdx,...preferences.choices.slice(courseIdx+1)]})
                         
                       }
                     />
@@ -57,6 +57,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
           onChange={(event) => {
             const showAdditional = event.target.value == 'other' ? true : false
             setShowAdditionalDiet(showAdditional)
+            setPreferences({...preferences, dietary_requirements: {...preferences.dietary_requirements, selected: event.target.value}})
           }}
           className="my-2 block rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
 
@@ -74,6 +75,9 @@ const MealPreferences = ({preferences,setPreferences}) =>{
             id="comment"
             name="comment"
             rows={2}
+            onChange={(event) => {
+              setPreferences({...preferences, dietary_requirements: {...preferences.dietary_requirements, other: event.target.value}})
+            }}
             className="block w-full max-w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             placeholder='Please add details here'
           />
@@ -94,6 +98,9 @@ const MealPreferences = ({preferences,setPreferences}) =>{
             type="text"
             placeholder="171653467, 12987619"
             aria-describedby="seating-preference"
+            onChange={(event) => {
+              setPreferences({...preferences, seating_preference: event.target.value.split(',')})
+            }}
             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           />
         </div>
