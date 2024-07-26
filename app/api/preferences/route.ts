@@ -8,16 +8,18 @@ export async function POST(request: Request) {
   const email = cookies().get('email')
   // console.log(data)
   const courseInfo = Array.from(data.entries()).filter((item)=>{ return /course/.test(item[0]) ? true : false }).map((item)=>{ return parseInt(item[1].toString()) })
+  const dietChoices = Array.from(data.entries()).filter((item)=>{ return /selected\[.*\]/.test(item[0]) ? true : false }).map((item)=>{ return item[0].replace('selected[','').replace(']','') })
+  console.log("Diet",dietChoices)
   const apiRequestBody = {
     ticket_number: parseInt(ticket.value), //TODO should be a string eventually
     email: email.value,
     preferences: {
       choices: courseInfo,
       dietary_requirements: {
-        selected: [data.get('dietary-requirements')],
+        selected: [...dietChoices],
         other: data.get('other'),
       },
-      seating_preference: data.get('seating_preference').toString().split(',')
+      seating_preference: data.get('seating_preference').toString().split(',').filter((item)=>{ return item.length > 0}),
     }
   }
   console.log("POST -> Conor: ",apiRequestBody)

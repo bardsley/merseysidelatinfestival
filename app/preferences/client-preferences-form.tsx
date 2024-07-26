@@ -38,8 +38,6 @@ export default function ClientPreferencesForm(props) {
       }, 3000)
     }
   }, [])
-       
-        
 
   if(hasCookie) {
       return (
@@ -55,13 +53,12 @@ export default function ClientPreferencesForm(props) {
               <form action="/api/session?_method=DELETE" method="POST"><button className=" px-3 py-1 bg-chillired-500 rounded text-xs block">Change Ticket</button></form>
             </div>
           </div>
-          {/* {JSON.stringify(preferences)} */}
           {preferences && typeof preferences === 'object' ? (
             <form action="/api/preferences" method="POST" encType="multipart/form-data">
             <MealPreferences preferences={preferences} setPreferences={setPreferences}></MealPreferences>
               <button className="py-3 px-4 bg-chillired-500 rounded-lg">Save Preferences</button>
             </form>
-          ) : preferences ? preferences : (<div>Loading Preferences...</div>) }
+          ) : preferences ? preferences : (<div className="m-2 ">Loading Preferences...</div>) }
         </>
       )
   } else {
