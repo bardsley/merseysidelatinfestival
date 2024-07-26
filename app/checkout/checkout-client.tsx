@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from "react";
 import {getBestCombination,priceIds } from "../../components/ticketing/pricingUtilities"
-import MealPreferences from "../../components/preferences/MealPreferences"
+import MealPreferences, { blankPreferences } from "../../components/preferences/MealPreferences"
 import {Container} from "../../components/layout/container"
 import {Icon} from "../../components/icon"
 import { ExclamationCircleIcon } from '@heroicons/react/20/solid'
@@ -10,7 +10,7 @@ import StripeForm from "./stripe"
 type fieldEntry = {name: string, label?: string, placeholder?: string, type?: string, value?: string | number, error?: string, width?: string  }
 
 export default function CheckoutClient() {
-  const [preferences, setPreferences] = useState({choices: [-1,-1,-1], dietary_requirements : { selected: [], other: ""}, seating_preference: []})
+  const [preferences, setPreferences] = useState(blankPreferences)
   const [selectedOptions, setSelectedOptions] = useState({} as any)
   const [stripeProducts,setStripeProducts] = useState(false as boolean | string[])
   const [userData, setUserData] = useState(false as any)

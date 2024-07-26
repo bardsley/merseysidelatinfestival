@@ -1,6 +1,6 @@
 import Layout from "../../components/layout/layout";
 import {Container} from "../../components/layout/container";
-import ClientForm from "./client-form";
+import ClientPreferencesForm from "./client-preferences-form";
 import { cookies } from "next/headers"
 
 export default async function PreferencesPage() {
@@ -14,7 +14,7 @@ export default async function PreferencesPage() {
     <Layout>
       <Container className="text-white">
         <h1 className="text-lg font-bold">Preferences</h1>
-        <ClientForm hasCookie={hasCookie} ticket={ticket} email={email}></ClientForm>
+        <ClientPreferencesForm hasCookie={hasCookie} ticket={ticket} email={email}></ClientPreferencesForm>
       </Container>
     </Layout>
   );

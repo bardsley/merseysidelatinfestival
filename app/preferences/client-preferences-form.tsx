@@ -6,7 +6,7 @@ import { TicketIcon } from '@heroicons/react/24/solid'
 import { useEffect, useState } from "react";
 import MealPreferences from "../../components/preferences/MealPreferences"
 
-export default function ClientForm(props) {
+export default function ClientPreferencesForm(props) {
   const {hasCookie, ticket, email } = props
   const [preferences, setPreferences] = useState(false as boolean | string | any)
   const [messageShown, setMessageShown] = useState(true)
@@ -28,7 +28,6 @@ export default function ClientForm(props) {
         const fetchURL = `//${process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL}/api/preferences?email=${email.value}&ticket_number=${ticket.value}`
         fetch(fetchURL, {method: "GET",}).then(res => {
         res.json().then(data => {
-          console.log("Preferences",data)
           data.error ? setPreferences(data.error) : setPreferences(data.preferences)
         })
       })

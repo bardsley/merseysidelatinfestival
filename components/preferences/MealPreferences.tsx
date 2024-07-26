@@ -1,16 +1,34 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
-const courses = [
+export const courses = [
   { name: "Starter", options: ["Vegan Tart", "Meat on Toast"]},
   { name: "Main", options: ["Pasta", "Meat and Veg"]},
   { name: "Desert", options: ["Fruit Tart", "Gelatine"]},
 ]
 
+export const blankPreferences = {choices: [-1,-1,-1], dietary_requirements : { selected: [], other: ""}, seating_preference: []}
 const dietaryRequirements = ["None","Vegan","Gluten free","Lactose free","Nut alergy","Kosher","Halal","Other"]
 const veganChoices = Object.keys(courses).map((key) => courses[key].options[0])
+
 const MealPreferences = ({preferences,setPreferences}) =>{
 
-  return (
+  const checkInputOk = (preferences) => {
+    const choicesValid = preferences.choices && preferences.choices.length > 0 // Choices is and array of stuff
+    const seatingValid = preferences.seating_preference && preferences.seating_preference.length >= 0 // Preferences is an array of stuff
+    const dietValid = preferences.dietary_requirements && Object.keys(preferences.dietary_requirements).length > 0 // Dietary requirements is a dict of stuff
+    && preferences.dietary_requirements.selected && preferences.dietary_requirements.selected.length >= 0 // Dietary requirements selected is an array or empty array
+    && (!preferences.dietary_requirements.selected.includes('other') || preferences.dietary_requirements.other) // Dietary requirements other is a string or empty string
+    return choicesValid && seatingValid && dietValid
+  }
+  
+  useEffect(() => {
+    if(!checkInputOk(preferences)) {
+      console.log("Preferences not ok, Reseting")
+      setPreferences(blankPreferences)
+    }
+  })
+
+  return checkInputOk(preferences) ? (
     <>
       <fieldset className="my-6 max-w-full">
         <legend className="text-base font-semibold leading-6 text-white">Course</legend>
@@ -52,7 +70,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
         <legend className="text-base font-semibold leading-6 text-white">Other Specific Dietary Requirements</legend>
         <p className='mb-3 text-sm'>Please note the food choices above, {veganChoices.join(', ').toLowerCase()} are vegan</p>
 
-        <select name="dietary-requirements" id="dietary-requirements" defaultValue={preferences.dietary_requirements.selected}
+        <select name="dietary-requirements" id="dietary-requirements" multiple defaultValue={preferences.dietary_requirements.selected}
           onChange={(event) => {
             // const showAdditional = event.target.value == 'other' ? true : false
             // setShowAdditionalDiet(showAdditional)
@@ -117,6 +135,12 @@ const MealPreferences = ({preferences,setPreferences}) =>{
         <pre>Preferences -- {JSON.stringify(preferences,null,2)}</pre>
       </div>
       </> : null } */}
+    </>
+  ) : (
+    <>
+      <p className='text-sm text-gray-300'>
+      Please select a meal preference to continue
+      </p>
     </>
   )
 }
