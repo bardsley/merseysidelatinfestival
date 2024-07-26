@@ -31,6 +31,7 @@ Adam
 - [ ] Studewnt banner on purchase card
 - [ ] Preferences Page
 - [ ] Return page from checkout
+- [ ] Clear cache on purchase
 
 Connor
 ------  
