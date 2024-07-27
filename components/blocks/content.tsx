@@ -12,6 +12,7 @@ import CountdownElement, { CountdownElementTemplate } from "../content/countdown
 import {  RichTextTemplate } from "@tinacms/schema-tools"
 
 const components = { BuyButton, CountdownElement }
+
 const proseClasses = "prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl \
 prose-a:text-chillired-600 hover:prose-a:text-chillired-800 \
 prose-blockquote:border prose-blockquote:border-richblack-700 prose-blockquote:p-6 prose-blockquote:rounded-md prose-blockquote:text-xl prose-blockquote:m-3 prose-blockquote:bg-richblack-500 \
