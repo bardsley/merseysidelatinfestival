@@ -79,6 +79,7 @@ export default function CheckoutClient() {
           <>
             Name: {userData.name} <br/>
             Email: {userData.email}<br/>
+            Phone: {userData.phone}<br/>
             <button className="mt-3 border px-6 py-1 border-white rounded-md" onClick={() => setSteps({...steps,details:false})}>Edit</button>
           </>) :
           (<>
@@ -104,7 +105,7 @@ export default function CheckoutClient() {
                       defaultValue={userData[field.name] || null}
                       aria-invalid="true"
                       aria-describedby={`${field.name}-error`}
-                      onBlur={(e) => {
+                      onChange={(e) => {
                         setUserData({...userData, [field.name]: e.target.value})
                       }}
                       className={`block rounded-md border-0 py-1.5 pr-10 ring-1 ring-inset focus:ring-2 focus:ring-inset text-gray-900 sm:text-sm sm:leading-6 max-w-full ${statusClass} ${otherClass}`}
@@ -131,8 +132,8 @@ export default function CheckoutClient() {
       { steps.details && !steps.meal ? <>
       <p className="text-sm">If you don&apos;t know the answer to some of these things you can always update preferences later</p>
       <MealPreferences preferences={preferences} setPreferences={setPreferences}></MealPreferences>
-      <button className="bg-chillired-400 px-6 py-2 rounded" onClick={() => setSteps({...steps,meal:true})}>Continue</button>
-      </> : steps.meal ? (<><p>Meal details entered</p><button className="mt-3 border px-6 py-1 border-white rounded-md" onClick={() => nextStep("meal")}>Edit</button></>) : "Complete attendee details first " }
+      <button className="bg-chillired-400 px-6 py-2 rounded" onClick={() => nextStep("meal")}>Continue</button>
+      </> : steps.meal ? (<><p>Meal details entered</p><button className="mt-3 border px-6 py-1 border-white rounded-md" onClick={() => setSteps({...steps,meal:false})}>Edit</button></>) : "Complete attendee details first " }
        </>
     </Container>) : null }
     
@@ -146,7 +147,7 @@ export default function CheckoutClient() {
         : <div className="text-center"><h2 className="text-2xl">Not Ready for payment</h2><p>Payment form will load once you have finished editing the above information</p></div>
       }
     </Container>
-    { process.env.NODE_ENV == 'development' && process.env.INTERNAL_DEBUG == 'true' ? <>
+    { process.env.NODE_ENV == 'development' && process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' ? <>
       <hr />
       <h2>Debug Ignore below the line</h2>
       <div className='flex'>

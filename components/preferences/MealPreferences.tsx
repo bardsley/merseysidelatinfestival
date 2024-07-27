@@ -17,7 +17,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
   const dietValid = (preferences) => preferences.dietary_requirements && Object.keys(preferences.dietary_requirements).length > 0 // Dietary requirements is a dict of stuff
     && preferences.dietary_requirements.selected && preferences.dietary_requirements.selected.length >= 0 // Dietary requirements selected is an array or empty array
   const checkInputOk = (preferences) => {
-    process.env.INTERNAL_DEBUG == 'true' && console.log(choicesValid(preferences),seatingValid(preferences),dietValid(preferences))
+    process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' && console.log(choicesValid(preferences),seatingValid(preferences),dietValid(preferences))
     return choicesValid(preferences) && seatingValid(preferences) && dietValid(preferences)
   }
   
@@ -82,13 +82,13 @@ const MealPreferences = ({preferences,setPreferences}) =>{
         <legend className="text-base font-semibold leading-6 text-white">Other Specific Dietary Requirements</legend>
         <p className='mb-3 text-sm'>Please note the food choices above, {veganChoices.join(', ').toLowerCase()} are vegan</p>
 
-        <ul className='grid grid-cols-2 md:grid-cols-4 gap-2'>
+        <ul className='grid grid-cols-2 md:grid-cols-4 gap-2 mb-3'>
         {dietaryRequirements.map((diet) => {
-          const checked = preferences.dietary_requirements.selected.includes(diet)
-          const value = diet.toLowerCase().replaceAll(' ','-')
+          const dietSlug = diet.toLowerCase().replaceAll(' ','-')
+          const checked = preferences.dietary_requirements.selected.includes(dietSlug)
           return (
             <li key={diet}>
-              <input className="rounded mr-2" type="checkbox" name={`selected[${diet}]`} id={`selected[${diet}]`} defaultChecked={checked} value={value} onChange={(event) => {
+              <input className="rounded mr-2" type="checkbox" name={`selected[${dietSlug}]`} id={`selected[${dietSlug}]`} defaultChecked={checked} value={dietSlug} onChange={(event) => {
                 setDietTo(event.target.value,event.target.checked)}}
                 />{' '}
               <label htmlFor={`selected[${diet}]`} className='capitalize'>{diet}</label> 
@@ -99,7 +99,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
 
 
         { preferences.dietary_requirements.selected.includes('other') ? (
-          <div className="mt-2">
+          <div className="mt-6">
           <textarea
             id="other"
             name="other"
@@ -139,8 +139,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
         Whilst we will endeavour to match everyone who sets a preference this cannot be guaranteed
         </p>
       </div>
-      
-      { process.env.NODE_ENV == 'development' && process.env.INTERNAL_DEBUG == 'true' ? <>
+      { process.env.NODE_ENV == 'development' && process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' ? <>
       <hr />
       <h2>Debug Ignore below the line</h2>
       <div className='flex'>
