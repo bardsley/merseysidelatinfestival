@@ -38,7 +38,7 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
             className="relative flex-shrink-0 md:w-2/5 flex justify-center order-first md:hidden md:order-last"
           >
             <Image
-              className="w-full h-auto max-w-full rounded-lg mb-3"
+              className={`w-full h-auto max-w-full rounded-lg mb-3 ${/.*\.svg/.test(data.image.src) ? "p-12 sm:p-24 md:p-0" : "nothing"}`}
               style={{ objectFit: "cover" }}
               alt={data.image.alt}
               src={data.image.src}
@@ -102,7 +102,7 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
             {data.image && (
               <div
                 data-tina-field={tinaField(data.image, "src")}
-                className="relative flex-shrink-0 md:w-2/5 flex justify-center order-first md:order-last"
+                className={`relative flex-shrink-0 md:w-2/5 flex justify-center order-first md:order-last`}
               >
                 <Image
                   className="w-full h-auto max-w-full rounded-lg hidden md:block"
