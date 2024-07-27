@@ -15,5 +15,31 @@ const BuyButton = (props: {description: TinaMarkdownContent, buttonid: string}) 
   )
 }
 
+export const BuyButtonTemplate = {
+  name: "BuyButton",
+  label: "BuyButton",
+  fields: [
+    {
+      name: "description",
+      label: "Description",
+      type: "rich-text",
+    },
+    {
+      name: "buttonid",
+      label: "Buy Button Type",
+      type: 'string',
+      options: [
+        {
+          value: 'buy_btn_1PX2hYEWkmdeWsQPpM9k8WFI',
+          label: 'Student',
+        },
+        {
+          value: 'buy_btn_1PX2eZEWkmdeWsQPvSMRezVD',
+          label: 'Normal',
+        },
+      ],
+    }
+  ],
+}
 
 export default BuyButton;

@@ -2607,7 +2607,7 @@
     typescript "^5.5.3"
     zod "^3.14.3"
 
-"@tinacms/cli@^1.5.34":
+"@tinacms/cli@^1.5.52":
   version "1.5.52"
   resolved "https://registry.yarnpkg.com/@tinacms/cli/-/cli-1.5.52.tgz#3e9ec8265c5e9047e975462b025a06b312b9dbe0"
   integrity sha512-8Q1291mold5Lz6TktWKng5ftRQx70jb3pBTodaQ/pEjFJw08zYySKPqrnOtwVwK2UOjrfAfNa62e34lm34IE0g==
@@ -9115,6 +9115,13 @@ react-color@^2.17.3:
     prop-types "^15.5.10"
     reactcss "^1.2.0"
     tinycolor2 "^1.4.1"
+
+react-countdown@^2.3.5:
+  version "2.3.5"
+  resolved "https://registry.yarnpkg.com/react-countdown/-/react-countdown-2.3.5.tgz#70c035b5cbc7e8fdb4ad91fe5f44afd7a7933a68"
+  integrity sha512-K26ENYEesMfPxhRRtm1r+Pf70SErrvW3g4CArLi/x6MPFjgfDFYePT4UghEj8p2nI0cqVV7/JjDgjyr//U60Og==
+  dependencies:
+    prop-types "^15.7.2"
 
 react-datetime@^2.16.3:
   version "2.16.3"
