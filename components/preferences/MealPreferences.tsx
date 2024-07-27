@@ -17,13 +17,13 @@ const MealPreferences = ({preferences,setPreferences}) =>{
   const dietValid = (preferences) => preferences.dietary_requirements && Object.keys(preferences.dietary_requirements).length > 0 // Dietary requirements is a dict of stuff
     && preferences.dietary_requirements.selected && preferences.dietary_requirements.selected.length >= 0 // Dietary requirements selected is an array or empty array
   const checkInputOk = (preferences) => {
-    console.log(choicesValid(preferences),seatingValid(preferences),dietValid(preferences))
+    process.env.INTERNAL_DEBUG == 'true' && console.log(choicesValid(preferences),seatingValid(preferences),dietValid(preferences))
     return choicesValid(preferences) && seatingValid(preferences) && dietValid(preferences)
   }
   
   useEffect(() => {
     if(!checkInputOk(preferences)) {
-      console.log("Preferences not ok, Reseting")
+      console.error("Preferences not ok, Reseting broken preferences to defaults")
       const origPreferences = deepCopy(preferences)
       const newPreferences = {
         choices: choicesValid(preferences)? origPreferences.choices : blankPreferences.choices, 
@@ -89,7 +89,6 @@ const MealPreferences = ({preferences,setPreferences}) =>{
           return (
             <li key={diet}>
               <input className="rounded mr-2" type="checkbox" name={`selected[${diet}]`} id={`selected[${diet}]`} defaultChecked={checked} value={value} onChange={(event) => {
-                console.log(event.target.value)
                 setDietTo(event.target.value,event.target.checked)}}
                 />{' '}
               <label htmlFor={`selected[${diet}]`} className='capitalize'>{diet}</label> 
@@ -141,7 +140,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
         </p>
       </div>
       
-      { process.env.NODE_ENV == 'development' && process.env.DEBUG == 'true' ? <>
+      { process.env.NODE_ENV == 'development' && process.env.INTERNAL_DEBUG == 'true' ? <>
       <hr />
       <h2>Debug Ignore below the line</h2>
       <div className='flex'>

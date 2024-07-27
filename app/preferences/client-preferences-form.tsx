@@ -9,11 +9,12 @@ import MealPreferences from "../../components/preferences/MealPreferences"
 export default function ClientPreferencesForm(props) {
   const {hasCookie, ticket, email } = props
   const [preferences, setPreferences] = useState(false as boolean | string | any)
+  const [error, setError] = useState(false as boolean | string)
   const [messageShown, setMessageShown] = useState(true)
   const params = useSearchParams()
   
-  const message = params.get('message')
-  const messageType = params.get('messageType')
+  const message = params.get('message') || error
+  const messageType = params.get('messageType') ? params.get('messageType') : error ? 'bad' : 'good'
 
   const messageClassesBase = "message py-2 pl-4 pr-2 text-white rounded-md flex justify-between items-center transition ease-in-out delay-150 duration-500"
   const messageClassType = messageType =='good' ? 'bg-green-600' : 'bg-red-600'
@@ -28,7 +29,8 @@ export default function ClientPreferencesForm(props) {
         const fetchURL = `//${process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL}/api/preferences?email=${email.value}&ticket_number=${ticket.value}`
         fetch(fetchURL, {method: "GET",}).then(res => {
         res.json().then(data => {
-          data.error ? setPreferences(data.error) : setPreferences(data.preferences)
+          console.log("data.error",data.error)
+          data.error ? setError(data.error) : setPreferences(data.preferences)
         })
       })
     }
@@ -53,6 +55,7 @@ export default function ClientPreferencesForm(props) {
               <form action="/api/session?_method=DELETE" method="POST"><button className=" px-3 py-1 bg-chillired-500 rounded text-xs block">Change Ticket</button></form>
             </div>
           </div>
+          {/* {JSON.stringify(preferences)} */}
           {preferences && typeof preferences === 'object' ? (
             <form action="/api/preferences" method="POST" encType="multipart/form-data">
             <MealPreferences preferences={preferences} setPreferences={setPreferences}></MealPreferences>

@@ -146,7 +146,7 @@ export default function CheckoutClient() {
         : <div className="text-center"><h2 className="text-2xl">Not Ready for payment</h2><p>Payment form will load once you have finished editing the above information</p></div>
       }
     </Container>
-    { process.env.NODE_ENV == 'development' && process.env.DEBUG == 'true' ? <>
+    { process.env.NODE_ENV == 'development' && process.env.INTERNAL_DEBUG == 'true' ? <>
       <hr />
       <h2>Debug Ignore below the line</h2>
       <div className='flex'>

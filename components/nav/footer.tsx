@@ -143,7 +143,7 @@ export default function Footer() {
           )}
         />
       </Container>
-      { process.env.NODE_ENV == 'development' && process.env.DEBUG == 'true' ? <>
+      { process.env.NODE_ENV == 'development' && process.env.INTERNAL_DEBUG == 'true' ? <>
       <hr />
       <h2>Debug Ignore below the line</h2>
       <div className='flex'>
