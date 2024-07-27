@@ -10,19 +10,27 @@ import { Section } from "../layout/section";
 import BuyButton from "../content/buybutton";
 
 const components = { BuyButton }
+const proseClasses = "prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl \
+prose-a:text-chillired-600 hover:prose-a:text-chillired-800 \
+prose-blockquote:border prose-blockquote:border-richblack-700 prose-blockquote:p-6 prose-blockquote:rounded-md prose-blockquote:text-xl prose-blockquote:m-3 prose-blockquote:bg-richblack-500 \
+prose-p:mb-3 \
+prose-strong:font-semibold \
+prose-ul:list-disc prose-ul:list-inside prose-ol:list-decimal prose-ol:list-inside prose-li:pl-3 \
+"
 
 export const Content = ({ data }: { data: PageBlocksContent }) => {
+  const className = data.textsize && data.textsize !== 'default' 
+    ? `prose-${data.textsize}`
+    : data.color === "primary" ? `prose-primary` : `dark:prose-dark`
   return (
     <Section color={data.color}>
       <Container
-        className={`prose prose-lg ${
-          data.color === "primary" ? `prose-primary` : `dark:prose-dark`
-        }`}
+        className={[className,proseClasses].join(" ")}
         data-tina-field={tinaField(data, "body")}
-        size="large"
+        size={data.padding || "large"}
         width={data.width || 'medium'}  
       >
-        <TinaMarkdown content={data.body} components={components}/>
+        <TinaMarkdown content={data.body} components={components} />
       </Container>
     </Section>
   );
@@ -89,6 +97,28 @@ export const contentBlockSchema: Template = {
         { label: "Default", value: "default" },
         { label: "Tint", value: "tint" },
         { label: "Primary", value: "primary" },
+      ],
+    },
+    {
+      type: "string",
+      label: "Padding",
+      name: "padding",
+      options: [
+        { label: "Small", value: "small" },
+        { label: "Medium", value: "medium" },
+        { label: "Large", value: "large" },
+      ],
+    },
+    {
+      type: "string",
+      label: "Text Size",
+      name: "textsize",
+      options: [
+        { label: "Default", value: "default" },
+        { label: "Small", value: "sm" },
+        { label: "Medium", value: "base" },
+        { label: "Large", value: "lg" },
+        { label: "XL", value: "xl" },
       ],
     },
   ],

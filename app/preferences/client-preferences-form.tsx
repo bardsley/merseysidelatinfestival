@@ -67,7 +67,7 @@ export default function ClientPreferencesForm(props) {
   } else {
     return (
       <>
-        <p>To set preference please give us the details of the Ticket</p>
+        <p>To set preferences please give us the details of the Ticket</p>
         <TicketCheck></TicketCheck>
       </>
     )
