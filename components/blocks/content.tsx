@@ -91,5 +91,27 @@ export const contentBlockSchema: Template = {
         { label: "Primary", value: "primary" },
       ],
     },
+    {
+      type: "string",
+      label: "Padding",
+      name: "padding",
+      options: [
+        { label: "Small", value: "small" },
+        { label: "Medium", value: "medium" },
+        { label: "Large", value: "large" },
+      ],
+    },
+    {
+      type: "string",
+      label: "Text Size",
+      name: "textsize",
+      options: [
+        { label: "Default", value: "default" },
+        { label: "Small", value: "sm" },
+        { label: "Medium", value: "base" },
+        { label: "Large", value: "lg" },
+        { label: "XL", value: "xl" },
+      ],
+    },
   ],
 };
