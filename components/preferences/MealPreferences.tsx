@@ -1,16 +1,46 @@
-import React from 'react'
-
-const courses = [
+import React, { useEffect } from 'react'
+import { deepCopy } from '../../lib/useful'
+export const courses = [
   { name: "Starter", options: ["Vegan Tart", "Meat on Toast"]},
   { name: "Main", options: ["Pasta", "Meat and Veg"]},
   { name: "Desert", options: ["Fruit Tart", "Gelatine"]},
 ]
 
-const dietaryRequirements = ["None","Vegan","Gluten free","Lactose free","Nut alergy","Kosher","Halal","Other"]
+export const blankPreferences = {choices: [-1,-1,-1], dietary_requirements : { selected: [], other: ""}, seating_preference: []}
+const dietaryRequirements = ["vegan","gluten free","lactose free","nut alergy","kosher","halal","other"]
 const veganChoices = Object.keys(courses).map((key) => courses[key].options[0])
+
 const MealPreferences = ({preferences,setPreferences}) =>{
 
-  return (
+  const choicesValid = (preferences) => preferences.choices && preferences.choices.length > 0 // Choices is and array of stuff 
+  const seatingValid = (preferences) => preferences.seating_preference && preferences.seating_preference.length >= 0 // Preferences is an array of stuff
+  const dietValid = (preferences) => preferences.dietary_requirements && Object.keys(preferences.dietary_requirements).length > 0 // Dietary requirements is a dict of stuff
+    && preferences.dietary_requirements.selected && preferences.dietary_requirements.selected.length >= 0 // Dietary requirements selected is an array or empty array
+  const checkInputOk = (preferences) => {
+    process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' && console.log(choicesValid(preferences),seatingValid(preferences),dietValid(preferences))
+    return choicesValid(preferences) && seatingValid(preferences) && dietValid(preferences)
+  }
+  
+  useEffect(() => {
+    if(!checkInputOk(preferences)) {
+      console.error("Preferences not ok, Reseting broken preferences to defaults")
+      const origPreferences = deepCopy(preferences)
+      const newPreferences = {
+        choices: choicesValid(preferences)? origPreferences.choices : blankPreferences.choices, 
+        dietary_requirements : dietValid(preferences)? origPreferences.dietary_requirements : blankPreferences.dietary_requirements,
+        seating_preference: seatingValid(preferences)? origPreferences.seating_preference : blankPreferences.seating_preference
+      }
+      setPreferences(newPreferences)
+    }
+  })
+
+  const setDietTo = (diet,setTo) => {
+    const currentDietChoices = deepCopy(preferences.dietary_requirements.selected)
+    const newDietChoices = setTo? [...currentDietChoices,diet] : currentDietChoices.filter((choice) => choice!= diet)
+    setPreferences({...preferences, dietary_requirements: {...preferences.dietary_requirements, selected: newDietChoices}})
+  }
+
+  return checkInputOk(preferences) ? (
     <>
       <fieldset className="my-6 max-w-full">
         <legend className="text-base font-semibold leading-6 text-white">Course</legend>
@@ -52,24 +82,24 @@ const MealPreferences = ({preferences,setPreferences}) =>{
         <legend className="text-base font-semibold leading-6 text-white">Other Specific Dietary Requirements</legend>
         <p className='mb-3 text-sm'>Please note the food choices above, {veganChoices.join(', ').toLowerCase()} are vegan</p>
 
-        <select name="dietary-requirements" id="dietary-requirements" defaultValue={preferences.dietary_requirements.selected}
-          onChange={(event) => {
-            // const showAdditional = event.target.value == 'other' ? true : false
-            // setShowAdditionalDiet(showAdditional)
-            setPreferences({...preferences, dietary_requirements: {...preferences.dietary_requirements, selected: event.target.value}})
-          }}
-          className="my-2 block rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+        <ul className='grid grid-cols-2 md:grid-cols-4 gap-2 mb-3'>
+        {dietaryRequirements.map((diet) => {
+          const dietSlug = diet.toLowerCase().replaceAll(' ','-')
+          const checked = preferences.dietary_requirements.selected.includes(dietSlug)
+          return (
+            <li key={diet}>
+              <input className="rounded mr-2" type="checkbox" name={`selected[${dietSlug}]`} id={`selected[${dietSlug}]`} defaultChecked={checked} value={dietSlug} onChange={(event) => {
+                setDietTo(event.target.value,event.target.checked)}}
+                />{' '}
+              <label htmlFor={`selected[${diet}]`} className='capitalize'>{diet}</label> 
+            </li>
+          )
+        })}
+        </ul>
 
-          {dietaryRequirements.map((diet) => {
-            return (
-              <option key={diet} value={diet.toLowerCase().replaceAll(' ','-')}>{diet}</option>
-            )
-          } )}
 
-        </select>
-
-        { preferences.dietary_requirements.selected == 'other' ? (
-          <div className="mt-2">
+        { preferences.dietary_requirements.selected.includes('other') ? (
+          <div className="mt-6">
           <textarea
             id="other"
             name="other"
@@ -109,14 +139,19 @@ const MealPreferences = ({preferences,setPreferences}) =>{
         Whilst we will endeavour to match everyone who sets a preference this cannot be guaranteed
         </p>
       </div>
-      
-      {/* { process.env.NODE_ENV == 'development' ? <>
+      { process.env.NODE_ENV == 'development' && process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' ? <>
       <hr />
       <h2>Debug Ignore below the line</h2>
       <div className='flex'>
         <pre>Preferences -- {JSON.stringify(preferences,null,2)}</pre>
       </div>
-      </> : null } */}
+      </> : null }
+    </>
+  ) : (
+    <>
+      <p className='text-sm text-gray-300'>
+      Please select a meal preference to continue
+      </p>
     </>
   )
 }

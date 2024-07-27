@@ -8,16 +8,18 @@ export async function POST(request: Request) {
   const email = cookies().get('email')
   // console.log(data)
   const courseInfo = Array.from(data.entries()).filter((item)=>{ return /course/.test(item[0]) ? true : false }).map((item)=>{ return parseInt(item[1].toString()) })
+  const dietChoices = Array.from(data.entries()).filter((item)=>{ return /selected\[.*\]/.test(item[0]) ? true : false }).map((item)=>{ return item[0].replace('selected[','').replace(']','') })
+  console.log("Diet",dietChoices)
   const apiRequestBody = {
     ticket_number: parseInt(ticket.value), //TODO should be a string eventually
     email: email.value,
     preferences: {
       choices: courseInfo,
       dietary_requirements: {
-        selected: [data.get('dietary-requirements')],
+        selected: [...dietChoices],
         other: data.get('other'),
       },
-      seating_preference: data.get('seating_preference').toString().split(',')
+      seating_preference: data.get('seating_preference').toString().split(',').filter((item)=>{ return item.length > 0}),
     }
   }
   console.log("POST -> Conor: ",apiRequestBody)
@@ -41,12 +43,12 @@ export async function GET(request: NextRequest) {
   const email = params.get('email') 
   const ticket = params.get('ticket_number')
   const apiRequest = `https://x4xy6yutqmildatdl3qc53bnzu0bhbdf.lambda-url.eu-west-2.on.aws/?requested=meal&email=${email}&ticketnumber=${ticket}`
-  // console.log("-> Conor: ",apiRequest)
+  console.log("-> Conor: ",apiRequest)
   const apiResponse = await fetch(apiRequest, { method: 'GET',  headers: { 'Content-Type': 'application/json' }})
   // const data = apiResponse.ok ? await apiResponse.json() : await apiResponse.text()
-  const data = await apiResponse.json()
+  const data = apiResponse.ok ? await apiResponse.json() : { error: `Computer says "${apiResponse.statusText}"... we'll let someone who understands this know about this` }
   // console.log("<- Conor",data, apiResponse.statusText, apiResponse.status)
-  const responseData = apiResponse.ok ? data[0] : { message: data }
+  const responseData = apiResponse.ok ? data[0] : data
   // console.log("API Response",responseData)
-  return  Response.json(responseData)
+  return Response.json(responseData,{status: apiResponse.status})
 }

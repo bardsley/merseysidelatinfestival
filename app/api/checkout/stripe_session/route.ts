@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
       `${request.headers.get("origin")}/return?session_id={CHECKOUT_SESSION_ID}`,
   }
 
-  console.log("lineItems:",lineItems)
+  console.log("Checkout Session:",checkoutSessionObject)
   try {
     // Create Checkout Sessions from body params.
     const session = await stripe.checkout.sessions.create(checkoutSessionObject);

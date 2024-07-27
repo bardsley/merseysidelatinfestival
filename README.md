@@ -31,6 +31,7 @@ Adam
 - [ ] Studewnt banner on purchase card
 - [ ] Preferences Page
 - [ ] Return page from checkout
+- [ ] Clear cache on purchase
 
 Connor
 ------  
@@ -94,7 +95,7 @@ TBD: Send in this structure in the checkout link request as below. Otherwise jus
     'selected':["nut allergy", "gluten free", ...], // list of requirements selected from a list
     'other': "Some specific additional dietary requirement"
   },
-  'seating_preference': [12345, 12678, ...] // list of ticket numbers of people they want to sit with
+  'seating_preference': ["12345", "12678", ...] // list of ticket numbers of people they want to sit with
 }
 ```
 request checkout 
