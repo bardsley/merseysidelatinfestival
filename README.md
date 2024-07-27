@@ -2,17 +2,14 @@
 
 TODO
 ======
-Next Chat
-- [ ] Should we store last checkout if not completed? Yes
-- [ ] Benefits of recalculating passes etc based on options on post checkout vs passing them into the checkout and along to API?
 
 Adam
 ----
-- [ ] Merseyside small logo
+- [x] Merseyside small logo
 - [ ] Optimise images
-- [ ] Video of dancing for hero
+- [x] Video of dancing for hero
 - [x] Add see through option for a section
-- [ ] Add title to features section
+- [x] Add title to features section
 - [ ] Disclaimer on food choices
 - [ ] Default prose styles e.g. <article class="prose prose-img:rounded-xl prose-headings:underline prose-a:text-blue-600">{{ markdown }}</article>
 - [X] Hydration error in production
