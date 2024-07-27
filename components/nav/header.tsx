@@ -8,6 +8,8 @@ import { cn } from "../../lib/utils";
 import { tinaField } from "tinacms/dist/react";
 import NavItems from "./nav-items";
 import { useLayout } from "../layout/layout-context";
+import NavMobile from "../nav/nav-mobile";
+
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useRouter, usePathname  } from 'next/navigation'
@@ -42,6 +44,7 @@ export default function Header() {
       ? headerColor.primary[theme.color]
       : headerColor.default;
   const origPath = pathname
+  
   return (
     <div
       className={`relative overflow-hidden bg-gradient-to-b ${headerColorCss}`}
@@ -113,21 +116,9 @@ export default function Header() {
                <XMarkIcon aria-hidden="true" className="h-6 w-6" />
              </button>
            </div>
-           <div className="mt-6 flow-root">
-             <div className="-my-6 divide-y divide-gray-500/10">
-               <div className="space-y-2 py-6">
-                 {header.nav.map((item) => (
-                   <a
-                     key={item.href}
-                     href={item.href}
-                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-richblack-600"
-                   >
-                     {item.label}
-                   </a>
-                 ))}
-               </div>
-             </div>
-           </div>
+           <Suspense>
+            <NavMobile navs={header.nav} />
+          </Suspense>
          </DialogPanel>
        </Dialog>
       </Container>

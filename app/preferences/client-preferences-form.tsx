@@ -4,15 +4,17 @@ import TicketCheck from "./ticketcheck"
 import { BiAlarmExclamation, BiCheckCircle } from "react-icons/bi";
 import { TicketIcon } from '@heroicons/react/24/solid'
 import { useEffect, useState } from "react";
+import MealPreferences from "../../components/preferences/MealPreferences"
 
-export default function ClientForm(props) {
+export default function ClientPreferencesForm(props) {
   const {hasCookie, ticket, email } = props
-  const [preferences, setPreferences] = useState(false as boolean | string | any[])
+  const [preferences, setPreferences] = useState(false as boolean | string | any)
+  const [error, setError] = useState(false as boolean | string)
   const [messageShown, setMessageShown] = useState(true)
   const params = useSearchParams()
   
-  const message = params.get('message')
-  const messageType = params.get('messageType')
+  const message = params.get('message') || error
+  const messageType = params.get('messageType') ? params.get('messageType') : error ? 'bad' : 'good'
 
   const messageClassesBase = "message py-2 pl-4 pr-2 text-white rounded-md flex justify-between items-center transition ease-in-out delay-150 duration-500"
   const messageClassType = messageType =='good' ? 'bg-green-600' : 'bg-red-600'
@@ -20,18 +22,15 @@ export default function ClientForm(props) {
   const messageClassIcon = messageType =='good' ? (<BiCheckCircle className={messageIconClasses}/>) : <BiAlarmExclamation className={messageIconClasses}/>
   const messageClasses = [messageClassesBase,messageClassType].join(' ')
 
-  const courses = [
-    { name: "Starter", options: ["Vegan Tart", "Meat on Toast"]},
-    { name: "Main", options: ["Pasta", "Meat and Veg"]},
-    { name: "Desert", options: ["Fruit Tart", "Gelatine"]},
-  ]
+
 
   useEffect(() => {
     if(ticket && email) {
         const fetchURL = `//${process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL}/api/preferences?email=${email.value}&ticket_number=${ticket.value}`
         fetch(fetchURL, {method: "GET",}).then(res => {
         res.json().then(data => {
-          data.error ? setPreferences(data.error) : setPreferences(data[0].meal_options)
+          console.log("data.error",data.error)
+          data.error ? setError(data.error) : setPreferences(data.preferences)
         })
       })
     }
@@ -41,8 +40,6 @@ export default function ClientForm(props) {
       }, 3000)
     }
   }, [])
-       
-        
 
   if(hasCookie) {
       return (
@@ -61,43 +58,10 @@ export default function ClientForm(props) {
           {/* {JSON.stringify(preferences)} */}
           {preferences && typeof preferences === 'object' ? (
             <form action="/api/preferences" method="POST" encType="multipart/form-data">
-            <fieldset className="my-6">
-              <legend className="text-base font-semibold leading-6 text-white">Course</legend>
-                <div className="mt-4 divide-y divide-gray-700 border-b border-t border-gray-700">
-                  {courses.map((course, courseIdx) => (
-                    <div key={courseIdx} className="relative flex items-start py-4">
-                      <div className="min-w-0 flex-1 text-sm leading-6">
-                        <span className="select-none font-medium text-white">
-                          {course.name}
-                        </span>
-                      </div>
-                      <div className="ml-3 flex h-6 items-center gap-5">
-                        {course.options.map((option,optionIdx) => {
-                          return (
-                            <div key={`c${courseIdx}-${optionIdx}`} className="flex items-center gap-2 w-36 justify-end">
-                            <label htmlFor={`course-${courseIdx}-${optionIdx}`}>{option}</label>
-                            <input
-                              id={`course-${courseIdx}-${optionIdx}`}
-                              name={`course-${courseIdx}`}
-                              type="radio"
-                              value={optionIdx}
-                              defaultChecked={preferences && preferences[courseIdx] == optionIdx}
-                              // checked={preferences[courseIdx] == optionIdx}
-                              className="h-4 w-4 rounded-full border-gray-700 text-indigo-600 focus:ring-indigo-600"
-                              onChange={() => setPreferences([...preferences.slice(0,courseIdx),optionIdx,...preferences.slice(courseIdx+1)])}
-                            />
-                            </div>
-                          )
-                        })}
-                        
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </fieldset>
+            <MealPreferences preferences={preferences} setPreferences={setPreferences}></MealPreferences>
               <button className="py-3 px-4 bg-chillired-500 rounded-lg">Save Preferences</button>
             </form>
-          ) : preferences ? preferences : (<div>Loading Preferences...</div>) }
+          ) : preferences ? preferences : (<div className="m-2 ">Loading Preferences...</div>) }
         </>
       )
   } else {

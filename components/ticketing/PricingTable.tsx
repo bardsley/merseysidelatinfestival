@@ -1,10 +1,12 @@
 'use client'
 import React, { useState, useEffect } from 'react';
+import { useFormStatus } from "react-dom"
 import Cell from './Cell';
 import { ICellProps } from './Cell';
 import { individualTickets,initialSelectedOptions, passTypes, days, fullPassName } from './pricingDefaults'
 import { calculateTotalCost, passOrTicket, getBestCombination } from './pricingUtilities'
 import PassCards from './passes'
+import { useRouter } from 'next/navigation'
 import { deepCopy } from '../../lib/useful'
 import symmetricDifference from 'set.prototype.symmetricdifference'
 import difference from 'set.prototype.difference'
@@ -19,17 +21,20 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
   const [totalCost, setTotalCost] = useState(0);
   const [packages,setPackages] = useState([])
   const [packageCost, setPackageCost] = useState(0)
+  const router = useRouter()
 
   const togglePriceModel = () => {
     setPriceModel(priceModel === "cost"? "studentCost" : "cost")
     setStudentDiscount(priceModel === "cost" ? true : false) //! This looks backwards but priceModel hasn't changed yet
   }
 
-  const selectFullPass = () => {
+  const selectFullPass = (setTo) => {
     let initialOptions = selectedOptions
     days.forEach((day) => {
       passTypes.forEach((passType) => {
-        initialOptions[day][passType] = individualTickets[day][passType].isAvailable ? true : false
+        if(individualTickets[day][passType] && individualTickets[day][passType].isAvailable) {
+          initialOptions[day][passType] = setTo
+        }
       })
     })
     setSelectedOptions({...initialOptions})
@@ -49,14 +54,14 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
   const setDayPass = (day,setTo) => {
     // console.log(day,selectedOptions)
     let initialOptions = selectedOptions
-    Object.keys(initialSelectedOptions[day]).forEach((elm) => { if(individualTickets[day][elm].isAvailable) { initialOptions[day][elm] = setTo } })
+    Object.keys(initialSelectedOptions[day]).forEach((elm) => { if(individualTickets[day][elm] && individualTickets[day][elm].isAvailable) { initialOptions[day][elm] = setTo } })
     setSelectedOptions({...initialOptions})
   }
   const setTypePass = (type,setTo) => {
-    console.log(type,setTo)
+    // console.log(type,setTo)
     // console.log(type,selectedOptions,individualTickets,individualTickets)
     let initialOptions = selectedOptions
-    Object.keys(initialSelectedOptions).forEach((elm) => { if(individualTickets[elm][type].isAvailable) { initialOptions[elm][type] = setTo }})
+    Object.keys(initialSelectedOptions).forEach((elm) => { if(individualTickets[elm][type] && individualTickets[elm][type].isAvailable) { initialOptions[elm][type] = setTo }})
     setSelectedOptions({...initialOptions})
   }
 
@@ -69,6 +74,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
 
   const clearOptions = () => {
     console.log("Options reset to: ", initialSelectedOptions)
+    localStorage.removeItem("selectedOptions")
     setSelectedOptions(deepCopy(initialSelectedOptions))
   }
 
@@ -81,13 +87,42 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
     fullPassFunction(() => selectFullPass)
   },[])
 
+  useEffect(() => {
+    const storedOptions = localStorage.getItem("selectedOptions")
+    if(storedOptions) { setSelectedOptions(JSON.parse(storedOptions)) }
+  },[])
+
+  function CheckoutButton() {
+    const { pending } = useFormStatus();
+    return (
+      <button type="submit" disabled={pending} 
+        className='bg-chillired-400 text-white rounded-lg py-6 px-12 hover:bg-chillired-700 text-nowrap w-full max-w-72 md:w-auto'>
+        {pending ? "Checking Out..." : "Buy Now"}
+      </button>
+
+    );
+  }
+
+  async function checkout() {
+    localStorage.setItem("selectedOptions", JSON.stringify(selectedOptions))
+    router.push("/checkout") //TODO This 100% needs a check for errors
+  }
+  
   const cellClasses = 'border border-gray-600 text-center py-2 px-3 md:py-2 md:px-4 ';
   const headerClasses = cellClasses.replaceAll('border-gray-600','border-chillired-400')
   const toggleCellClasses = "bg-richblack-600 text-white " +  cellClasses
   return (
     <div className="table-container w-full flex justify-center flex-col md:pt-12 max-w-full lg:mx-auto md:mx-3 col-span-5 text-xs md:text-base">
     
-      <PassCards setDayPass={setDayPass} setTypePass={setTypePass} setDinnerPass={setDinnerPass} priceModel={priceModel} scrollToElement={scrollToElement} selectFullPass={selectFullPass}></PassCards>
+      <PassCards 
+        selected={packages} 
+        setDayPass={setDayPass} 
+        setTypePass={setTypePass} 
+        setDinnerPass={setDinnerPass} 
+        priceModel={priceModel} 
+        scrollToElement={scrollToElement} 
+        shouldScroll={packages.length == 0}
+        selectFullPass={selectFullPass}></PassCards>
       
       <div className='mb-12'>
         <Cell option={{name: 'I am a student and will bring Student ID', cost: 0, studentCost: 0, isAvailable: true } }
@@ -104,41 +139,14 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
               <th key={day} className={headerClasses}>{day}</th> 
             ))}
           </tr>
-          {/* <tr>
-            <th className={toggleCellClasses}>Day pass</th>
-            <th className={toggleCellClasses}></th>
-            {['Saturday','Sunday'].map((day) => { 
-              const cellProps = {
-                isSelected: isAllDayOptions(selectedOptions,day), 
-                onSelect: setDayPass,
-                studentDiscount: priceModel === "studentCost",
-                day: day,
-                option: { name:'', cost: passes[`${day} Pass`]['cost'], studentCost: passes[`${day} Pass`]['studentCost'], isAvailable: passes[`${day} Pass`]['isAvailable'] }
-              } as ICellProps
-              return (
-              <th key={`${day}-full`} className={toggleCellClasses}>
-                <Cell {...cellProps} />
-              </th>
-            )})}
-          </tr>  */}
         </thead>
         <tbody>
           {passTypes.map((passType) => {
-            // const passOption = passType === 'Party'? passes['Party Pass'] : passType === 'Classes' ? passes['Class Pass'] : {cost: 0, studentCost: 0, isAvailable: false}
-            // const cellProps = {
-            //   isSelected: isAllPassOptions(selectedOptions,passType),
-            //   onSelect: setTypePass,
-            //   studentDiscount: priceModel === "studentCost",
-            //   passType: passType,
-            //   option: { name:'', cost: passOption['cost'], studentCost: passOption['studentCost'], isAvailable: passOption['isAvailable'] }
 
-            // } as ICellProps
             return (
             <tr key={passType}>
               <td className={toggleCellClasses}>
                 {passType}
-                {/* <Cell {...cellProps} />  */}
-
               </td>
               {days.map((day) => {
                 const cellProps = {
@@ -151,7 +159,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
                 } as ICellProps
                 return (
                 
-                  individualTickets[day][passType].isAvailable ? (
+                  individualTickets[day][passType] && individualTickets[day][passType].isAvailable ? (
                     <td key={`${day}-${passType}`} className={cellClasses}>
                     {selectedOptions[day][passType]}
                     <Cell {...cellProps} />  
@@ -164,7 +172,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
         <caption className='caption-top pt-6'>
           <div className='flex justify-between mb-2'>
             <h2 className="text-xl">Your Current Selection</h2>  
-            <button onClick={clearOptions} className='border border-gray-300 rounded-md px-3 py-1'>Clear my choices</button>
+            <button onClick={clearOptions} id="clear-form" className='border border-gray-300 rounded-md px-3 py-1'>Clear my choices</button>
           </div>
         
         </caption>
@@ -179,20 +187,22 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
             <h2 className='text-3xl font-bold'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost}</span>) : null } £{packageCost}</h2>
             { totalCost - packageCost > 0 ? (<p>Saving you £{totalCost - packageCost} on the full cost of those options!</p>) : null }
           </div>
-          <div className='flex w-full md:w-auto flex-col md:flex-row items-center justify-center'>
-            <button className='bg-chillired-400 text-white rounded-lg py-6 px-12 hover:bg-chillired-700 text-nowrap w-full max-w-72 md:w-auto'>Buy Now</button>
-          </div>
+          <form action={checkout} className='flex w-full md:w-auto flex-col md:flex-row items-center justify-center'>
+          <CheckoutButton></CheckoutButton>
+          </form>
           
         </>
       ) : "Select options in the table above to see the suggested packages" }
       </div>
       
+      { process.env.NODE_ENV == 'development' && process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' ? <>
       <hr />
       <h2>Debug Ignore below the line</h2>
       <div className='flex'>
         <pre>Selected -- {JSON.stringify(selectedOptions,null,2)}</pre>
-        <pre>Initial--{JSON.stringify(initialSelectedOptions,null,2)}</pre>
+        <pre>Packages--{JSON.stringify(packages,null,2)}</pre>
       </div>
+      </> : null }
       
     </div>
   )

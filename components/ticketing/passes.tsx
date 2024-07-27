@@ -4,18 +4,19 @@ import { PassCard } from './PassCard';
 
 
 
-export default function PassCards({setDayPass,setTypePass,setDinnerPass,priceModel,scrollToElement,selectFullPass}) {
+export default function PassCards({setDayPass,setTypePass,setDinnerPass,priceModel,scrollToElement,selectFullPass,selected,shouldScroll}) {
 
-  const clickFunctionFromPassName = (passName:string) => {
-
-    if(/(Saturday|Sunday)/.test(passName)) {
-      return () => { setDayPass(passName.split(' ')[0],true); scrollToElement()}
+  const clickFunctionFromPassName = (passName:string,setTo:boolean) => {
+    if (passName == fullPassName) {
+      return () => { selectFullPass(setTo); shouldScroll && scrollToElement()}
+    } else if(/(Saturday|Sunday)/.test(passName)) {
+      return () => { setDayPass(passName.split(' ')[0],setTo); shouldScroll && scrollToElement()}
     } else if ( passName == "Class Pass" ) {
-      return () => { setTypePass("Classes",true); scrollToElement()}
+      return () => { setTypePass("Classes",setTo); shouldScroll && scrollToElement()}
     } else if ( passName == "Party Pass" ) {
-      return () => { setTypePass("Party",true); scrollToElement()}
+      return () => { setTypePass("Party",setTo); shouldScroll && scrollToElement()}
     } else {
-      return () => { setDinnerPass(true); scrollToElement()}
+      return () => { setDinnerPass(setTo); shouldScroll && scrollToElement()}
     }
   }  
 
@@ -31,13 +32,16 @@ export default function PassCards({setDayPass,setTypePass,setDinnerPass,priceMod
       <div className={`mx-auto grid max-w-full grid-cols-1 gap-8 lg:max-w-full mb-12 ${dynamicColClasses}`}>
 
       
-      <PassCard passName={fullPassName} clickFunction={() => { selectFullPass(); scrollToElement('fullPass')}} pass={passes[fullPassName]} priceModel={priceModel} hasASaving={true}></PassCard>
+      <PassCard passName={fullPassName} clickFunction={() => { 
+        console.log('full pass',!selected.includes(fullPassName),selected)
+        clickFunctionFromPassName(fullPassName,!selected.includes(fullPassName))() 
+        }} pass={passes[fullPassName]} priceModel={priceModel} hasASaving={true} selected={selected.includes(fullPassName)}></PassCard>
 
         {passToDisplay.map((passName) => {
           const pass = passes[passName]
           const hasSaving = priceModel == 'studentCost' ? pass.studentSaving > 0 : pass.saving > 0
-          const clickFunction = clickFunctionFromPassName(passName)
-          return (<PassCard key={passName} passName={passName} clickFunction={clickFunction} pass={pass} priceModel={priceModel} hasASaving={hasSaving}></PassCard>)
+          const clickFunction = clickFunctionFromPassName(passName,!selected.includes(passName))
+          return (<PassCard key={passName} passName={passName} clickFunction={clickFunction} pass={pass} priceModel={priceModel} hasASaving={hasSaving} selected={selected.includes(passName)}></PassCard>)
         })}
         
       </div>
