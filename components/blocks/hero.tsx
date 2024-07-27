@@ -8,6 +8,11 @@ import Image from "next/image";
 import { Section } from "../layout/section";
 import { Container } from "../layout/container";
 import { Actions } from "./actions";
+import CountdownElement, { CountdownElementTemplate } from "../content/countdown";
+import { RichTextTemplate } from "@tinacms/schema-tools"
+
+const components = { CountdownElement }
+
 
 export const Hero = ({ data }: { data: PageBlocksHero }) => {
   const headlineColorClasses = {
@@ -80,7 +85,7 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
                       : `dark:prose-dark`
                   }`}
                 >
-                  <TinaMarkdown content={data.text} /> 
+                  <TinaMarkdown content={data.text} components={components}/> 
                 </div>
               )}
 
@@ -101,7 +106,7 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
               >
                 <Image
                   className="w-full h-auto max-w-full rounded-lg hidden md:block"
-                  style={{ objectFit: "cover" }}
+                  style={/.*\.svg/.test(data.image.src) ? {objectFit: "contain"} : { objectFit: "cover" }}
                   alt={data.image.alt}
                   src={data.image.src}
                   width={500}
@@ -117,7 +122,7 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
                 data.color === "primary" ? `prose-primary` : `dark:prose-dark`
               }`}
             >
-              <TinaMarkdown content={data.text2} />
+              <TinaMarkdown content={data.text2} components={components}/>
             </div>
           )}
         </div>
@@ -155,11 +160,17 @@ export const heroBlockSchema: Template = {
       label: "Text-1",
       name: "text",
       type: "rich-text",
+      templates: [
+        CountdownElementTemplate as RichTextTemplate
+      ]
     },
     {
       type: "rich-text",
       label: "Text-2",
       name: "text2",
+      templates: [
+        CountdownElementTemplate as RichTextTemplate
+      ]
     },
     {
       label: "Actions",

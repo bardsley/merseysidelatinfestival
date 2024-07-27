@@ -27,7 +27,7 @@ export const BuyButtonTemplate = {
     {
       name: "buttonid",
       label: "Buy Button Type",
-      type: "string",
+      type: 'string',
       options: [
         {
           value: 'buy_btn_1PX2hYEWkmdeWsQPpM9k8WFI',

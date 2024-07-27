@@ -9,6 +9,7 @@ import { Container } from "../layout/container";
 import { Section } from "../layout/section";
 import BuyButton, { BuyButtonTemplate } from "../content/buybutton";
 import CountdownElement, { CountdownElementTemplate } from "../content/countdown";
+import {  RichTextTemplate } from "@tinacms/schema-tools"
 
 const components = { BuyButton, CountdownElement }
 const proseClasses = "prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl \
@@ -52,8 +53,8 @@ export const contentBlockSchema: Template = {
       label: "Body",
       name: "body",
       templates: [
-        BuyButtonTemplate,
-        CountdownElementTemplate
+        BuyButtonTemplate as RichTextTemplate,
+        CountdownElementTemplate as RichTextTemplate
       ]
     },
     {
