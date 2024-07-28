@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { NextResponse} from 'next/server'
 
 
 export async function POST(request: Request) {
@@ -26,4 +27,8 @@ export async function POST(request: Request) {
   }
   redirect(`/preferences${ message ? `?message=${message}&messageType=good` : ''}`)
   
+}
+
+export async function GET() {
+  return NextResponse.json({ generated_at: new Date().toISOString() })
 }
