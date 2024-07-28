@@ -10,10 +10,10 @@ logger.setLevel("INFO")
 stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
 
 #* This is not required for deployment only needed for local testing 
-profile_name='AdministratorAccess-645491919786'
-boto3.setup_default_session(profile_name=profile_name)
-logging.basicConfig()
-from pprint import pprint
+# profile_name='AdministratorAccess-645491919786'
+# boto3.setup_default_session(profile_name=profile_name)
+# logging.basicConfig()
+# from pprint import pprint
 
 db = boto3.resource('dynamodb')
 table = db.Table('mlf24_stripe_products')

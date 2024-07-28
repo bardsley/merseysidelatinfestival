@@ -1,7 +1,7 @@
 import stripe
 import json
 from gdrivewrite import update_gs
-from sendmail import sendemail
+# from sendmail import sendemail
 from random import randint
 import datetime
 import boto3
@@ -13,6 +13,8 @@ stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
 # get dynamodb table
 db = boto3.resource('dynamodb')
 table = db.Table('mlf24_db')
+
+lambda_client = boto3.client('lambda')
 
 # Turn line items into a array detailing the access the person has i.e. what
 # parts of the fetival.
@@ -125,9 +127,22 @@ def lambda_handler(event, context):
         })
         
         # send the email with these details
-        sendemail(full_name,
-                  email,
-                  ticket_number,
-                  response['line_items'])
+        response = lambda_client.invoke(
+            FunctionName='dev-send_email',
+            InvocationType='Event',
+            Payload=json.dumps({
+                    'name':full_name, 
+                    'email':email, 
+                    'ticket_number':ticket_number, 
+                    'line_items':line_items
+                }),
+            Qualifier='1',
+            )
+
+
+        # sendemail(full_name,
+        #           email,
+        #           ticket_number,
+        #           response['line_items'])
             
     return True
