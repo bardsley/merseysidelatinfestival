@@ -25,14 +25,14 @@ def genHTML(fullname, email, ticketnumber, items, ticket_link):
     rows = ""
     total_amount = 0
     for i in items['data']:
-        with open("./ticket_email/html_row.html", 'r') as file:
+        with open("./html_row.html", 'r') as file:
             tmpl = Template(file.read())
             rows = rows+"\n"+tmpl.substitute({'tickettype':i['description'], 'qty':1, 'price':babel.numbers.format_currency(i['amount_total']/100, "GBP", locale='en_UK')})
             total_amount += i['amount_total']
-    with open("./ticket_email/html_row.html", 'r') as file:
+    with open("./html_row.html", 'r') as file:
         tmpl = Template(file.read())
         total_row = tmpl.substitute({'tickettype':"", 'qty':"<strong>Total</strong>", 'price':"<strong>"+babel.numbers.format_currency(total_amount/100, "GBP", locale='en_UK')+"</strong>"})
-    with open("./ticket_email/html_tmpl.html", 'r') as file:
+    with open("./html_tmpl.html", 'r') as file:
         tmpl_f = Template(file.read())
         return tmpl_f.substitute({'fullname':fullname, 'email':email, 'ticketnumber':ticketnumber, 'rows':rows, 'ticket_link':ticket_link, 'total_row':total_row})
 
