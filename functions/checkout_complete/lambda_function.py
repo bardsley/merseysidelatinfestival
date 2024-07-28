@@ -1,6 +1,6 @@
 import stripe
 import json
-from gdrivewrite import update_gs
+# from gdrivewrite import update_gs
 # from sendmail import sendemail
 from random import randint
 import datetime
@@ -42,12 +42,13 @@ def get_ticket_number():
         response = table.scan(FilterExpression=Key('ticket_number').eq(ticketnumber))
         if response['Count'] == 0:
             search = False
+    logger.info("ticket number generated: "+str(ticketnumber))
     return ticketnumber
 
 # put the corresponding data into the dynamodb table
 def update_ddb(Item):
     table.put_item(Item=Item)
-    return
+    return True
 
 # Main function to handle the event
 def lambda_handler(event, context):
@@ -62,7 +63,9 @@ def lambda_handler(event, context):
                   
         # retrieve the full checkout session including the line items
         #! catch error is checkout session does not exist
+        logger.info("Retrieve Stripe checkout session")
         response = stripe.checkout.Session.retrieve(CHECKOUT_SESSION_ID, expand=['line_items', 'line_items.data.price.product'])
+        logger.info(response)
 
         # process the line items and get the string of items purchased for gsheet
         access, _pass_type = process_line_items(response['line_items'])
@@ -82,6 +85,8 @@ def lambda_handler(event, context):
         
         purchase_date = str(datetime.datetime.utcfromtimestamp(response['created']))
         cs_id = CHECKOUT_SESSION_ID
+        
+        logger.info("Getting ticket number")
         ticket_number = get_ticket_number()
 
         Friday_Party     = access[0]
@@ -94,35 +99,36 @@ def lambda_handler(event, context):
         ticket_used = ''
         meal = json.loads(response['metadata']['preferences']) if 'preferences' in response['metadata'] else None
 
-        # Put the information into the gsheet
-        update_gs([full_name,
-                   pass_type,
-                   payment_method,
-                   payment_status,
-                   amount,
-                   payout_estimate,
-                   email,
-                   phone,
-                   purchase_date,
-                   cs_id,
-                   ticket_number,
-                   Friday_Party, Saturday_Classes, Saturday_Dinner, Saturday_Party, Sunday_Classes, Sunday_Party,
-                   ticket_used])
+        # # Put the information into the gsheet
+        # gs_response = update_gs([full_name,
+        #           pass_type,
+        #           payment_method,
+        #           payment_status,
+        #           amount,
+        #           payout_estimate,
+        #           email,
+        #           phone,
+        #           purchase_date,
+        #           cs_id,
+        #           ticket_number,
+        #           Friday_Party, Saturday_Classes, Saturday_Dinner, Saturday_Party, Sunday_Classes, Sunday_Party,
+        #           ticket_used])
         
         line_items = []
         logger.info(response['line_items'])
         for item in response['line_items']['data']:
-            
             line_items.append({
                 'prod_id':item['id'],
                 'description':item['description'],
                 'amount_total':item['amount_total']
             })
 
+    
         logger.info(line_items)
         
         # put the information into dynamodb table
-        update_ddb(Item={
+        logger.info("Putting data in DynamoDB")
+        db_response = update_ddb(Item={
                 'email': email,      
                 'ticket_number': ticket_number,
                 'full_name':full_name,
@@ -133,10 +139,12 @@ def lambda_handler(event, context):
                 'schedule': None,
                 'meal_options':meal,
                 'ticket_used': ticket_used,
-                
         })
+        logger.info(db_response)
+        
         
         # send the email with these details
+        logger.info("Invoking send_email lambda")
         response = lambda_client.invoke(
             FunctionName='dev-send_email',
             InvocationType='Event',
@@ -144,8 +152,9 @@ def lambda_handler(event, context):
                     'name':full_name, 
                     'email':email, 
                     'ticket_number':ticket_number, 
-                    'line_items':line_items
+                    'line_items':response['line_items']
                 }),
             )
+        logger.info(response)
             
-    return True
+    return {'statusCode':200}
