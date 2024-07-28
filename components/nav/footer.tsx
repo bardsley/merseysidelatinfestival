@@ -50,7 +50,7 @@ export default function Footer() {
       : footerColor.default;
 
   return (
-    <footer className={cn(`bg-gradient-to-br`, footerColorCss)}>
+    <footer className={cn(`bg-gradient-to-br pt-12 pb-6`, footerColorCss)}>
       <Container className="relative" size="small">
         <div className="flex justify-center items-center gap-6 flex-wrap">
           
@@ -142,6 +142,10 @@ export default function Footer() {
             "to-transparent bottom-0 left-4 right-4 -z-1 opacity-5"
           )}
         />
+        <div className="flex justify-center items-center gap-6 my-6 flex-col sm:flex-row">
+          <div className="w-1/2 flex justify-center"><p className="text-center">Event organised by and related content copyright of{" "}<br/><a href="http://www.salsaliverpool.com/">Salsa Liverpool</a></p></div>
+          <div className="w-1/2 flex justify-center"><p className="text-center">Congress System provided by <br/><a href="https://adambardsley.co.uk">Adam Bardsley</a> & Connor Monaghan</p></div>
+        </div>
       </Container>
       { process.env.NODE_ENV == 'development' && process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' ? <>
       <hr />

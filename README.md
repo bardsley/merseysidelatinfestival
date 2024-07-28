@@ -26,10 +26,11 @@ Adam
 - [x] Passes not available tdon't get auto triggered e.g dinner pass nbot available select options
 - [ ] Allow change name / email.
 - [ ] Studewnt banner on purchase card
-- [ ] Preferences Page
+- [x] Preferences Page
 - [ ] Return page from checkout
 - [ ] Clear cache on purchase
 - [ ] Messages not displayed on preferences page after log out
+- [x] Licenseing stuff
 
 Connor
 ------  
