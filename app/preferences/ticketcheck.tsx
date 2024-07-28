@@ -1,5 +1,5 @@
 'use client'
-export default function TicketCheck() {
+export default function TicketCheck({email,ticket_number}) {
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center p-6 my-6 md:my-12 lg:px-8 border rounded-lg ">
     
@@ -22,6 +22,7 @@ export default function TicketCheck() {
                 type="email"
                 required
                 autoComplete="email"
+                defaultValue={email}
                 className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
               />
             </div>
@@ -46,6 +47,7 @@ export default function TicketCheck() {
                 id="ticket"
                 name="ticket"
                 type="text"
+                defaultValue={ticket_number}
                 className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
               />
             </div>
