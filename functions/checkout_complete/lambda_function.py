@@ -7,6 +7,9 @@ import datetime
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import os
+import logging
+logger = logging.getLogger()
+logger.setLevel("INFO")
 
 stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
 
@@ -107,23 +110,30 @@ def lambda_handler(event, context):
                    ticket_used])
         
         line_items = []
-        for item in response['line_items']:
+        logger.info(response['line_items'])
+        for item in response['line_items']['data']:
+            
             line_items.append({
                 'prod_id':item['id'],
                 'description':item['description'],
                 'amount_total':item['amount_total']
             })
+
+        logger.info(line_items)
         
         # put the information into dynamodb table
         update_ddb(Item={
                 'email': email,      
                 'ticket_number': ticket_number,
                 'full_name':full_name,
+                'active': True,
+                'purchase_date':response['created'],
                 'line_items': line_items,
                 'access':access,
                 'schedule': None,
                 'meal_options':meal,
-                'ticket_used': ticket_used
+                'ticket_used': ticket_used,
+                
         })
         
         # send the email with these details
@@ -136,13 +146,6 @@ def lambda_handler(event, context):
                     'ticket_number':ticket_number, 
                     'line_items':line_items
                 }),
-            Qualifier='1',
             )
-
-
-        # sendemail(full_name,
-        #           email,
-        #           ticket_number,
-        #           response['line_items'])
             
     return True

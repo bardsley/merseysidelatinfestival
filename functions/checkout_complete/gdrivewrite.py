@@ -3,20 +3,20 @@ from google.oauth2.service_account import Credentials
 import logging
 import json
 import os
+import base64
+
 logger = logging.getLogger()
 logger.setLevel("INFO")
 
-account_file = os.environ.get("GOOGLE_ACCOUNT_FILE")
+account_file = json.loads(base64.b64decode(os.environ.get("GOOGLE_ACCOUNT_FILE")))
 
 google_sheet_key = os.environ.get("GOOGLE_SHEET_KEY")
-
-print(account_file)
 
 def init():
     scopes = ['https://www.googleapis.com/auth/spreadsheets',
           'https://www.googleapis.com/auth/drive']
 
-    credentials = Credentials.from_service_account_file(account_file, scopes=scopes)
+    credentials = Credentials.from_service_account_info(account_file, scopes=scopes)
 
     gc = gspread.authorize(credentials)
 
