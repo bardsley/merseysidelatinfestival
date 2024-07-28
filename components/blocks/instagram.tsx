@@ -39,7 +39,7 @@ export const Instagram = ({ data }: { data: PageBlocksInstagram }) => {
       <InstagramSection data={data}>
           <TinaMarkdown content={data.body} components={components} />
           {instaData && instaData.instagram_posts && instaData.instagram_posts.length > 0 && (
-            <div className="flex gap-x-3 items-start">
+            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 items-start mt-12">
               {instaData.instagram_posts.map(post => { 
                 if(post.media_type == 'IMAGE') {
                   return <InstagramImage key={post.id} post={post} />
@@ -81,10 +81,11 @@ const InstagramSection = ({data,children}) => {
     </Container>
     </Section>
 } 
-const instaPostClasses = "cover aspect-square rounded-lg w-1/4 relative"
+const instaPostClasses = "cover aspect-square rounded-lg relative col-span-1"
 const instaLinkClasses = "relative block overflow-hidden aspect-square rounded-t-lg"
+const instaMediaClasses = "w-full"
 
-const InstagramCaption = ({caption}) => { return (<div className="w-full h-1/3 bottom-0 p-3 rounded-b-lg bg-[#ffffff] text-richblack-700 ">
+const InstagramCaption = ({caption}) => { return (<div className="w-full bottom-0 rounded-b-lg bg-[#ffffff] text-xl sm:text-sm px-6 pt-4 pb-2 h-auto text-richblack-700 ">
   <p >{caption}</p>
 </div>) }
 
@@ -92,7 +93,7 @@ const InstagramImage = ({post}: {post: any}) => {
   return (
     <div key={post.id} className={instaPostClasses}>
       <Link href={post.permalink} className={instaLinkClasses}>
-        <Image src={post.media_url} width={360} height={360} alt={post.caption}/>
+        <Image src={post.media_url} width={360} height={360} alt={post.caption} className={instaMediaClasses}/>
       </Link>
       <InstagramCaption caption={post.caption}/>
     </div>
@@ -105,7 +106,7 @@ const InstagramVideo = ({post}: {post: any}) => {
   return (
     <div key={post.id} className={instaPostClasses}>
       <div className={play ? instaLinkClasses.replace('aspect-square','aspect-auto') : instaLinkClasses}>
-        <Image src={post.thumbnail_url} width={360} height={360} alt={post.caption} className=""/>
+        <Image src={post.thumbnail_url} width={360} height={360} alt={post.caption} className={instaMediaClasses}/>
         <div className="w-full h-full absolute top-0 left-0 flex items-center justify-center z-50" onClick={() => {setPlay(p =>!p); play ? videoRef.current.pause() : videoRef.current.play() }}>
           <Icon data={{name: "BiPlay", color: "red", style: "circle", size: "medium"}} className={play ? "hidden" : ""}></Icon>      
         </div>
@@ -135,14 +136,14 @@ const InstagramCarousel = ({post}: {post: any}) => {
   return (
     <div key={post.id} className={instaPostClasses} >
       <Carousel
-        className="rounded-t-lg"
+        className={instaMediaClasses + " rounded-t-lg"}
         navigation={navigationElm}
         placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}
       >
         { post.children.map((child: any) => {
           return (
-            <div key={child.id}>
-              <img src={child.media_url} width={360} height={360} alt={post.caption} className=""/>
+            <div className="w-full h-full" key={child.id}>
+              <img src={child.media_url} width={360} height={360} alt={post.caption} className={instaMediaClasses}/>
               
             </div>
           )
