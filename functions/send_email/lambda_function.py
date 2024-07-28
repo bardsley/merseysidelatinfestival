@@ -18,6 +18,9 @@ import io
 import babel.numbers
 import os
 import json
+import logging
+logger = logging.getLogger()
+logger.setLevel("INFO")
 
 sendgrid_api_key = os.environ.get("SENDGRID_API_KEY")
 
@@ -37,8 +40,10 @@ def genHTML(fullname, email, ticketnumber, items, ticket_link):
         return tmpl_f.substitute({'fullname':fullname, 'email':email, 'ticketnumber':ticketnumber, 'rows':rows, 'ticket_link':ticket_link, 'total_row':total_row})
 
 def lambda_handler(event, context):
+    
+    logger.info(event)
 
-    data = json.loads(event['body'])
+    data = event
 
     full_name     = data['name']
     email         = data['email']
@@ -71,7 +76,7 @@ def lambda_handler(event, context):
     try:
         sg = sendgrid.SendGridAPIClient(api_key=sendgrid_api_key)
         response = sg.send(message)
-        return response
+        return "Success"
     except Exception as e:
         print(e.message)
         return e
