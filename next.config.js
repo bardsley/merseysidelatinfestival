@@ -6,6 +6,11 @@ module.exports = {
         hostname: "assets.tina.io",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "*.cdninstagram.com",
+        port: "",
+      }
     ],
   },
   webpack(config) {
