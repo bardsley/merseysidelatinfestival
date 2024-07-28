@@ -1,3 +1,5 @@
+import time
+
 import stripe
 import json
 import logging
@@ -10,14 +12,13 @@ logger.setLevel("INFO")
 stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
 
 #* This is not required for deployment only needed for local testing 
-# profile_name='AdministratorAccess-645491919786'
-# boto3.setup_default_session(profile_name=profile_name)
-# logging.basicConfig()
-# from pprint import pprint
+profile_name='AdministratorAccess-645491919786'
+boto3.setup_default_session(profile_name=profile_name)
+logging.basicConfig()
+from pprint import pprint
 
 db = boto3.resource('dynamodb')
 table = db.Table('mlf24_stripe_products')
-
 
 '''
 format
@@ -36,13 +37,13 @@ def lambda_handler(event, context):
     response = table.scan(FilterExpression=Attr('active').eq(True))
     items = response['Items']
     
-    prices = stripe.Price.list(ids=[d['price_id'] for d in items], limit=100, expand=['data.product'])
+    # prices = stripe.Price.list(ids=[d['price_id'] for d in items], limit=100, expand=['data.product'])
 
-    pprint(prices)
+    # pprint(prices)
 
-    passes   = [d for d in prices if 'Pass' in d['product']['name']]
+    # passes   = [d for d in prices if 'Pass' in d['product']['name']]
 
-    pprint(passes)
+    # pprint(passes)
 
     # friday   = [d for d in products if 'Friday' in d['name']]
     # saturday = [d for d in products if ('Saturday' in d['name']) & ('Pass' not in d['name'])]
@@ -56,7 +57,7 @@ def lambda_handler(event, context):
     #     for prod in day:
     #         option = prod['name'].split('-')[-1].strip()
     #         lines.append("{}: {{ cost: {}, studentCost: {}, isAvailable: {}, priceId: {}, studentPriceId: {} }},".format(
-    #             option, prod.
+    #             option, prod[]
     #         ))
 
     # pprint([d['name'].split('-')[-1].strip() for d in products if ('Saturday' in d['name']) & ('Pass' not in d['name'])])

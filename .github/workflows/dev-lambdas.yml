@@ -35,4 +35,28 @@ jobs:
           role-to-assume: arn:aws:iam::645491919786:role/github-aws-credentials-mlf24-Role-s5Siu9i8MPJB
 
       - run: zip -jr dev-send_email.zip ./functions/send_email/
-      - run: aws lambda update-function-code --function-name=dev-send_email --zip-file=fileb://dev-send_email.zip      
+      - run: aws lambda update-function-code --function-name=dev-send_email --zip-file=fileb://dev-send_email.zip     
+  update-dev-gen_price_update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: unfor19/install-aws-cli-action@v1
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-west-2
+          role-to-assume: arn:aws:iam::645491919786:role/github-aws-credentials-mlf24-Role-s5Siu9i8MPJB
+
+      - run: zip -jr dev-gen_price_update.zip ./functions/gen_price_update/
+      - run: aws lambda update-function-code --function-name=dev-gen_price_update --zip-file=fileb://dev-gen_price_update.zip 
+  update-dev-stripe_price_update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: unfor19/install-aws-cli-action@v1
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-west-2
+          role-to-assume: arn:aws:iam::645491919786:role/github-aws-credentials-mlf24-Role-s5Siu9i8MPJB
+
+      - run: zip -jr dev-stripe_price_update.zip ./functions/stripe_price_update/
+      - run: aws lambda update-function-code --function-name=dev-stripe_price_update --zip-file=fileb://dev-stripe_price_update.zip                  

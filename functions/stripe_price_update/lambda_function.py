@@ -68,7 +68,8 @@ def lambda_handler(event, context):
             'price_type': price_type,
             'active': ev_data['data']['object']['active'],
             'livemode': ev_data['data']['object']['livemode'],
-            'last_update': last_update
+            'last_update': last_update,
+            'unit_amount': ev_data['data']['object']['unit_amount']
             }
         
         logger.info("Updating the table with latest data")
@@ -87,7 +88,10 @@ def lambda_handler(event, context):
                 'price_type': "default",
                 'active': ev_data['data']['object']['active'],
                 'livemode': ev_data['data']['object']['livemode'],
-                'last_update': ev_data['data']['object']['updated']
+                'last_update': ev_data['data']['object']['updated'],
+                'name': ev_data['data']['object']['name'],
+                'description': ev_data['data']['object']['description']
+
             }
 
             logger.info("The default price has changed, updating the table")
@@ -99,7 +103,9 @@ def lambda_handler(event, context):
                 'price_type': "default",
                 'active': ev_data['data']['object']['active'],
                 'livemode': ev_data['data']['object']['livemode'],
-                'last_update': ev_data['data']['object']['updated']
+                'last_update': ev_data['data']['object']['updated'],
+                'name': ev_data['data']['object']['name'],
+                'description': ev_data['data']['object']['description']
             }
 
             logger.info("The active status of the product has changed to {}".format(ev_data['data']['object']['active']))
@@ -118,7 +124,9 @@ def lambda_handler(event, context):
                     'price_type': "student",
                     'active': ev_data['data']['object']['active'],
                     'livemode': ev_data['data']['object']['livemode'],
-                    'last_update': ev_data['data']['object']['updated']
+                    'last_update': ev_data['data']['object']['updated'],
+                    'name': ev_data['data']['object']['name'],
+                    'description': ev_data['data']['object']['description']
                 }
 
                 logger.info("Updating the status of student price to {}".format(ev_data['data']['object']['active']))
