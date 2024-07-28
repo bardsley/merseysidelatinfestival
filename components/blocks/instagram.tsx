@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState, useRef} from "react";
 
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 import type { Template } from "tinacms";
@@ -13,6 +13,7 @@ import {  RichTextTemplate } from "@tinacms/schema-tools"
 import useSWR from 'swr'
 import Image from "next/image";
 import Link from "next/link";
+import {Icon} from "../icon"
 import { Carousel } from "@material-tailwind/react";
 
 const components = { BuyButton, CountdownElement }
@@ -38,7 +39,7 @@ export const Instagram = ({ data }: { data: PageBlocksInstagram }) => {
       <InstagramSection data={data}>
           <TinaMarkdown content={data.body} components={components} />
           {instaData && instaData.instagram_posts && instaData.instagram_posts.length > 0 && (
-            <div className="flex gap-x-3">
+            <div className="flex gap-x-3 items-start">
               {instaData.instagram_posts.map(post => { 
                 if(post.media_type == 'IMAGE') {
                   return <InstagramImage key={post.id} post={post} />
@@ -80,23 +81,39 @@ const InstagramSection = ({data,children}) => {
     </Container>
     </Section>
 } 
-const instaPostClasses = "cover overflow-hidden aspect-square rounded-lg w-1/4"
+const instaPostClasses = "cover aspect-square rounded-lg w-1/4 relative"
+const instaLinkClasses = "relative block overflow-hidden aspect-square rounded-t-lg"
+
+const InstagramCaption = ({caption}) => { return (<div className="w-full h-1/3 bottom-0 p-3 rounded-b-lg bg-[#ffffff] text-richblack-700 ">
+  <p >{caption}</p>
+</div>) }
+
 const InstagramImage = ({post}: {post: any}) => {
   return (
     <div key={post.id} className={instaPostClasses}>
-      <Link href={post.permalink}>
+      <Link href={post.permalink} className={instaLinkClasses}>
         <Image src={post.media_url} width={360} height={360} alt={post.caption}/>
       </Link>
+      <InstagramCaption caption={post.caption}/>
     </div>
   )
 }
 
 const InstagramVideo = ({post}: {post: any}) => {
+  const [play,setPlay] = useState(false)
+  const videoRef = useRef(null);
   return (
     <div key={post.id} className={instaPostClasses}>
-      <Link href={post.permalink}>
+      <div className={play ? instaLinkClasses.replace('aspect-square','aspect-auto') : instaLinkClasses}>
         <Image src={post.thumbnail_url} width={360} height={360} alt={post.caption} className=""/>
-      </Link>
+        <div className="w-full h-full absolute top-0 left-0 flex items-center justify-center border z-50" onClick={() => {setPlay(p =>!p); play ? videoRef.current.pause() : videoRef.current.play() }}>
+          <Icon data={{name: "BiPlay", color: "red", style: "circle", size: "medium"}} className={play ? "hidden" : ""}></Icon>      
+        </div>
+        <video ref={videoRef} className={`absolute top-0 left-0 w-full h-full ${play ? "autoplay": "invisible"}`} loop muted>
+          <source src={post.media_url} type="video/mp4" />
+        </video>
+      </div>
+      <InstagramCaption caption={post.caption}/>
     </div>
   )
 }
@@ -116,17 +133,24 @@ const InstagramCarousel = ({post}: {post: any}) => {
     </div>
   )
   return (
-    <Carousel key={post.id} 
-      className={instaPostClasses}
-      navigation={navigationElm}
-      placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}
-    >
-      { post.children.map((child: any) => {
-        return (
-          <img key={child.id} src={child.media_url} width={360} height={360} alt={post.caption} className=""/>
-        )
-      })}
-    </Carousel>
+    <div key={post.id} className={instaPostClasses} >
+      <Carousel
+        className="rounded-t-lg"
+        navigation={navigationElm}
+        placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}
+      >
+        { post.children.map((child: any) => {
+          return (
+            <div key={child.id}>
+              <img src={child.media_url} width={360} height={360} alt={post.caption} className=""/>
+              
+            </div>
+          )
+        })}
+      </Carousel>
+      <InstagramCaption caption={post.caption}/>
+    </div>
+    
   )
 }
 
