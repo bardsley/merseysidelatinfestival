@@ -26,20 +26,29 @@ lambda_client = boto3.client('lambda')
 def process_line_items(line_items):
     access = [0,0,0,0,0,0]
     pass_type = ""
+    line_items = []
     for item in line_items['data']:
         access_metadata = json.loads(item['price']['product']['metadata']['access'])
-        # access = access+access_metadata
         access = [sum(i) for i in zip(access, access_metadata)]
         pass_type += ", "+item['description']
-    return access, pass_type[2:]
+
+        line_items.append({
+                'prod_id':item['price']['product']['id'],
+                'price_id':item['price']['id'],
+                'description':item['description'],
+                'amount_total':item['amount_total']
+            })
+
+    return access, pass_type[2:], line_items
 
 # Generate a random ticket number
+#! this bit could be done quicker
 def get_ticket_number():
     search = True
     # generate a new ticket number if it is already used in the table
     while search:
         ticketnumber = randint(1000000000, 9999999999)
-        response = table.scan(FilterExpression=Key('ticket_number').eq(ticketnumber))
+        response = table.query(KeyConditionExpression=Key('ticket_number').eq(ticketnumber))
         if response['Count'] == 0:
             search = False
     logger.info("ticket number generated: "+str(ticketnumber))
@@ -68,7 +77,11 @@ def lambda_handler(event, context):
         logger.info(response)
 
         # process the line items and get the string of items purchased for gsheet
-        access, _pass_type = process_line_items(response['line_items'])
+        access, _pass_type, line_items = process_line_items(response['line_items'])
+
+        logger.info(line_items)
+
+        student_ticket = True if "student_active" in response['line_items']['data'][0]['price']['nickname'] else False
 
         pass_type = _pass_type # will be a comma-seperate list of passes bought including if just an individual option
         
@@ -96,7 +109,7 @@ def lambda_handler(event, context):
         Sunday_Classes   = access[4]
         Sunday_Party     = access[5]
 
-        ticket_used = ''
+        ticket_used = False
         meal = json.loads(response['metadata']['preferences']) if 'preferences' in response['metadata'] else None
 
         # # Put the information into the gsheet
@@ -113,19 +126,7 @@ def lambda_handler(event, context):
         #           ticket_number,
         #           Friday_Party, Saturday_Classes, Saturday_Dinner, Saturday_Party, Sunday_Classes, Sunday_Party,
         #           ticket_used])
-        
-        line_items = []
-        logger.info(response['line_items'])
-        for item in response['line_items']['data']:
-            line_items.append({
-                'prod_id':item['id'],
-                'description':item['description'],
-                'amount_total':item['amount_total']
-            })
-
-    
-        logger.info(line_items)
-        
+                
         # put the information into dynamodb table
         logger.info("Putting data in DynamoDB")
         db_response = update_ddb(Item={
@@ -139,6 +140,9 @@ def lambda_handler(event, context):
                 'schedule': None,
                 'meal_options':meal,
                 'ticket_used': ticket_used,
+                'checkout_session':cs_id,
+                'status':"paid_stripe", #! Actually check if the payment has been processed
+                'student_ticket': student_ticket
         })
         logger.info(db_response)
         
