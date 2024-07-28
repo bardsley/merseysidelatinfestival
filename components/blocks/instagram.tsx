@@ -106,7 +106,7 @@ const InstagramVideo = ({post}: {post: any}) => {
     <div key={post.id} className={instaPostClasses}>
       <div className={play ? instaLinkClasses.replace('aspect-square','aspect-auto') : instaLinkClasses}>
         <Image src={post.thumbnail_url} width={360} height={360} alt={post.caption} className=""/>
-        <div className="w-full h-full absolute top-0 left-0 flex items-center justify-center border z-50" onClick={() => {setPlay(p =>!p); play ? videoRef.current.pause() : videoRef.current.play() }}>
+        <div className="w-full h-full absolute top-0 left-0 flex items-center justify-center z-50" onClick={() => {setPlay(p =>!p); play ? videoRef.current.pause() : videoRef.current.play() }}>
           <Icon data={{name: "BiPlay", color: "red", style: "circle", size: "medium"}} className={play ? "hidden" : ""}></Icon>      
         </div>
         <video ref={videoRef} className={`absolute top-0 left-0 w-full h-full ${play ? "autoplay": "invisible"}`} loop muted>
