@@ -6,14 +6,15 @@ import { TicketIcon } from '@heroicons/react/24/solid'
 import { useEffect, useState } from "react";
 import MealPreferences from "../../components/preferences/MealPreferences"
 
-export default function ClientForm(props) {
+export default function ClientPreferencesForm(props) {
   const {hasCookie, ticket, email } = props
   const [preferences, setPreferences] = useState(false as boolean | string | any)
+  const [error, setError] = useState(false as boolean | string)
   const [messageShown, setMessageShown] = useState(true)
   const params = useSearchParams()
   
-  const message = params.get('message')
-  const messageType = params.get('messageType')
+  const message = params.get('message') || error
+  const messageType = params.get('messageType') ? params.get('messageType') : error ? 'bad' : 'good'
 
   const messageClassesBase = "message py-2 pl-4 pr-2 text-white rounded-md flex justify-between items-center transition ease-in-out delay-150 duration-500"
   const messageClassType = messageType =='good' ? 'bg-green-600' : 'bg-red-600'
@@ -28,8 +29,8 @@ export default function ClientForm(props) {
         const fetchURL = `//${process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL}/api/preferences?email=${email.value}&ticket_number=${ticket.value}`
         fetch(fetchURL, {method: "GET",}).then(res => {
         res.json().then(data => {
-          console.log("Preferences",data)
-          data.error ? setPreferences(data.error) : setPreferences(data.preferences)
+          console.log("data.error",data.error)
+          data.error ? setError(data.error) : setPreferences(data.preferences)
         })
       })
     }
@@ -39,8 +40,6 @@ export default function ClientForm(props) {
       }, 3000)
     }
   }, [])
-       
-        
 
   if(hasCookie) {
       return (
@@ -62,13 +61,13 @@ export default function ClientForm(props) {
             <MealPreferences preferences={preferences} setPreferences={setPreferences}></MealPreferences>
               <button className="py-3 px-4 bg-chillired-500 rounded-lg">Save Preferences</button>
             </form>
-          ) : preferences ? preferences : (<div>Loading Preferences...</div>) }
+          ) : preferences ? preferences : (<div className="m-2 ">Loading Preferences...</div>) }
         </>
       )
   } else {
     return (
       <>
-        <p>To set preference please give us the details of the Ticket</p>
+        <p>To set preferences please give us the details of the Ticket</p>
         <TicketCheck></TicketCheck>
       </>
     )

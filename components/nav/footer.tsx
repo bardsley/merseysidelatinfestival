@@ -4,7 +4,7 @@ import { cn } from "../../lib/utils";
 import { Container } from "../layout/container";
 // import Link from "next/link";
 // import { Icon } from "../icon";
-import { FaFacebookF, FaGithub, FaTwitter, FaYoutube } from "react-icons/fa";
+import { FaFacebook, FaGithub, FaTwitter, FaYoutube } from "react-icons/fa";
 import { AiFillInstagram } from "react-icons/ai";
 import { useLayout } from "../layout/layout-context";
 // import { RawRenderer } from "../raw-renderer";
@@ -15,7 +15,7 @@ export default function Footer() {
   const footer = globalSettings?.footer;
 
   
-  const socialIconClasses = "h-7 w-auto";
+  const socialIconClasses = "h-10 w-auto";
   const socialIconColorClasses = {
     blue: "text-blue-500 dark:text-blue-400 hover:text-blue-300",
     teal: "text-teal-500 dark:text-teal-400 hover:text-teal-300",
@@ -57,16 +57,16 @@ export default function Footer() {
           <div className="flex gap-4">
             {footer.social && footer.social.facebook && (
               <a
-                className="inline-block opacity-80 hover:opacity-100 transition ease-out duration-150"
+                className="inline-block opacity-80 hover:opacity-100 transition ease-out duration-150 flex items-center"
                 href={footer.social.facebook}
                 target="_blank"
               >
-                <FaFacebookF
+                <FaFacebook
                   className={`${socialIconClasses} ${
                     socialIconColorClasses[
                       footer.color === "primary" ? "primary" : theme.color
                     ]
-                  }`}
+                  } h-8`}
                 />
               </a>
             )}
@@ -143,7 +143,7 @@ export default function Footer() {
           )}
         />
       </Container>
-      { process.env.NODE_ENV == 'development' ? <>
+      { process.env.NODE_ENV == 'development' && process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' ? <>
       <hr />
       <h2>Debug Ignore below the line</h2>
       <div className='flex'>

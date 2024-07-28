@@ -2,17 +2,14 @@
 
 TODO
 ======
-Next Chat
-- [ ] Should we store last checkout if not completed? Yes
-- [ ] Benefits of recalculating passes etc based on options on post checkout vs passing them into the checkout and along to API?
 
 Adam
 ----
-- [ ] Merseyside small logo
+- [x] Merseyside small logo
 - [ ] Optimise images
-- [ ] Video of dancing for hero
+- [x] Video of dancing for hero
 - [x] Add see through option for a section
-- [ ] Add title to features section
+- [x] Add title to features section
 - [ ] Disclaimer on food choices
 - [ ] Default prose styles e.g. <article class="prose prose-img:rounded-xl prose-headings:underline prose-a:text-blue-600">{{ markdown }}</article>
 - [X] Hydration error in production
@@ -31,18 +28,25 @@ Adam
 - [ ] Studewnt banner on purchase card
 - [ ] Preferences Page
 - [ ] Return page from checkout
+- [ ] Clear cache on purchase
 
 Connor
 ------  
+- [x] Send me the link (for picture frame?) https://www.twibbonize.com
+- [x] resend AWS access
 - [ ] Add a video of the dancing man
 - [ ] Send Adm the SVG files
-- [x] Send me the link (for picture frame?) https://www.twibbonize.com
 - [ ] Email to all not selected meal options 
 - [ ] artist ticket 99XXXXXXX
-- [ ] Explore discount code functionality
-- [x] resend AWS access
 - [ ] Document Lambda & make lambda robust
 - [ ] Allow change name / email.
+- [ ] add additional info to checkout_complete and check if cs exist in db
+- [ ] handle refunds
+- [ ] move email sending into function and make more versitile
+- [ ] ?create new sendgrid
+- [ ] update action for other lambda functions
+- [ ] checkout_complete timeout problem
+- [ ] generate price file dynamically and commit to git
 
 Karen
 -----
@@ -51,6 +55,8 @@ Karen
 When we have time
 -----------------
 - [ ] Stripe integration for passes
+- [ ] ticket upgrades
+
 
 Last Meeting
 ------------
@@ -94,10 +100,10 @@ TBD: Send in this structure in the checkout link request as below. Otherwise jus
     'selected':["nut allergy", "gluten free", ...], // list of requirements selected from a list
     'other': "Some specific additional dietary requirement"
   },
-  'seating_preference': [12345, 12678, ...] // list of ticket numbers of people they want to sit with
+  'seating_preference': ["12345", "12678", ...] // list of ticket numbers of people they want to sit with
 }
 ```
-request checkout 
+request checkout (no longer needed)
 -----------------
 ```jsonc
 {
@@ -112,17 +118,20 @@ request checkout
   'promo_code': "promo_******" // (optional)
 }
 ```
-dyanamodb table
+dyanamodb customer info table
 ---------------
 ```jsonc
 {
   'email': "john_doe@example.com",      
-  'ticket_number': 123456789,
+  'ticket_number': "123456789",
   'full_name': "John Doe",
-  'line_items': {
+  'active': True|False,
+  'purchase_date': 75014206,
+  'line_items': {[
     'amount_total': 4500,
-    'description': 'Party Pass'
-  },
+    'description': 'Party Pass',
+    'price_id': "price_xxxxx"
+  }],
   'access': [1,0,0,1,0,1],
   'schedule': {
     // tbd
@@ -130,7 +139,10 @@ dyanamodb table
   'meal_options':{
     // meal data format (see above)
   },
-  'ticket_used': "", // time/date of ticket being scanned
+  'ticket_used': "false"|"75014206", // time/date of ticket being scanned as string
+  'checkout_session': "cs_xxxxxx",
+  'status': "paid_stripe"|"paid_cash"|"refunded_stripe"|"refunded_cash",
+  'student_ticket': True|False,
 }
 ```
 *********************
