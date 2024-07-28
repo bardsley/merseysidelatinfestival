@@ -1,8 +1,8 @@
 {
-  "name": "@tinacms/starter",
-  "version": "0.1.0",
+  "name": "CongressSystem",
+  "version": "0.3.1",
   "private": true,
-  "license": "MIT",
+  "license": "Contact Adam & Connor for details",
   "scripts": {
     "dev": "tinacms dev -c \"set NODE_DEBUG=http && next dev\"",
     "build": "tinacms build && next build",
