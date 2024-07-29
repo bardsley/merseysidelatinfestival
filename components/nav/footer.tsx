@@ -57,7 +57,7 @@ export default function Footer() {
           <div className="flex gap-4">
             {footer.social && footer.social.facebook && (
               <a
-                className="inline-block opacity-80 hover:opacity-100 transition ease-out duration-150 flex items-center"
+                className=" opacity-80 hover:opacity-100 transition ease-out duration-150 inline-flex items-center"
                 href={footer.social.facebook}
                 target="_blank"
               >
