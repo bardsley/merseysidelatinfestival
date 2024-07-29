@@ -65,11 +65,13 @@ def lambda_handler(event, context):
         last_update = ev_data['data']['object']['created'] if ev_data['type'] == "price.created" else int(time.time())
 
         input = {
-            'price_type': price_type,
+            # 'price_type': price_type,
             'active': ev_data['data']['object']['active'],
             'livemode': ev_data['data']['object']['livemode'],
-            'last_update': last_update
+            'last_update': last_update,
+            'unit_amount': ev_data['data']['object']['unit_amount']
             }
+        if price_type: input['price_type'] = price_type
         
         logger.info("Updating the table with latest data")
         return update_table(input, {'prod_id': prod_id, 'price_id': price_id})
@@ -87,19 +89,25 @@ def lambda_handler(event, context):
                 'price_type': "default",
                 'active': ev_data['data']['object']['active'],
                 'livemode': ev_data['data']['object']['livemode'],
-                'last_update': ev_data['data']['object']['updated']
+                'last_update': ev_data['data']['object']['updated'],
+                'prod_name': ev_data['data']['object']['name'],
+                'description': ev_data['data']['object']['description'],
+                'access': ev_data['data']['object']['metadata']['access']
             }
 
-            logger.info("The default price has changed, updating the table")
+            logger.info("The default price has changed, updating the table with new default")
             update_table(input, {'prod_id': prod_id, 'price_id': price_id})
 
-        if 'active' in ev_data['data']['previous_attributes']:
+        if ('active' in ev_data['data']['previous_attributes']) or ('updated' in ev_data['data']['previous_attributes']):
             
             input = {
                 'price_type': "default",
                 'active': ev_data['data']['object']['active'],
                 'livemode': ev_data['data']['object']['livemode'],
-                'last_update': ev_data['data']['object']['updated']
+                'last_update': ev_data['data']['object']['updated'],
+                'prod_name': ev_data['data']['object']['name'],
+                'description': ev_data['data']['object']['description'],
+                'access': ev_data['data']['object']['metadata']['access']
             }
 
             logger.info("The active status of the product has changed to {}".format(ev_data['data']['object']['active']))
@@ -118,7 +126,10 @@ def lambda_handler(event, context):
                     'price_type': "student",
                     'active': ev_data['data']['object']['active'],
                     'livemode': ev_data['data']['object']['livemode'],
-                    'last_update': ev_data['data']['object']['updated']
+                    'last_update': ev_data['data']['object']['updated'],
+                    'prod_name': ev_data['data']['object']['name'],
+                    'description': ev_data['data']['object']['description'],
+                    'access': ev_data['data']['object']['metadata']['access']
                 }
 
                 logger.info("Updating the status of student price to {}".format(ev_data['data']['object']['active']))

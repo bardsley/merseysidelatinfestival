@@ -3,7 +3,7 @@ name: Deploy Python Lambdas to Dev Namespace
 on:
   push:
     branches:
-      - develop
+      - feature/lambda-functions-setup
     paths:
       - '**.py' # Change to the file extension of the language that you are using.
 
@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 jobs:
-  updateDevRecieveStripeUpdate:
+  update-dev-checkout_complete:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -22,5 +22,41 @@ jobs:
           aws-region: eu-west-2
           role-to-assume: arn:aws:iam::645491919786:role/github-aws-credentials-mlf24-Role-s5Siu9i8MPJB
 
-      - run: zip -jr devRecieveStripeUpdate.zip ./functions/recieveStripeUpdate/
-      - run: aws lambda update-function-code --function-name=dev-recieveStripeUpdate --zip-file=fileb://devRecieveStripeUpdate.zip
+      - run: zip -jr dev-checkout_complete.zip ./functions/checkout_complete/
+      - run: aws lambda update-function-code --function-name=dev-checkout_complete --zip-file=fileb://dev-checkout_complete.zip
+  update-dev-send_email:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: unfor19/install-aws-cli-action@v1
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-west-2
+          role-to-assume: arn:aws:iam::645491919786:role/github-aws-credentials-mlf24-Role-s5Siu9i8MPJB
+
+      - run: zip -jr dev-send_email.zip ./functions/send_email/
+      - run: aws lambda update-function-code --function-name=dev-send_email --zip-file=fileb://dev-send_email.zip     
+  update-dev-gen_price_update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: unfor19/install-aws-cli-action@v1
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-west-2
+          role-to-assume: arn:aws:iam::645491919786:role/github-aws-credentials-mlf24-Role-s5Siu9i8MPJB
+
+      - run: zip -jr dev-gen_price_update.zip ./functions/gen_price_update/
+      - run: aws lambda update-function-code --function-name=dev-gen_price_update --zip-file=fileb://dev-gen_price_update.zip 
+  update-dev-stripe_price_update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: unfor19/install-aws-cli-action@v1
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-west-2
+          role-to-assume: arn:aws:iam::645491919786:role/github-aws-credentials-mlf24-Role-s5Siu9i8MPJB
+
+      - run: zip -jr dev-stripe_price_update.zip ./functions/stripe_price_update/
+      - run: aws lambda update-function-code --function-name=dev-stripe_price_update --zip-file=fileb://dev-stripe_price_update.zip                  
