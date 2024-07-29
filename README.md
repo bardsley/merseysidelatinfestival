@@ -1,4 +1,7 @@
-[Colour Pallette base ](https://coolors.co/02252f-001014-e23912-ffd20a-eee2df)
+Useful Links
+============
+- [Beta site (develop branch)](https://beta.merseysidelatinfestival.co.uk/)
+- [Colour Pallette base ](https://coolors.co/02252f-001014-e23912-ffd20a-eee2df)
 
 TODO
 ======
@@ -25,14 +28,14 @@ Adam
 - [x] Proect Main branch - Can't commit directly into main have to PR
 - [x] Passes not available tdon't get auto triggered e.g dinner pass nbot available select options
 - [ ] Allow change name / email.
-- [ ] Studewnt banner on purchase card
+- [x] Studewnt banner on purchase card
 - [x] Preferences Page
 - [ ] Return page from checkout
 - [ ] Clear cache on purchase
 - [x] Messages not displayed on preferences page after log out
 - [x] Licenseing stuff
 - [x] Fixed develop branch disconnect?
-- [ ] Jumpto goes to right place on pass selector
+- [x] Jumpto goes to right place on pass selector
 
 Connor
 ------  
