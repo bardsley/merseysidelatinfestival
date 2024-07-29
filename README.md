@@ -29,7 +29,7 @@ Adam
 - [x] Preferences Page
 - [ ] Return page from checkout
 - [ ] Clear cache on purchase
-- [ ] Messages not displayed on preferences page after log out
+- [x] Messages not displayed on preferences page after log out
 - [x] Licenseing stuff
 - [x] Fixed develop branch disconnect?
 

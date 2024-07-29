@@ -42,7 +42,7 @@ export default function ClientPreferencesForm(props) {
     }
   }, [])
 
-  if(hasCookie) {
+  if(hasCookie && !preFilledEmail && !preFilledTicketNumber ) {
       return (
         <>
           { message ? (<div className={messageClasses + (messageShown ? "" : " opacity-0")} onClick={() => setMessageShown(false)}>{message} {messageClassIcon}</div>) : null }
@@ -68,6 +68,7 @@ export default function ClientPreferencesForm(props) {
   } else {
     return (
       <>
+        { message ? (<div className={messageClasses + (messageShown ? "" : " opacity-0")} onClick={() => setMessageShown(false)}>{message} {messageClassIcon}</div>) : null }
         <p>To set preferences please give us the details of the Ticket</p>
         <TicketCheck email={preFilledEmail} ticket_number={preFilledTicketNumber}></TicketCheck>
       </>
