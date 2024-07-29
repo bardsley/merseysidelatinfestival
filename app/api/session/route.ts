@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   let message: boolean | string = false 
   if(newHttpMethod && newHttpMethod != 'NOCHANGE') {
     cookies().delete('ticket')
-    message = 'logged out'
+    message = 'Logged out'
   } else {
     const ticket = data.get('ticket').toString()
     const email = data.get('email').toString()

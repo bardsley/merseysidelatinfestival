@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation'
 import { deepCopy } from '../../lib/useful'
 import symmetricDifference from 'set.prototype.symmetricdifference'
 import difference from 'set.prototype.difference'
+import { DivideIcon } from '@heroicons/react/24/outline';
 symmetricDifference.shim();
 difference.shim();
 
@@ -177,22 +178,28 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
         
         </caption>
       </table>
-      <div className='flex mx-auto w-full flex-col md:flex-row justify-between max-w-2xl mt-12 mb-12 p-12 gap-12 items-start rounded border border-gray-600'>
-          
-      { totalCost && totalCost > 0 ? (
-        <>
-          <div className='max-w-2/3'>
-            <p>{packages.length == 1 && packages[0] == fullPassName ?  "Best deal" : "Best option for you"}</p>
-            <h2 className='text-2xl'>{packages.map((packageName) => `${packageName} ${passOrTicket(packageName)}`).join(', ').replace('Saturday Dinner Ticket','Dinner Ticket')}</h2>
-            <h2 className='text-3xl font-bold'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost}</span>) : null } £{packageCost}</h2>
-            { totalCost - packageCost > 0 ? (<p>Saving you £{totalCost - packageCost} on the full cost of those options!</p>) : null }
-          </div>
-          <form action={checkout} className='flex w-full md:w-auto flex-col md:flex-row items-center justify-center'>
-          <CheckoutButton></CheckoutButton>
-          </form>
-          
-        </>
-      ) : "Select options in the table above to see the suggested packages" }
+      <div className="mx-auto w-full  max-w-2xl  items-start mt-10 mb-10 rounded-lg border border-gray-900 bg-gray-50 text-richblack-700 shadow-lg">
+      { priceModel === 'studentCost' && totalCost && totalCost > 0 ? (
+          <div className='rounded-t-md border-t-gray-600 border border-b-0 border-l-0 border-r-0 bg-gold-500 p-2 font-bold text-center'>This is a student only ticket deal!</div>) 
+        : null }
+        <div className='flex flex-col md:flex-row justify-between  p-10 gap-12'>
+          { totalCost && totalCost > 0 ? (
+            <>
+              <div className='max-w-2/3'>
+                
+                <p>{packages.length == 1 && packages[0] == fullPassName ?  "Best deal" : "Best option for you"}</p>
+                <h2 className='text-2xl'>{packages.map((packageName) => `${packageName} ${passOrTicket(packageName)}`).join(', ').replace('Saturday Dinner Ticket','Dinner Ticket')}</h2>
+                <h2 className='text-3xl font-bold'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost}</span>) : null } £{packageCost}</h2>
+                { totalCost - packageCost > 0 ? (<p>Saving you £{totalCost - packageCost} on the full cost of those options!</p>) : null }
+              </div>
+              <form action={checkout} className='flex w-full md:w-auto flex-col md:flex-row items-center justify-center'>
+              <CheckoutButton></CheckoutButton>
+              </form>
+              
+            </>
+          ) : "Select options in the table above to see the suggested packages" }
+        </div>
+        
       </div>
       
       { process.env.NODE_ENV == 'development' && process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' ? <>
