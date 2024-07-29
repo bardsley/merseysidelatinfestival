@@ -10,7 +10,6 @@ import { useRouter } from 'next/navigation'
 import { deepCopy } from '../../lib/useful'
 import symmetricDifference from 'set.prototype.symmetricdifference'
 import difference from 'set.prototype.difference'
-import { DivideIcon } from '@heroicons/react/24/outline';
 symmetricDifference.shim();
 difference.shim();
 
