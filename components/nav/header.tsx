@@ -105,7 +105,7 @@ export default function Header() {
            <div className="flex items-center justify-between">
              <a href="#" className="-m-1.5 p-1.5">
                <span className="sr-only">{header.name}</span>
-               <Logo className="w-12 h-12"></Logo>
+               <Link href='/'><Logo className="w-12 h-12"></Logo></Link>
              </a>
              <button
                type="button"
