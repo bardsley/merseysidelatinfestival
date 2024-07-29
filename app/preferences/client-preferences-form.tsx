@@ -4,7 +4,7 @@ import TicketCheck from "./ticketcheck"
 import { BiAlarmExclamation, BiCheckCircle } from "react-icons/bi";
 import { TicketIcon } from '@heroicons/react/24/solid'
 import { useEffect, useState } from "react";
-import MealPreferences from "../../components/preferences/MealPreferences"
+import MealPreferences, { blankPreferences } from "../../components/preferences/MealPreferences"
 
 export default function ClientPreferencesForm(props) {
   const {hasCookie, ticket, email } = props
@@ -15,6 +15,8 @@ export default function ClientPreferencesForm(props) {
   
   const message = params.get('message') || error
   const messageType = params.get('messageType') ? params.get('messageType') : error ? 'bad' : 'good'
+  const preFilledEmail = params.get('email') 
+  const preFilledTicketNumber = params.get('ticket_number')
 
   const messageClassesBase = "message py-2 pl-4 pr-2 text-white rounded-md flex justify-between items-center transition ease-in-out delay-150 duration-500"
   const messageClassType = messageType =='good' ? 'bg-green-600' : 'bg-red-600'
@@ -29,8 +31,7 @@ export default function ClientPreferencesForm(props) {
         const fetchURL = `//${process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL}/api/preferences?email=${email.value}&ticket_number=${ticket.value}`
         fetch(fetchURL, {method: "GET",}).then(res => {
         res.json().then(data => {
-          console.log("data.error",data.error)
-          data.error ? setError(data.error) : setPreferences(data.preferences)
+          data.error ? setError(data.error) : data.preferences ? setPreferences(data.preferences) : setPreferences(blankPreferences)
         })
       })
     }
@@ -68,7 +69,7 @@ export default function ClientPreferencesForm(props) {
     return (
       <>
         <p>To set preferences please give us the details of the Ticket</p>
-        <TicketCheck></TicketCheck>
+        <TicketCheck email={preFilledEmail} ticket_number={preFilledTicketNumber}></TicketCheck>
       </>
     )
   }

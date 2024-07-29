@@ -45,10 +45,11 @@ export async function GET(request: NextRequest) {
   const apiRequest = `https://x4xy6yutqmildatdl3qc53bnzu0bhbdf.lambda-url.eu-west-2.on.aws/?requested=meal&email=${email}&ticketnumber=${ticket}`
   console.log("-> Conor: ",apiRequest)
   const apiResponse = await fetch(apiRequest, { method: 'GET',  headers: { 'Content-Type': 'application/json' }})
-  // const data = apiResponse.ok ? await apiResponse.json() : await apiResponse.text()
-  const data = apiResponse.ok ? await apiResponse.json() : { error: `Computer says "${apiResponse.statusText}"... we'll let someone who understands this know about this` }
-  // console.log("<- Conor",data, apiResponse.statusText, apiResponse.status)
+  const data = apiResponse.ok ? await apiResponse.json() 
+    : apiResponse.status >= 400 && apiResponse.status < 500 ? await apiResponse.json()
+      : { error: `Computer says "${apiResponse.statusText}"... we'll let someone who understands this know about this` }
+  console.log("<- Conor",data, apiResponse.statusText, apiResponse.status)
   const responseData = apiResponse.ok ? data[0] : data
-  // console.log("API Response",responseData)
+  console.log("API Response",responseData)
   return Response.json(responseData,{status: apiResponse.status})
 }

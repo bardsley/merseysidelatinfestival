@@ -26,9 +26,12 @@ Adam
 - [x] Passes not available tdon't get auto triggered e.g dinner pass nbot available select options
 - [ ] Allow change name / email.
 - [ ] Studewnt banner on purchase card
-- [ ] Preferences Page
+- [x] Preferences Page
 - [ ] Return page from checkout
 - [ ] Clear cache on purchase
+- [ ] Messages not displayed on preferences page after log out
+- [x] Licenseing stuff
+- [x] Fixed develop branch disconnect?
 
 Connor
 ------  
@@ -43,6 +46,8 @@ Connor
 - [ ] add additional info to checkout_complete and check if cs exist in db
 - [ ] handle refunds
 - [ ] move email sending into function and make more versitile
+- [ ] Add link to email http://www.merseysidelatinfestival.com/preferences?email=adam.bardsley@gmail.com&ticket_number=5021048233
+- [ ] Style email with new logo and bigger it
 - [ ] ?create new sendgrid
 - [ ] update action for other lambda functions
 - [ ] checkout_complete timeout problem
