@@ -89,13 +89,27 @@ const InstagramCaption = ({caption}) => { return (<div className="w-full bottom-
   <p >{caption}</p>
 </div>) }
 
+const shrinkCaption = (caption) => {
+  if(caption.length > 200) {
+    // split the post
+    const splitCaption = caption.split("\n")
+    let newCaption = ""
+    splitCaption.forEach((line) => {
+      if(newCaption.length<200) { newCaption = newCaption + line }
+     })
+    return newCaption
+  }
+  else {
+    return caption
+  }
+}
 const InstagramImage = ({post}: {post: any}) => {
   return (
     <div key={post.id} className={instaPostClasses}>
       <Link href={post.permalink} className={instaLinkClasses}>
         <Image src={post.media_url} width={360} height={360} alt={post.caption} className={instaMediaClasses}/>
       </Link>
-      <InstagramCaption caption={post.caption}/>
+      <InstagramCaption caption={shrinkCaption(post.caption)}/>
     </div>
   )
 }
