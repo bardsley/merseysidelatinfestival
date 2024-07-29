@@ -19,7 +19,7 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
       setTimeout(() => {
         const bottom = packagesSuggestorRef.current.getBoundingClientRect().bottom
         window && window.scrollBy({
-          top: bottom + 400,
+          top: bottom,
           behavior : "smooth"
         })
       },100)
@@ -127,10 +127,12 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
     </Section>
     <Section>
       <Container size='medium' width="huge">
-    <PricingTable fullPassFunction={setFullPassSelectFunction} scrollToElement={scrollToElement}></PricingTable>
+        <div ref={packagesSuggestorRef}>
+          <PricingTable fullPassFunction={setFullPassSelectFunction} scrollToElement={scrollToElement}></PricingTable>
+        </div>
       </Container>
     </Section>
-    <a className="block border border-gold-700 scroll-mb-40" ref={packagesSuggestorRef} id="package"></a>
+    {/* <a className="block border border-gold-700 scroll-mb-40" ref={packagesSuggestorRef} id="package"></a> */}
     </>
     
   );
