@@ -11,6 +11,7 @@ export const Container = ({
 }) => {
   const verticalPadding = {
     custom: "",
+    top: "container-none mb-0 mt-4 md:mt-8 md:mb-0",
     small: "container-small my-4 md:my-8",
     medium: "container-medium my-6 md:my-12",
     large: "container-large my-12 md:my-24",
@@ -25,7 +26,7 @@ export const Container = ({
   };
   const paddingClass = {
     default: 'mx-auto px-4 md:px-8',
-    tight: 'mx-auto px-0 md:px-0',
+    tight: 'mx-auto px-4 lg:px-0',
   }
 
   return (
