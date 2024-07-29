@@ -42,7 +42,7 @@ export default function NavItems({ navs }: { navs: any }) {
   const { theme } = useLayout();
   const searchParams = useSearchParams()
   const draft = searchParams.get('draft')
-  const filteredNavs = draft ? navs : navs.filter((item)=>{return item.visible})
+  const filteredNavs = draft || process.env.NODE_ENV == 'development' ? navs : navs.filter((item)=>{return item.visible})
   return (
     <>
       {draft ? (<a className="block text-xs bg-chillired-800 text-white w-96 text-center rounded-b-md absolute right-0 z-50" href="/">Currently showing Draft Content, Click to Hide</a>) : null}
@@ -62,7 +62,7 @@ export default function NavItems({ navs }: { navs: any }) {
               <Link
                 data-tina-field={tinaField(item, "label")} 
                 href={`/${item.href}${draft ? "?draft=yup" : ''}`}
-                className={`relative select-none hover:text-gold-400	text-base inline-block tracking-wide transition duration-150 ease-out hover:opacity-100 py-8 px-1 lg:px-4 whitespace-nowrap`}
+                className={`${!item.visible ? "text-gray-400" : null} relative select-none hover:text-gold-400	text-base inline-block tracking-wide transition duration-150 ease-out hover:opacity-100 py-8 px-1 lg:px-4 whitespace-nowrap`}
               >
                 {item.label}
                 {currentPath === `/${item.href}` && (

@@ -4,7 +4,7 @@ import { useSearchParams } from 'next/navigation'
 export default function NavMobile({ navs }: { navs: any }) {
   const searchParams = useSearchParams()
   const draft = searchParams.get('draft')
-  const filteredNavs = draft ? navs : navs.filter((item)=>{return item.visible})
+  const filteredNavs = draft || process.env.NODE_ENV == 'development' ? navs : navs.filter((item)=>{return item.visible})
   return (
     <div className="mt-6 flow-root">
       <div className="-my-6 divide-y divide-gray-500/10">
@@ -13,9 +13,9 @@ export default function NavMobile({ navs }: { navs: any }) {
             <a
               key={item.href}
               href={item.href}
-              className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-richblack-600"
+              className={`-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 ${item.visible ? "text-white" : "text-gray-400"}  hover:bg-richblack-600`}
             >
-              {item.label}
+              {item.label} { item.visible ? null : "draft"}
             </a>
           ))}
         </div>

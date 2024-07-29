@@ -32,6 +32,7 @@ Adam
 - [x] Messages not displayed on preferences page after log out
 - [x] Licenseing stuff
 - [x] Fixed develop branch disconnect?
+- [ ] Jumpto goes to right place on pass selector
 
 Connor
 ------  
