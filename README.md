@@ -31,6 +31,7 @@ Adam
 - [ ] Clear cache on purchase
 - [ ] Messages not displayed on preferences page after log out
 - [x] Licenseing stuff
+- [x] Fixed develop branch disconnect?
 
 Connor
 ------  
