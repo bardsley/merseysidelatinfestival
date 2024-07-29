@@ -18,8 +18,9 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
     if (packagesSuggestorRef.current) {
       setTimeout(() => {
         const bottom = packagesSuggestorRef.current.getBoundingClientRect().bottom
+        console.log(packagesSuggestorRef.current.getBoundingClientRect())
         window && window.scrollBy({
-          top: bottom,
+          top: bottom -699 ,
           behavior : "smooth"
         })
       },100)
@@ -132,7 +133,6 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
         </div>
       </Container>
     </Section>
-    {/* <a className="block border border-gold-700 scroll-mb-40" ref={packagesSuggestorRef} id="package"></a> */}
     </>
     
   );
