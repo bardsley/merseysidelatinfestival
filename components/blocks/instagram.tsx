@@ -128,7 +128,7 @@ const InstagramVideo = ({post}: {post: any}) => {
           <source src={post.media_url} type="video/mp4" />
         </video>
       </div>
-      <InstagramCaption caption={post.caption}/>
+      <InstagramCaption caption={shrinkCaption(post.caption)}/>
     </div>
   )
 }
@@ -163,7 +163,7 @@ const InstagramCarousel = ({post}: {post: any}) => {
           )
         })}
       </Carousel>
-      <InstagramCaption caption={post.caption}/>
+      <InstagramCaption caption={shrinkCaption(post.caption)}/>
     </div>
     
   )
