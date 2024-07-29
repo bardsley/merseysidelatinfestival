@@ -3,6 +3,7 @@ export type Ticket = {
   studentCost: number;
   isAvailable: boolean;
   priceId?: string;
+  studentPriceId?: string;
 };
 export type DayTickets = {
   Party: Ticket;
@@ -28,6 +29,7 @@ export type Pass = {
   combination: string[];
   description?: string;
   included?: string[];
-  priceId: string
+  priceId?: string
+  studentPriceId?: string
 };
 export type Passes = { [key: string]: Pass };
