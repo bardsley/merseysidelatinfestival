@@ -57,8 +57,9 @@ def lambda_handler(event, context):
 
         # If student price not available default to 'default' price
         prod['student'] = prod['student'] if prod['student'] != None else prod['default']
-        
-        active = "true" if prod['default']['active'] else "false"
+
+        # lowercase true/false in JS
+        prod['default']['active'] = 'true' if prod['default']['active'] else 'false'
 
         # create the line with those details and append it
         lines_passes.append("\t'{}': {{\n\t\t cost: {},\n\t\t studentCost: {},\n\t\t isAvailable: {},\n\t\t saving: {},\n\t\t studentSaving: {},\n\t\t combination: {},\n\t\t description: \"{}\",\n\t\t priceId: '{}',\n\t\t studentPriceId: '{}'}},\n".format(
