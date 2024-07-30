@@ -4,7 +4,7 @@ echo "VERCEL_GIT_COMMIT_REF: $VERCEL_GIT_COMMIT_REF"
 
 if [[ "$VERCEL_GIT_COMMIT_REF" == "pricing" ]] ; then
   # Don't build
-  echo "🛑 - Build cancelled"
+  echo "🛑 - Build cancelled - dont deploy pricing directly"
   exit 0;
 else
   # Proceed with the build
