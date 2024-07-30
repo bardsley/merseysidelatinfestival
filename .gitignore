@@ -28,12 +28,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-.tina/__generated__sendgrid.env
+.tina/__generated__
 sendgrid.env
-sendgrid.env
-sendgrid.env
-sendgrid.env
-sendgrid.env
-sendgrid.env
-sendgrid.env
-sendgrid.env
+.vercel
