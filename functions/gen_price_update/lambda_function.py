@@ -139,9 +139,9 @@ def lambda_handler(event, context):
         logger.info("File not found, creating it")
         repo.create_file(path, message, new_file, branch=branch, author=author)
 
-    # logger.info("merge")
-    # try:
-    #     response = repo.merge("pricing-testing", "pricing", commit_message=message)
-    #     logger.info(response)
-    # except Github.GithubException as ge:
-    #     logger.error(ge) 
+    logger.info("merge")
+    try:
+        response = repo.merge("pricing-testing", "pricing", commit_message=message)
+        logger.info(response)
+    except Github.GithubException as ge:
+        logger.error(ge) 
