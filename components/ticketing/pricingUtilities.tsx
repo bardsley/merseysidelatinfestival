@@ -1,5 +1,5 @@
 import { SelectedOptions } from './pricingTypes'
-import { individualTickets, passes, fullPassName} from './pricingDefaults'
+import { individualTickets, passes, fullPassName} from './pricingDefaultsDynamic'
 import power from 'power-set'
 
 const generateAllPassCombinations = (passes) => {
