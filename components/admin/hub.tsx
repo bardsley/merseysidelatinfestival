@@ -18,9 +18,9 @@ const actions = [
     state: 'live',
   },
   {
-    title: 'Ticketing',
+    title: 'Attendees',
     href: '/admin/ticketing',
-    description: "Tickets and passes for the event",
+    description: "Tickets, passes for the event",
     icon: TicketIcon,
     iconForeground: 'text-purple-700',
     iconBackground: 'bg-purple-200',
@@ -45,7 +45,7 @@ const actions = [
     state: 'unreleased',
   },
   {
-    title: 'Meal Information',
+    title: 'Dining Information',
     href: '#',
     description: "Meal information and seating plans",
     icon: CakeIcon,

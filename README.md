@@ -6,6 +6,10 @@ Useful Links
 TODO
 ======
 
+Both to think and discuss
+- [ ] Do we need the spreadsheet, could it be updated via a button in admin
+- [ ] On the day payments
+
 Adam
 ----
 - [x] Merseyside small logo
@@ -36,6 +40,13 @@ Adam
 - [x] Licenseing stuff
 - [x] Fixed develop branch disconnect?
 - [x] Jumpto goes to right place on pass selector
+- [ ] Generate what I can from pricingDefaultDynamic
+- [ ] Fix pass selector to generate what to tick dynamically not just list all of same type
+- [ ] User management
+- [ ] Filtering creates extra Lindsays
+- [ ] Scanned no signed in
+- [ ] Checked in at, by, using
+- [ ] Build a interface for cash sales
 
 Connor
 ------  
@@ -56,6 +67,15 @@ Connor
 - [ ] update action for other lambda functions
 - [ ] checkout_complete timeout problem
 - [ ] generate price file dynamically and commit to git
+- [ ] Consolidate all the lambda roles and policies
+- [ ] Logout causes errors
+- [ ] Return on unfiltered shouldn't auto sets
+- [ ] Cutoff meal preferences
+- [ ] Swap meal preferences admin only
+- [ ] Seating plan
+- [ ] Store phone numbers
+- [ ] Import from google into dynamodb
+- [ ] create a live DB and a dev DB
 
 Karen
 -----
@@ -63,8 +83,9 @@ Karen
 
 When we have time
 -----------------
-- [ ] Stripe integration for passes
+- [x] Stripe integration for passes
 - [ ] ticket upgrades
+- [ ] Human assisted table optimisation, human says these people must sit here and the magic places everyone else
 
 
 Last Meeting
@@ -76,8 +97,6 @@ Last Meeting
 - Logo ✔️
 - Meal options ✔️
 - Preview deployments ✔️
-
-
 
 Purchasing Rules
 ----------------
@@ -132,6 +151,7 @@ dyanamodb customer info table
 ```jsonc
 {
   'email': "john_doe@example.com",      
+  'phone': "+447734774125",
   'ticket_number': "123456789",
   'full_name': "John Doe",
   'active': True|False,
@@ -150,7 +170,7 @@ dyanamodb customer info table
   },
   'ticket_used': "false"|"75014206", // time/date of ticket being scanned as string
   'checkout_session': "cs_xxxxxx",
-  'status': "paid_stripe"|"paid_cash"|"refunded_stripe"|"refunded_cash",
+  'status': "paid_stripe"|"paid_cash"|"refunded_stripe"|"refunded_cash"|"paid_card"
   'student_ticket': True|False,
 }
 ```

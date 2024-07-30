@@ -16,6 +16,7 @@ export default function TicketList() {
     { name: 'Jonathon Walton', email: 'jonathon.walton@reallylongemail.com', signed_in: '2024-11-29T19:26:00.000Z', passes: ['Saturday Pass'], purchased_at: '2024-10-01-T19:06:00.000Z' },
     { name: 'Sarah Marshal', email: 'ihate@sarahmarshal.com', signed_in: '2024-11-30T10:00:00.000Z', passes: ['Full Pass'], purchased_at: '2024-11-22T19:06:00.000Z' },
     { name: 'Lindsay Lohan', email: 'lindsay.havinfun@gmail.com', signed_in: '2024-12-01T12:00:00.000Z', passes: ['Class Pass', 'Dinner and Dine Pass'], purchased_at: '2024-11-21T19:06:00.000Z' },
+    { name: 'Andy Lohan', email: 'lindsay.havinfun@gmail.com', signed_in: '2024-12-01T12:00:00.000Z', passes: ['Class Pass', 'Dinner and Dine Pass'], purchased_at: '2024-11-21T19:06:00.000Z' },
     { name: 'Big Al', email: 'idance.on.tuesdays@thatplace.com', signed_in: null, passes: ['Class Pass'], purchased_at: '2024-06-22T19:06:00.000Z' },
     { name: 'Cheep Brin', email: 'noemail', signed_in: null, passes: ['Saturday Ticket'], purchased_at: '2024-06-22T19:06:00.000Z' },
 
