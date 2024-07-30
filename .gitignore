@@ -21,6 +21,8 @@
 .env.production
 .idea
 
+.vercel
+
 sendgrid.env
 
 # debug
@@ -30,4 +32,4 @@ yarn-error.log*
 
 .tina/__generated__
 sendgrid.env
-.vercel
+
