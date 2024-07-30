@@ -36,20 +36,19 @@ export default function TicketList() {
           <ChevronUpIcon className='w-4 h-4'/> 
           : <ChevronDownIcon className='w-4 h-4'/> 
         : <ChevronUpDownIcon className='w-6 h-6' />
-      return <a href="#" onClick={fieldClickFunction} className='w-24 flex justify-end pr-3 items-center'>{sortIcon}</a>
+      return <a href="#" onClick={fieldClickFunction} className='w-12 sm:w-24 flex justify-end pr-3 items-center'>{sortIcon}</a>
   }
 
   const headerClassNames = "p-0 text-left text-sm font-semibold text-white "
   const headerContainerClassNames = "flex justify-between"
   const labelClassNames = "py-3.5 pl-4 block"
   return (
-    <div className="px-0">
-      <div>{sortBy} {sortDirection}</div>
-      <div className="-mx-4 sm:mx-0 mt-8">
-        <table className="min-w-full divide-y divide-richblack-600">
-          <thead className="bg-richblack-600">
-            <tr>
-              <th scope="col" className={`${headerClassNames}`}>
+    <div className="px-0 mt-8">
+      <div className="-mx-4 sm:mx-0 mt-3 ">
+        <table className="min-w-full">
+          <thead className="bg-richblack-700">
+            <tr className=''>
+              <th scope="col" className={`${headerClassNames} sm:rounded-l-lg`}>
                 <span className={headerContainerClassNames}>
                   <span className={`${labelClassNames} sm:pl-2 `}>Name <span className='sm:hidden'> & Details</span><span className='hidden sm:inline lg:hidden'>& Email</span></span>
                   { sortField('name') }
@@ -67,9 +66,9 @@ export default function TicketList() {
                   { sortField('passes') }
                 </span>
               </th>
-              <th scope="col" className={`${headerClassNames}`}>
+              <th scope="col" className={`${headerClassNames} sm:rounded-r-lg`}>
                 <span className={headerContainerClassNames}>
-                  <span className={`${labelClassNames}`}>Sign in?</span>
+                  <span className={`${labelClassNames} text-nowrap`}>Sign in?</span>
                   { sortField('signed_in') }
                 </span>
               </th>
