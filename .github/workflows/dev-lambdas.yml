@@ -3,16 +3,17 @@ name: Deploy Python Lambdas to Dev Namespace
 on:
   push:
     branches:
-      - feature/lambda-functions-setup
+      - feature/develop
     paths:
       - '**.py' # Change to the file extension of the language that you are using.
+      - '.github/workflows/dev-lambdas.yml'
 
 permissions:
   id-token: write
   contents: write
 
 jobs:
-  update-dev-checkout_complete:
+  udpate-dev-lambdas:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -20,43 +21,87 @@ jobs:
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: eu-west-2
-          role-to-assume: arn:aws:iam::645491919786:role/github-aws-credentials-mlf24-Role-s5Siu9i8MPJB
+          role-to-assume: arn:aws:iam::645491919786:role/github-aws-credentials-mlf24-Role-s5Siu9i8MPJB 
 
-      - run: zip -jr dev-checkout_complete.zip ./functions/checkout_complete/
-      - run: aws lambda update-function-code --function-name=dev-checkout_complete --zip-file=fileb://dev-checkout_complete.zip
-  update-dev-send_email:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: unfor19/install-aws-cli-action@v1
-      - uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: eu-west-2
-          role-to-assume: arn:aws:iam::645491919786:role/github-aws-credentials-mlf24-Role-s5Siu9i8MPJB
+      # - name: Download hash file
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: dev-hashfile
+      #     path: .github/workflows/
+      #     if-no-files-found: warn
 
-      - run: zip -jr dev-send_email.zip ./functions/send_email/
-      - run: aws lambda update-function-code --function-name=dev-send_email --zip-file=fileb://dev-send_email.zip     
-  update-dev-gen_price_update:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: unfor19/install-aws-cli-action@v1
-      - uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: eu-west-2
-          role-to-assume: arn:aws:iam::645491919786:role/github-aws-credentials-mlf24-Role-s5Siu9i8MPJB
+      - name: Initialize hash file if it doesn't exist
+        run: touch .github/workflows/dev-hashfile.txt
 
-      - run: zip -jr dev-gen_price_update.zip ./functions/gen_price_update/
-      - run: aws lambda update-function-code --function-name=dev-gen_price_update --zip-file=fileb://dev-gen_price_update.zip 
-  update-dev-stripe_price_update:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: unfor19/install-aws-cli-action@v1
-      - uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: eu-west-2
-          role-to-assume: arn:aws:iam::645491919786:role/github-aws-credentials-mlf24-Role-s5Siu9i8MPJB
+      - name: Loop through directories and update Lambda functions if there are changes
+        run: |
+          for dir in functions/*; do
+            if [ -d "$dir" ]; then
+              dirname=$(basename "$dir")
+              new_hash=$(find "$dir" -type f -exec sha256sum {} \; | sha256sum)
+              old_hash=$(grep "$dirname" .github/workflows/dev-hashfile.txt | awk '{print $2}')
+              
+              if [ "$new_hash" != "$old_hash" ]; then
+                echo "Changes detected in $dirname. Updating Lambda function..."
+                zip_filename="dev-${dirname}.zip"
+                lambda_function_name="dev-${dirname}"
+                
+                zip -jr "${zip_filename}" "$dir"
+                aws lambda update-function-code --function-name "${lambda_function_name}" --zip-file "fileb://${zip_filename}"
+                sed -i "/$dirname/d" .github/workflows/dev-hashfile.txt
+                echo "$dirname $new_hash" >> .github/workflows/dev-hashfile.txt
+              else
+                echo "No changes in $dirname. Skipping update."
+              fi
+            fi
+          done    
 
-      - run: zip -jr dev-stripe_price_update.zip ./functions/stripe_price_update/
-      - run: aws lambda update-function-code --function-name=dev-stripe_price_update --zip-file=fileb://dev-stripe_price_update.zip                  
+           
+  # update-dev-checkout_complete:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: unfor19/install-aws-cli-action@v1
+  #     - uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         aws-region: eu-west-2
+  #         role-to-assume: arn:aws:iam::645491919786:role/github-aws-credentials-mlf24-Role-s5Siu9i8MPJB
+
+  #     - run: zip -jr dev-checkout_complete.zip ./functions/checkout_complete/
+  #     - run: aws lambda update-function-code --function-name=dev-checkout_complete --zip-file=fileb://dev-checkout_complete.zip
+  # update-dev-send_email:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: unfor19/install-aws-cli-action@v1
+  #     - uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         aws-region: eu-west-2
+  #         role-to-assume: arn:aws:iam::645491919786:role/github-aws-credentials-mlf24-Role-s5Siu9i8MPJB
+
+  #     - run: zip -jr dev-send_email.zip ./functions/send_email/
+  #     - run: aws lambda update-function-code --function-name=dev-send_email --zip-file=fileb://dev-send_email.zip     
+  # update-dev-gen_price_update:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: unfor19/install-aws-cli-action@v1
+  #     - uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         aws-region: eu-west-2
+  #         role-to-assume: arn:aws:iam::645491919786:role/github-aws-credentials-mlf24-Role-s5Siu9i8MPJB
+
+  #     - run: zip -jr dev-gen_price_update.zip ./functions/gen_price_update/
+  #     - run: aws lambda update-function-code --function-name=dev-gen_price_update --zip-file=fileb://dev-gen_price_update.zip 
+  # update-dev-stripe_price_update:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: unfor19/install-aws-cli-action@v1
+  #     - uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         aws-region: eu-west-2
+  #         role-to-assume: arn:aws:iam::645491919786:role/github-aws-credentials-mlf24-Role-s5Siu9i8MPJB
+
+  #     - run: zip -jr dev-stripe_price_update.zip ./functions/stripe_price_update/
+  #     - run: aws lambda update-function-code --function-name=dev-stripe_price_update --zip-file=fileb://dev-stripe_price_update.zip                  

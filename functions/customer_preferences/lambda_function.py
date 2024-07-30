@@ -42,7 +42,6 @@ def post(event):
     '''
 
     #TODO check the format of meal_options/schedule are correct
-    #TODO check that the tiket number includes meal access
     '''
     # get data and check if it is proper JSON return error if not
     try:
