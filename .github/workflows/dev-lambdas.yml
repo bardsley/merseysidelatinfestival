@@ -27,6 +27,7 @@ jobs:
         with:
           name: dev-hashfile
           path: .github/workflows/
+          if-no-files-found: ignore
 
       - name: Initialize hash file if it doesn't exist
         run: touch .github/workflows/dev-hashfile.txt
