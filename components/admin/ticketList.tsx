@@ -65,7 +65,7 @@ export default function TicketList() {
     const [filtering, setFiltering] = useState(false)
     const currentInput = useRef(null)
     return filtering ? (
-      <input ref={currentInput} className="border-b border-t-0 bg-richblack-500 text-white" type="text" placeholder={fieldname} size={10} autoFocus={true} 
+      <input ref={currentInput} className="border-b border-t-0 bg-richblack-500 text-white w-full" type="text" placeholder={fieldname} size={10} autoFocus={true} 
         onBlur={(evt) => {setFilterFunction(evt.target.value); setFiltering(false)}}
         onKeyUp={(evt) => {if (evt.key === 'Enter') {setFiltering(false); setFilterFunction(currentInput.current.value) }}}
       />
@@ -108,7 +108,7 @@ export default function TicketList() {
                   { sortField('passes') }
                 </span>
               </th>
-              <th scope="col" className={`${headerClassNames} sm:rounded-r-lg`}>
+              <th scope="col" className={`${headerClassNames} sm:rounded-r-lg max-w-24 flex-grow-0`}>
                 <span className={headerContainerClassNames}>
                   <FilterLabel fieldname={"signed_in"} setFilterFunction={(filter) => { setFilterByField('signed_in'); setFilterBy(filter)}}>
                     <span className={`${labelClassNames} text-nowrap`}>Sign in?</span>
