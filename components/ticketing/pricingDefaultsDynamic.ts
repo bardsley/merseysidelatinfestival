@@ -15,11 +15,11 @@ export const individualTickets: IndividualTickets = {
 		},
 	Saturday: { 
 		 Dinner:{
-			 cost: 35,
-			 studentCost: 35,
+			 cost: 40,
+			 studentCost: 40,
 			 isAvailable: true,
-			 priceId: 'price_1PZdLDEWkmdeWsQPawG018VY',
-			 studentPriceId: 'price_1PZdLDEWkmdeWsQPawG018VY'
+			 priceId: 'price_1PiMK8EWkmdeWsQP0gNHspzr',
+			 studentPriceId: 'price_1PiMK8EWkmdeWsQP0gNHspzr'
 			 },
 		 Party:{
 			 cost: 22,
