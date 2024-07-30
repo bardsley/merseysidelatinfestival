@@ -51,8 +51,8 @@ export default function ClientPreferencesForm(props) {
             <h1 className="text-xl w-full">
               Meal preferences for ticket
             </h1>
-            <div className=" flex justify-between items-end w-full">
-              <h1 className="text-4xl flex items-center gap-6"><TicketIcon className="w-12 h-12"/>{ticket.value}</h1>
+            <div className=" flex-col sm:flex-row flex justify-between items-end w-full ">
+              <h1 className="text-3xl sm:text-4xl flex items-center gap-6"><TicketIcon className="w-12 h-12"/>{ticket.value}</h1>
               <form action="/api/session?_method=DELETE" method="POST"><button className=" px-3 py-1 bg-chillired-500 rounded text-xs block">Change Ticket</button></form>
             </div>
           </div>
