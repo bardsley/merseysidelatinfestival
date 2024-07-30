@@ -6,6 +6,7 @@ on:
       - feature/pricing-update
     paths:
       - '**.py' # Change to the file extension of the language that you are using.
+      - '.github/workflows/dev-lambdas.yml'
 
 permissions:
   id-token: write
@@ -23,11 +24,11 @@ jobs:
           role-to-assume: arn:aws:iam::645491919786:role/github-aws-credentials-mlf24-Role-s5Siu9i8MPJB 
 
       - name: Download hash file
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: dev-hashfile
           path: .github/workflows/
-          if-no-files-found: ignore
+          if-no-files-found: warn
 
       - name: Initialize hash file if it doesn't exist
         run: touch .github/workflows/dev-hashfile.txt
