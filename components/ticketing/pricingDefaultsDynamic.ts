@@ -29,11 +29,11 @@ export const individualTickets: IndividualTickets = {
 			 studentPriceId: 'price_1PZdGnEWkmdeWsQPSM32DRS0'
 			 },
 		 Classes:{
-			 cost: 40,
-			 studentCost: 40,
+			 cost: 55,
+			 studentCost: 55,
 			 isAvailable: true,
-			 priceId: 'price_1PZdJKEWkmdeWsQP3pwuvPlG',
-			 studentPriceId: 'price_1PZdJKEWkmdeWsQP3pwuvPlG'
+			 priceId: 'price_1PiMe5EWkmdeWsQP1s1BhBsv',
+			 studentPriceId: 'price_1PiMe5EWkmdeWsQP1s1BhBsv'
 			 },
 		},
 	Sunday: { 
