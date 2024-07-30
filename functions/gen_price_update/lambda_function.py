@@ -116,8 +116,8 @@ def lambda_handler(event, context):
                         passes=''.join(lines_passes),
                         days=days,
                         full_pass_loc=full_pass_loc)
-    with open("./pricingDefaults.test.ts", 'w') as file:     
-        file.write(new_file)    
+    # with open("./pricingDefaults.test.ts", 'w') as file:     
+    #     file.write(new_file)    
 
     logger.debug("get repo")
     repo = git.get_repo("bardsley/merseysidelatinfestival")
