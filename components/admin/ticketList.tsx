@@ -1,8 +1,8 @@
 'use client'
 import {format } from 'date-fns'
 import { useState, useRef } from 'react';
-import { ChevronDownIcon, ChevronUpIcon, ChevronUpDownIcon, XMarkIcon } from '@heroicons/react/24/solid'
-
+import { ChevronDownIcon, ChevronUpIcon, ChevronUpDownIcon, XMarkIcon, EllipsisVerticalIcon } from '@heroicons/react/24/solid'
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 
 
 export default function TicketList() {
@@ -116,13 +116,16 @@ export default function TicketList() {
                   { sortField('signed_in') }
                 </span>
               </th>
+              <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0 min-w-20">
+                <span className="sr-only">Edit</span>
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-800 bg-none">
             {filteredPeople.map((person) => { 
               const passString = person.passes.join(', ')
               return(
-              <tr key={person.email} className='align-bottom'>
+              <tr key={person.email} className='align-center'>
                 <td className="w-full max-w-0 py-4 pl-4 pr-3 text-sm  font-medium text-white sm:w-auto sm:max-w-none sm:pl-2 vertical-align-top">
                   <a href="#" className="text-chillired-600 hover:text-chillired-700">
                     <span className="text-lg leading-6 sm:text-base md:text-base">{person.name}</span>
@@ -136,9 +139,43 @@ export default function TicketList() {
                 </td>
                 <td className="hidden px-3 py-4 text-sm text-gray-200 lg:table-cell">{person.email}</td>
                 <td className="hidden px-3 py-4 text-sm text-gray-200 sm:table-cell">{passString}</td>
-                <td className="px-3 py-4 text-sm text-gray-200 text-nowrap flex flex-col items-center">
+                <td className="px-3 py-4 text-sm text-gray-200 text-nowrap align-center">
                   {person.signed_in ? format(person.signed_in,'EEE HH:mm') :  <button className='bg-green-700 text-white rounded-full px-4 py-1'>Sign in</button>}
                 </td>
+                <td className='px-3 py-0 text-xl align-middle'>
+                  <Menu as="div" className="relative flex flex-col h-full justify-center items-center">
+                    <MenuButton className="-m-2.5 block p-2.5 text-chillired-400 hover:text-chillired-800 h-full">
+                      <span className="sr-only">Open options</span>
+                      <EllipsisVerticalIcon aria-hidden="true" className="h-5 w-5" />
+                    </MenuButton>
+                    <MenuItems
+                      transition
+                      className="absolute right-0 z-10 mt-2 w-44 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+                    >
+                      <MenuItem>
+                        <a href="#" className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50">
+                          View<span className="sr-only">, {person.name}</span>
+                        </a>
+                      </MenuItem>
+                      <MenuItem>
+                        <a href="#" className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50">
+                          Transfer<span className="sr-only">, {person.name}</span>
+                        </a>
+                      </MenuItem>
+                      <MenuItem>
+                        <a href="#" className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50">
+                          Meal Preferences<span className="sr-only">, {person.name}</span>
+                        </a>
+                      </MenuItem>
+                      <MenuItem>
+                        <a href="#" className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50">
+                          Resend Email<span className="sr-only">, {person.name}</span>
+                        </a>
+                      </MenuItem>
+                    </MenuItems>
+                  </Menu>
+                </td>
+                
               </tr>
             )})}
           </tbody>
