@@ -55,10 +55,14 @@ export async function POST(req: NextRequest) {
   const affectedUserId = reqJson.userId;
   const permission = reqJson.permission;
   const value = reqJson.value;
-  const response = await clerkClient.users.updateUserMetadata(affectedUserId, {
-    publicMetadata: { [permission]: value }
-  });
-  // console.log(response)
+  try {
+    await clerkClient.users.updateUserMetadata(affectedUserId, {
+      publicMetadata: { [permission]: value }
+    });
+  } 
+  catch (error) {
+    return Response.json({error: error},{status: 500})
+  }
   
   return Response.json({message: "User is now an admin"}, {status: 200})
 }
