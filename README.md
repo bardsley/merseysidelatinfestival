@@ -47,6 +47,7 @@ Adam
 - [ ] Scanned no signed in
 - [ ] Checked in at, by, using
 - [ ] Build a interface for cash sales
+- [ ] Do we need phone number on login
 
 Connor
 ------  
