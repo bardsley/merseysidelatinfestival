@@ -78,6 +78,7 @@ Connor
 - [ ] Store phone numbers
 - [ ] Import from google into dynamodb
 - [ ] create a live DB and a dev DB
+- [ ] fix full pass access in stripe
 
 Karen
 -----
