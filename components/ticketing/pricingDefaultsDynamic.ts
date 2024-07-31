@@ -117,7 +117,7 @@ export const passes: Passes = {
 		 isAvailable: true,
 		 saving: 1,
 		 studentSaving: 1,
-		 combination: ['Friday Party', 'Saturday Classes', 'Saturday Party', 'Sunday Classes', 'Sunday Party'],
+		 combination: ['Friday Party', 'Saturday Classes', 'Saturday Party', 'Saturday Dinner', 'Sunday Classes', 'Sunday Party'],
 		 description: "Everything the festival has at the best rate! If you're looking for the best deal this is it",
 		 priceId: 'price_1PhiIlEWkmdeWsQPHit5QAQq',
 		 studentPriceId: 'price_1PhiIBEWkmdeWsQPInw95nZm'},
