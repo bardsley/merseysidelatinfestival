@@ -19,7 +19,10 @@ export const initialSelectedOptions = {
   }
 }
 
-export const fullPassName = Object.keys(passes).at(4)
+export const fullPassName = Object.keys(passes).reduce((passInfo,passName) => {
+  const pass = passes[passName]
+  return pass.cost > passInfo.cost ? { passName: passName, cost: pass.cost } : passInfo
+},{passName:'None',cost:0 }).passName //at(4)
 export const days = ['Friday', 'Saturday', 'Sunday']
 // export const passTypes = Object.keys(individualTickets['Saturday']).filter((item) => individualTickets['Saturday'][item].isAvailable) //['Party', 'Classes', 'Dinner']
 
