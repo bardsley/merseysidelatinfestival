@@ -43,11 +43,12 @@ Adam
 - [x] Generate what I can from pricingDefaultDynamic
 - [x] Fix pass selector to generate what to tick dynamically not just list all of same type
 - [ ] User management
-- [ ] Filtering creates extra Lindsays
+- [x] Filtering creates extra Lindsays
 - [ ] Scanned no signed in
 - [ ] Checked in at, by, using
 - [ ] Build a interface for cash sales
 - [ ] Do we need phone number on login
+- [ ] Student prices into checkout
 
 Connor
 ------  
