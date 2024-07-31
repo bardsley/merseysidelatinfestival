@@ -1,3 +1,6 @@
+import {
+  ClerkProvider,
+} from '@clerk/nextjs'
 import "../styles.css";
 import React from "react";
 import { ThemeProvider } from "../components/theme-provider";
@@ -51,6 +54,7 @@ export default async function RootLayout({
   const fontVariable = selectFont(global.theme.font);
 
   return (
+    <ClerkProvider>
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn("min-h-screen flex flex-col antialiased", fontVariable)}
@@ -61,9 +65,11 @@ export default async function RootLayout({
           disableTransitionOnChange
           forcedTheme={global.theme.darkMode}
         >
+          
           {children}
         </ThemeProvider>
       </body>
     </html>
+    </ClerkProvider>
   );
 }
