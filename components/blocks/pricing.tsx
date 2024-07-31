@@ -18,7 +18,6 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
     if (packagesSuggestorRef.current) {
       setTimeout(() => {
         const bottom = packagesSuggestorRef.current.getBoundingClientRect().bottom
-        console.log(packagesSuggestorRef.current.getBoundingClientRect())
         window && window.scrollBy({
           top: bottom -699 ,
           behavior : "smooth"

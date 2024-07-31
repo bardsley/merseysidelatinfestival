@@ -1,5 +1,5 @@
-import { SelectedOptions } from './pricingTypes'
-import { individualTickets, passes, fullPassName} from './pricingDefaultsDynamic'
+import { SelectedOptions, PartialSelectedOptions } from './pricingTypes'
+import { individualTickets, passes, fullPassName} from './pricingDefaults'
 import power from 'power-set'
 
 const generateAllPassCombinations = (passes) => {
@@ -88,6 +88,22 @@ const priceForIndividualItems = (items: any[], priceModel) => {
     return price + individualTickets[day][passType][priceModel]
   },0)
   return price
+}
+
+export const itemListToOptions = (items: string[], setTo:boolean) => {
+  return items.reduce((returnOptions,item) => {
+    const [day,passType] = item.split(' ')
+    const isAvailable = individualTickets[day] && individualTickets[day][passType] && individualTickets[day][passType].isAvailable
+    returnOptions = {...returnOptions,[day]: {...returnOptions[day], [passType]: isAvailable ? setTo : false}}
+    return returnOptions
+  },{})
+}
+
+export const addToOptions = (currentOptions: SelectedOptions,options: PartialSelectedOptions) => {
+  return Object.keys(currentOptions).reduce((returnOptions,day) => {
+    returnOptions = {...returnOptions,[day]: {...currentOptions[day], ...returnOptions[day], ...options[day]}}
+    return returnOptions
+  },{})
 }
 const itemsNotCovered = (optionsRequested,optionsCovered) => {
   const requested = new Set(optionsRequested) 

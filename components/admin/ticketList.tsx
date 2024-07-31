@@ -12,14 +12,13 @@ export default function TicketList() {
   const [filterByField, setFilterByField] = useState('');
 
   const people = [
-    { name: 'Arnold Swarzenegger', email: 'arnie@gmail.com', signed_in: '2024-11-29T19:06:00.000Z', passes: ['Party Pass', 'Saturday Classes'], purchased_at: '2024-11-22T19:06:00.000Z' },
-    { name: 'Jonathon Walton', email: 'jonathon.walton@reallylongemail.com', signed_in: '2024-11-29T19:26:00.000Z', passes: ['Saturday Pass'], purchased_at: '2024-10-01-T19:06:00.000Z' },
-    { name: 'Sarah Marshal', email: 'ihate@sarahmarshal.com', signed_in: '2024-11-30T10:00:00.000Z', passes: ['Full Pass'], purchased_at: '2024-11-22T19:06:00.000Z' },
-    { name: 'Lindsay Lohan', email: 'lindsay.havinfun@gmail.com', signed_in: '2024-12-01T12:00:00.000Z', passes: ['Class Pass', 'Dinner and Dine Pass'], purchased_at: '2024-11-21T19:06:00.000Z' },
-    { name: 'Andy Lohan', email: 'lindsay.havinfun@gmail.com', signed_in: '2024-12-01T12:00:00.000Z', passes: ['Class Pass', 'Dinner and Dine Pass'], purchased_at: '2024-11-21T19:06:00.000Z' },
+    { name: 'Arnold Swarzenegger', email: 'arnie@gmail.com', signed_in: '2024-11-29T19:06:00.000Z', passes: ['Party Pass', 'Saturday Classes'], purchased_at: '2024-11-22T19:06:00.000Z', ticket_number: '1286741345' },
+    { name: 'Jonathon Walton', email: 'jonathon.walton@reallylongemail.com', signed_in: '2024-11-29T19:26:00.000Z', passes: ['Saturday Pass'], purchased_at: '2024-10-01-T19:06:00.000Z', ticket_number: '1048162345' },
+    { name: 'Sarah Marshal', email: 'ihate@sarahmarshal.com', signed_in: '2024-11-30T10:00:00.000Z', passes: ['Full Pass'], purchased_at: '2024-11-22T19:06:00.000Z', ticket_number: '1481602345' },
+    { name: 'Lindsay Lohan', email: 'lindsay.havinfun@gmail.com', signed_in: '2024-12-01T12:00:00.000Z', passes: ['Class Pass', 'Dinner and Dine Pass'], purchased_at: '2024-11-21T19:06:00.000Z', ticket_number: '9823467324' },
+    { name: 'Andy Lohan', email: 'lindsay.havinfun@gmail.com', signed_in: '2024-12-01T12:00:00.000Z', passes: ['Class Pass', 'Dinner and Dine Pass'], purchased_at: '2024-11-21T19:06:00.000Z', ticket_number: '12072389414' },
     { name: 'Big Al', email: 'idance.on.tuesdays@thatplace.com', signed_in: null, passes: ['Class Pass'], purchased_at: '2024-06-22T19:06:00.000Z' },
-    { name: 'Cheep Brin', email: 'noemail', signed_in: null, passes: ['Saturday Ticket'], purchased_at: '2024-06-22T19:06:00.000Z' },
-
+    { name: 'Cheep Brin', email: 'noemail', signed_in: null, passes: ['Saturday Ticket'], purchased_at: '2024-06-22T19:06:00.000Z', ticket_number: '1926531234' },
     // More people...
   ]
 
@@ -58,9 +57,6 @@ export default function TicketList() {
         : <ChevronUpDownIcon className='w-6 h-6' />
       return <a href="#" onClick={fieldClickFunction} className='w-12 sm:w-24 flex justify-end pr-3 items-center'>{sortIcon}</a>
   }
-
-
-
 
   const FilterLabel = ({fieldname,setFilterFunction,children}) => {
     const [filtering, setFiltering] = useState(false)
@@ -126,7 +122,7 @@ export default function TicketList() {
             {filteredPeople.map((person) => { 
               const passString = person.passes.join(', ')
               return(
-              <tr key={person.email} className='align-center'>
+              <tr key={`${person.ticket_number}`} className='align-center'>
                 <td className="w-full max-w-0 py-4 pl-4 pr-3 text-sm  font-medium text-white sm:w-auto sm:max-w-none sm:pl-2 vertical-align-top">
                   <a href="#" className="text-chillired-600 hover:text-chillired-700">
                     <span className="text-lg leading-6 sm:text-base md:text-base">{person.name}</span>

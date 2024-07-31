@@ -1,23 +1,18 @@
 // import { CheckIcon } from '@heroicons/react/20/solid'
-import { fullPassName, passes } from './pricingDefaultsDynamic'
+import { fullPassName, passes} from './pricingDefaults'
 import { PassCard } from './PassCard';
+import { itemsFromPassCombination, itemListToOptions, addToOptions } from './pricingUtilities'
 
 
 
-export default function PassCards({setDayPass,setTypePass,setDinnerPass,priceModel,scrollToElement,selectFullPass,selected,shouldScroll}) {
+// export default function PassCards({setDayPass,setTypePass,setDinnerPass,priceModel,scrollToElement,selectFullPass,selected,shouldScroll}) {
+export default function PassCards({currentSelectedOptions, setSelectedOptions, priceModel,scrollToElement,selected,shouldScroll}) {
 
   const clickFunctionFromPassName = (passName:string,setTo:boolean) => {
-    if (passName == fullPassName) {
-      return () => { selectFullPass(setTo); shouldScroll && scrollToElement()}
-    } else if(/(Saturday|Sunday)/.test(passName)) {
-      return () => { setDayPass(passName.split(' ')[0],setTo); shouldScroll && scrollToElement()}
-    } else if ( passName == "Class Pass" ) {
-      return () => { setTypePass("Classes",setTo); shouldScroll && scrollToElement()}
-    } else if ( passName == "Party Pass" ) {
-      return () => { setTypePass("Party",setTo); shouldScroll && scrollToElement()}
-    } else {
-      return () => { setDinnerPass(setTo); shouldScroll && scrollToElement()}
-    }
+    let initialOptions = currentSelectedOptions
+    const itemsInPassName = itemsFromPassCombination([passName]) as string[]
+    setSelectedOptions(addToOptions(initialOptions,itemListToOptions(itemsInPassName,setTo)))
+    shouldScroll && scrollToElement()
   }  
 
   const passToDisplay = Object.keys(passes).filter((item) => passes[item].isAvailable).filter((item)=>item !== fullPassName)
@@ -33,14 +28,13 @@ export default function PassCards({setDayPass,setTypePass,setDinnerPass,priceMod
 
       
       <PassCard passName={fullPassName} clickFunction={() => { 
-        console.log('full pass',!selected.includes(fullPassName),selected)
-        clickFunctionFromPassName(fullPassName,!selected.includes(fullPassName))() 
+        clickFunctionFromPassName(fullPassName,!selected.includes(fullPassName))
         }} pass={passes[fullPassName]} priceModel={priceModel} hasASaving={true} selected={selected.includes(fullPassName)}></PassCard>
 
         {passToDisplay.map((passName) => {
           const pass = passes[passName]
           const hasSaving = priceModel == 'studentCost' ? pass.studentSaving > 0 : pass.saving > 0
-          const clickFunction = clickFunctionFromPassName(passName,!selected.includes(passName))
+          const clickFunction = () => clickFunctionFromPassName(passName,!selected.includes(passName))
           return (<PassCard key={passName} passName={passName} clickFunction={clickFunction} pass={pass} priceModel={priceModel} hasASaving={hasSaving} selected={selected.includes(passName)}></PassCard>)
         })}
         
