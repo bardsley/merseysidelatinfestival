@@ -14,6 +14,7 @@ export default function CheckoutClient() {
   const [selectedOptions, setSelectedOptions] = useState({} as any)
   const [stripeProducts,setStripeProducts] = useState(false as boolean | string[])
   const [userData, setUserData] = useState(false as any)
+  const [student, setStudent] = useState(false as boolean)
   const [steps, setSteps] = useState({details: false, meal: false, payment: false})
   const [bestCombo,setBestCombo] = useState({price:0, options: []})
 
@@ -32,23 +33,26 @@ export default function CheckoutClient() {
 
   useEffect(() => {
     const loadedOptions = JSON.parse(localStorage.getItem("selectedOptions"))
+    const loadedStudent = JSON.parse(localStorage.getItem("student"))
     setSelectedOptions(loadedOptions)
+    setStudent(loadedStudent)
     console.log("Loaded Options",loadedOptions)
+
   },[])
 
   useEffect(() => {
-    const calculatedBestCombo = getBestCombination(selectedOptions,'cost')
+    const calculatedBestCombo = getBestCombination(selectedOptions,student ? 'studentCost':'cost')
     setBestCombo(calculatedBestCombo)
     console.log("Best Combo",bestCombo)
-  },[selectedOptions])
+  },[selectedOptions,student])
 
   useEffect(() => {
-    const allPassAndTicketPriceIds = priceIds()
+    const allPassAndTicketPriceIds = priceIds(student)
     console.log("All Pass and Ticket Price Ids",allPassAndTicketPriceIds)
     const selectedPassPriceIds = bestCombo.options.map(pass => allPassAndTicketPriceIds[pass])
     console.log("Selected Pass Price Ids",selectedPassPriceIds)
     setStripeProducts(selectedPassPriceIds)
-  },[bestCombo])
+  },[bestCombo,student])
 
   const dinnerInfoRequired = selectedOptions && selectedOptions['Saturday'] && selectedOptions['Saturday']['Dinner']
   const stripeReady = stripeProducts && typeof stripeProducts === "object" && stripeProducts.length > 0
@@ -65,7 +69,7 @@ export default function CheckoutClient() {
       <Container size="small" width="medium" className=" text-white w-full rounded-3xl border border-richblack-700 bg-richblack-500 py-6 transition-all	">
         <h2 className="text-xl flex items-center -ml-14 ">
           <Icon data={{name: "BiCart", color: "purple", style: "circle", size: "medium"}} className="mr-2 border border-richblack-700"></Icon>
-          Passes selected
+          {student ? "Student " : null}Passes selected
         </h2>
         {bestCombo.options.join(', ')} : £{bestCombo.price}
       </Container>

@@ -136,22 +136,23 @@ export const passCombinations = generateAllPassCombinations(passes)
 
 export { calculateTotalCost, passOrTicket, optionsToPassArray, availableOptionsForDay, isAllDayOptions, isAllPassOptions, priceForPassCombination, itemsFromPassCombination, priceForIndividualItems, itemsNotCovered, getBestCombination }
 
-const getTicketPriceIds = () => {
+const getTicketPriceIds = (student = false) => {
+  
   const ticketNames = Object.keys(individualTickets).reduce((returnObj,day) => {
     const keys = Object.keys(individualTickets[day])
     return {...returnObj, ...keys.reduce((returnObj,key) => {
       // [`${day} ${key}`
-      return individualTickets[day][key].priceId ? {...returnObj, [`${day} ${key}`]: `${individualTickets[day][key].priceId}`} : returnObj
+      return individualTickets[day][key][student ? 'studentPriceId' : 'priceId'] ? {...returnObj, [`${day} ${key}`]: `${individualTickets[day][key][student ? 'studentPriceId' : 'priceId']}`} : returnObj
     },{})}
   },{}
 )
   return ticketNames
 }
 
-export const priceIds = () => {
+export const priceIds = (student = false) => {
   const passPriceIds = Object.keys(passes).reduce((returnObj,key) => { 
-    return {...returnObj, [key]: passes[key].priceId}
+    return {...returnObj, [key]: passes[key][student ? 'studentPriceId' : 'priceId']}
   },{})
-  const ticketPriceIds = getTicketPriceIds()
+  const ticketPriceIds = getTicketPriceIds(student)
   return {...passPriceIds,...ticketPriceIds}
 }
