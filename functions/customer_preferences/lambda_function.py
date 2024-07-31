@@ -82,7 +82,7 @@ def post(event):
         if ticket_entry['access'][2] < 1: return err("Attempting to set meal options for a ticket which does not include dinner.")
 
         logger.info(f"-SET MEAL OPTIONS:, {data['preferences']}")
-        UpdateExp += ", meal_options = :val1"
+        UpdateExp += ", meal_preferences = :val1"
         ExpAttrVals[':val1'] = data['preferences']
     if 'schedule' in data:
         logger.info(f"-SET SCHEDULE OPTIONS:, {data['schedule']}")
