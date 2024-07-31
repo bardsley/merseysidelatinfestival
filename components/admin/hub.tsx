@@ -54,13 +54,13 @@ const actions = [
     state: 'unreleased',
   },
   {
-    title: 'Fun Stuff',
-    href: '#',
-    description: "This doesn't do anything we just had an extra space",
+    title: 'Users',
+    href: '/admin/users',
+    description: "Backend user admin",
     icon: LightBulbIcon,
     iconForeground: 'text-gray-700',
     iconBackground: 'bg-gray-300',
-    state: 'unreleased',
+    state: 'live',
   },
 ]
 

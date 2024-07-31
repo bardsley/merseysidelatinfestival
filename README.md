@@ -42,7 +42,7 @@ Adam
 - [x] Jumpto goes to right place on pass selector
 - [x] Generate what I can from pricingDefaultDynamic
 - [x] Fix pass selector to generate what to tick dynamically not just list all of same type
-- [ ] User management
+- [x] User management
 - [x] Filtering creates extra Lindsays
 - [ ] Scanned no signed in
 - [ ] Checked in at, by, using
