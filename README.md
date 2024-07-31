@@ -47,8 +47,8 @@ Adam
 - [ ] Scanned no signed in
 - [ ] Checked in at, by, using
 - [ ] Build a interface for cash sales
-- [ ] Do we need phone number on login
-- [ ] Student prices into checkout
+- [x] Do we need phone number on login
+- [x] Student prices into checkout
 - [x] Signout errors - Sort of fixed, redirect if a page doesn't exist
 
 Connor
