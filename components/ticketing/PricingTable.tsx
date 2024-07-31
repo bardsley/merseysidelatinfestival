@@ -89,7 +89,6 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
 
   return (
     <div className="table-container w-full flex justify-center flex-col md:pt-12 max-w-full lg:mx-auto md:mx-3 col-span-5 text-xs md:text-base">
-    selectedOptions, setSelectedOptions, priceModel,scrollToElement,selected,shouldScroll
       <PassCards 
         currentSelectedOptions={selectedOptions}
         setSelectedOptions={setSelectedOptions}
