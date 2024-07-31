@@ -99,6 +99,8 @@ Last Meeting
 - Meal options ✔️
 - Preview deployments ✔️
 
+
+
 Purchasing Rules
 ----------------
 
@@ -152,7 +154,6 @@ dyanamodb customer info table
 ```jsonc
 {
   'email': "john_doe@example.com",      
-  'phone': "+447734774125",
   'ticket_number': "123456789",
   'full_name': "John Doe",
   'active': True|False,
@@ -171,7 +172,7 @@ dyanamodb customer info table
   },
   'ticket_used': "false"|"75014206", // time/date of ticket being scanned as string
   'checkout_session': "cs_xxxxxx",
-  'status': "paid_stripe"|"paid_cash"|"refunded_stripe"|"refunded_cash"|"paid_card"
+  'status': "paid_stripe"|"paid_cash"|"refunded_stripe"|"refunded_cash",
   'student_ticket': True|False,
 }
 ```
