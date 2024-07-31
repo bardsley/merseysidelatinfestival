@@ -42,13 +42,13 @@ Adam
 - [x] Jumpto goes to right place on pass selector
 - [x] Generate what I can from pricingDefaultDynamic
 - [x] Fix pass selector to generate what to tick dynamically not just list all of same type
-- [ ] User management
+- [x] User management
 - [x] Filtering creates extra Lindsays
 - [ ] Scanned no signed in
 - [ ] Checked in at, by, using
 - [ ] Build a interface for cash sales
-- [ ] Do we need phone number on login
-- [ ] Student prices into checkout
+- [x] Do we need phone number on login
+- [x] Student prices into checkout
 - [x] Signout errors - Sort of fixed, redirect if a page doesn't exist
 
 Connor
