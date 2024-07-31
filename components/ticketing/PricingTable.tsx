@@ -65,6 +65,10 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
   useEffect(() => {
     const storedOptions = localStorage.getItem("selectedOptions")
     if(storedOptions) { setSelectedOptions(JSON.parse(storedOptions)) }
+    const studentDiscount = localStorage.getItem("student") === 'true'
+    console.log("Student Discount",studentDiscount)
+    setPriceModel(studentDiscount ? "studentCost" : "cost")
+    setStudentDiscount(studentDiscount)
   },[])
 
   function CheckoutButton() {
@@ -80,6 +84,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
 
   async function checkout() {
     localStorage.setItem("selectedOptions", JSON.stringify(selectedOptions))
+    localStorage.setItem("student",priceModel === "cost" ? "false" : "true")
     router.push("/checkout") //TODO This 100% needs a check for errors
   }
   
