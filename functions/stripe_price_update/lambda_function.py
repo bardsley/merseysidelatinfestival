@@ -18,6 +18,15 @@ db = boto3.resource('dynamodb')
 table = db.Table('mlf24_stripe_products')
 
 def update_table(input, key):
+    if key['price_id'] is None:
+        query = stripe.Price.search(query="product:'{}'".format(key['prod_id']))
+        logger.info("No default price, updating each price that exists ")
+        for item in query['data']:
+            _update_table(input, {'prod_id': key['prod_id'], 'price_id': item['id']}, condition='attribute_exists(price_id)') 
+    else:
+        _update_table(input, key, condition=None)
+
+def _update_table(input, key, condition=None):
     UpdateExp   = ""
     ExpAttrVals = {}
     for k in input:
@@ -30,13 +39,16 @@ def update_table(input, key):
         'ExpressionAttributeValues' : ExpAttrVals
     }
 
+    if condition:
+        params['ConditionExpression'] = condition
+
     try:
         logger.info(params)
         response = table.update_item(**params)
         logger.info(response)
         return True
     except db.meta.client.exceptions.ConditionalCheckFailedException as e:
-        logger.error(e)
+        logger.error("The price does not exist in the table")
         return False
 
 def lambda_handler(event, context):
@@ -56,20 +68,28 @@ def lambda_handler(event, context):
         price_id = ev_data['data']['object']['id']
         logger.info({'prod_id': prod_id, 'price_id': price_id})
 
-        if not ev_data['data']['object']['active']: 
-            logger.info("Deleting a price which is no longer active")
+        if ev_data['type'] == "price.deleted": 
+            logger.info("Deleting a price which has been deleted from Stripe")
             return table.delete_item(Key={'prod_id': prod_id, 'price_id': price_id})
 
         price_type = "student" if ev_data['data']['object']['nickname'] == "student_active" else None
 
         last_update = ev_data['data']['object']['created'] if ev_data['type'] == "price.created" else int(time.time())
 
+        stripe_product = stripe.Product.retrieve(prod_id)
+
         input = {
             # 'price_type': price_type,
-            'active': ev_data['data']['object']['active'],
+            # 'active': ev_data['data']['object']['active'],
+                'product_active': stripe_product['active'],
+                'price_active': ev_data['data']['object']['active'],
             'livemode': ev_data['data']['object']['livemode'],
             'last_update': last_update,
-            'unit_amount': ev_data['data']['object']['unit_amount']
+            'unit_amount': ev_data['data']['object']['unit_amount'],
+
+            'prod_name': stripe_product['name'],
+            'description': stripe_product['description'],
+            'access': stripe_product['metadata']['access']
             }
         if price_type: input['price_type'] = price_type
         
@@ -87,7 +107,9 @@ def lambda_handler(event, context):
 
             input = {
                 'price_type': "default",
-                'active': ev_data['data']['object']['active'],
+                # 'active': ev_data['data']['object']['active'],
+                    'product_active': ev_data['data']['object']['active'],
+                    # 'price_active': ev_data['data']['object']['active'],
                 'livemode': ev_data['data']['object']['livemode'],
                 'last_update': ev_data['data']['object']['updated'],
                 'prod_name': ev_data['data']['object']['name'],
@@ -102,7 +124,9 @@ def lambda_handler(event, context):
             
             input = {
                 'price_type': "default",
-                'active': ev_data['data']['object']['active'],
+                # 'active': ev_data['data']['object']['active'],
+                    'product_active': ev_data['data']['object']['active'],
+                    # 'price_active': ev_data['data']['object']['active'],
                 'livemode': ev_data['data']['object']['livemode'],
                 'last_update': ev_data['data']['object']['updated'],
                 'prod_name': ev_data['data']['object']['name'],
@@ -114,17 +138,18 @@ def lambda_handler(event, context):
             update_table(input, {'prod_id': prod_id, 'price_id': price_id})
             
             query = stripe.Price.search(query="active:'true' AND product:'{}'".format(prod_id))
+            student_price = None
             for item in query['data']:
                 if item['nickname'] == "student_active": 
                     student_price = item['id'] 
                     break
-                else:
-                    student_price = None
             
             if student_price:
                 input = {
                     'price_type': "student",
-                    'active': ev_data['data']['object']['active'],
+                    # 'active': ev_data['data']['object']['active'],
+                         'product_active': ev_data['data']['object']['active'],
+                         'price_active': query['data'][student_price]['object']['active'],
                     'livemode': ev_data['data']['object']['livemode'],
                     'last_update': ev_data['data']['object']['updated'],
                     'prod_name': ev_data['data']['object']['name'],
