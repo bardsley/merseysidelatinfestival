@@ -40,7 +40,7 @@ Adam
 - [x] Licenseing stuff
 - [x] Fixed develop branch disconnect?
 - [x] Jumpto goes to right place on pass selector
-- [ ] Generate what I can from pricingDefaultDynamic
+- [x] Generate what I can from pricingDefaultDynamic
 - [x] Fix pass selector to generate what to tick dynamically not just list all of same type
 - [ ] User management
 - [ ] Filtering creates extra Lindsays
