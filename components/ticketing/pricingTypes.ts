@@ -5,6 +5,8 @@ export type Ticket = {
   priceId?: string;
   studentPriceId?: string;
 };
+
+
 export type DayTickets = {
   Party: Ticket;
   Classes?: Ticket;
@@ -15,11 +17,20 @@ export type IndividualTickets = {
   Saturday: DayTickets;
   Sunday: DayTickets;
 };
+
+export type DayOption = { Party: boolean; Classes?: boolean; Dinner?: boolean; }
 export type SelectedOptions = {
-  Friday: { Party: boolean; Classes: boolean; Dinner: boolean };
-  Saturday: { Party: boolean; Classes: boolean; Dinner: boolean };
-  Sunday: { Party: boolean; Classes: boolean; Dinner: boolean };
+  Friday: DayOption;
+  Saturday: DayOption;
+  Sunday: DayOption;
 };
+export type PartialDayOption = { Party: boolean; Classes?: boolean; Dinner?: boolean; }
+export type PartialSelectedOptions = {
+  Friday?: PartialDayOption;
+  Saturday?: PartialDayOption;
+  Sunday?: PartialDayOption;
+};
+
 export type Pass = {
   cost: number;
   studentCost: number;
