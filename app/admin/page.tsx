@@ -2,7 +2,7 @@ import {
   SignInButton,
   SignedIn,
   SignedOut,
-  UserButton
+  UserButton,
 } from '@clerk/nextjs'
 import React from "react";
 import Layout from "../../components/layout/layout";
@@ -14,7 +14,6 @@ export default async function AdminDashboardPage() {
 
   const pages = [
     { name: 'Dashboard', href: '/admin', current: true },
-    
   ]
   return (
     <Layout>
@@ -44,12 +43,12 @@ export default async function AdminDashboardPage() {
 
           </SignedOut>
           <SignedIn>
-          <UserButton />
-            <Hub></Hub>
+            <UserButton />
+              <Hub></Hub>
           </SignedIn>
           
         </Container>
       </section>
     </Layout>
-  );
+  )
 }
