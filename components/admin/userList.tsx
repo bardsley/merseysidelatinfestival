@@ -4,7 +4,7 @@ import { EnvelopeIcon, ClockIcon } from '@heroicons/react/20/solid'
 import { format } from "date-fns";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
-export default function UserList() {
+export default function UserList({loggedInUser}) {
   const { mutate } = useSWRConfig()
   const {data, error, isLoading, isValidating} = useSWR("/api/users", fetcher);
   const users = data?.users
@@ -14,7 +14,7 @@ export default function UserList() {
   else {
   return (
     <ul role="list" className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {users && users.map((user) => { return (<Card key={user.id} person={user} mutate={mutate}/>)})}
+      {users && users.map((user) => { return (<Card key={user.id} person={user} mutate={mutate} loggedInUser={loggedInUser}/>)})}
     </ul>
     )
   }
@@ -29,10 +29,11 @@ export default function UserList() {
     console.log(apiResponse)
   }
 
-  const Card = ({person,mutate}) => {
+  const Card = ({person,mutate,loggedInUser}) => {
     console.log("person:",person)
     const admin = person.metadata?.public?.admin;
     const title = person.metadata?.public?.title;
+    const isMe = person.id === loggedInUser
     return (<li
           key={person.email}
           className="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white text-center shadow"
@@ -47,7 +48,9 @@ export default function UserList() {
               <dd className="text-sm text-gray-500">{title}</dd>
               <dt className="sr-only">Role</dt>
               <dd className="mt-3">
-                <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                <span className={`inline-flex items-center rounded-full 
+                  ${ admin ? "bg-green-50 text-green-700 ring-green-600/20" : "bg-blue-50 text-blue-700 ring-blue-600/20"}
+                  px-3 pb-0 pt-1 text-xs font-medium  ring-1 ring-inset `}>
                   {admin ? "Admin" : "User"}
                 </span>
               </dd>
@@ -65,12 +68,17 @@ export default function UserList() {
                 </a>
               </div>
               <div className="-ml-px flex w-0 flex-1">
-                <button
+                { isMe ? <div className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
+                  This is you
+                </div>
+                :<button
                   onClick={() => {setPermission(person.id,"admin",!admin); setTimeout(() => mutate("/api/users"),600)}}
-                  className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
+                  className="hover:text-red-600 relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
                 >
                   {admin ? "Revoke Admin" : "Make Admin"}
                 </button>
+                }
+                
               </div>
               <div className="-ml-px flex w-0 flex-1">
                 <span
