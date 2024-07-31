@@ -42,7 +42,6 @@ def post(event):
     '''
 
     #TODO check the format of meal_options/schedule are correct
-    #TODO check that the tiket number includes meal access
     '''
     # get data and check if it is proper JSON return error if not
     try:
@@ -83,7 +82,7 @@ def post(event):
         if ticket_entry['access'][2] < 1: return err("Attempting to set meal options for a ticket which does not include dinner.")
 
         logger.info(f"-SET MEAL OPTIONS:, {data['preferences']}")
-        UpdateExp += ", meal_options = :val1"
+        UpdateExp += ", meal_preferences = :val1"
         ExpAttrVals[':val1'] = data['preferences']
     if 'schedule' in data:
         logger.info(f"-SET SCHEDULE OPTIONS:, {data['schedule']}")

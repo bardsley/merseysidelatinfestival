@@ -6,6 +6,10 @@ Useful Links
 TODO
 ======
 
+Both to think and discuss
+- [ ] Do we need the spreadsheet, could it be updated via a button in admin
+- [ ] On the day payments
+
 Adam
 ----
 - [x] Merseyside small logo
@@ -36,6 +40,16 @@ Adam
 - [x] Licenseing stuff
 - [x] Fixed develop branch disconnect?
 - [x] Jumpto goes to right place on pass selector
+- [x] Generate what I can from pricingDefaultDynamic
+- [x] Fix pass selector to generate what to tick dynamically not just list all of same type
+- [x] User management
+- [x] Filtering creates extra Lindsays
+- [ ] Scanned no signed in
+- [ ] Checked in at, by, using
+- [ ] Build a interface for cash sales
+- [x] Do we need phone number on login
+- [x] Student prices into checkout
+- [x] Signout errors - Sort of fixed, redirect if a page doesn't exist
 
 Connor
 ------  
@@ -56,6 +70,16 @@ Connor
 - [ ] update action for other lambda functions
 - [ ] checkout_complete timeout problem
 - [ ] generate price file dynamically and commit to git
+- [ ] Consolidate all the lambda roles and policies
+- [ ] Logout causes errors
+- [ ] Return on unfiltered shouldn't auto sets
+- [ ] Cutoff meal preferences
+- [ ] Swap meal preferences admin only
+- [ ] Seating plan
+- [ ] Store phone numbers
+- [ ] Import from google into dynamodb
+- [ ] create a live DB and a dev DB
+- [ ] fix full pass access in stripe
 
 Karen
 -----
@@ -63,8 +87,9 @@ Karen
 
 When we have time
 -----------------
-- [ ] Stripe integration for passes
+- [x] Stripe integration for passes
 - [ ] ticket upgrades
+- [ ] Human assisted table optimisation, human says these people must sit here and the magic places everyone else
 
 
 Last Meeting

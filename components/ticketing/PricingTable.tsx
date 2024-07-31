@@ -4,7 +4,7 @@ import { useFormStatus } from "react-dom"
 import Cell from './Cell';
 import { ICellProps } from './Cell';
 import { individualTickets,initialSelectedOptions, passTypes, days, fullPassName } from './pricingDefaults'
-import { calculateTotalCost, passOrTicket, getBestCombination } from './pricingUtilities'
+import { calculateTotalCost, passOrTicket, getBestCombination, itemsFromPassCombination, itemListToOptions, addToOptions } from './pricingUtilities'
 import PassCards from './passes'
 import { useRouter } from 'next/navigation'
 import { deepCopy } from '../../lib/useful'
@@ -30,15 +30,10 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
 
   const selectFullPass = (setTo) => {
     let initialOptions = selectedOptions
-    days.forEach((day) => {
-      passTypes.forEach((passType) => {
-        if(individualTickets[day][passType] && individualTickets[day][passType].isAvailable) {
-          initialOptions[day][passType] = setTo
-        }
-      })
-    })
-    setSelectedOptions({...initialOptions})
+    const itemsInPassName = itemsFromPassCombination([fullPassName]) as string[]
+    setSelectedOptions(addToOptions(initialOptions,itemListToOptions(itemsInPassName,setTo)))
   }
+
   const selectPassCombination = () => {
     const {price: suggestedCost, options: suggestedPackages} = getBestCombination(selectedOptions,priceModel)
     console.log(`Suggested packages: ${suggestedPackages.join(', ')} - £${suggestedCost}`)
@@ -49,26 +44,6 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
   const setIndividualOption = (day,passType) => {
     let initialOptions = selectedOptions
     initialOptions[day][passType] =!initialOptions[day][passType]
-    setSelectedOptions({...initialOptions})
-  }
-  const setDayPass = (day,setTo) => {
-    // console.log(day,selectedOptions)
-    let initialOptions = selectedOptions
-    Object.keys(initialSelectedOptions[day]).forEach((elm) => { if(individualTickets[day][elm] && individualTickets[day][elm].isAvailable) { initialOptions[day][elm] = setTo } })
-    setSelectedOptions({...initialOptions})
-  }
-  const setTypePass = (type,setTo) => {
-    // console.log(type,setTo)
-    // console.log(type,selectedOptions,individualTickets,individualTickets)
-    let initialOptions = selectedOptions
-    Object.keys(initialSelectedOptions).forEach((elm) => { if(individualTickets[elm][type] && individualTickets[elm][type].isAvailable) { initialOptions[elm][type] = setTo }})
-    setSelectedOptions({...initialOptions})
-  }
-
-  const setDinnerPass = (setTo) => {
-    let initialOptions = selectedOptions
-    initialOptions.Saturday.Dinner = individualTickets.Saturday.Dinner.isAvailable ? setTo : false
-    initialOptions.Saturday.Party = individualTickets.Saturday.Party.isAvailable ? setTo : false
     setSelectedOptions({...initialOptions})
   }
 
@@ -90,6 +65,10 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
   useEffect(() => {
     const storedOptions = localStorage.getItem("selectedOptions")
     if(storedOptions) { setSelectedOptions(JSON.parse(storedOptions)) }
+    const studentDiscount = localStorage.getItem("student") === 'true'
+    console.log("Student Discount",studentDiscount)
+    setPriceModel(studentDiscount ? "studentCost" : "cost")
+    setStudentDiscount(studentDiscount)
   },[])
 
   function CheckoutButton() {
@@ -105,24 +84,24 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
 
   async function checkout() {
     localStorage.setItem("selectedOptions", JSON.stringify(selectedOptions))
+    localStorage.setItem("student",priceModel === "cost" ? "false" : "true")
     router.push("/checkout") //TODO This 100% needs a check for errors
   }
   
   const cellClasses = 'border border-gray-600 text-center py-2 px-3 md:py-2 md:px-4 ';
   const headerClasses = cellClasses.replaceAll('border-gray-600','border-chillired-400')
-  const toggleCellClasses = "bg-richblack-600 text-white " +  cellClasses
+  const toggleCellClasses = "bg-richblack-600 text-white " +  cellClasses 
+
   return (
     <div className="table-container w-full flex justify-center flex-col md:pt-12 max-w-full lg:mx-auto md:mx-3 col-span-5 text-xs md:text-base">
-    
       <PassCards 
+        currentSelectedOptions={selectedOptions}
+        setSelectedOptions={setSelectedOptions}
         selected={packages} 
-        setDayPass={setDayPass} 
-        setTypePass={setTypePass} 
-        setDinnerPass={setDinnerPass} 
         priceModel={priceModel} 
         scrollToElement={scrollToElement} 
         shouldScroll={packages.length == 0}
-        selectFullPass={selectFullPass}></PassCards>
+        ></PassCards>
       
       <div className='mb-12'>
         <Cell option={{name: 'I am a student and will bring Student ID', cost: 0, studentCost: 0, isAvailable: true } }

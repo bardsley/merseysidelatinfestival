@@ -27,6 +27,7 @@
     "postcss-nesting": "^12.1.5"
   },
   "dependencies": {
+    "@clerk/nextjs": "^5.2.8",
     "@headlessui/react": "^2.1.2",
     "@heroicons/react": "^2.1.5",
     "@material-tailwind/react": "^2.1.9",

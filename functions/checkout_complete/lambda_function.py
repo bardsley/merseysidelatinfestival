@@ -15,7 +15,7 @@ stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
 
 # get dynamodb table
 db = boto3.resource('dynamodb')
-table = db.Table('mlf24_db')
+table = db.Table('dev-mlf24_attendees')
 
 lambda_client = boto3.client('lambda')
 
@@ -26,29 +26,29 @@ lambda_client = boto3.client('lambda')
 def process_line_items(line_items):
     access = [0,0,0,0,0,0]
     pass_type = ""
-    line_items = []
+    line_items_return = []
     for item in line_items['data']:
         access_metadata = json.loads(item['price']['product']['metadata']['access'])
         access = [sum(i) for i in zip(access, access_metadata)]
         pass_type += ", "+item['description']
 
-        line_items.append({
+        line_items_return.append({
                 'prod_id':item['price']['product']['id'],
                 'price_id':item['price']['id'],
                 'description':item['description'],
                 'amount_total':item['amount_total']
             })
 
-    return access, pass_type[2:], line_items
+    return access, pass_type[2:], line_items_return
 
 # Generate a random ticket number
 #! this bit could be done quicker
-def get_ticket_number():
+def get_ticket_number(email, student_ticket):
     search = True
     # generate a new ticket number if it is already used in the table
     while search:
-        ticketnumber = randint(1000000000, 9999999999)
-        response = table.query(KeyConditionExpression=Key('ticket_number').eq(ticketnumber))
+        ticketnumber = str(randint(1000000000, 9999999999)) if student_ticket == False else str(55)+str(randint(1000000000, 9999999999))[:-2]
+        response = table.query(KeyConditionExpression=Key('ticket_number').eq(ticketnumber) & Key('email').eq(email))
         if response['Count'] == 0:
             search = False
     logger.info("ticket number generated: "+str(ticketnumber))
@@ -61,6 +61,7 @@ def update_ddb(Item):
 
 # Main function to handle the event
 def lambda_handler(event, context):
+    logger.info(event)
     # get event data
     ev_data = json.loads(event['body'])
     # ev_data = event['body'] # for use if testing with input as json already
@@ -79,9 +80,9 @@ def lambda_handler(event, context):
         # process the line items and get the string of items purchased for gsheet
         access, _pass_type, line_items = process_line_items(response['line_items'])
 
-        logger.info(line_items)
+        logger.info(response['line_items']['data'][0]['price']['nickname'])
 
-        student_ticket = True if "student_active" in response['line_items']['data'][0]['price']['nickname'] else False
+        student_ticket = True if response['line_items']['data'][0]['price']['nickname' ] == "student_active" else False
 
         pass_type = _pass_type # will be a comma-seperate list of passes bought including if just an individual option
         
@@ -100,7 +101,7 @@ def lambda_handler(event, context):
         cs_id = CHECKOUT_SESSION_ID
         
         logger.info("Getting ticket number")
-        ticket_number = get_ticket_number()
+        ticket_number = get_ticket_number(email, student_ticket)
 
         Friday_Party     = access[0]
         Saturday_Classes = access[1]
@@ -131,14 +132,15 @@ def lambda_handler(event, context):
         logger.info("Putting data in DynamoDB")
         db_response = update_ddb(Item={
                 'email': email,      
-                'ticket_number': ticket_number,
+                'ticket_number': str(ticket_number),
                 'full_name':full_name,
+                'phone': str(phone),
                 'active': True,
-                'purchase_date':response['created'],
+                'purchase_date':str(response['created']),
                 'line_items': line_items,
                 'access':access,
                 'schedule': None,
-                'meal_options':meal,
+                'meal_preferences':meal,
                 'ticket_used': ticket_used,
                 'checkout_session':cs_id,
                 'status':"paid_stripe", #! Actually check if the payment has been processed

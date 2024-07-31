@@ -1,4 +1,4 @@
-import { SelectedOptions } from './pricingTypes'
+import { SelectedOptions, PartialSelectedOptions } from './pricingTypes'
 import { individualTickets, passes, fullPassName} from './pricingDefaults'
 import power from 'power-set'
 
@@ -89,6 +89,22 @@ const priceForIndividualItems = (items: any[], priceModel) => {
   },0)
   return price
 }
+
+export const itemListToOptions = (items: string[], setTo:boolean) => {
+  return items.reduce((returnOptions,item) => {
+    const [day,passType] = item.split(' ')
+    const isAvailable = individualTickets[day] && individualTickets[day][passType] && individualTickets[day][passType].isAvailable
+    returnOptions = {...returnOptions,[day]: {...returnOptions[day], [passType]: isAvailable ? setTo : false}}
+    return returnOptions
+  },{})
+}
+
+export const addToOptions = (currentOptions: SelectedOptions,options: PartialSelectedOptions) => {
+  return Object.keys(currentOptions).reduce((returnOptions,day) => {
+    returnOptions = {...returnOptions,[day]: {...currentOptions[day], ...returnOptions[day], ...options[day]}}
+    return returnOptions
+  },{})
+}
 const itemsNotCovered = (optionsRequested,optionsCovered) => {
   const requested = new Set(optionsRequested) 
   // console.log("Requested",requested,optionsRequested)
@@ -120,22 +136,23 @@ export const passCombinations = generateAllPassCombinations(passes)
 
 export { calculateTotalCost, passOrTicket, optionsToPassArray, availableOptionsForDay, isAllDayOptions, isAllPassOptions, priceForPassCombination, itemsFromPassCombination, priceForIndividualItems, itemsNotCovered, getBestCombination }
 
-const getTicketPriceIds = () => {
+const getTicketPriceIds = (student = false) => {
+  
   const ticketNames = Object.keys(individualTickets).reduce((returnObj,day) => {
     const keys = Object.keys(individualTickets[day])
     return {...returnObj, ...keys.reduce((returnObj,key) => {
       // [`${day} ${key}`
-      return individualTickets[day][key].priceId ? {...returnObj, [`${day} ${key}`]: `${individualTickets[day][key].priceId}`} : returnObj
+      return individualTickets[day][key][student ? 'studentPriceId' : 'priceId'] ? {...returnObj, [`${day} ${key}`]: `${individualTickets[day][key][student ? 'studentPriceId' : 'priceId']}`} : returnObj
     },{})}
   },{}
 )
   return ticketNames
 }
 
-export const priceIds = () => {
+export const priceIds = (student = false) => {
   const passPriceIds = Object.keys(passes).reduce((returnObj,key) => { 
-    return {...returnObj, [key]: passes[key].priceId}
+    return {...returnObj, [key]: passes[key][student ? 'studentPriceId' : 'priceId']}
   },{})
-  const ticketPriceIds = getTicketPriceIds()
+  const ticketPriceIds = getTicketPriceIds(student)
   return {...passPriceIds,...ticketPriceIds}
 }
