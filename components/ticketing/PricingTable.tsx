@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useFormStatus } from "react-dom"
 import Cell from './Cell';
 import { ICellProps } from './Cell';
-import { individualTickets,initialSelectedOptions, passTypes, days, fullPassName } from './pricingDefaultsDynamic'
+import { individualTickets,initialSelectedOptions, passTypes, days, fullPassName } from './pricingDefaults'
 import { calculateTotalCost, passOrTicket, getBestCombination, itemsFromPassCombination, itemListToOptions, addToOptions } from './pricingUtilities'
 import PassCards from './passes'
 import { useRouter } from 'next/navigation'

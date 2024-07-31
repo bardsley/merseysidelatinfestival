@@ -1,5 +1,5 @@
 import React from 'react';
-import { fullPassName } from './pricingDefaultsDynamic';
+import { fullPassName } from './pricingDefaults';
 
 export const PassCard = ({passName, clickFunction, pass, priceModel, hasASaving, selected}) => {
   const cardWidthClasses = passName === fullPassName ? 'col-span-full' : 'md:flex-col'

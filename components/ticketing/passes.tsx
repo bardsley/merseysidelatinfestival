@@ -1,5 +1,5 @@
 // import { CheckIcon } from '@heroicons/react/20/solid'
-import { fullPassName, passes} from './pricingDefaultsDynamic'
+import { fullPassName, passes} from './pricingDefaults'
 import { PassCard } from './PassCard';
 import { itemsFromPassCombination, itemListToOptions, addToOptions } from './pricingUtilities'
 
