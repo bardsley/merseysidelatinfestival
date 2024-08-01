@@ -21,7 +21,7 @@ import json
 import logging
 logger = logging.getLogger()
 logger.setLevel("INFO")
-# logging.basicConfig()
+logging.basicConfig()
 
 sendgrid_api_key = os.environ.get("SENDGRID_API_KEY")
     
@@ -56,38 +56,57 @@ def generate_standard_ticket_body(data):
             'rows':rows, 
             'ticket_link':"http://app.merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(data['email'], data['ticket_number']), 
             'total_row':total_row,
-            'heading_message':data['heading_message']
+            'heading_message':data['heading_message'],
         })   
     return body
+
+def gen_ticket_qr(ticket_number):
+    logger.info("Generating a standard ticket email")
+    # generate qr code
+    logger.info("Create QR code")
+    qr_ticket = qrcode.make(ticket_number, box_size=8, version=3)
+    qr_byte_arr = io.BytesIO()
+    qr_ticket.save(qr_byte_arr)
+    qr_byte_arr = qr_byte_arr.getvalue()
+    encoded = base64.b64encode(qr_byte_arr).decode()
+    return Attachment(FileContent(encoded),FileName('qrticket.jpg'), FileType('image/jpeg'), Disposition('inline'), ContentId('qr-ticket'))   
 
 def lambda_handler(event, context):
     
     logger.info(event)
 
     if event['email_type'] == "standard_ticket":
-        logger.info("Generating a standard ticket email")
-        # generate qr code
-        logger.info("Create QR code")
-        qr_ticket = qrcode.make(event['ticket_number'], box_size=8, version=3)
-        qr_byte_arr = io.BytesIO()
-        qr_ticket.save(qr_byte_arr)
-        qr_byte_arr = qr_byte_arr.getvalue()
-        encoded = base64.b64encode(qr_byte_arr).decode()
-        attachment = Attachment(FileContent(encoded),FileName('qrticket.jpg'), FileType('image/jpeg'), Disposition('inline'), ContentId('qr-ticket'))
-        
+        attachment = gen_ticket_qr(event['ticket_number'])
+
         logger.info("Generate the body of the email")
         body = generate_standard_ticket_body(event)
         subject = 'Merseyside Latin Festival Ticket Confirmation'
+    elif event['email_type'] == "transfer_ticket":
+        # generate as usual the ticket body
+        attachment = gen_ticket_qr(event['ticket_number'])
 
+        logger.info("Generate the body of the email")
+        body = generate_standard_ticket_body(event)
+
+        # append transfer details at bottom of body
+        with open("./ticket_transfer.html", "r") as transfer_file:
+            logger.info("Insert the body of the email into header and footer")
+            transfer_tmpl = Template(transfer_file.read())
+            transfer_content = transfer_tmpl.substitute({
+                'oldname': event['full_name_from'],
+                'oldemail': event['email_from']
+                })
+
+        body += transfer_content
+        subject = 'Merseyside Latin Festival Ticket Transfer'
     else:
         return False
 
+    # put body in with header
     with open("./header_footer.html", "r") as header_footer_file:
         logger.info("Insert the body of the email into header and footer")
         header_footer_tmpl = Template(header_footer_file.read())
         html_content = header_footer_tmpl.substitute({'body':body})
-
-    # put body in with header
 
     # Generate the sendgrid message
     logger.info("Create the Mail object")
