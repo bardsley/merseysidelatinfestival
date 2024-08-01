@@ -13,7 +13,7 @@ logger.setLevel("INFO")
 # boto3.setup_default_session(profile_name=profile_name)
 
 db = boto3.resource('dynamodb')
-table = db.Table('mlf24_db')
+table = db.Table('mlf24_attendees')
 
 def get_ticket(ticket_number, email):
     '''
@@ -69,7 +69,7 @@ def post(event):
     try:
         ticket_entry = get_ticket(ticket_number, email)
     except ValueError as e:
-        return err(e)
+        return err(str(e))
         
     # empty variables to be set according to what options are slected (meal_options, schedule)
     UpdateExp   = ""
@@ -130,7 +130,7 @@ def get(event):
     try:
         ticket_entry = get_ticket(ticket_number, email)
     except ValueError as e:
-        return err(e)
+        return err(str(e))
 
     response_items = []
     if 'meal' in event['queryStringParameters']['requested']:

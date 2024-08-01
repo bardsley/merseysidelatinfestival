@@ -53,33 +53,47 @@ Adam
 
 Connor
 ------  
+- [ ] update action for other lambda functions (workflow for deploying lambdas that don't exist)
+- [x] Allow change name / email
+- [x] capture history of owners and who transferred to
+- [ ] check that a ticket is active when making meal updates
+- [x] check ticket active when transferring
+- [ ] Add a video of the dancing man
+- [ ] add student 'banner' to ticket email
+- [x] update resend email lambda
+- [x] add new email templates to send_email
+- [x] move email sending into new function
+- [ ] capture history of meal preference changes
+- [ ] purchase fulfilment for in-person payments (cash or card terminal)
+- [ ] capture purchases otd (could be same as above and still send icket email)
+- [ ] check if cs exist in db when checkout
+- [ ] capture if discount codes have been used
+- [ ] artist ticket 99XXXXXXX
+- [ ] handle refunds
+- [ ] Consolidate all the lambda roles and policies
+- [ ] Email to all not selected meal options 
+- [ ] Import from google into dynamodb
+- [ ] create a live DB
+- [ ] ?create new sendgrid
+- [ ] Seating plan
+- [ ] Send Adm the SVG files
+- [ ] Document Lambda & make lambda robust
+- [x] add additional info to checkout_complete 
 - [x] Send me the link (for picture frame?) https://www.twibbonize.com
 - [x] resend AWS access
-- [ ] Add a video of the dancing man
-- [ ] Send Adm the SVG files
-- [ ] Email to all not selected meal options 
-- [ ] artist ticket 99XXXXXXX
-- [ ] Document Lambda & make lambda robust
-- [ ] Allow change name / email.
-- [ ] add additional info to checkout_complete and check if cs exist in db
-- [ ] handle refunds
-- [ ] move email sending into function and make more versitile
-- [ ] Add link to email http://www.merseysidelatinfestival.com/preferences?email=adam.bardsley@gmail.com&ticket_number=5021048233
-- [ ] Style email with new logo and bigger it
-- [ ] ?create new sendgrid
-- [ ] update action for other lambda functions
-- [ ] checkout_complete timeout problem
-- [ ] generate price file dynamically and commit to git
-- [ ] Consolidate all the lambda roles and policies
+- [x] Add link to email http://www.merseysidelatinfestival.com/preferences?email=adam.bardsley@gmail.com&ticket_number=5021048233
+- [x] Style email with new logo and bigger it
+- [x] checkout_complete timeout problem
+- [x] Store phone numbers
+- [x] generate price file dynamically and commit to git
+- [x] create a dev DB
+- [x] fix full pass access in stripe
+
+**Thinking these might be on the wrong list because I don't remeber what they're for**
 - [ ] Logout causes errors
 - [ ] Return on unfiltered shouldn't auto sets
 - [ ] Cutoff meal preferences
-- [ ] Swap meal preferences admin only
-- [ ] Seating plan
-- [ ] Store phone numbers
-- [ ] Import from google into dynamodb
-- [ ] create a live DB and a dev DB
-- [ ] fix full pass access in stripe
+- [ ] Swap meal preferences admin only ¿Could this not use the same endpoint?
 
 Karen
 -----
@@ -160,7 +174,7 @@ dyanamodb customer info table
   'ticket_number': "123456789",
   'full_name': "John Doe",
   'active': True|False,
-  'purchase_date': 75014206,
+  'purchase_date': 1721571296,
   'line_items': {[
     'amount_total': 4500,
     'description': 'Party Pass',
@@ -170,15 +184,50 @@ dyanamodb customer info table
   'schedule': {
     // tbd
   },
-  'meal_options':{
+  'meal_preferences': None|{
     // meal data format (see above)
   },
   'ticket_used': "false"|"75014206", // time/date of ticket being scanned as string
   'checkout_session': "cs_xxxxxx",
   'status': "paid_stripe"|"paid_cash"|"refunded_stripe"|"refunded_cash",
   'student_ticket': True|False,
+  'promo_code': None|{
+    'code': "MLF",
+    'value': 500
+  },
+  'meal_preferences_history': None|{
+    // meal data format (see above) plus...
+    'updated_date': 1722471022,
+    'source': "admin"|"customer" // when we have users could be admin-name
+  },
+  'transferred': None|{
+    'date': 1722472454,
+    'ticket_number': "123456789", // Will be the same if only the name changed and not the email
+    'email': "john_doe@example.com", // new details of who it was transferred to 
+    'full_name': "Johnnie Doe",
+    'source': "admin"|"customer"
+  }
+  'owner_history': None|[{
+    'date': 1721297593,
+    'ticket_number': "678912345"
+    'email':"jane.doe@example.com",
+    'full_name': "Jane Doe",
+    'source': "admin"|"customer"
+  }]
 }
 ```
+request transfer ticket (lambda transfer_owner)
+---------------
+```jsonc
+{
+  'ticket_number': "123456789",
+  'email': "jane.doe@example.com",
+  'email_to': "new.email@example.com", // could be the same email if they only want to change the name
+  'name_to': "Jennie Doe",
+  'source': "admin"|"customer" // really I should be checking where it comes from not you telling me (future API)
+}
+```
+
 *********************
 ****  ENDPOINTS  ****
 *********************

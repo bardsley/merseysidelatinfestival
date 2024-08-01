@@ -1,54 +1,23 @@
+from lambda_function import lambda_handler
 # import boto3
 
-# # #* This is not required for deployment only needed for local testing 
+#* This is not required for deployment only needed for local testing 
 # logging.basicConfig()
 # profile_name='AdministratorAccess-645491919786'
 # boto3.setup_default_session(profile_name=profile_name)
 
-# lambda_client = boto3.client('lambda')
-
-# from lambda_function import lambda_handler
-
-# lambda_handler({
-#     'name':"Connor Monaghan", 
-#     'email':"connor1monaghan@gmail.com", 
-#     'ticket_number':123456789, 
-#     'line_items':{
-#         'data':[
-#             {'description':"ITEM 1", 'amount_total':7500},
-#             {'description':"ITEM 2", 'amount_total':3500},
-#             {'description':"ITEM 3", 'amount_total':12500}
-#             ]
-#     }
-#     }, None)
-
-import boto3 
-import json
-
-#* This is not required for deployment only needed for local testing 
-# logging.basicConfig()
-profile_name='AdministratorAccess-645491919786'
-boto3.setup_default_session(profile_name=profile_name)
-
-lambda_client = boto3.client('lambda')
-
 event = {
-    'name':"C K Monaghan", 
-    'email':"connor1monaghan@gmail.com", 
-    'ticket_number':7501444444, 
-    'line_items':{
-        'data':[
-            {'description':"ITEM 1", 'amount_total':7500},
-            {'description':"ITEM 2", 'amount_total':3500}
-            ]
-    }
+    'email_type': 'transfer_ticket', 
+    'name': 'T Enzyme', 
+    'email': 'toaster_amylase0a@icloud.com', 
+    'ticket_number': '7227400839', 
+    'line_items': [
+        {'price_id': 'price_1PZcrKEWkmdeWsQPl1h22Dk4', 'amount_total': 9500, 'description': 'Saturday Pass', 'prod_id': 'prod_QQToHXWAJ7kCf4'}, 
+        {'price_id': 'price_1PZdHNEWkmdeWsQPMx12ez1O', 'amount_total': 1500, 'description': 'Sunday - Party', 'prod_id': 'prod_QQUFAgkOcEFm3I'}
+    ], 
+    'email_from': 'toaster_amylase0a@icloud.com', 
+    'full_name_from': 'C M', 
+    'heading_message': 'A TICKET HAS BEEN TRANSFERRED TO YOU!'
 }
 
-response = lambda_client.invoke(
-    FunctionName='dev-send_email',
-    InvocationType='Event',
-    Payload=json.dumps(event),
-    # Qualifier='1',
-    )
-
-# arn:aws:lambda:eu-west-2:645491919786:function:dev-send_email
+lambda_handler(event, None)
