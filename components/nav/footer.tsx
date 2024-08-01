@@ -2,7 +2,7 @@
 import React from "react";
 import { cn } from "../../lib/utils";
 import { Container } from "../layout/container";
-// import Link from "next/link";
+import Link from "next/link";
 // import { Icon } from "../icon";
 import { FaFacebook, FaGithub, FaTwitter, FaYoutube } from "react-icons/fa";
 import { AiFillInstagram } from "react-icons/ai";
@@ -143,8 +143,21 @@ export default function Footer() {
           )}
         />
         <div className="flex justify-center items-center gap-6 my-6 flex-col sm:flex-row">
-          <div className="w-1/2 flex justify-center"><p className="text-center">Event organised by and related content copyright of{" "}<br/><a href="http://www.salsaliverpool.com/">Salsa Liverpool</a></p></div>
-          <div className="w-1/2 flex justify-center"><p className="text-center">Congress System provided by <br/><a href="https://adambardsley.co.uk">Adam Bardsley</a> & Connor Monaghan</p></div>
+          <div className="w-1/3 flex justify-center flex-1 ">
+            <p className="text-center">
+              Event organised by and related content copyright of{" "}
+              <a href="http://www.salsaliverpool.com/">Salsa Liverpool</a>
+            </p>
+          </div>
+          <div className="w-1/3 flex justify-center flex-1">
+            <p className="text-center">Congress System provided by <br/>
+              <a href="https://adambardsley.co.uk">Adam Bardsley</a> & Connor Monaghan
+            </p>
+          </div>
+          <div className="w-1/3 flex flex-col justify-center text-center flex-1">
+            <p className="text-center"><Link href="tos">Terms of Service</Link></p>
+            <p className="text-center"><Link href="/privacy">Privacy Policy</Link></p>
+          </div>
         </div>
       </Container>
       { process.env.NODE_ENV == 'development' && process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' ? <>
