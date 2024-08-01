@@ -3,12 +3,11 @@ import {format } from 'date-fns'
 import { useState, useRef } from 'react';
 import { ChevronDownIcon, ChevronUpIcon, ChevronUpDownIcon, XMarkIcon, EllipsisVerticalIcon } from '@heroicons/react/24/solid'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import useSWR, {useSWRConfig} from "swr";
+import useSWR from "swr";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function TicketList() {
-  const { mutate } = useSWRConfig()
   const [sortBy, setSortBy] = useState('purchased_at');
   const [sortDirection, setSortDirection] = useState('desc');
   const [filterBy, setFilterBy] = useState('');
