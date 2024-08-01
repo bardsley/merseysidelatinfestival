@@ -7,7 +7,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function UserList({loggedInUser}) {
   const { mutate } = useSWRConfig()
-  const {data, error, isLoading, isValidating} = useSWR("/api/users", fetcher);
+  const {data, error, isLoading, isValidating} = useSWR("/api/admin/users", fetcher);
   const users = data?.users
   if(isLoading) { return <p>Loading...</p> }
   else if (isValidating) { return <p>Validating...</p>} 
