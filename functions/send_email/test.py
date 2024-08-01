@@ -7,20 +7,17 @@ from lambda_function import lambda_handler
 # boto3.setup_default_session(profile_name=profile_name)
 
 event = {
-    'email_type':"transfer_ticket",
-    'name': 'CK Monaghan', 
-    'email': 'c.monaghan@liverpool.ac.uk', 
-    'ticket_number': '5520910259', 
+    'email_type': 'transfer_ticket', 
+    'name': 'T Enzyme', 
+    'email': 'toaster_amylase0a@icloud.com', 
+    'ticket_number': '7227400839', 
     'line_items': [
-        {
-            'prod_id': 'prod_QQTrga8mShkzyo', 
-            'price_id': 'price_1PgTOHEWkmdeWsQPNMogFUVa', 
-            'description': 'Party Pass', 
-            'amount_total': 3500
-        }], 
-    'heading_message': 'A TICKET HAS BEEN TRANSFERRED TO YOU!',
-    'email_from':"john.doe@example.com",
-    'full_name_from':"John Doe"
-    }
+        {'price_id': 'price_1PZcrKEWkmdeWsQPl1h22Dk4', 'amount_total': 9500, 'description': 'Saturday Pass', 'prod_id': 'prod_QQToHXWAJ7kCf4'}, 
+        {'price_id': 'price_1PZdHNEWkmdeWsQPMx12ez1O', 'amount_total': 1500, 'description': 'Sunday - Party', 'prod_id': 'prod_QQUFAgkOcEFm3I'}
+    ], 
+    'email_from': 'toaster_amylase0a@icloud.com', 
+    'full_name_from': 'C M', 
+    'heading_message': 'A TICKET HAS BEEN TRANSFERRED TO YOU!'
+}
 
 lambda_handler(event, None)
