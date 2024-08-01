@@ -12,9 +12,9 @@ import logging
 logger = logging.getLogger()
 logger.setLevel("INFO")
 
-logging.basicConfig()
-profile_name='AdministratorAccess-645491919786'
-boto3.setup_default_session(profile_name=profile_name)
+# logging.basicConfig()
+# profile_name='AdministratorAccess-645491919786'
+# boto3.setup_default_session(profile_name=profile_name)
 
 stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
 

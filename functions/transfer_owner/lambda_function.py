@@ -21,7 +21,7 @@ logger = logging.getLogger()
 logger.setLevel("INFO")
 
 db = boto3.resource('dynamodb')
-table = db.Table('mlf24_db')
+table = db.Table('dev-mlf24_attendees')
 
 lambda_client = boto3.client('lambda')
  
