@@ -85,11 +85,10 @@ def lambda_handler(event, context):
     except (TypeError, JSONDecodeError) as e:
         logger.error(e)
         return err("An error has occured with the input you have provied.", event_body=event['body'])
-    
     if ('ticket_number' not in data) and ('email' not in data) and ('email_to' not in data) and ('name_to' not in data) and ('phone_to' not in data):
         return err("Must provide ticket_number, email, email_to, name_to, phone_to.")
     else:
-        ticket_number = int(data['ticket_number'])
+        ticket_number = str(data['ticket_number'])
         email = data['email']
 
     try:
@@ -104,6 +103,14 @@ def lambda_handler(event, context):
         return err(return_string)
     
     if data['email'] == data['email_to']:
+        previous_owner = [json.dumps({
+            'date': int(time.time()),
+            'ticket_number': ticket_number,
+            'email': data['email'],
+            'full_name': ticket_entry['full_name'],
+            'source': data['source'] if 'source' in data else None #! check this here rather than on client
+        }, cls=DecimalEncoder)]
+
         input = {
             'full_name': data['name_to'],
             'transferred': {
@@ -111,9 +118,11 @@ def lambda_handler(event, context):
                 'ticket_number': ticket_number,
                 'email': ticket_entry['email'],
                 'full_name': ticket_entry['full_name'],
-                'source': data['source'] #! check this here rather than on client
-            }
+                'source': data['source'] if 'source' in data else None, #! check this here rather than on client
+            },
+            'owner_history': previous_owner+(ticket_entry['owner_history'] if 'owner_history' in ticket_entry else [])
         }
+        logger.info(input)
         update_table(input, {'email': data['email'], 'ticket_number':data['ticket_number']})
 
         logger.info("Invoking send_email lambda")
@@ -129,7 +138,7 @@ def lambda_handler(event, context):
                     'email_from': ticket_entry['email'],
                     'full_name_from': ticket_entry['full_name'],
                     'heading_message': "A TICKET HAS BEEN TRANSFERRED TO YOU!"
-                }),
+                }, cls=DecimalEncoder),
             )
         logger.info(response)
         
@@ -147,7 +156,7 @@ def lambda_handler(event, context):
                 'ticket_number': ticket_number,
                 'email': ticket_entry['email'],
                 'full_name': ticket_entry['full_name'],
-                'source': data['source'] #! check this here rather than on client
+                'source': data['source'] if 'source' in data else None #! check this here rather than on client
             }
         }
         update_table(input, {'email': data['email'], 'ticket_number':ticket_number})
@@ -157,9 +166,8 @@ def lambda_handler(event, context):
             'ticket_number': ticket_number,
             'email': data['email'],
             'full_name': ticket_entry['full_name'],
-            'source': data['source'] #! check this here rather than on client
-        })]
-
+            'source': data['source'] if 'source' in data else None #! check this here rather than on client
+        }, cls=DecimalEncoder)]
 
         # Create a new ticket
         logger.info("Invoking create_ticket lambda")
@@ -179,7 +187,7 @@ def lambda_handler(event, context):
                 'meal_preferences': ticket_entry['meal_preferences'],
                 'checkout_session': ticket_entry['checkout_session'] if 'checkout_session' in ticket_entry else None, 
                 'schedule': ticket_entry['schedule'],
-                'owner_history': previous_owner+ticket_entry['owner_history']
+                'owner_history': previous_owner+(ticket_entry['owner_history'] if 'owner_history' in ticket_entry else [])
                 },cls=DecimalEncoder),
             )
         logger.info(create_ticket)      
@@ -197,7 +205,7 @@ def lambda_handler(event, context):
                     'email_from': ticket_entry['email'],
                     'full_name_from': ticket_entry['full_name'],
                     'heading_message': "A TICKET HAS BEEN TRANSFERRED TO YOU!"
-                }),
+                }, cls=DecimalEncoder),
             )
         logger.info(response)
         
