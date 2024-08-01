@@ -8,7 +8,8 @@ from string import Template
 import boto3
 from boto3.dynamodb.conditions import Attr
 import stripe
-from github import Auth, Github, InputGitAuthor
+from github import Auth, Github, InputGitAuthor, GithubException
+
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -170,7 +171,7 @@ def lambda_handler(event, context):
 
     logger.info("merge")
     try:
-        response = repo.merge("develop", branch, commit_message=message)
+        response = repo.merge("develop", branch, commit_message="merge 'pricing-dev' into 'develop'")
         logger.info(response)
-    except Github.GithubException as ge:
+    except GithubException as ge:
         logger.error(ge) 

@@ -10,8 +10,6 @@ export async function GET() {
     return Response.json({error: "User is not signed in."}, { status: 401 });
   }
 
-
-
   try {
     const response = await clerkClient.users.getUserList();
     const users = response.data.map((user) => {
