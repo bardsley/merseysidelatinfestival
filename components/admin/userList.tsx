@@ -4,6 +4,7 @@ import { EnvelopeIcon, ClockIcon } from '@heroicons/react/20/solid'
 import { format } from "date-fns";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 export default function UserList({loggedInUser}) {
   const { mutate } = useSWRConfig()
   const {data, error, isLoading, isValidating} = useSWR("/api/admin/users", fetcher);
@@ -42,7 +43,7 @@ export default function UserList({loggedInUser}) {
 
           <div className="flex flex-1 flex-col p-8">
             <img alt="" src={person.imageUrl} className="mx-auto h-32 w-32 flex-shrink-0 rounded-full" />
-            <h3 className="mt-6 text-sm font-medium text-gray-900">{person.firstName}</h3>
+            <h3 className="mt-6 text-sm font-medium text-gray-900">{person.firstName} {person.lastName}</h3>
             <dl className="mt-1 flex flex-grow flex-col justify-between">
               <dt className="sr-only">Title</dt>
               <dd className="text-sm text-gray-500">{title}</dd>
