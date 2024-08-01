@@ -148,4 +148,4 @@ def lambda_handler(event, context):
     #           access[0], access[1], access[2], access[3], access[4], access[5],
     #           ticket_used])
             
-    return {'statusCode':200}
+    return {'ticket_number':ticket_number}

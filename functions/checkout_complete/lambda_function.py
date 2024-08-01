@@ -80,8 +80,8 @@ def lambda_handler(event, context):
         email     = stripe_response['customer_email']
         phone     = ateendee_details['phone']
 
-        # send the email with these details
-        logger.info("Invoking send_email lambda")
+        # Create the ticket
+        logger.info("Invoking create_ticket lambda")
         response = lambda_client.invoke(
             FunctionName='dev-create_ticket',
             InvocationType='Event',
