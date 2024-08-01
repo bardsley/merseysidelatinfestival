@@ -53,14 +53,15 @@ Adam
 
 Connor
 ------  
-- [ ] Allow change name / email
-- [ ] capture history of owners and who transferred to
+- [ ] update action for other lambda functions (workflow for deploying lambdas that don't exist)
+- [x] Allow change name / email
+- [x] capture history of owners and who transferred to
 - [ ] check that a ticket is active when making meal updates
-- [ ] check ticket active when transferring
+- [x] check ticket active when transferring
 - [ ] Add a video of the dancing man
 - [ ] add student 'banner' to ticket email
-- [ ] update resend email lambda
-- [ ] add new email templates to send_email
+- [x] update resend email lambda
+- [x] add new email templates to send_email
 - [x] move email sending into new function
 - [ ] capture history of meal preference changes
 - [ ] purchase fulfilment for in-person payments (cash or card terminal)
@@ -73,7 +74,6 @@ Connor
 - [ ] Email to all not selected meal options 
 - [ ] Import from google into dynamodb
 - [ ] create a live DB
-- [ ] update action for other lambda functions
 - [ ] ?create new sendgrid
 - [ ] Seating plan
 - [ ] Send Adm the SVG files
