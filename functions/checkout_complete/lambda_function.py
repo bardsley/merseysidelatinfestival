@@ -158,7 +158,8 @@ def lambda_handler(event, context):
                     'name':full_name, 
                     'email':email, 
                     'ticket_number':ticket_number, 
-                    'line_items':response['line_items']
+                    'line_items':response['line_items'],
+                    'heading_message': "THANK YOU FOR YOUR PURCHASE!"
                 }),
             )
         logger.info(response)

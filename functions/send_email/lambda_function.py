@@ -24,7 +24,7 @@ logger.setLevel("INFO")
 
 sendgrid_api_key = os.environ.get("SENDGRID_API_KEY")
 
-def genHTML(fullname, email, ticketnumber, items, ticket_link):
+def process_line_items(items):
     rows = ""
     total_amount = 0
     for i in items['data']:
@@ -35,9 +35,12 @@ def genHTML(fullname, email, ticketnumber, items, ticket_link):
     with open("./ticket_html_row.html", 'r') as file:
         tmpl = Template(file.read())
         total_row = tmpl.substitute({'tickettype':"", 'qty':"<strong>Total</strong>", 'price':"<strong>"+babel.numbers.format_currency(total_amount/100, "GBP", locale='en_UK')+"</strong>"})
+    return rows, total_row
+
+def genHTML(input):
     with open("./ticket_html_tmpl.html", 'r') as file:
         tmpl_f = Template(file.read())
-        return tmpl_f.substitute({'fullname':fullname, 'email':email, 'ticketnumber':ticketnumber, 'rows':rows, 'ticket_link':ticket_link, 'total_row':total_row})
+        return tmpl_f.substitute(input)
 
 def lambda_handler(event, context):
     
@@ -45,18 +48,23 @@ def lambda_handler(event, context):
 
     data = event
 
-    full_name     = data['name']
-    email         = data['email']
-    ticket_number = data['ticket_number']
-    line_items    = data['line_items']
-    ticket_link = "http://app.merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(email, ticket_number)
+    rows, total_row = process_line_items(data['line_items'])
+    input = {
+        'fullname':data['name'], 
+        'email':data['email'], 
+        'ticketnumber':data['ticket_number'], 
+        'rows':rows, 
+        'ticket_link':"http://app.merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(email, ticket_number), 
+        'total_row':total_row,
+        'heading_message':data['heading_message']
+        }
 
     # Generate the sendgrid message
     message = Mail(
         from_email='do-not-reply@em4840.merseysidelatinfestival.co.uk',
         to_emails=email,
         subject='Merseyside Latin Festival Ticket Confirmation',
-        html_content=genHTML(full_name, email, ticket_number, line_items, ticket_link)
+        html_content=genHTML(input)
         )
 
     ## Code using PIL    

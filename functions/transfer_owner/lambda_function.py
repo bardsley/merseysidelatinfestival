@@ -21,6 +21,8 @@ logger.setLevel("INFO")
 
 db = boto3.resource('dynamodb')
 table = db.Table('mlf24_db')
+
+lambda_client = boto3.client('lambda')
  
 def err(msg:str, code=400, logmsg=None, **kwargs):
     logmsg = logmsg if logmsg else msg
@@ -107,7 +109,19 @@ def lambda_handler(event, context):
             }
         }
 
-        # TODO send email 
+        logger.info("Invoking send_email lambda")
+        response = lambda_client.invoke(
+            FunctionName='dev-send_email',
+            InvocationType='Event',
+            Payload=json.dumps({
+                    'name':data['name_to'], 
+                    'email':email, 
+                    'ticket_number':ticket_number, 
+                    'line_items':ticket_entry['line_items'], 
+                    'heading_message': "A TICKET HAS BEEN TRANSFERRED TO YOU!"
+                }),
+            )
+        logger.info(response)
         
         update_table(input, {'email': data['email'], 'ticket_number':data['ticket_number']})
         return {'statusCode': 200, 'body': json.dumps({'message':"Still working on it (Connor)"})}
