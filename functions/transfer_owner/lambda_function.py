@@ -21,9 +21,9 @@ logger = logging.getLogger()
 logger.setLevel("INFO")
 
 #* This is not required for deployment only needed for local testing 
-logging.basicConfig()
-profile_name='AdministratorAccess-645491919786'
-boto3.setup_default_session(profile_name=profile_name)
+# logging.basicConfig()
+# profile_name='AdministratorAccess-645491919786'
+# boto3.setup_default_session(profile_name=profile_name)
 
 
 db = boto3.resource('dynamodb')
@@ -178,7 +178,6 @@ def lambda_handler(event, context):
                 },cls=DecimalEncoder),
             )
         logger.info(create_ticket)
-        logger.info()
 
         new_ticket_number = json.loads(create_ticket['Payload'].read())['ticket_number']
 
