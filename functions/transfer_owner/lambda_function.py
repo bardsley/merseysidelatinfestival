@@ -183,7 +183,6 @@ def lambda_handler(event, context):
         new_ticket_number = json.loads(create_ticket['Payload'].read())['ticket_number']
 
         input = {
-            'full_name': data['name_to'],
             'active': False,
             'transferred': {
                 'date': int(time.time()),
