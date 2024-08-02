@@ -1,11 +1,11 @@
 import { Field, ErrorMessage } from 'formik';
 
-const FormField = ({field}) => {
+const FormField = ({field, label, description=false}:{ field:string, label?:string, description?:boolean|string }) => {
   const fieldId = `${field}-description`
   return (
     <div className='text-left'>
       <label htmlFor={field} className="block text-sm font-medium leading-6 text-gray-900 capitalize">
-        {field}
+        {label || field}
       </label>
       <div className="mt-2">
         <Field type="text" name={field} 
@@ -17,7 +17,7 @@ const FormField = ({field}) => {
       
       <ErrorMessage name={field}/>
       <p id={fieldId} className="mt-2 text-sm text-gray-500">
-        This will not transfer the ticket or change the ticket number but will add a different name
+        {description}
       </p>
     </div>
   )

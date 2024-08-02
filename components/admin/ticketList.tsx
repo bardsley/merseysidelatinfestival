@@ -6,26 +6,30 @@ import { ChevronDownIcon, ChevronUpIcon, ChevronUpDownIcon, XMarkIcon, EllipsisV
 import { BiCreditCard, BiLogoSketch, BiLeftArrowCircle, BiSolidRightArrowSquare } from 'react-icons/bi';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import useSWR, {mutate} from "swr";
-import NameChangeModal from './nameChangeModal';
+import NameChangeModal from './modals/nameChangeModal';
+import TicketTransferModal from './modals/ticketTransferModal';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const TicketStatusIcon = ({attendee})  => {
-  const PaymentIcon = attendee.status === 'paid_stripe' ? <BiCreditCard className='w-6 h-6' /> 
-    : attendee.status === 'paid_cash' ? <CurrencyPoundIcon className='w-6 h-6' /> :
-      attendee.status === 'gratis' ? <BiLogoSketch className='w-6 h-6' /> : null //TODO should have a icon for wtf paid for this
-  const trasnferOutIcon = attendee.transferred_out ? <BiSolidRightArrowSquare className='w-6 h-6' /> : null
-  const transferInIcon =  attendee.transferred_in ? <BiLeftArrowCircle className='w-6 h-6' /> : null
+  const PaymentIcon = attendee.status === 'paid_stripe' ? <BiCreditCard title="Paid Online" className='w-6 h-6' /> 
+    : attendee.status === 'paid_cash' ? <CurrencyPoundIcon title="Paid Cash" className='w-6 h-6' /> :
+      attendee.status === 'gratis' ? <BiLogoSketch title="Free Ticket" className='w-6 h-6' /> : null //TODO should have a icon for wtf paid for this
+  const trasnferOutIcon = attendee.transferred_out ? <BiSolidRightArrowSquare title={`Transferred to ${attendee.transferred_out}`} className='w-6 h-6' /> : null
+  const transferInIcon =  attendee.transferred_in ? <BiLeftArrowCircle title={`Transferred from ${attendee.transferred_in}`} className='w-6 h-6' /> : null
   const namechangeIcon = attendee.name_changed ? <ClipboardIcon className='w-6 h-6' /> : null
   const wtfIcon = attendee.transferred_in && attendee.transferred_out ? <ExclamationTriangleIcon className='w-6 h-6' /> : null
-  return <>{PaymentIcon}{trasnferOutIcon}{transferInIcon}{namechangeIcon}{wtfIcon}</>
+  return <span className='flex'>{PaymentIcon}{trasnferOutIcon}{transferInIcon}{namechangeIcon}{wtfIcon}</span>
 }
+
 export default function TicketList() {
   const [sortBy, setSortBy] = useState('purchased_at');
   const [sortDirection, setSortDirection] = useState('desc');
   const [filterBy, setFilterBy] = useState('');
   const [filterByField, setFilterByField] = useState('');
+
   const [nameChangeModalActive, setNameChangeModalActive] = useState(false)
+  const [ticketTransferModalActive, setTicketTransferModalActive] = useState(false)
   const [activeTicket, setActiveTicket] = useState(null)
 
   const {data, error, isLoading, isValidating} = useSWR("/api/admin/attendees", fetcher);
@@ -93,6 +97,7 @@ export default function TicketList() {
     return (
       <div className="px-0 my-8 ">
         { nameChangeModalActive ? <NameChangeModal open={nameChangeModalActive} onClose={(value) => { setNameChangeModalActive(value); mutate("/api/admin/attendees") }} ticket={activeTicket}/> : null }
+        { ticketTransferModalActive ? <TicketTransferModal open={ticketTransferModalActive} onClose={(value) => { setTicketTransferModalActive(value); mutate("/api/admin/attendees") }} ticket={activeTicket}/> : null }
         { filterBy ? <div className='flex' onClick={() => setFilterBy('')}><span className='hover:cursor-pointer flex items-center rounded-md bg-gray-400 text-black pl-3 py-0'>Filtered by {filterByField}: &quot;{filterBy}&quot; <XMarkIcon className='w-4 h-4 ml-1 mr-1'/> </span></div> : null }
         <div className="-mx-4 sm:mx-0 mt-3 ">
           <table className="min-w-full">
@@ -149,7 +154,7 @@ export default function TicketList() {
                   <td className="w-full max-w-0 py-4 pl-4 pr-3 text-sm  font-medium sm:w-auto sm:max-w-none sm:pl-2 vertical-align-top">
                     <a href="#" className={`${attendee.active ? 'text-chillired-600 hover:text-chillired-700' : "text-gray-600"}`}>
                       <span className="text-lg leading-6 sm:text-base md:text-base">{attendee.name}</span><br/>
-                      <span className="text-md leading-6 sm:text-base md:text-base">{attendee.ticket_number}</span>
+                      <span className="text-xs leading-6 text-gray-300">#{attendee.ticket_number}</span>
                     </a>
                     <dl className="font-normal lg:hidden text-inherit">
                       <dt className="sr-only">Email</dt>
@@ -157,7 +162,7 @@ export default function TicketList() {
                       <dt className="sr-only sm:hidden">Passes</dt>
                       <dd className="mt-1 truncate text-inherit sm:hidden">{passString}</dd>
                       <dt className="sr-only sm:hidden">Status</dt>
-                      <dd className="mt-1 truncate text-inherit sm:hidden"><TicketStatusIcon attendee={attendee.status}/>
+                      <dd className="mt-1 truncate text-inherit sm:hidden"><TicketStatusIcon attendee={attendee}/>
                       </dd>
                     </dl>
                   </td>
@@ -185,16 +190,19 @@ export default function TicketList() {
                           </a>
                         </MenuItem>
                         <MenuItem>
-                          <a href="#" className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50">
-                            Transfer<span className="sr-only">, {attendee.name}</span>
-                          </a>
+                          { attendee.active ? (
+                            <a href="#" className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50"
+                              onClick={() => { setActiveTicket(attendee); setTicketTransferModalActive(true) }}
+                            >
+                            Transfer<span className="sr-only"> {attendee.name}&apos;s ticket</span>
+                          </a>) : <span className='line-through block px-3 py-1 text-sm leading-6 text-gray-300 data-[focus]:bg-gray-50'>Transfer</span> }
                         </MenuItem>
                         <MenuItem>
                           { attendee.active ? (
                             <a href="#" className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50"
                               onClick={() => { setActiveTicket(attendee); setNameChangeModalActive(true) }}
                             >
-                            Change Name<span className="sr-only">, {attendee.name}</span>
+                            Change Name<span className="sr-only"> from {attendee.name}</span>
                           </a>) : <span className='line-through block px-3 py-1 text-sm leading-6 text-gray-300 data-[focus]:bg-gray-50'>Change Name</span> }
                         </MenuItem>
                         <MenuItem>

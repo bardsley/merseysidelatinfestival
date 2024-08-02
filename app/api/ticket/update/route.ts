@@ -1,8 +1,7 @@
 // import { createClerkClient } from '@clerk/backend';
 import { auth } from '@clerk/nextjs/server';
-import { NextRequest, NextResponse, userAgent} from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
-import { attachReactRefresh } from 'next/dist/build/webpack-config';
 
 
 export async function POST(req: NextRequest) {
@@ -37,10 +36,12 @@ export async function POST(req: NextRequest) {
   const attendeePreviousData = await currentAttendeeResponse.json()
   // console.log(apiRequest, currentAttendeeResponse,attendeePreviousData)
   
+  
   if(attendeePreviousData.error) { return Response.json({error: attendeePreviousData.error}, { status: 400 }); }
   if(attendeePreviousData.length < 0) { return Response.json({error: "No tickets"}, { status: 400 }); }
   if(attendeePreviousData.length > 1) { return Response.json({error: "Multiple tickets match"}, { status: 400 }); }
   if(attendeePreviousData[0].ticket_used) { return Response.json({error: "Ticket has already been used."}, { status: 400 }); }
+  if(attendeePreviousData[0].status == 'gratis') { return Response.json({error: "You can't transfer a gifted ticket."}, { status: 400 }); }
 
   console.log("attendeePreviousData",attendeePreviousData[0])
 
