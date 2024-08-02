@@ -13,7 +13,7 @@ logger.setLevel("INFO")
 # boto3.setup_default_session(profile_name=profile_name)
 
 db = boto3.resource('dynamodb')
-table = db.Table('mlf24_attendees')
+table = db.Table('dev-mlf24_attendees')
 
 def get_ticket(ticket_number, email):
     '''
@@ -63,7 +63,7 @@ def post(event):
     if ('ticket_number' not in data) and ('email' not in data):
         return err("Must provide ticket_number and email.")
     else:
-        ticket_number = int(data['ticket_number'])
+        ticket_number = data['ticket_number'] # Ticket numerbs are strings now
         email = data['email']
     
     try:
