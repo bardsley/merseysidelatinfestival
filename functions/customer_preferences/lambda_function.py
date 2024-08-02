@@ -141,6 +141,8 @@ def get(event):
         response_items.append({'schedule_options':ticket_entry['schedule']})
     if 'validity' in event['queryStringParameters']['requested']:
         response_items.append({'validity': True})
+    if 'info' in event['queryStringParameters']['requested']:
+        response_items.append(ticket_entry)
     return {
             'statusCode': 200,
             'body': response_items
