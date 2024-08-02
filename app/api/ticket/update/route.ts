@@ -35,10 +35,12 @@ export async function POST(req: NextRequest) {
   const attendeePreviousData = await currentAttendeeResponse.json()
   // console.log(apiRequest, currentAttendeeResponse,attendeePreviousData)
   
+  
   if(attendeePreviousData.error) { return Response.json({error: attendeePreviousData.error}, { status: 400 }); }
   if(attendeePreviousData.length < 0) { return Response.json({error: "No tickets"}, { status: 400 }); }
   if(attendeePreviousData.length > 1) { return Response.json({error: "Multiple tickets match"}, { status: 400 }); }
   if(attendeePreviousData[0].ticket_used) { return Response.json({error: "Ticket has already been used."}, { status: 400 }); }
+  if(attendeePreviousData[0].status == 'gratis') { return Response.json({error: "You can't transfer a gifted ticket."}, { status: 400 }); }
 
   console.log("attendeePreviousData",attendeePreviousData[0])
 

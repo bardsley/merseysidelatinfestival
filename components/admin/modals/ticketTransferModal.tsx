@@ -1,12 +1,10 @@
 'use client'
 import { Formik, Form } from 'formik';
-import FormField from './FormField';
+import FormField from '../forms/FormField';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
-import { FlagIcon } from '@heroicons/react/24/outline'
+import { FlagIcon } from '@heroicons/react/24/solid'
 
-
-
-export default function NameChangeModal({ticket,open,onClose}) {
+export default function TicketTransferModal({ticket,open,onClose}) {
   
   return (
     <Formik
@@ -17,8 +15,11 @@ export default function NameChangeModal({ticket,open,onClose}) {
           email: ticket.email,
           replace: {
             name: values.name,
+            email: values.email,
+            phone: values.phone,
           }
         }
+        console.log(bodyData)
         const apiResponse = await fetch("/api/ticket/update",{
           method: "POST",
           body: JSON.stringify(bodyData),
@@ -45,14 +46,16 @@ export default function NameChangeModal({ticket,open,onClose}) {
             
             <Form>
             <div>
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-                <FlagIcon aria-hidden="true" className="h-6 w-6 text-blue-600" />
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+                <FlagIcon aria-hidden="true" className="h-6 w-6 text-red-600" />
               </div>
               <div className="mt-3 text-center sm:mt-5">
                 <DialogTitle as="h3" className="text-base font-semibold leading-6 text-gray-900">
-                  Change Name
+                  Transfer Ticket
                 </DialogTitle>
-                <FormField field="name"/>
+                <FormField field="name" label="New Name"/>
+                <FormField field="email" label="New Email"/>
+                <FormField field="phone" label="New Phone"/>
               </div>
             </div>
             <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
@@ -61,7 +64,7 @@ export default function NameChangeModal({ticket,open,onClose}) {
                 disabled={isSubmitting}
                 className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
               >
-                Change
+                Transfer
               </button>
               <button
                 data-autofocus
