@@ -5,7 +5,8 @@ import { ChevronDownIcon, ChevronUpIcon, ChevronUpDownIcon, XMarkIcon, EllipsisV
 } from '@heroicons/react/24/solid'
 import { BiCreditCard, BiLogoSketch, BiLeftArrowCircle, BiSolidRightArrowSquare } from 'react-icons/bi';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import useSWR from "swr";
+import useSWR, {mutate} from "swr";
+import NameChangeModal from './nameChangeModal';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -24,6 +25,9 @@ export default function TicketList() {
   const [sortDirection, setSortDirection] = useState('desc');
   const [filterBy, setFilterBy] = useState('');
   const [filterByField, setFilterByField] = useState('');
+  const [nameChangeModalActive, setNameChangeModalActive] = useState(false)
+  const [activeTicket, setActiveTicket] = useState(null)
+
   const {data, error, isLoading, isValidating} = useSWR("/api/admin/attendees", fetcher);
   const attendees = data?.attendees
 
@@ -44,7 +48,7 @@ export default function TicketList() {
   return filtering ? (
     <input ref={currentInput} className="border-b border-t-0 bg-richblack-500 text-white w-full" type="text" placeholder={fieldname} size={10} autoFocus={true} 
       onBlur={(evt) => {setFilterFunction(evt.target.value); setFiltering(false)}}
-      onKeyUp={(evt) => {if (evt.key === 'Enter') {setFiltering(false); setFilterFunction(currentInput.current.value) }}}
+      onKeyUp={(evt) => {if (evt.key === 'Enter' && currentInput.current ) {setFiltering(false); setFilterFunction(currentInput.current.value) }}}
     />
   ):
   (<a href='#' className="block w-full  " onClick={() => setFiltering(true)}>{children}</a>)
@@ -61,7 +65,7 @@ export default function TicketList() {
     return <p>Error {JSON.stringify(data.error)}</p>
   }
   else {
-    console.log(attendees)
+    
     const sortedAttendees = attendees.sort((a, b) => {
       if (sortDirection === 'desc') {
         return (0 - (a[sortBy] > b[sortBy] ? 1 : -1))
@@ -88,6 +92,7 @@ export default function TicketList() {
 
     return (
       <div className="px-0 my-8 ">
+        { nameChangeModalActive ? <NameChangeModal open={nameChangeModalActive} onClose={(value) => { setNameChangeModalActive(value); mutate("/api/admin/attendees") }} ticket={activeTicket}/> : null }
         { filterBy ? <div className='flex' onClick={() => setFilterBy('')}><span className='hover:cursor-pointer flex items-center rounded-md bg-gray-400 text-black pl-3 py-0'>Filtered by {filterByField}: &quot;{filterBy}&quot; <XMarkIcon className='w-4 h-4 ml-1 mr-1'/> </span></div> : null }
         <div className="-mx-4 sm:mx-0 mt-3 ">
           <table className="min-w-full">
@@ -143,7 +148,7 @@ export default function TicketList() {
                 <tr key={`${attendee.ticket_number}`} className={`align-center ${attendee.active ? '' : 'decoration-1	 line-through text-gray-600'}`}>
                   <td className="w-full max-w-0 py-4 pl-4 pr-3 text-sm  font-medium sm:w-auto sm:max-w-none sm:pl-2 vertical-align-top">
                     <a href="#" className={`${attendee.active ? 'text-chillired-600 hover:text-chillired-700' : "text-gray-600"}`}>
-                      <span className="text-lg leading-6 sm:text-base md:text-base">{attendee.name}</span>
+                      <span className="text-lg leading-6 sm:text-base md:text-base">{attendee.name}</span><br/>
                       <span className="text-md leading-6 sm:text-base md:text-base">{attendee.ticket_number}</span>
                     </a>
                     <dl className="font-normal lg:hidden text-inherit">
@@ -185,6 +190,14 @@ export default function TicketList() {
                           </a>
                         </MenuItem>
                         <MenuItem>
+                          { attendee.active ? (
+                            <a href="#" className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50"
+                              onClick={() => { setActiveTicket(attendee); setNameChangeModalActive(true) }}
+                            >
+                            Change Name<span className="sr-only">, {attendee.name}</span>
+                          </a>) : <span className='line-through block px-3 py-1 text-sm leading-6 text-gray-300 data-[focus]:bg-gray-50'>Change Name</span> }
+                        </MenuItem>
+                        <MenuItem>
                           <a href="#" className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50">
                             Meal Preferences<span className="sr-only">, {attendee.name}</span>
                           </a>
@@ -202,6 +215,7 @@ export default function TicketList() {
               )})}
             </tbody>
           </table>
+          
         </div>
       </div>
     )
