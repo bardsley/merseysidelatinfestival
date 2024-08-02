@@ -1,12 +1,24 @@
 'use client'
 import {format } from 'date-fns'
 import { useState, useRef } from 'react';
-import { ChevronDownIcon, ChevronUpIcon, ChevronUpDownIcon, XMarkIcon, EllipsisVerticalIcon } from '@heroicons/react/24/solid'
+import { ChevronDownIcon, ChevronUpIcon, ChevronUpDownIcon, XMarkIcon, EllipsisVerticalIcon, CurrencyPoundIcon, ClipboardIcon, ExclamationTriangleIcon
+} from '@heroicons/react/24/solid'
+import { BiCreditCard, BiLogoSketch, BiLeftArrowCircle, BiSolidRightArrowSquare } from 'react-icons/bi';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import useSWR from "swr";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
+const TicketStatusIcon = ({attendee})  => {
+  const PaymentIcon = attendee.status === 'paid_stripe' ? <BiCreditCard className='w-6 h-6' /> 
+    : attendee.status === 'paid_cash' ? <CurrencyPoundIcon className='w-6 h-6' /> :
+      attendee.status === 'gratis' ? <BiLogoSketch className='w-6 h-6' /> : null //TODO should have a icon for wtf paid for this
+  const trasnferOutIcon = attendee.transferred_out ? <BiSolidRightArrowSquare className='w-6 h-6' /> : null
+  const transferInIcon =  attendee.transferred_in ? <BiLeftArrowCircle className='w-6 h-6' /> : null
+  const namechangeIcon = attendee.name_changed ? <ClipboardIcon className='w-6 h-6' /> : null
+  const wtfIcon = attendee.transferred_in && attendee.transferred_out ? <ExclamationTriangleIcon className='w-6 h-6' /> : null
+  return <>{PaymentIcon}{trasnferOutIcon}{transferInIcon}{namechangeIcon}{wtfIcon}</>
+}
 export default function TicketList() {
   const [sortBy, setSortBy] = useState('purchased_at');
   const [sortDirection, setSortDirection] = useState('desc');
@@ -109,13 +121,18 @@ export default function TicketList() {
                 <th scope="col" className={`${headerClassNames} sm:rounded-r-lg max-w-24 flex-grow-0`}>
                   <span className={headerContainerClassNames}>
                     <FilterLabel fieldname={"signed_in"} setFilterFunction={(filter) => { setFilterByField('signed_in'); setFilterBy(filter)}}>
-                      <span className={`${labelClassNames} text-nowrap`}>Sign in?</span>
+                      <span className={`${labelClassNames} text-nowrap`}>Check-in?</span>
                     </FilterLabel>
                     { sortField('signed_in') }
                   </span>
                 </th>
+                <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0 min-w-20 hidden sm:table-cell">
+                  <span className="sr-only">Status</span>
+                  {}
+                </th>
                 <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0 min-w-20">
                   <span className="sr-only">Edit</span>
+                  {}
                 </th>
               </tr>
             </thead>
@@ -123,22 +140,29 @@ export default function TicketList() {
               {filteredAttendees.map((attendee) => { 
                 const passString = attendee.passes.join(', ')
                 return(
-                <tr key={`${attendee.ticket_number}`} className='align-center'>
-                  <td className="w-full max-w-0 py-4 pl-4 pr-3 text-sm  font-medium text-white sm:w-auto sm:max-w-none sm:pl-2 vertical-align-top">
-                    <a href="#" className="text-chillired-600 hover:text-chillired-700">
+                <tr key={`${attendee.ticket_number}`} className={`align-center ${attendee.active ? '' : 'decoration-1	 line-through text-gray-600'}`}>
+                  <td className="w-full max-w-0 py-4 pl-4 pr-3 text-sm  font-medium sm:w-auto sm:max-w-none sm:pl-2 vertical-align-top">
+                    <a href="#" className={`${attendee.active ? 'text-chillired-600 hover:text-chillired-700' : "text-gray-600"}`}>
                       <span className="text-lg leading-6 sm:text-base md:text-base">{attendee.name}</span>
+                      <span className="text-md leading-6 sm:text-base md:text-base">{attendee.ticket_number}</span>
                     </a>
-                    <dl className="font-normal lg:hidden">
+                    <dl className="font-normal lg:hidden text-inherit">
                       <dt className="sr-only">Email</dt>
-                      <dd className="mt-1 truncate text-gray-100">{attendee.email}</dd>
+                      <dd className="mt-1 truncate text-inherit">{attendee.email}</dd>
                       <dt className="sr-only sm:hidden">Passes</dt>
-                      <dd className="mt-1 truncate text-gray-100 sm:hidden">{passString}</dd>
+                      <dd className="mt-1 truncate text-inherit sm:hidden">{passString}</dd>
+                      <dt className="sr-only sm:hidden">Status</dt>
+                      <dd className="mt-1 truncate text-inherit sm:hidden"><TicketStatusIcon attendee={attendee.status}/>
+                      </dd>
                     </dl>
                   </td>
-                  <td className="hidden px-3 py-4 text-sm text-gray-200 lg:table-cell">{attendee.email}</td>
-                  <td className="hidden px-3 py-4 text-sm text-gray-200 sm:table-cell">{passString}</td>
+                  <td className="hidden px-3 py-4 text-sm text-inherit lg:table-cell">{attendee.email}</td>
+                  <td className="hidden px-3 py-4 text-sm text-inherit sm:table-cell">{passString}</td>
                   <td className="px-3 py-4 text-sm text-gray-200 text-nowrap align-center">
-                    {attendee.signed_in ? format(attendee.signed_in,'EEE HH:mm') :  <button className='bg-green-700 text-white rounded-full px-4 py-1'>Sign in</button>}
+                    {attendee.checkin_at ? format(attendee.checkin_at,'EEE HH:mm') :  <button className='bg-green-700 rounded-full px-4 py-1'>Check in</button>}
+                  </td>
+                  <td className='hidden sm:table-cell px-3 py-0 text-xl align-middle'>
+                    <TicketStatusIcon attendee={attendee}/>
                   </td>
                   <td className='px-3 py-0 text-xl align-middle'>
                     <Menu as="div" className="relative flex flex-col h-full justify-center items-center">

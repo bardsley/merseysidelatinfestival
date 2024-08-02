@@ -50,6 +50,9 @@ Adam
 - [x] Do we need phone number on login
 - [x] Student prices into checkout
 - [x] Signout errors - Sort of fixed, redirect if a page doesn't exist
+- [ ] Logout causes errors
+- [ ] Return on unfiltered shouldn't auto sets
+- [ ] Swap meal preferences admin only ¿Could this not use the same endpoint? Yes
 
 Connor
 ------  
@@ -88,12 +91,12 @@ Connor
 - [x] generate price file dynamically and commit to git
 - [x] create a dev DB
 - [x] fix full pass access in stripe
+- [ ] Send preference with wrong email and ticket should give an error
+- [ ] Rename preferences function to ticket_information
+- [ ] Add CloudWatch to check for Lambda errors and timeouts
 
 **Thinking these might be on the wrong list because I don't remeber what they're for**
-- [ ] Logout causes errors
-- [ ] Return on unfiltered shouldn't auto sets
 - [ ] Cutoff meal preferences
-- [ ] Swap meal preferences admin only ¿Could this not use the same endpoint?
 
 Karen
 -----

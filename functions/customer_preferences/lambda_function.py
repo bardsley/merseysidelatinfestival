@@ -88,7 +88,8 @@ def post(event):
         logger.info(f"-SET SCHEDULE OPTIONS:, {data['schedule']}")
         UpdateExp += ", schedule = :val2"
         ExpAttrVals[':val2'] = json.dumps(data['schedule'])    
-    
+    if 'validity' in event['queryStringParameters']['requested']:
+        response_items.append({'validity': True})
     # define the params for the ddb update
     params = {
         'Key': {
