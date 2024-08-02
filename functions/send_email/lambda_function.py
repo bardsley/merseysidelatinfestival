@@ -35,9 +35,9 @@ def generate_standard_ticket_body(data):
             rows = rows+"\n"+line_item_tmpl.substitute({
                 'tickettype':i['description'], 
                 'qty':1, 
-                'price':babel.numbers.format_currency(i['amount_total']/100, "GBP", locale='en_UK')
+                'price':babel.numbers.format_currency(int(i['amount_total'])/100, "GBP", locale='en_UK')
             })
-            total_amount += i['amount_total']
+            total_amount += int(i['amount_total'])
     # create total row
     with open("./ticket_row.html", 'r') as total_row_file:
         total_tmpl = Template(total_row_file.read())

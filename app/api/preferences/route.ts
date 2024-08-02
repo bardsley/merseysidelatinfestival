@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     }
   }
   console.log("POST -> Conor: ",apiRequestBody)
-  const apiResponse = await fetch("https://x4xy6yutqmildatdl3qc53bnzu0bhbdf.lambda-url.eu-west-2.on.aws/", {
+  const apiResponse = await fetch(process.env.LAMBDA_PREFERENCES, {
     method: 'POST',
     body: JSON.stringify(apiRequestBody)
   })
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams
   const email = params.get('email') 
   const ticket = params.get('ticket_number')
-  const apiRequest = `https://x4xy6yutqmildatdl3qc53bnzu0bhbdf.lambda-url.eu-west-2.on.aws/?requested=meal&email=${email}&ticketnumber=${ticket}`
+  const apiRequest = `${process.env.LAMBDA_PREFERENCES}?requested=meal&email=${email}&ticketnumber=${ticket}`
   console.log("-> Conor: ",apiRequest)
   const apiResponse = await fetch(apiRequest, { method: 'GET',  headers: { 'Content-Type': 'application/json' }})
   const data = apiResponse.ok ? await apiResponse.json() 
