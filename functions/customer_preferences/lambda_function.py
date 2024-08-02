@@ -121,7 +121,7 @@ def get(event):
         return err("Must provide ticketnumber and email.")
     else:
         if data['ticketnumber'].isnumeric() is False: return err("ticket number not int-like")
-        ticket_number = int(data['ticketnumber'])
+        ticket_number = data['ticketnumber']
         email = data['email']
 
     # query db for ticket number and email, if don't match or exist return error
