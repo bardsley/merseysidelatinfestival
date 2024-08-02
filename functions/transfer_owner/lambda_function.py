@@ -113,14 +113,7 @@ def lambda_handler(event, context):
 
         input = {
             'full_name': data['name_to'],
-            'transferred': {
-                'date': int(time.time()),
-                'ticket_number': ticket_number,
-                'email': ticket_entry['email'],
-                'full_name': ticket_entry['full_name'],
-                'source': data['source'] if 'source' in data else None, #! check this here rather than on client
-            },
-            'owner_history': previous_owner+(ticket_entry['owner_history'] if 'owner_history' in ticket_entry else [])
+            'history': previous_owner+(ticket_entry['history'] if 'history' in ticket_entry else [])
         }
         logger.info(input)
         update_table(input, {'email': data['email'], 'ticket_number':data['ticket_number']})
@@ -161,13 +154,13 @@ def lambda_handler(event, context):
         }
         update_table(input, {'email': data['email'], 'ticket_number':ticket_number})
 
-        previous_owner = [json.dumps({
+        previous_owner = [{
             'date': int(time.time()),
             'ticket_number': ticket_number,
             'email': data['email'],
             'full_name': ticket_entry['full_name'],
             'source': data['source'] if 'source' in data else None #! check this here rather than on client
-        }, cls=DecimalEncoder)]
+        }]
 
         # Create a new ticket
         logger.info("Invoking create_ticket lambda")
@@ -183,11 +176,11 @@ def lambda_handler(event, context):
                 'access': ticket_entry['access'],
                 'status': ticket_entry['status'],
                 'student_ticket': ticket_entry['student_ticket'],
-                'promo_code': ticket_entry['promo_code'],
+                'promo_code': ticket_entry['promo_code'] if 'promo_code' in ticket_entry else None,
                 'meal_preferences': ticket_entry['meal_preferences'],
                 'checkout_session': ticket_entry['checkout_session'] if 'checkout_session' in ticket_entry else None, 
                 'schedule': ticket_entry['schedule'],
-                'owner_history': previous_owner+(ticket_entry['owner_history'] if 'owner_history' in ticket_entry else [])
+                'history': previous_owner+(ticket_entry['history'] if 'history' in ticket_entry else [])
                 },cls=DecimalEncoder),
             )
         logger.info(create_ticket)      
