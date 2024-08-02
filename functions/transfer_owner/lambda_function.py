@@ -20,6 +20,12 @@ from boto3.dynamodb.conditions import Key
 logger = logging.getLogger()
 logger.setLevel("INFO")
 
+#* This is not required for deployment only needed for local testing 
+logging.basicConfig()
+profile_name='AdministratorAccess-645491919786'
+boto3.setup_default_session(profile_name=profile_name)
+
+
 db = boto3.resource('dynamodb')
 table = db.Table('dev-mlf24_attendees')
 
@@ -141,18 +147,6 @@ def lambda_handler(event, context):
         #   make the old ticket inactive and state that it has been transferred and to who
         #   send the new ticket to the new owner and tell them who it came from
         #   send email to old owner telling them they transferred it and who to
-        input = {
-            'full_name': data['name_to'],
-            'active': False,
-            'transferred': {
-                'date': int(time.time()),
-                'ticket_number': ticket_number,
-                'email': ticket_entry['email'],
-                'full_name': ticket_entry['full_name'],
-                'source': data['source'] if 'source' in data else None #! check this here rather than on client
-            }
-        }
-        update_table(input, {'email': data['email'], 'ticket_number':ticket_number})
 
         previous_owner = [{
             'date': int(time.time()),
@@ -166,7 +160,7 @@ def lambda_handler(event, context):
         logger.info("Invoking create_ticket lambda")
         create_ticket = lambda_client.invoke(
             FunctionName='dev-create_ticket',
-            InvocationType='Event',
+            InvocationType='RequestResponse',
             Payload=json.dumps({
                 'email': data['email_to'],      
                 'full_name': data['name_to'],
@@ -183,7 +177,23 @@ def lambda_handler(event, context):
                 'history': previous_owner+(ticket_entry['history'] if 'history' in ticket_entry else [])
                 },cls=DecimalEncoder),
             )
-        logger.info(create_ticket)      
+        logger.info(create_ticket)
+        logger.info()
+
+        new_ticket_number = json.loads(create_ticket['Payload'].read())['ticket_number']
+
+        input = {
+            'full_name': data['name_to'],
+            'active': False,
+            'transferred': {
+                'date': int(time.time()),
+                'ticket_number': new_ticket_number,
+                'email': ticket_entry['email'],
+                'full_name': ticket_entry['full_name'],
+                'source': data['source'] if 'source' in data else None #! check this here rather than on client
+            }
+        }
+        update_table(input, {'email': data['email'], 'ticket_number':ticket_number})
 
         logger.info("Invoking send_email lambda")
         response = lambda_client.invoke(
@@ -193,7 +203,7 @@ def lambda_handler(event, context):
                     'email_type':"transfer_ticket",
                     'name':data['name_to'], 
                     'email':data['email_to'], 
-                    'ticket_number':create_ticket['ticket_number'], 
+                    'ticket_number':new_ticket_number, 
                     'line_items':ticket_entry['line_items'], 
                     'email_from': ticket_entry['email'],
                     'full_name_from': ticket_entry['full_name'],
