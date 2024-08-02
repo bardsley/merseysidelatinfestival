@@ -12,7 +12,7 @@ export async function GET() {
 
   const user = await currentUser();
   if(!user){
-    return Response.json({error: "User is not signed in."}, { status: 401 });
+    return Response.json({error: "User is not signed in!"}, { status: 401 });
   }
   if(!user.publicMetadata.admin){
     return Response.json({error: "User is does not have list tickets permissions."}, { status: 401 });
@@ -25,17 +25,30 @@ export async function GET() {
     },
   })
   const attendeeData = await attendeesResponse.json()
+  // console.log(attendeeData)
+  
   const attendees = attendeeData.Items.map((attendee) => {
+    const transferred_out = attendee.transferred && attendee.transferred.ticket_number != attendee.ticket_number
+    const name_changed = attendee.transferred && attendee.transferred.ticket_number == attendee.ticket_number
+    const transferred_in = !name_changed && attendee.history
+    // console.log(attendee.full_name,attendee.ticket_number,attendee.transferred?.ticket_number, attendee.transferred?.ticket_number != attendee.ticket_number)
+
     return {
       name: attendee.full_name,
       email: attendee.email,
-      signed_in: attendee.ticket_used,
+      checkin_at: attendee.ticket_used,
       passes: attendee.line_items.map((item) => item.description),
       purchased_at: new Date(parseInt(attendee.purchase_date) * 1000).toISOString(),
       ticket_number: attendee.ticket_number,
       active: attendee.active,
       status: attendee.status,
       student_ticket: attendee.student_ticket,
+      transferred_in: transferred_in ? attendee.history[0].ticket_number : false,
+      transferred_out: transferred_out ? attendee.transferred.ticket_number  : false, //! TODO why is it transferred out without a history
+      name_changed: name_changed,
+      transferred: attendee.transferred,
+      history: attendee.history,
+
     };
   })
 

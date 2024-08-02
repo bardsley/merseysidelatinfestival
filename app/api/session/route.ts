@@ -18,7 +18,7 @@ export async function POST(request: Request) {
       cookies().set('ticket', ticket, { secure: true })
       cookies().set('email', email, { secure: true })
     } else {
-      const apiRequestUrl = `${process.env.LAMBDA_CHECK_EMAIL_TICKET_COMBO}?email=${email}`
+      const apiRequestUrl = `${process.env.LAMBDA_SEND_TICKET_EMAIL}?email=${email}`
       const apiResponse = await fetch(apiRequestUrl, { method: 'GET',  headers: { 'Content-Type': 'application/json' }})
       console.log("apiResponse", apiResponse)
       message = `An email will be sent to ${email} if this has and tickets associated to it`

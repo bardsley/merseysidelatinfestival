@@ -13,7 +13,7 @@ logger.setLevel("INFO")
 # boto3.setup_default_session(profile_name=profile_name)
 
 db = boto3.resource('dynamodb')
-table = db.Table('mlf24_db')
+table = db.Table('dev-mlf24_attendees')
 
 def get_ticket(ticket_number, email):
     '''
@@ -63,13 +63,13 @@ def post(event):
     if ('ticket_number' not in data) and ('email' not in data):
         return err("Must provide ticket_number and email.")
     else:
-        ticket_number = int(data['ticket_number'])
+        ticket_number = data['ticket_number'] # Ticket numerbs are strings now
         email = data['email']
     
     try:
         ticket_entry = get_ticket(ticket_number, email)
     except ValueError as e:
-        return err(e)
+        return err(str(e))
         
     # empty variables to be set according to what options are slected (meal_options, schedule)
     UpdateExp   = ""
@@ -88,7 +88,6 @@ def post(event):
         logger.info(f"-SET SCHEDULE OPTIONS:, {data['schedule']}")
         UpdateExp += ", schedule = :val2"
         ExpAttrVals[':val2'] = json.dumps(data['schedule'])    
-    
     # define the params for the ddb update
     params = {
         'Key': {
@@ -122,7 +121,7 @@ def get(event):
         return err("Must provide ticketnumber and email.")
     else:
         if data['ticketnumber'].isnumeric() is False: return err("ticket number not int-like")
-        ticket_number = int(data['ticketnumber'])
+        ticket_number = data['ticketnumber']
         email = data['email']
 
     # query db for ticket number and email, if don't match or exist return error
@@ -130,7 +129,7 @@ def get(event):
     try:
         ticket_entry = get_ticket(ticket_number, email)
     except ValueError as e:
-        return err(e)
+        return err(str(e))
 
     response_items = []
     if 'meal' in event['queryStringParameters']['requested']:
@@ -140,6 +139,10 @@ def get(event):
         response_items.append({'preferences':ticket_entry['meal_options']})
     if 'schedule' in event['queryStringParameters']['requested']:
         response_items.append({'schedule_options':ticket_entry['schedule']})
+    if 'validity' in event['queryStringParameters']['requested']:
+        response_items.append({'validity': True})
+    if 'info' in event['queryStringParameters']['requested']:
+        response_items.append(ticket_entry)
     return {
             'statusCode': 200,
             'body': response_items

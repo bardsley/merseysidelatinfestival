@@ -141,7 +141,7 @@ def lambda_handler(event, context):
             student_price = None
             for item in query['data']:
                 if item['nickname'] == "student_active": 
-                    student_price = item['id'] 
+                    student_price = item
                     break
             
             if student_price:
@@ -149,7 +149,7 @@ def lambda_handler(event, context):
                     'price_type': "student",
                     # 'active': ev_data['data']['object']['active'],
                          'product_active': ev_data['data']['object']['active'],
-                         'price_active': query['data'][student_price]['object']['active'],
+                         'price_active': student_price['active'],
                     'livemode': ev_data['data']['object']['livemode'],
                     'last_update': ev_data['data']['object']['updated'],
                     'prod_name': ev_data['data']['object']['name'],
@@ -158,6 +158,6 @@ def lambda_handler(event, context):
                 }
 
                 logger.info("Updating the status of student price to {}".format(ev_data['data']['object']['active']))
-                update_table(input, {'prod_id': prod_id, 'price_id': student_price})
+                update_table(input, {'prod_id': prod_id, 'price_id': student_price['id']})
 
         return True
