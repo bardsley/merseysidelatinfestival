@@ -1,9 +1,7 @@
 // import { createClerkClient } from '@clerk/backend';
 import { auth } from '@clerk/nextjs/server';
-import { NextRequest, NextResponse, userAgent} from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
-import { attachReactRefresh } from 'next/dist/build/webpack-config';
-
 
 export async function POST(req: NextRequest) {
   const {userId} = auth();
