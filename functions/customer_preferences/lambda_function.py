@@ -88,8 +88,6 @@ def post(event):
         logger.info(f"-SET SCHEDULE OPTIONS:, {data['schedule']}")
         UpdateExp += ", schedule = :val2"
         ExpAttrVals[':val2'] = json.dumps(data['schedule'])    
-    if 'validity' in event['queryStringParameters']['requested']:
-        response_items.append({'validity': True})
     # define the params for the ddb update
     params = {
         'Key': {
@@ -141,6 +139,8 @@ def get(event):
         response_items.append({'preferences':ticket_entry['meal_options']})
     if 'schedule' in event['queryStringParameters']['requested']:
         response_items.append({'schedule_options':ticket_entry['schedule']})
+    if 'validity' in event['queryStringParameters']['requested']:
+        response_items.append({'validity': True})
     return {
             'statusCode': 200,
             'body': response_items
