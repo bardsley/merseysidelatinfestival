@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
 import { deepCopy } from '../../lib/useful'
 export const courses = [
-  { name: "Starter", options: ["Vegan Tart", "Meat on Toast"]},
-  { name: "Main", options: ["Pasta", "Meat and Veg"]},
-  { name: "Desert", options: ["Fruit Tart", "Gelatine"]},
+  { name: "Starter", options: ["Vegetable Terrine", "Chicken Liver Pate"]},
+  { name: "Main", options: ["Roasted Onion", "Fish & Prawn Risotto", "Chicken Supreme"]},
+  { name: "Desert", options: ["Fruit Platter", "Bread & Butter Pudding"]},
 ]
 
 export const blankPreferences = {choices: [-1,-1,-1], dietary_requirements : { selected: [], other: ""}, seating_preference: []}
@@ -46,17 +46,18 @@ const MealPreferences = ({preferences,setPreferences}) =>{
         <legend className="text-base font-semibold leading-6 text-white">Course</legend>
         <div className="mt-4 divide-y divide-gray-700 border-b border-t border-gray-700">
           {courses.map((course, courseIdx) => (
-            <div key={courseIdx} className="relative flex items-center md:items-start justify-between w-full py-4 flex-wrap md:flex-nowrap">
-              <div className="min-w-0 text-sm leading-6 w-full md:w-auto ">
+            <div key={courseIdx} className="relative grid grid-cols-6 items-center md:items-start justify-between w-full py-4 flex-wrap md:flex-nowrap">
+              <div className="min-w-0 text-sm leading-6 w-full md:w-auto col-span-1 ">
                 <span className="select-none  text-white font-bold md:font-medium">
                   {course.name}
                 </span>
               </div>
-              <div className="ml-3 flex flex-1 h-6 items-center justify-end gap-5">
+              <div className="ml-3 grid grid-cols-3 h-6 items-center justify-end gap-5 col-span-5">
                 {course.options.map((option,optionIdx) => {
+                  const startAt = course.options.length < 3 ? `col-start-${4 - course.options.length + optionIdx}` : ''
                   return (
-                    <div key={`c${courseIdx}-${optionIdx}`} className="flex items-center gap-2 w-36 justify-end">
-                    <label htmlFor={`course-${courseIdx}-${optionIdx}`}>{option}</label>
+                    <div key={`c${courseIdx}-${optionIdx}`} className={`flex items-center gap-3 justify-start cols-span-1 ${startAt}`}>
+                    
                     <input
                       id={`course-${courseIdx}-${optionIdx}`}
                       name={`course-${courseIdx}`}
@@ -69,6 +70,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
                         
                       }
                     />
+                    <label htmlFor={`course-${courseIdx}-${optionIdx}`}>{option}</label>
                     </div>
                   )
                 })}
