@@ -23,7 +23,7 @@ export default function UserList({loggedInUser}) {
 
   const setPermission = async (userId,permission,setTo) => {
     console.log(userId)
-    const apiResponse = await fetch(`/api/users`,{
+    const apiResponse = await fetch(`/api/admin/users`,{
       method: 'POST',
       body: JSON.stringify({userId: userId, permission: permission, value: setTo}),
     })
@@ -73,7 +73,7 @@ export default function UserList({loggedInUser}) {
                   This is you
                 </div>
                 :<button
-                  onClick={() => {setPermission(person.id,"admin",!admin); setTimeout(() => mutate("/api/users"),600)}}
+                  onClick={() => {setPermission(person.id,"admin",!admin); setTimeout(() => mutate("/api/admin/users"),600)}}
                   className="hover:text-red-600 relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
                 >
                   {admin ? "Revoke Admin" : "Make Admin"}
