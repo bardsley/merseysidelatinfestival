@@ -5,16 +5,20 @@ import { NextResponse} from 'next/server'
 
 export async function POST(request: Request) {
   const data = await request.formData()
-  const newHttpMethod = request.headers.get('x-new-method')
+
+  const { searchParams } = new URL(request.url)
+  const method = searchParams.get('_method')
+  console.log("method", method)
+
   let message: boolean | string = false 
-  if(newHttpMethod && newHttpMethod != 'NOCHANGE') {
+  if(method && method == 'DELETE') {
     cookies().delete('ticket')
     message = 'Logged out'
   } else {
-    const ticket = data.get('ticket').toString()
-    const email = data.get('email').toString()
-
-    if(ticket) {
+    const ticket = data.get('ticket') ? data.get('ticket').toString() : null
+    const email = data.get('email') ? data.get('email').toString() : null
+    
+    if(ticket && email) {
       cookies().set('ticket', ticket, { secure: true })
       cookies().set('email', email, { secure: true })
     } else {

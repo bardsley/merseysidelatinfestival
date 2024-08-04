@@ -11,7 +11,7 @@ export async function POST(request: Request) {
   const dietChoices = Array.from(data.entries()).filter((item)=>{ return /selected\[.*\]/.test(item[0]) ? true : false }).map((item)=>{ return item[0].replace('selected[','').replace(']','') })
   console.log("Diet",dietChoices)
   const apiRequestBody = {
-    ticket_number: parseInt(ticket.value), //TODO should be a string eventually
+    ticket_number: ticket.value,
     email: email.value,
     preferences: {
       choices: courseInfo,
@@ -42,12 +42,13 @@ export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams
   const email = params.get('email') 
   const ticket = params.get('ticket_number')
-  const apiRequest = `${process.env.LAMBDA_PREFERENCES}?requested=meal&email=${email}&ticketnumber=${ticket}`
+  const apiRequest = `${process.env.LAMBDA_PREFERENCES}?requested=preferences&email=${email}&ticketnumber=${ticket}`
   console.log("-> Conor: ",apiRequest)
   const apiResponse = await fetch(apiRequest, { method: 'GET',  headers: { 'Content-Type': 'application/json' }})
-  const data = apiResponse.ok ? await apiResponse.json() 
+  console.log("apiResponse",apiResponse)
+  const data = apiResponse.ok ? await apiResponse.json() //TODO this doesn't like empty JSON responses
     : apiResponse.status >= 400 && apiResponse.status < 500 ? await apiResponse.json()
-      : { error: `Computer says "${apiResponse.statusText}"... we'll let someone who understands this know about this` }
+      : { error: `Computer says "${apiResponse.status}:${apiResponse.statusText}"... we'll let someone who understands this know about this` }
   console.log("<- Conor",data, apiResponse.statusText, apiResponse.status)
   const responseData = apiResponse.ok ? data[0] : data
   console.log("API Response",responseData)
