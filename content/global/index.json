@@ -15,7 +15,7 @@
       {
         "href": "meal",
         "label": "Meal",
-        "visible": false
+        "visible": true
       },
       {
         "href": "tickets",
