@@ -10,7 +10,7 @@ export default async function Page({
   params: { filename: string[] };
 }) {
 
-  console.log("PAGE:",params);
+  // console.log("PAGE:",params);
   try {
     const data = await client.queries.page({
       relativePath: `${params.filename}.mdx`,

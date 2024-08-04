@@ -89,7 +89,7 @@ def lambda_handler(event, context):
                 'email': email,      
                 'full_name': full_name,
                 'phone':phone,
-                'purchase_date': str(response['created']),
+                'purchase_date': str(stripe_response['created']),
                 'line_items': line_items,
                 'access': access,
                 'status': "paid_stripe",
