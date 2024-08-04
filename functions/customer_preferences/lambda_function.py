@@ -69,6 +69,7 @@ def post(event):
     try:
         ticket_entry = get_ticket(ticket_number, email)
     except ValueError as e:
+        logger.error(f"GET TICKET FAILED:, {ticket_number} : {email}")
         return err(str(e))
         
     # empty variables to be set according to what options are slected (meal_options, schedule)
@@ -132,11 +133,11 @@ def get(event):
         return err(str(e))
 
     response_items = []
-    if 'meal' in event['queryStringParameters']['requested']:
+    if 'preferences' in event['queryStringParameters']['requested']:
         # check that the meal is included in this ticket, if not return error
         if ticket_entry['access'][2] < 1: return err("Attempting to get meal options for a ticket which does not include dinner.")
         
-        response_items.append({'preferences':ticket_entry['meal_options']})
+        response_items.append({'preferences':ticket_entry['meal_preferences']})
     if 'schedule' in event['queryStringParameters']['requested']:
         response_items.append({'schedule_options':ticket_entry['schedule']})
     if 'validity' in event['queryStringParameters']['requested']:
