@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Clerk Styles */
+.cl-userButtonBox {
+  flex-direction: row-reverse;
+  color: #fff;
+  
+}
+.cl-userButtonBox {
+  margin-bottom: 1.25em;
+  align-self: flex-end;
+  border: solid 1px #0d3c49;
+  border-radius: 20px;
+  padding: 0.5em 1.5em 0.5em 0.5em;
+
+}
+
+.cl-userButtonOuterIdentifier {
+  font-size: 1.5em;
+}
