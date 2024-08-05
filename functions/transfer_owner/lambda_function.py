@@ -109,13 +109,13 @@ def lambda_handler(event, context):
         return err(return_string)
     
     if data['email'] == data['email_to']:
-        previous_owner = [json.dumps({
+        previous_owner = [{
             'date': int(time.time()),
             'ticket_number': ticket_number,
             'email': data['email'],
             'full_name': ticket_entry['full_name'],
             'source': data['source'] if 'source' in data else None #! check this here rather than on client
-        }, cls=DecimalEncoder)]
+        }]
 
         input = {
             'full_name': data['name_to'],
@@ -156,6 +156,12 @@ def lambda_handler(event, context):
             'source': data['source'] if 'source' in data else None #! check this here rather than on client
         }]
 
+        if 'history' in ticket_entry:
+            if ticket_entry['history'] is not None:
+                history = previous_owner+ticket_entry['history']
+            else:
+                history = previous_owner
+
         # Create a new ticket
         logger.info("Invoking create_ticket lambda")
         create_ticket = lambda_client.invoke(
@@ -172,9 +178,9 @@ def lambda_handler(event, context):
                 'student_ticket': ticket_entry['student_ticket'],
                 'promo_code': ticket_entry['promo_code'] if 'promo_code' in ticket_entry else None,
                 'meal_preferences': ticket_entry['meal_preferences'],
-                'checkout_session': ticket_entry['checkout_session'] if 'checkout_session' in ticket_entry else None, 
+                'checkout_session': None, 
                 'schedule': ticket_entry['schedule'],
-                'history': previous_owner+(ticket_entry['history'] if 'history' in ticket_entry else [])
+                'history': history
                 },cls=DecimalEncoder),
             )
         logger.info(create_ticket)
