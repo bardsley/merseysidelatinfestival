@@ -1,7 +1,6 @@
 'use client'
 import { useState} from 'react';
-import { ChevronDownIcon, ChevronUpIcon, ChevronUpDownIcon, EllipsisVerticalIcon, CurrencyPoundIcon, ClipboardIcon, ExclamationTriangleIcon
-} from '@heroicons/react/24/solid'
+import { ChevronDownIcon, ChevronUpIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid'
 
 import useSWR, {mutate} from "swr";
 import NameChangeModal from './modals/nameChangeModal';

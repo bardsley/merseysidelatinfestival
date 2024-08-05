@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest, { params }: { params: { session_id: string } }) {
+export async function GET(_request: NextRequest, { params }: { params: { session_id: string } }) {
   try {
     const session =
       await stripe.checkout.sessions.retrieve(params.session_id);
