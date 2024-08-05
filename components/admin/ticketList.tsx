@@ -1,32 +1,20 @@
 'use client'
-import {format } from 'date-fns'
-import { useState, useRef } from 'react';
-import { ChevronDownIcon, ChevronUpIcon, ChevronUpDownIcon, XMarkIcon, EllipsisVerticalIcon, CurrencyPoundIcon, ClipboardIcon, ExclamationTriangleIcon
-} from '@heroicons/react/24/solid'
-import { BiCreditCard, BiLogoSketch, BiLeftArrowCircle, BiSolidRightArrowSquare } from 'react-icons/bi';
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
+import { useState} from 'react';
+import { ChevronDownIcon, ChevronUpIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid'
+
 import useSWR, {mutate} from "swr";
 import NameChangeModal from './modals/nameChangeModal';
 import TicketTransferModal from './modals/ticketTransferModal';
+import { filterItems, filter, FilterSelector, FilterLabel } from './lists/filterable';
+import { TicketRow } from './lists/ticketRow';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
-const TicketStatusIcon = ({attendee})  => {
-  const PaymentIcon = attendee.status === 'paid_stripe' ? <BiCreditCard title="Paid Online" className='w-6 h-6' /> 
-    : attendee.status === 'paid_cash' ? <CurrencyPoundIcon title="Paid Cash" className='w-6 h-6' /> :
-      attendee.status === 'gratis' ? <BiLogoSketch title="Free Ticket" className='w-6 h-6' /> : null //TODO should have a icon for wtf paid for this
-  const trasnferOutIcon = attendee.transferred_out ? <BiSolidRightArrowSquare title={`Transferred to ${attendee.transferred_out}`} className='w-6 h-6' /> : null
-  const transferInIcon =  attendee.transferred_in ? <BiLeftArrowCircle title={`Transferred from ${attendee.transferred_in}`} className='w-6 h-6' /> : null
-  const namechangeIcon = attendee.name_changed ? <ClipboardIcon className='w-6 h-6' /> : null
-  const wtfIcon = attendee.transferred_in && attendee.transferred_out ? <ExclamationTriangleIcon className='w-6 h-6' /> : null
-  return <span className='flex'>{PaymentIcon}{trasnferOutIcon}{transferInIcon}{namechangeIcon}{wtfIcon}</span>
-}
 
 export default function TicketList() {
   const [sortBy, setSortBy] = useState('purchased_at');
   const [sortDirection, setSortDirection] = useState('desc');
-  const [filterBy, setFilterBy] = useState('');
-  const [filterByField, setFilterByField] = useState('');
+  const [filterBy, setFilterBy] = useState([{field: "active", value: true}] as filter[]);
+
 
   const [nameChangeModalActive, setNameChangeModalActive] = useState(false)
   const [ticketTransferModalActive, setTicketTransferModalActive] = useState(false)
@@ -46,17 +34,8 @@ export default function TicketList() {
     return <a href="#" onClick={fieldClickFunction} className='w-12 sm:w-24 flex justify-end pr-3 items-center'>{sortIcon}</a>
   }
 
-  const FilterLabel = ({fieldname,setFilterFunction,children}) => {
-  const [filtering, setFiltering] = useState(false)
-  const currentInput = useRef(null)
-  return filtering ? (
-    <input ref={currentInput} className="border-b border-t-0 bg-richblack-500 text-white w-full" type="text" placeholder={fieldname} size={10} autoFocus={true} 
-      onBlur={(evt) => {setFilterFunction(evt.target.value); setFiltering(false)}}
-      onKeyUp={(evt) => {if (evt.key === 'Enter' && currentInput.current ) {setFiltering(false); setFilterFunction(currentInput.current.value) }}}
-    />
-  ):
-  (<a href='#' className="block w-full  " onClick={() => setFiltering(true)}>{children}</a>)
-  }
+  const addFilter = (filter:filter) => { filter.value ? setFilterBy([...filterBy, filter]) : null }
+  const removeFilter = (filter:filter) => { setFilterBy(filterBy.filter(f => { return !(f.field == filter.field && f.value == filter.value) })) } 
 
   const headerClassNames = "p-0 text-left text-sm font-semibold text-white "
   const headerContainerClassNames = "flex justify-between"
@@ -77,36 +56,24 @@ export default function TicketList() {
         return (0 - (b[sortBy] > a[sortBy] ? 1 : -1)) 
       }
     });
-  
-    const filteredAttendees = filterByField ? sortedAttendees.filter((person) => { 
-      if(!filterBy) {
-        return true
-      }
-      if(['name','email'].includes(filterByField)) {
-        return person[filterByField].toLowerCase().includes(filterBy.toLowerCase())
-      }
-      if(filterByField == 'passes') {
-        return person[filterByField].map((pass) => pass.toLowerCase()).join(', ').includes(filterBy.toLowerCase())
-      }
-      if(filterByField == 'signed_in') {
-        return person[filterByField] && format(new Date(person[filterByField]), 'eee') == filterBy
-      }
-      else {return true}
-    }) : sortedAttendees
+    const filteredAttendees = filterBy ? filterItems(sortedAttendees,filterBy) : sortedAttendees
 
     return (
       <div className="px-0 my-8 ">
-        { nameChangeModalActive ? <NameChangeModal open={nameChangeModalActive} onClose={(value) => { setNameChangeModalActive(value); mutate("/api/admin/attendees") }} ticket={activeTicket}/> : null }
-        { ticketTransferModalActive ? <TicketTransferModal open={ticketTransferModalActive} onClose={(value) => { setTicketTransferModalActive(value); mutate("/api/admin/attendees") }} ticket={activeTicket}/> : null }
-        { filterBy ? <div className='flex' onClick={() => setFilterBy('')}><span className='hover:cursor-pointer flex items-center rounded-md bg-gray-400 text-black pl-3 py-0'>Filtered by {filterByField}: &quot;{filterBy}&quot; <XMarkIcon className='w-4 h-4 ml-1 mr-1'/> </span></div> : null }
+        { nameChangeModalActive ? <NameChangeModal open={nameChangeModalActive} onClose={(value) => { setNameChangeModalActive(value)}} refreshFunction={()=> mutate("/api/admin/attendees")} ticket={activeTicket}/> : null }
+        { ticketTransferModalActive ? <TicketTransferModal open={ticketTransferModalActive} onClose={(value) => { setTicketTransferModalActive(value);}} refreshFunction={()=> mutate("/api/admin/attendees")} ticket={activeTicket}/> : null }
+        <FilterSelector filters={filterBy} removeFilterFunction={removeFilter}/>
         <div className="-mx-4 sm:mx-0 mt-3 ">
           <table className="min-w-full">
             <thead className="bg-richblack-700">
               <tr className=''>
                 <th scope="col" className={`${headerClassNames} sm:rounded-l-lg`}>
                   <span className={headerContainerClassNames}>
-                    <FilterLabel fieldname={"name"} setFilterFunction={(filter) => { setFilterByField('name'); setFilterBy(filter) }}>
-                      <span className={`${labelClassNames} sm:pl-2 `}>Name <span className='sm:hidden'> & Details</span><span className='hidden sm:inline lg:hidden'>& Email</span></span>
+                    <FilterLabel fieldname={"name"} addFilterFunction={addFilter}>
+                      <span className={`${labelClassNames} sm:pl-2 `}>Name 
+                        <span className='sm:hidden'> & Details</span>
+                        <span className='hidden sm:inline lg:hidden'>& Email</span>
+                      </span>
                     </FilterLabel>
                     
                     { sortField('name') }
@@ -114,7 +81,7 @@ export default function TicketList() {
                 </th>
                 <th scope="col" className={`${headerClassNames} hidden lg:table-cell`}>
                   <span className={headerContainerClassNames}>
-                    <FilterLabel fieldname={"email"} setFilterFunction={(filter) => { setFilterByField('email'); setFilterBy(filter) }}>
+                    <FilterLabel fieldname={"email"} addFilterFunction={addFilter}>
                       <span className={`${labelClassNames}`}>Email</span>
                     </FilterLabel>
                     { sortField('email') }
@@ -122,7 +89,7 @@ export default function TicketList() {
                 </th>
                 <th scope="col" className={`${headerClassNames} hidden sm:table-cell`}>
                   <span className={headerContainerClassNames}>
-                    <FilterLabel fieldname={"passes"} setFilterFunction={(filter) => { setFilterByField('passes'); setFilterBy(filter) }}>
+                    <FilterLabel fieldname={"passes"} addFilterFunction={addFilter}>
                       <span className={`${labelClassNames}`}>Passes</span>
                     </FilterLabel>
                     { sortField('passes') }
@@ -130,7 +97,7 @@ export default function TicketList() {
                 </th>
                 <th scope="col" className={`${headerClassNames} sm:rounded-r-lg max-w-24 flex-grow-0`}>
                   <span className={headerContainerClassNames}>
-                    <FilterLabel fieldname={"signed_in"} setFilterFunction={(filter) => { setFilterByField('signed_in'); setFilterBy(filter)}}>
+                    <FilterLabel fieldname={"signed_in"} addFilterFunction={addFilter}>
                       <span className={`${labelClassNames} text-nowrap`}>Check-in?</span>
                     </FilterLabel>
                     { sortField('signed_in') }
@@ -147,80 +114,7 @@ export default function TicketList() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800 bg-none">
-              {filteredAttendees.map((attendee) => { 
-                const passString = attendee.passes.join(', ')
-                return(
-                <tr key={`${attendee.ticket_number}`} className={`align-center ${attendee.active ? '' : 'decoration-1	 line-through text-gray-600'}`}>
-                  <td className="w-full max-w-0 py-4 pl-4 pr-3 text-sm  font-medium sm:w-auto sm:max-w-none sm:pl-2 vertical-align-top">
-                    <a href="#" className={`${attendee.active ? 'text-chillired-600 hover:text-chillired-700' : "text-gray-600"}`}>
-                      <span className="text-lg leading-6 sm:text-base md:text-base">{attendee.name}</span><br/>
-                      <span className="text-xs leading-6 text-gray-300">#{attendee.ticket_number}</span>
-                    </a>
-                    <dl className="font-normal lg:hidden text-inherit">
-                      <dt className="sr-only">Email</dt>
-                      <dd className="mt-1 truncate text-inherit">{attendee.email}</dd>
-                      <dt className="sr-only sm:hidden">Passes</dt>
-                      <dd className="mt-1 truncate text-inherit sm:hidden">{passString}</dd>
-                      <dt className="sr-only sm:hidden">Status</dt>
-                      <dd className="mt-1 truncate text-inherit sm:hidden"><TicketStatusIcon attendee={attendee}/>
-                      </dd>
-                    </dl>
-                  </td>
-                  <td className="hidden px-3 py-4 text-sm text-inherit lg:table-cell">{attendee.email}</td>
-                  <td className="hidden px-3 py-4 text-sm text-inherit sm:table-cell">{passString}</td>
-                  <td className="px-3 py-4 text-sm text-gray-200 text-nowrap align-center">
-                    {attendee.checkin_at ? format(attendee.checkin_at,'EEE HH:mm') :  <button className='bg-green-700 rounded-full px-4 py-1'>Check in</button>}
-                  </td>
-                  <td className='hidden sm:table-cell px-3 py-0 text-xl align-middle'>
-                    <TicketStatusIcon attendee={attendee}/>
-                  </td>
-                  <td className='px-3 py-0 text-xl align-middle'>
-                    <Menu as="div" className="relative flex flex-col h-full justify-center items-center">
-                      <MenuButton className="-m-2.5 block p-2.5 text-chillired-400 hover:text-chillired-800 h-full">
-                        <span className="sr-only">Open options</span>
-                        <EllipsisVerticalIcon aria-hidden="true" className="h-5 w-5" />
-                      </MenuButton>
-                      <MenuItems
-                        transition
-                        className="absolute right-0 z-10 mt-2 w-44 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
-                      >
-                        <MenuItem>
-                          <a href="#" className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50">
-                            View<span className="sr-only">, {attendee.name}</span>
-                          </a>
-                        </MenuItem>
-                        <MenuItem>
-                          { attendee.active ? (
-                            <a href="#" className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50"
-                              onClick={() => { setActiveTicket(attendee); setTicketTransferModalActive(true) }}
-                            >
-                            Transfer<span className="sr-only"> {attendee.name}&apos;s ticket</span>
-                          </a>) : <span className='line-through block px-3 py-1 text-sm leading-6 text-gray-300 data-[focus]:bg-gray-50'>Transfer</span> }
-                        </MenuItem>
-                        <MenuItem>
-                          { attendee.active ? (
-                            <a href="#" className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50"
-                              onClick={() => { setActiveTicket(attendee); setNameChangeModalActive(true) }}
-                            >
-                            Change Name<span className="sr-only"> from {attendee.name}</span>
-                          </a>) : <span className='line-through block px-3 py-1 text-sm leading-6 text-gray-300 data-[focus]:bg-gray-50'>Change Name</span> }
-                        </MenuItem>
-                        <MenuItem>
-                          <a href="#" className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50">
-                            Meal Preferences<span className="sr-only">, {attendee.name}</span>
-                          </a>
-                        </MenuItem>
-                        <MenuItem>
-                          <a href="#" className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50">
-                            Resend Email<span className="sr-only">, {attendee.name}</span>
-                          </a>
-                        </MenuItem>
-                      </MenuItems>
-                    </Menu>
-                  </td>
-                  
-                </tr>
-              )})}
+              {filteredAttendees.map((attendee) => <TicketRow key={attendee.id} attendee={attendee} setActiveTicket={setActiveTicket} setNameChangeModalActive={setNameChangeModalActive} setTicketTransferModalActive={setTicketTransferModalActive} />)}
             </tbody>
           </table>
           
@@ -229,3 +123,4 @@ export default function TicketList() {
     )
   }
 }
+

@@ -26,7 +26,16 @@ const actions = [
     icon: TicketIcon,
     iconForeground: 'text-purple-700',
     iconBackground: 'bg-purple-200',
-    state: 'demo'
+    state: 'live'
+  },
+  {
+    title: 'Users',
+    href: '/admin/users',
+    description: "Backend user admin",
+    icon: LightBulbIcon,
+    iconForeground: 'text-gray-700',
+    iconBackground: 'bg-gray-300',
+    state: 'live',
   },
   {
     title: 'Sign people in',
@@ -55,15 +64,6 @@ const actions = [
     iconBackground: 'bg-green-200',
     state: 'unreleased',
   },
-  {
-    title: 'Users',
-    href: '/admin/users',
-    description: "Backend user admin",
-    icon: LightBulbIcon,
-    iconForeground: 'text-gray-700',
-    iconBackground: 'bg-gray-300',
-    state: 'live',
-  },
 ]
 
 function classNames(...classes) {
@@ -73,6 +73,7 @@ function classNames(...classes) {
 export default function Hub() {
   const { user, isLoaded } = useUser();
   if (!isLoaded) { return <div>Loading</div> }
+  if (!user) { return <div>Not logged in</div> }
   
   return user.publicMetadata.admin ? (
     <div className="divide-x divide-richblack-700 border border-richblack-700 overflow-hidden rounded-lg shadow sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 sm:gap-px  text-white mt-6">

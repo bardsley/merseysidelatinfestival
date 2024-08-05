@@ -1,5 +1,4 @@
 import {
-  SignInButton,
   SignedIn,
   SignedOut,
   UserButton,
@@ -23,30 +22,20 @@ export default async function AdminDashboardPage() {
           <Navigation pages={pages} />
         </Container>        
         <Container width="large" padding="tight" className={`flex-1 pb-2`} size="none">
-          <h1 className="text-2xl md:text-5xl px-4 ">Admin dashboard</h1>
-          <SignedOut>
-            <div className='flex'>
-              <div>
-                <h2>Have an account</h2>
-                <p>Fantastic, just login below</p>
-                <SignInButton />
-              </div>
-              <div>
-                <h2>Need an account</h2>
-                <p>Signup here and then an existing admin will give your privaleges</p>
-                <a href="/admin/sign-up">
-                  Signup
-                </a>
-              </div>
-            </div>
-            
-
-          </SignedOut>
           <SignedIn>
-            <UserButton />
+              <div className='flex align-baseline'>
+              <h1 className="text-2xl md:text-5xl px-4 ">Admin dashboard</h1>
+              <UserButton showName={true}/>
+              </div>
+              
+
               <Hub></Hub>
           </SignedIn>
-          
+          <SignedOut>
+            <div className='flex'>
+              Honestly you should never see this.
+            </div>
+          </SignedOut>
         </Container>
       </section>
     </Layout>

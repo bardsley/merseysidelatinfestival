@@ -4,7 +4,7 @@ import FormField from '../forms/FormField';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 import { FlagIcon } from '@heroicons/react/24/solid'
 
-export default function TicketTransferModal({ticket,open,onClose}) {
+export default function TicketTransferModal({ticket,open,onClose,refreshFunction}) {
   
   return (
     <Formik
@@ -28,6 +28,7 @@ export default function TicketTransferModal({ticket,open,onClose}) {
         setSubmitting(false);
         console.log(bodyData,data);
         onClose(false)
+        refreshFunction()
        }}
      >
     {({ isSubmitting }) => (

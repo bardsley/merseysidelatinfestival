@@ -1,13 +1,15 @@
 'use client'
 import { Formik, Form } from 'formik';
+import { useState } from 'react';
 import FormField from '../forms/FormField';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 import { FlagIcon } from '@heroicons/react/24/outline'
+import Alert from '../../generic/alert';
 
 
 
-export default function NameChangeModal({ticket,open,onClose}) {
-  
+export default function NameChangeModal({ticket,open,onClose,refreshFunction}) {
+  const [error, setError] = useState(false as boolean | string)
   return (
     <Formik
        initialValues={{ ticket_number: ticket.ticket_number, name: ticket.name, phone: ticket.phone, email: ticket.email, }}
@@ -26,7 +28,13 @@ export default function NameChangeModal({ticket,open,onClose}) {
         const data = await apiResponse.json()
         setSubmitting(false);
         console.log(bodyData,data);
-        onClose(false)
+        if(data.error) {
+          setError(data.error)
+        } else {
+          onClose(false)
+          refreshFunction()
+        }
+        
        }}
      >
     {({ isSubmitting }) => (
@@ -54,6 +62,7 @@ export default function NameChangeModal({ticket,open,onClose}) {
                 </DialogTitle>
                 <FormField field="name"/>
               </div>
+              { error ? <Alert message={error} type="bad" dismissFunction={() => setError(false)} /> : null }
             </div>
             <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
               <button

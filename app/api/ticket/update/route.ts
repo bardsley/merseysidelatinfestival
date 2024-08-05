@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     }
   })
   const attendeePreviousData = await currentAttendeeResponse.json()
-  // console.log(apiRequest, currentAttendeeResponse,attendeePreviousData)
+  if(process.env.NEXT_PUBLIC_INTERNAL_DEBUG) { console.log(apiRequest, currentAttendeeResponse,attendeePreviousData) }
   
   
   if(attendeePreviousData.error) { return Response.json({error: attendeePreviousData.error}, { status: 400 }); }
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
   if(attendeePreviousData[0].ticket_used) { return Response.json({error: "Ticket has already been used."}, { status: 400 }); }
   if(attendeePreviousData[0].status == 'gratis') { return Response.json({error: "You can't transfer a gifted ticket."}, { status: 400 }); }
 
-  console.log("attendeePreviousData",attendeePreviousData[0])
+  if(process.env.NEXT_PUBLIC_INTERNAL_DEBUG) { console.log("attendeePreviousData",attendeePreviousData[0]) }
 
   const previousAttendee = attendeePreviousData[0]
   const name = replacement_data.name ? replacement_data.name : previousAttendee.name
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
     phone_to: phone
   }
 
-  console.log("newTicketInfo",newTicketInfo)
+  if(process.env.NEXT_PUBLIC_INTERNAL_DEBUG) { console.log("newTicketInfo",newTicketInfo) }
   const transferApiRequest = `${process.env.LAMBDA_TRANSFER_OWNER}`
   const transferResponse = await fetch(transferApiRequest,{
     method: 'POST',
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify(newTicketInfo)
   })
   const transferResponseData = transferResponse.ok ? await transferResponse.json() : await transferResponse.text()
-  console.log(transferApiRequest, transferResponse,transferResponseData)
+  if(process.env.NEXT_PUBLIC_INTERNAL_DEBUG) { console.log(transferApiRequest, transferResponse,transferResponseData) }
 
 
   try {
