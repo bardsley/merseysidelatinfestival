@@ -39,6 +39,7 @@ export const FilterSelector = ({filters,removeFilterFunction}:{filters: filter[]
   )
 }
 
+//TODO This should be more generic not doing check based on field names but types
 export const filterItems = (items, filters) => {
   return items.filter((person) => { 
     let excludePerson = false // Start out not excluding
@@ -51,7 +52,7 @@ export const filterItems = (items, filters) => {
         const matches = person[filter.field].map((pass) => pass.toLowerCase()).join(', ').includes(filterValue.toLowerCase())
         excludePerson = excludePerson || (invertFilter ? matches : !matches)
       } else if (filter.field == 'signed_in') {
-        excludePerson = excludePerson || (person[filter.field] && format(new Date(person[filter.field]), 'eee') != filterValue)
+        excludePerson = excludePerson || (filterValue == true && !person[filter.field]) || (person[filter.field] && format(new Date(person[filter.field]), 'eee') != filterValue)
       } else if (filter.field == 'active') {
         excludePerson = excludePerson || person[filter.field] != filterValue
       } else {
