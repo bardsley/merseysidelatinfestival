@@ -21,7 +21,7 @@ const actions = [
   },
   {
     title: 'Attendees',
-    href: '/admin/ticketing',
+    href: '/admin/ticketing?sortByField=purchased_date&sortByDirection=asc&filter=active:true',
     description: "Tickets, passes for the event",
     icon: TicketIcon,
     iconForeground: 'text-purple-700',
