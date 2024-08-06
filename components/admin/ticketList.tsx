@@ -2,7 +2,6 @@
 import { useSearchParams, useRouter, usePathname} from 'next/navigation'
 import { useState} from 'react';
 import { ChevronDownIcon, ChevronUpIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid'
-import Link from 'next/link';
 import useSWR, {mutate} from "swr";
 import NameChangeModal from './modals/nameChangeModal';
 import TicketTransferModal from './modals/ticketTransferModal';
