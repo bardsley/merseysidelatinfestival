@@ -18,8 +18,6 @@ export default function TicketList() {
   const sortByField = searchParams.get("sortByField")
   const sortByDirection = searchParams.get("sortByDirection")
 
-  const [sortBy, setSortBy] = useState(sortByField);
-  const [sortDirection, setSortDirection] = useState(sortByDirection);
   const [filterBy, setFilterBy] = useState([{field: "active", value: true}] as filter[]);
 
 
@@ -31,13 +29,11 @@ export default function TicketList() {
   const attendees = data?.attendees
 
   const sortFieldToggler = (field) => {
-    const newSortDirection = field != sortBy ? 'asc' : sortDirection == 'asc' ? 'desc' : 'asc'
+    const newSortDirection = field != sortByField ? 'asc' : sortByDirection == 'asc' ? 'desc' : 'asc'
     const fieldClickFunction = () => {
-      setSortBy(field); 
-      setSortDirection(newSortDirection)
       router.push(`/admin/ticketing?sortByField=${field}&sortByDirection=${newSortDirection}`)
     } 
-    const sortIcon = sortBy === field ? 
+    const sortIcon = sortByField === field ? 
       newSortDirection == 'asc' ? 
         <ChevronUpIcon className='w-4 h-4'/> 
         : <ChevronDownIcon className='w-4 h-4'/> 
@@ -61,10 +57,10 @@ export default function TicketList() {
   else {
     
     const sortedAttendees = attendees.sort((a, b) => {
-      if (sortDirection === 'desc') {
-        return (0 - (a[sortBy] > b[sortBy] ? 1 : -1))
+      if (sortByDirection === 'desc') {
+        return (0 - (a[sortByField] > b[sortByField] ? 1 : -1))
       } else {
-        return (0 - (b[sortBy] > a[sortBy] ? 1 : -1)) 
+        return (0 - (b[sortByField] > a[sortByField] ? 1 : -1)) 
       }
     });
     const filteredAttendees = filterBy ? filterItems(sortedAttendees,filterBy) : sortedAttendees
