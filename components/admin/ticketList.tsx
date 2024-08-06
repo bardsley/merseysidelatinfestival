@@ -1,8 +1,8 @@
 'use client'
-import { useSearchParams, useRouter} from 'next/navigation'
+import { useSearchParams, useRouter, usePathname} from 'next/navigation'
 import { useState} from 'react';
 import { ChevronDownIcon, ChevronUpIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid'
-
+import Link from 'next/link';
 import useSWR, {mutate} from "swr";
 import NameChangeModal from './modals/nameChangeModal';
 import TicketTransferModal from './modals/ticketTransferModal';
@@ -14,11 +14,17 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export default function TicketList() {
   
   const searchParams = useSearchParams()
+  const pathname = usePathname()
   const router = useRouter()
   const sortByField = searchParams.get("sortByField")
   const sortByDirection = searchParams.get("sortByDirection")
-
-  const [filterBy, setFilterBy] = useState([{field: "active", value: true}] as filter[]);
+  const filters = Array.from(searchParams.getAll('filter')).map(filter => { 
+    const [field,initValue] = filter.split(':'); 
+    const value = initValue == 'true' ? true : initValue == 'false' ? false : initValue
+    return {field, value}
+  })
+  // console.log(filters)
+  const [filterBy, setFilterBy] = useState(filters as filter[]);
 
 
   const [nameChangeModalActive, setNameChangeModalActive] = useState(false)
@@ -31,7 +37,13 @@ export default function TicketList() {
   const sortFieldToggler = (field) => {
     const newSortDirection = field != sortByField ? 'asc' : sortByDirection == 'asc' ? 'desc' : 'asc'
     const fieldClickFunction = () => {
-      router.push(`/admin/ticketing?sortByField=${field}&sortByDirection=${newSortDirection}`)
+      const newParams = Array.from(searchParams.entries()).map((entry) => {
+        if (entry[0] == "sortByField") { return ["sortByField",field] }
+        if (entry[0] == "sortByDirection") { return ["sortByDirection",newSortDirection] }
+        return entry
+      })
+      const newUrl = `${pathname}?${newParams.map(p => p.join('=')).join('&')}`
+      router.push(newUrl);
     } 
     const sortIcon = sortByField === field ? 
       newSortDirection == 'asc' ? 
@@ -41,8 +53,26 @@ export default function TicketList() {
     return <a href="#" onClick={fieldClickFunction} className='w-12 sm:w-24 flex justify-end pr-3 items-center'>{sortIcon}</a>
   }
 
-  const addFilter = (filter:filter) => { filter.value ? setFilterBy([...filterBy, filter]) : null }
-  const removeFilter = (filter:filter) => { setFilterBy(filterBy.filter(f => { return !(f.field == filter.field && f.value == filter.value) })) } 
+  const addFilter = (filter:filter) => { 
+    const newParams = [...Array.from(searchParams.entries()),["filter",`${filter.field}:${filter.value}`]]
+    const newUrl = `${pathname}?${newParams.map(p => p.join('=')).join('&')}`
+    router.push(newUrl);
+    filter.value ? setFilterBy([...filterBy, filter]) : null 
+  }
+
+  const removeFilter = (filter:filter) => { 
+    console.log("Remote",filter)
+    const newParams = Array.from(searchParams.entries()).map((entry) => {
+      if (entry[0] == "filter") { 
+        const [field,value] = entry[1].split(':')
+        return field == filter.field && value == filter.value ? null : entry
+      }
+      return entry
+    }).filter(Boolean)
+    const newUrl = `${pathname}?${newParams.map(p => p.join('=')).join('&')}`
+    router.push(newUrl);
+    setFilterBy(filterBy.filter(f => { return !(f.field == filter.field && f.value == filter.value) })) 
+  } 
 
   const headerClassNames = "p-0 text-left text-sm font-semibold text-white "
   const headerContainerClassNames = "flex justify-between"
@@ -77,6 +107,8 @@ export default function TicketList() {
             <span className="">Refreshing...</span>
         </div> : null}
         </div>
+
+        <Link href={pathname}>Update Filters {pathname} {JSON.stringify(Object.fromEntries(searchParams.entries()))}</Link>
         
         <div className="-mx-4 sm:mx-0 mt-3 ">
           <table className="min-w-full">
@@ -129,7 +161,9 @@ export default function TicketList() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800 bg-none">
-              {filteredAttendees.map((attendee) => <TicketRow key={attendee.id} attendee={attendee} setActiveTicket={setActiveTicket} setNameChangeModalActive={setNameChangeModalActive} setTicketTransferModalActive={setTicketTransferModalActive} />)}
+              {filteredAttendees.map((attendee) => 
+              <TicketRow key={attendee.ticket_number} attendee={attendee} setActiveTicket={setActiveTicket} setNameChangeModalActive={setNameChangeModalActive} setTicketTransferModalActive={setTicketTransferModalActive} />
+              )}
             </tbody>
           </table>
           

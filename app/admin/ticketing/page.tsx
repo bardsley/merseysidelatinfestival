@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Layout from "../../../components/layout/layout";
 import { Container } from "../../../components/layout/container";
 import Navigation from "../../../components/admin/navigation";
@@ -35,7 +35,9 @@ export default async function AdminDashboardPage() {
       </Container>
       
       <Container width="large" padding="tight" className={`flex-1 pb-2`} size="none">
-        <TicketList></TicketList>
+        <Suspense>
+          <TicketList></TicketList>
+        </Suspense>
       </Container>
     </section>
   </Layout>
