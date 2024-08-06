@@ -50,9 +50,11 @@ export default function TicketList() {
   }
 
   const addFilter = (filter:filter) => { 
-    const newParams = [...Array.from(searchParams.entries()),["filter",`${filter.field}:${filter.value}`]]
-    const newUrl = `${pathname}?${newParams.map(p => p.join('=')).join('&')}`
-    router.push(newUrl);
+    if(filter.value) {
+      const newParams = [...Array.from(searchParams.entries()), ["filter",`${filter.field}:${filter.value}`]].filter(Boolean)
+      const newUrl = `${pathname}?${newParams.map(p => p.join('=')).join('&')}`
+      router.push(newUrl);
+    }
   }
 
   const removeFilter = (filter:filter) => { 
