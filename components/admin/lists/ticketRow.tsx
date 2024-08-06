@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { BiCreditCard, BiLogoSketch, BiLeftArrowCircle, BiSolidRightArrowSquare } from 'react-icons/bi';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { EllipsisVerticalIcon, CurrencyPoundIcon, ClipboardIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid'
@@ -19,10 +20,10 @@ export const TicketRow = ({attendee,setActiveTicket, setNameChangeModalActive, s
   return (
     <tr key={`${attendee.ticket_number}`} className={`align-center ${attendee.active ? '' : 'decoration-1	 line-through text-gray-600'}`}>
       <td className="w-full max-w-0 py-4 pl-4 pr-3 text-sm  font-medium sm:w-auto sm:max-w-none sm:pl-2 vertical-align-top">
-        <a target='_blank' href={`/admin/ticketing/ticket/${attendee.ticket_number}/${attendee.email}`} className={`${attendee.active ? 'text-chillired-600 hover:text-chillired-700' : "text-gray-600"}`}>
+        <Link href={`/admin/ticketing/ticket/${attendee.ticket_number}/${attendee.email}`} className={`${attendee.active ? 'text-chillired-600 hover:text-chillired-700' : "text-gray-600"}`}>
           <span className="text-lg leading-6 sm:text-base md:text-base">{attendee.name}</span><br/>
           <span className="text-xs leading-6 text-gray-300">#{attendee.ticket_number}</span>
-        </a>
+        </Link>
         <dl className="font-normal lg:hidden text-inherit">
           <dt className="sr-only">Email</dt>
           <dd className="mt-1 truncate text-inherit">{attendee.email}</dd>

@@ -1,4 +1,5 @@
 'use client'
+import { useSearchParams, useRouter} from 'next/navigation'
 import { useState} from 'react';
 import { ChevronDownIcon, ChevronUpIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid'
 
@@ -11,8 +12,14 @@ import { TicketRow } from './lists/ticketRow';
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function TicketList() {
-  const [sortBy, setSortBy] = useState('purchased_at');
-  const [sortDirection, setSortDirection] = useState('desc');
+  
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const sortByField = searchParams.get("sortByField")
+  const sortByDirection = searchParams.get("sortByDirection")
+
+  const [sortBy, setSortBy] = useState(sortByField);
+  const [sortDirection, setSortDirection] = useState(sortByDirection);
   const [filterBy, setFilterBy] = useState([{field: "active", value: true}] as filter[]);
 
 
@@ -23,10 +30,14 @@ export default function TicketList() {
   const {data, error, isLoading, isValidating} = useSWR("/api/admin/attendees", fetcher, { keepPreviousData: false });
   const attendees = data?.attendees
 
-  const sortField = (field) => {
-  const newSortDirection = field != sortBy ? 'asc' : sortDirection == 'asc' ? 'desc' : 'asc'
-  const fieldClickFunction = () => {setSortBy(field); setSortDirection(newSortDirection)} 
-  const sortIcon = sortBy === field ? 
+  const sortFieldToggler = (field) => {
+    const newSortDirection = field != sortBy ? 'asc' : sortDirection == 'asc' ? 'desc' : 'asc'
+    const fieldClickFunction = () => {
+      setSortBy(field); 
+      setSortDirection(newSortDirection)
+      router.push(`/admin/ticketing?sortByField=${field}&sortByDirection=${newSortDirection}`)
+    } 
+    const sortIcon = sortBy === field ? 
       newSortDirection == 'asc' ? 
         <ChevronUpIcon className='w-4 h-4'/> 
         : <ChevronDownIcon className='w-4 h-4'/> 
@@ -84,7 +95,7 @@ export default function TicketList() {
                       </span>
                     </FilterLabel>
                     
-                    { sortField('name') }
+                    { sortFieldToggler('name') }
                   </span>
                 </th>
                 <th scope="col" className={`${headerClassNames} hidden lg:table-cell`}>
@@ -92,7 +103,7 @@ export default function TicketList() {
                     <FilterLabel fieldname={"email"} addFilterFunction={addFilter}>
                       <span className={`${labelClassNames}`}>Email</span>
                     </FilterLabel>
-                    { sortField('email') }
+                    { sortFieldToggler('email') }
                   </span>
                 </th>
                 <th scope="col" className={`${headerClassNames} hidden sm:table-cell`}>
@@ -100,7 +111,7 @@ export default function TicketList() {
                     <FilterLabel fieldname={"passes"} addFilterFunction={addFilter}>
                       <span className={`${labelClassNames}`}>Passes</span>
                     </FilterLabel>
-                    { sortField('passes') }
+                    { sortFieldToggler('passes') }
                   </span>
                 </th>
                 <th scope="col" className={`${headerClassNames} sm:rounded-r-lg max-w-24 flex-grow-0`}>
@@ -108,7 +119,7 @@ export default function TicketList() {
                     <FilterLabel fieldname={"signed_in"} addFilterFunction={addFilter}>
                       <span className={`${labelClassNames} text-nowrap`}>Check-in?</span>
                     </FilterLabel>
-                    { sortField('signed_in') }
+                    { sortFieldToggler('signed_in') }
                   </span>
                 </th>
                 <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0 min-w-20 hidden sm:table-cell">
