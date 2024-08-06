@@ -24,11 +24,14 @@ export const FilterSelector = ({filters,removeFilterFunction}:{filters: filter[]
   <div className='flex gap-1 align-start'>
     <span className='text-sm font-semibold mr-3'>Filters:</span>
     {filters.map((filter)=>{
+        const [filterText,negative] = typeof filter.value === 'boolean' ? [JSON.stringify(filter.value),false] : 
+          typeof filter.value == 'string' && filter.value.slice(0,1) == '!' ? [filter.value.slice(1),true]
+            : [filter.value,false]
         return (
         <span key={`${filter.field}${filter.value}`} onClick={() => removeFilterFunction(filter)}
           className='hover:cursor-pointer flex items-center rounded-full bg-gray-400 text-black pl-2 pr-1 py-0'
         >
-          &quot;{`${filter.field} = ${filter.value}`}&quot;
+          {filter.field} { negative ? '≠' : '='} &quot;{filterText}&quot;
           <XMarkIcon className='w-4 h-4 ml-1 mr-1'/> 
         </span>)
     })}  
