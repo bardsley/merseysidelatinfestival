@@ -9,8 +9,8 @@ Deployment / Development Flow
 2. Make changes until happy
 3. Push to github
 4. Create a pull request to develop
-  a. It built successfully and youve playde with the preview?, Carry on to 5 and collect £200
-  b. Do not pass go, fix it and go back to 2
+    1. It built successfully and youve playde with the preview?, Carry on to 5 and collect £200
+    2. Do not pass go, fix it and go back to 2
 5. Merge the pull request with a Squash and a nice message
 6. Delete branch locally and on remote and switch back to develop (and pull you new single commit)
 6. Create a pull request to main if happy to "go live"
