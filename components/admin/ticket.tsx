@@ -87,10 +87,13 @@ export default function TicketView({ticket_number, email}: {ticket_number: strin
 
         <div className="rounded-lg shadow-lg bg-richblack-600 border-gray-500 border my-4">
           <h3 className="font-bold uppercase border-b border-gray-500 py-2 px-4">Ticket</h3>
-          <div className="p-4">
-            <Info label="Ticket" info={ticket_number} options={{size: '3xl'}}/>
-            <Info label="Passes" info={accessToThings(ticket.access).join(", ")} options={{size: 'lg'}} />
-            <Info label="Usage & Elligibility" info={ticketUsage} />  
+          <div className="p-4 flex justify-between">
+            <div>
+              <Info label="Ticket" info={ticket_number} options={{size: '3xl'}}/>
+              <Info label="Passes" info={accessToThings(ticket.access).join(", ")} options={{size: 'lg'}} />
+              <Info label="Usage & Elligibility" info={ticketUsage} />  
+            </div>
+            <img src={`https://quickchart.io/qr?margin=1&text=${ticket.ticket_number}`} alt={ticket.ticket_number} className="" />
           </div>
         </div>
         
