@@ -18,7 +18,7 @@ export default async function AdminTicketPage({ params }: { params: { ticket_num
         <Navigation pages={pages} />
       </Container>             
       
-      <Container width="small" padding="tight" className={`flex-1 pb-2`} size="none">
+      <Container width="large" padding="tight" className={`flex-1 pb-2`} size="none">
         <TicketView ticket_number={params.ticket_number} email={params.email}  ></TicketView>
       </Container>
     </section>
