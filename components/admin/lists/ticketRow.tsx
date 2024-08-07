@@ -79,9 +79,10 @@ export const TicketRow = ({attendee,setActiveTicket, setNameChangeModalActive, s
               </a>
             </MenuItem>
             <MenuItem>
-              <a href="#" className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50 line-through">
+            { attendee.active ? (
+              <a href={`/api/admin/attendees/email/${attendee.email}`} className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50">
                 Resend Email<span className="sr-only">, {attendee.name}</span>
-              </a>
+              </a>) : <span className='line-through block px-3 py-1 text-sm leading-6 text-gray-300 data-[focus]:bg-gray-50'>Rsend Email</span> }
             </MenuItem>
           </MenuItems>
         </Menu>

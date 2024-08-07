@@ -74,6 +74,10 @@ export default function TicketView({ticket_number, email}: {ticket_number: strin
           >
           Change Name<span className="sr-only"> from {ticket.name}</span>
         </button>) : <button disabled className='line-through block px-3 py-1 text-sm leading-6 data-[focus]:bg-gray-50 bg-gray-700 text-gray-500 rounded-md disabled:cursor-not-allowed'>Change Name</button> }
+
+        { ticket.active ? (<a href={`/api/admin/attendees/email/${ticket.email}`} className="block px-3 py-1 text-sm leading-6 data-[focus]:bg-gray-50 bg-chillired-400 rounded-md">
+          Resend Email<span className="sr-only">, {ticket.name}</span>
+        </a>) : null }
       </div>
 
       <div className="cards md:order-1 flex-grow">
@@ -95,7 +99,7 @@ export default function TicketView({ticket_number, email}: {ticket_number: strin
               <Info label="Passes" info={accessToThings(ticket.access).join(", ")} options={{size: 'lg'}} />
               <Info label="Usage & Elligibility" info={ticketUsage} />  
             </div>
-            <img src={`https://quickchart.io/qr?margin=1&text=${ticket.ticket_number}`} alt={ticket.ticket_number} className="" />
+            <img src={`https://quickchart.io/qr?margin=1&text=${ticket.ticket_number}`} alt={ticket.ticket_number} className="aspect-square" />
           </div>
         </div>
         
