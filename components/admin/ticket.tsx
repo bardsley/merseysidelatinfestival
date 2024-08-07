@@ -7,6 +7,7 @@ import Link from "next/link";
 import NameChangeModal from './modals/nameChangeModal';
 import TicketTransferModal from './modals/ticketTransferModal';
 
+
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const accessToThings = (access:number[],) => {
@@ -36,6 +37,7 @@ export const Info = ({label,info,options}:infoParams) => {
   const displayText = typeof info == 'string' || !info ? info : info.join(', ')
   return (
     <dl className={grow ? "flex-grow basis-1" : ''}>
+
       { label ? <dt className="text-xs mb-0 text-gray-300">{label}</dt> : null }
       <dd className={`text-${size} leading-tight mb-3`}>{displayText}</dd>
     </dl>
@@ -133,6 +135,7 @@ export default function TicketView({ticket_number, email}: {ticket_number: strin
         </div> : null }
         
         { process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' && 
+
         (<>
         <hr/>
         {process.env.NEXT_PUBLIC_INTERNAL_DEBUG}
