@@ -9,7 +9,7 @@ export default async function AdminDashboardPage() {
 
   const pages = [
     { name: 'Admin', href: '/admin', current: true },
-    { name: 'Ticketing', href: '/admin/ticketing', current: true },
+    { name: 'Ticketing', href: '/admin/ticketing?sortByField=purchased_date&sortByDirection=asc&filter=active:true', current: true },
   ]
 
   const stats = [
