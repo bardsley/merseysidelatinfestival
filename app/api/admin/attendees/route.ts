@@ -44,7 +44,7 @@ export async function GET() {
       status: attendee.status,
       student_ticket: attendee.student_ticket,
       transferred_in: transferred_in ? attendee.history[0].ticket_number : false,
-      transferred_out: transferred_out ? attendee.transferred.ticket_number  : false, //! TODO why is it transferred out without a history
+      transferred_out: transferred_out ? attendee.transferred.ticket_number  : false,
       name_changed: name_changed,
       transferred: attendee.transferred,
       history: attendee.history,
