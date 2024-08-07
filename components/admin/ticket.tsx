@@ -1,8 +1,11 @@
 'use client'
-import useSWR from "swr";
+import useSWR, {mutate} from "swr";
+import { useState } from "react";
 import { initialSelectedOptions } from "../ticketing/pricingDefaults";
 import { format, fromUnixTime } from "date-fns";
 import Link from "next/link";
+import NameChangeModal from './modals/nameChangeModal';
+import TicketTransferModal from './modals/ticketTransferModal';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -39,6 +42,9 @@ export const Info = ({label,info,options}:infoParams) => {
 
 export default function TicketView({ticket_number, email}: {ticket_number: string, email: string}) {
   const {data} = useSWR(`/api/ticket/${ticket_number}/${email}`, fetcher)
+  const [nameChangeModalActive, setNameChangeModalActive] = useState(false)
+  const [ticketTransferModalActive, setTicketTransferModalActive] = useState(false)
+  const [activeTicket, setActiveTicket] = useState(null)
   const ticket = data && data[0]
 
   if(ticket) {
@@ -48,7 +54,23 @@ export default function TicketView({ticket_number, email}: {ticket_number: strin
     const purchasedThings = ticket.line_items ? ticket.line_items.map((item) => {return `${item.description} £${item.amount_total / 100}`}): []
 
     return ( data && <div>
-      
+      { nameChangeModalActive ? <NameChangeModal open={nameChangeModalActive} onClose={(value) => { setNameChangeModalActive(value)}} refreshFunction={()=> mutate(`/api/ticket/${ticket_number}/${email}`)} ticket={activeTicket}/> : null }
+      { ticketTransferModalActive ? <TicketTransferModal open={ticketTransferModalActive} onClose={(value) => { setTicketTransferModalActive(value);}} refreshFunction={()=> mutate(`/api/ticket/${ticket_number}/${email}`)} ticket={activeTicket}/> : null }
+
+      <div className="flex  gap-3 bg-richblack-700 p-3 rounded-md">
+        { ticket.active ? <button className="block px-3 py-1 text-sm leading-6  data-[focus]:bg-gray-50 bg-chillired-400 rounded-md"
+          onClick={() => { setActiveTicket(ticket); setTicketTransferModalActive(true) }}
+        >
+          Transfer<span className="sr-only"> {ticket.name}&apos;s ticket</span>
+        </button> : <button disabled className='line-through block px-3 py-1 text-sm leading-6 data-[focus]:bg-gray-50 bg-gray-700 text-gray-500 rounded-md disabled:cursor-not-allowed'>Transfer</button>}
+
+        { ticket.active ? (
+          <button className="block px-3 py-1 text-sm leading-6 data-[focus]:bg-gray-50 bg-chillired-400 rounded-md"
+            onClick={() => { setActiveTicket(ticket); setNameChangeModalActive(true) }}
+          >
+          Change Name<span className="sr-only"> from {ticket.name}</span>
+        </button>) : <button disabled className='line-through block px-3 py-1 text-sm leading-6 data-[focus]:bg-gray-50 bg-gray-700 text-gray-500 rounded-md disabled:cursor-not-allowed'>Change Name</button> }
+      </div>
       <div className="rounded-lg shadow-lg bg-richblack-600 border-gray-500 border my-4">
         <h3 className="font-bold uppercase border-b border-gray-500 py-2 px-4">Attendee</h3>
         <div className="p-4">
