@@ -134,8 +134,6 @@ const getBestCombination = (options,priceModel) => {
 
 export const passCombinations = generateAllPassCombinations(passes)
 
-export { calculateTotalCost, passOrTicket, optionsToPassArray, availableOptionsForDay, isAllDayOptions, isAllPassOptions, priceForPassCombination, itemsFromPassCombination, priceForIndividualItems, itemsNotCovered, getBestCombination }
-
 const getTicketPriceIds = (student = false) => {
   
   const ticketNames = Object.keys(individualTickets).reduce((returnObj,day) => {
@@ -149,10 +147,20 @@ const getTicketPriceIds = (student = false) => {
   return ticketNames
 }
 
-export const priceIds = (student = false) => {
+const priceIds = (student = false) => {
   const passPriceIds = Object.keys(passes).reduce((returnObj,key) => { 
     return {...returnObj, [key]: passes[key][student ? 'studentPriceId' : 'priceId']}
   },{})
   const ticketPriceIds = getTicketPriceIds(student)
   return {...passPriceIds,...ticketPriceIds}
 }
+
+const thingsToAccess = (selectedOptions:any) => {
+  return Object.keys(selectedOptions).flatMap((day) => {
+    return Object.keys(selectedOptions[day]).flatMap((pass) => {
+      return selectedOptions[day][pass] ? 1 : 0
+    })
+  })
+}
+
+export { calculateTotalCost, passOrTicket, optionsToPassArray, availableOptionsForDay, isAllDayOptions, isAllPassOptions, priceForPassCombination, itemsFromPassCombination, priceForIndividualItems, itemsNotCovered, getBestCombination, priceIds, thingsToAccess}

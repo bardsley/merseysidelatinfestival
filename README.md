@@ -8,12 +8,10 @@ Deployment / Development Flow
 1. Create a new branch from develop
 2. Make changes until happy
 3. Push to github
-4. Create a pull request to develop
     1. It built successfully and youve playde with the preview?, Carry on to 5 and collect £200
     2. Do not pass go, fix it and go back to 2
-5. Merge the pull request with a Squash and a nice message
-6. Delete branch locally and on remote and switch back to develop (and pull you new single commit)
-6. Create a pull request to main if happy to "go live"
+4. Squash chanegs onto develop with a good message combined mesage
+5. Create a pull request to main if happy to "go live"
 7. Merge Commit to main (one feature = one commit)
 
 
@@ -26,13 +24,21 @@ Both to think and discuss
 
 Adam
 ----
+- [ ] Scanned no signed in
+- [ ] Checked in at, by, using
+- [ ] Build a interface for cash sales
+- [ ] Disclaimer on food choices
+- [ ] Default prose styles e.g. <article class="prose prose-img:rounded-xl prose-headings:underline prose-a:text-blue-600">{{ markdown }}</article>
+- [ ] Return page from checkout
+- [ ] Allow change name / email for attendee. 
+- [ ] Clear cache on purchase
+---
 - [x] Merseyside small logo
 - [ ] Optimise images
 - [x] Video of dancing for hero
 - [x] Add see through option for a section
 - [x] Add title to features section
-- [ ] Disclaimer on food choices
-- [ ] Default prose styles e.g. <article class="prose prose-img:rounded-xl prose-headings:underline prose-a:text-blue-600">{{ markdown }}</article>
+
 - [X] Hydration error in production
 - [x] Reverse artist video animation 
 - [x] Student isn't coming through 
@@ -45,11 +51,8 @@ Adam
 - [x] deal with isAvailable changes
 - [x] Proect Main branch - Can't commit directly into main have to PR
 - [x] Passes not available tdon't get auto triggered e.g dinner pass nbot available select options
-- [ ] Allow change name / email.
 - [x] Studewnt banner on purchase card
 - [x] Preferences Page
-- [ ] Return page from checkout
-- [ ] Clear cache on purchase
 - [x] Messages not displayed on preferences page after log out
 - [x] Licenseing stuff
 - [x] Fixed develop branch disconnect?
@@ -58,28 +61,19 @@ Adam
 - [x] Fix pass selector to generate what to tick dynamically not just list all of same type
 - [x] User management
 - [x] Filtering creates extra Lindsays
-- [ ] Scanned no signed in
-- [ ] Checked in at, by, using
-- [ ] Build a interface for cash sales
 - [x] Do we need phone number on login
 - [x] Student prices into checkout
 - [x] Signout errors - Sort of fixed, redirect if a page doesn't exist
-- [ ] Logout causes errors
-- [ ] Return on unfiltered shouldn't auto sets
-- [ ] Swap meal preferences admin only ¿Could this not use the same endpoint? Yes
+- [x] Logout causes errors
+- [x] Return on unfiltered shouldn't auto sets
+- [x] Swap meal preferences admin only ¿Could this not use the same endpoint? Yes
 
 Connor
 ------  
 - [ ] update action for other lambda functions (workflow for deploying lambdas that don't exist)
-- [x] Allow change name / email
-- [x] capture history of owners and who transferred to
 - [ ] check that a ticket is active when making meal updates
-- [x] check ticket active when transferring
 - [ ] Add a video of the dancing man
 - [ ] add student 'banner' to ticket email
-- [x] update resend email lambda
-- [x] add new email templates to send_email
-- [x] move email sending into new function
 - [ ] capture history of meal preference changes
 - [ ] purchase fulfilment for in-person payments (cash or card terminal)
 - [ ] capture purchases otd (could be same as above and still send icket email)
@@ -95,6 +89,16 @@ Connor
 - [ ] Seating plan
 - [ ] Send Adm the SVG files
 - [ ] Document Lambda & make lambda robust
+- [ ] Send preference with wrong email and ticket should give an error
+- [ ] Rename preferences function to ticket_information
+- [ ] Add CloudWatch to check for Lambda errors and timeouts
+---
+- [x] Allow change name / email
+- [x] capture history of owners and who transferred to
+- [x] check ticket active when transferring
+- [x] update resend email lambda
+- [x] add new email templates to send_email
+- [x] move email sending into new function
 - [x] add additional info to checkout_complete 
 - [x] Send me the link (for picture frame?) https://www.twibbonize.com
 - [x] resend AWS access
@@ -105,9 +109,6 @@ Connor
 - [x] generate price file dynamically and commit to git
 - [x] create a dev DB
 - [x] fix full pass access in stripe
-- [ ] Send preference with wrong email and ticket should give an error
-- [ ] Rename preferences function to ticket_information
-- [ ] Add CloudWatch to check for Lambda errors and timeouts
 
 **Thinking these might be on the wrong list because I don't remeber what they're for**
 - [ ] Cutoff meal preferences
