@@ -1,7 +1,8 @@
-import { SelectedOptions, PartialSelectedOptions } from './pricingTypes'
+import { SelectedOptions, PartialSelectedOptions, Pass } from './pricingTypes'
 import { individualTickets, passes, fullPassName} from './pricingDefaults'
 import power from 'power-set'
-
+import isubsetof from 'set.prototype.issubsetof'
+isubsetof.shim();
 const generateAllPassCombinations = (passes) => {
     
   const passTitles = Object.keys(passes).filter((item) => { return item != fullPassName && passes[item].isAvailable })
@@ -75,9 +76,9 @@ const priceForPassCombination = (passCombination,priceModel) => {
   },0)
   return price
 }
-const itemsFromPassCombination = (passCombination) => {
+const itemsFromPassCombination = (passCombination) :string[] => {
   const items = passCombination.reduce((items ,passTitle) => {
-    passes[passTitle].combination.forEach((item) => items.add(item))
+    passes[passTitle] && passes[passTitle].combination.forEach((item) => items.add(item))
     return items
   },new Set)
   return Array.from(items.values())
@@ -163,4 +164,10 @@ const thingsToAccess = (selectedOptions:any) => {
   })
 }
 
-export { calculateTotalCost, passOrTicket, optionsToPassArray, availableOptionsForDay, isAllDayOptions, isAllPassOptions, priceForPassCombination, itemsFromPassCombination, priceForIndividualItems, itemsNotCovered, getBestCombination, priceIds, thingsToAccess}
+const passInCombination = (pass:Pass, combinations: string[]) => {
+  const superSet = new Set(combinations) 
+  const subSet = new Set(pass.combination)
+  return subSet.isSubsetOf(superSet)
+
+}
+export { calculateTotalCost, passOrTicket, optionsToPassArray, availableOptionsForDay, isAllDayOptions, isAllPassOptions, priceForPassCombination, itemsFromPassCombination, priceForIndividualItems, itemsNotCovered, getBestCombination, priceIds, thingsToAccess, passInCombination}
