@@ -133,7 +133,7 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
   const cellClasses = 'border border-gray-600 text-center py-2 px-3 md:py-2 md:px-4 ';
   const headerClasses = cellClasses.replaceAll('border-gray-600','border-chillired-400')
   const toggleCellClasses = "bg-richblack-600 text-white " +  cellClasses 
-  const inputClasses = "w-full md:w-auto mb-3 rounded-md border border-gray-600 p-2 bg-gray-50 text-gray-900 \
+  const inputClasses = "w-full mb-3 rounded-md border border-gray-600 p-2 bg-gray-50 text-gray-900 w-full\
     focus:border-chillired-400 focus:ring-chillired-400"
 
   return (
@@ -168,14 +168,14 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
       { priceModel === 'studentCost' && totalCost && totalCost > 0 ? (
           <div className='rounded-t-md border-t-gray-600 border border-b-0 border-l-0 border-r-0 bg-gold-500 p-2 font-bold text-center'>This is a student only ticket deal!</div>) 
         : null }
-        <div className='flex flex-col md:flex-row justify-between  p-10 gap-3'>
+        <div className='flex flex-col md:flex-row justify-between p-10 gap-3'>
           { totalCost && totalCost > 0 ? (
             <>
-              <div className='max-w-2/3'>
+              <div className='max-w-2/3 md:w-1/3'>
                 <h2 className='text-xl leading-none'>{packages.map((packageName) => `${packageName} ${passOrTicket(packageName)}`).join(', ').replace('Saturday Dinner Ticket','Dinner Ticket')}</h2>
                 <h2 className='text-3xl font-bold'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost}</span>) : null } £{packageCost}</h2>
               </div>
-              <form autoComplete="off" action={checkout} className='flex w-full md:w-auto flex-col md:flex-row items-center justify-center'>
+              <form autoComplete="off" action={checkout} className='flex w-full md:w-2/3 flex-col items-center justify-center'>
                 <input type="text" autoComplete="off" name="inperson-name" placeholder="Name" className={inputClasses} />
                 <input type="text" autoComplete="off" name="inperson-email" placeholder="Email" className={inputClasses}   />
                 <CheckoutButton></CheckoutButton>
