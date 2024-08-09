@@ -4,7 +4,8 @@ import {
   NewspaperIcon,
   TicketIcon,
   ArrowLeftEndOnRectangleIcon,
-  CalendarDaysIcon,
+  // CalendarDaysIcon,
+  ShoppingCartIcon,
   CakeIcon,
   LightBulbIcon
 } from '@heroicons/react/24/solid'
@@ -46,14 +47,23 @@ const actions = [
     iconBackground: 'bg-blue-200',
     state: 'unreleased',
   },
-  {
-    title: 'Class / Session Planner',
-    href: '#',
-    description: "Class or session times and teachers ",
-    icon: CalendarDaysIcon,
+  // {
+  //   title: 'Class / Session Planner',
+  //   href: '#',
+  //   description: "Class or session times and teachers ",
+  //   icon: CalendarDaysIcon,
+  //   iconForeground: 'text-yellow-800',
+  //   iconBackground: 'bg-yellow-200',
+  //   state: 'unreleased',
+  // },
+    {
+    title: 'Till',
+    href: '/admin/epos',
+    description: "Take money on or before the day",
+    icon: ShoppingCartIcon,
     iconForeground: 'text-yellow-800',
     iconBackground: 'bg-yellow-200',
-    state: 'unreleased',
+    state: 'demo',
   },
   {
     title: 'Dining Information',

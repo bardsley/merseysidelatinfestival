@@ -1,9 +1,11 @@
-import { SelectedOptions, PartialSelectedOptions } from './pricingTypes'
+import { PartialSelectedOptions, Pass } from './pricingTypes'
 import { individualTickets, passes, fullPassName} from './pricingDefaults'
 import power from 'power-set'
+import isubsetof from 'set.prototype.issubsetof'
+isubsetof.shim();
 
+// Returns a list of all pass combinations you could buy
 const generateAllPassCombinations = (passes) => {
-    
   const passTitles = Object.keys(passes).filter((item) => { return item != fullPassName && passes[item].isAvailable })
   const passCombinations = power(passTitles)
   // console.log(passCombinations)
@@ -22,6 +24,8 @@ const generateAllPassCombinations = (passes) => {
   console.log('---PassCombination Generated---')
   return [[],...passCombinations, [fullPassName]]
 }
+
+// This function takes a PartialSelectedOptions and returns it's cost for the given pricemodel to buy everything normla price
 const calculateTotalCost = (evaluatedOptions,priceModel) => {
   let total = 0;
   if(['cost','studentCost'].includes(priceModel)) {
@@ -37,10 +41,14 @@ const calculateTotalCost = (evaluatedOptions,priceModel) => {
   }
   return total
 }
+
+// Basic check to see if a thing is a pass or a ticket
 const passOrTicket = (itemName) => {
   return Object.keys(passes).includes(itemName)? "" : "Ticket"
 }
-const optionsToPassArray = (options) => { // max 2 level
+
+// This takes a PartialSelectedOptions and truns it into an array of individual tickets 
+const optionsToPassArray = (options:PartialSelectedOptions) => { // max 2 level
   const keys = Object.keys(options)
   return keys.flatMap((key) => {
     return Object.keys(options[key]).map((subkey) => {
@@ -48,10 +56,12 @@ const optionsToPassArray = (options) => { // max 2 level
     })
   }).filter(Boolean)
 }
+// Return the available tickets for a speciufic day
 const availableOptionsForDay = (day:string) => {
   return Object.keys(individualTickets[day]).filter((key)=>{ return individualTickets[day][key].isAvailable})
 }
-const isAllDayOptions = (options: SelectedOptions,day:string) => {
+// 
+const isAllDayOptions = (options: PartialSelectedOptions,day:string) => {
   const daySelection = new Set(Object.keys(options[day]).filter((key) => options[day][key]))
   const allSelections = new Set(availableOptionsForDay(day))
   return daySelection.symmetricDifference(allSelections).size == 0
@@ -62,7 +72,7 @@ const availableDaysForOption = (option: string) => {
     return options.includes(option) ? day : null
   }).filter(Boolean)
 }
-const isAllPassOptions = (options: SelectedOptions,passType:string) => {
+const isAllPassOptions = (options: PartialSelectedOptions,passType:string) => {
   const relevantDays = availableDaysForOption(passType)
   return relevantDays.map((day) => {
     return options[day][passType]
@@ -75,9 +85,9 @@ const priceForPassCombination = (passCombination,priceModel) => {
   },0)
   return price
 }
-const itemsFromPassCombination = (passCombination) => {
+const itemsFromPassCombination = (passCombination) :string[] => {
   const items = passCombination.reduce((items ,passTitle) => {
-    passes[passTitle].combination.forEach((item) => items.add(item))
+    passes[passTitle] && passes[passTitle].combination.forEach((item) => items.add(item))
     return items
   },new Set)
   return Array.from(items.values())
@@ -99,7 +109,7 @@ export const itemListToOptions = (items: string[], setTo:boolean) => {
   },{})
 }
 
-export const addToOptions = (currentOptions: SelectedOptions,options: PartialSelectedOptions) => {
+export const addToOptions = (currentOptions: PartialSelectedOptions,options: PartialSelectedOptions) => {
   return Object.keys(currentOptions).reduce((returnOptions,day) => {
     returnOptions = {...returnOptions,[day]: {...currentOptions[day], ...returnOptions[day], ...options[day]}}
     return returnOptions
@@ -134,8 +144,6 @@ const getBestCombination = (options,priceModel) => {
 
 export const passCombinations = generateAllPassCombinations(passes)
 
-export { calculateTotalCost, passOrTicket, optionsToPassArray, availableOptionsForDay, isAllDayOptions, isAllPassOptions, priceForPassCombination, itemsFromPassCombination, priceForIndividualItems, itemsNotCovered, getBestCombination }
-
 const getTicketPriceIds = (student = false) => {
   
   const ticketNames = Object.keys(individualTickets).reduce((returnObj,day) => {
@@ -149,10 +157,26 @@ const getTicketPriceIds = (student = false) => {
   return ticketNames
 }
 
-export const priceIds = (student = false) => {
+const priceIds = (student = false) => {
   const passPriceIds = Object.keys(passes).reduce((returnObj,key) => { 
     return {...returnObj, [key]: passes[key][student ? 'studentPriceId' : 'priceId']}
   },{})
   const ticketPriceIds = getTicketPriceIds(student)
   return {...passPriceIds,...ticketPriceIds}
 }
+
+const thingsToAccess = (selectedOptions:any) => {
+  return Object.keys(selectedOptions).flatMap((day) => {
+    return Object.keys(selectedOptions[day]).flatMap((pass) => {
+      return selectedOptions[day][pass] ? 1 : 0
+    })
+  })
+}
+
+const passInCombination = (pass:Pass, combinations: string[]) => {
+  const superSet = new Set(combinations) 
+  const subSet = new Set(pass.combination)
+  return subSet.isSubsetOf(superSet)
+
+}
+export { calculateTotalCost, passOrTicket, optionsToPassArray, availableOptionsForDay, isAllDayOptions, isAllPassOptions, priceForPassCombination, itemsFromPassCombination, priceForIndividualItems, itemsNotCovered, getBestCombination, priceIds, thingsToAccess, passInCombination}

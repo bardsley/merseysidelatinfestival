@@ -1,5 +1,6 @@
 export  { individualTickets, passes } from './pricingDefaultsDynamic'
 import { individualTickets, passes } from './pricingDefaultsDynamic'
+import type { PartialSelectedOptions } from './pricingTypes'
 
 export const initialSelectedOptions = {
   Friday: {
@@ -17,7 +18,7 @@ export const initialSelectedOptions = {
     Classes: false,
     // Dinner: false
   }
-}
+} as PartialSelectedOptions
 
 export const fullPassName = Object.keys(passes).reduce((passInfo,passName) => {
   const pass = passes[passName]

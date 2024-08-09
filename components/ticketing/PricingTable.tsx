@@ -2,10 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { useFormStatus } from "react-dom"
 import Cell from './Cell';
-import { ICellProps } from './Cell';
-import { individualTickets,initialSelectedOptions, passTypes, days, fullPassName } from './pricingDefaults'
+import { initialSelectedOptions, fullPassName } from './pricingDefaults'
 import { calculateTotalCost, passOrTicket, getBestCombination, itemsFromPassCombination, itemListToOptions, addToOptions } from './pricingUtilities'
+import type { PartialSelectedOptions } from './pricingTypes'
 import PassCards from './passes'
+import { OptionsTable } from './OptionsTable';
 import { useRouter } from 'next/navigation'
 import { deepCopy } from '../../lib/useful'
 import symmetricDifference from 'set.prototype.symmetricdifference'
@@ -14,8 +15,8 @@ symmetricDifference.shim();
 difference.shim();
 
 
-const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Function,scrollToElement:Function}) => {
-  const [selectedOptions, setSelectedOptions] = useState(deepCopy(initialSelectedOptions));
+const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scrollToElement?:Function}) => {
+  const [selectedOptions, setSelectedOptions] = useState(deepCopy(initialSelectedOptions) as PartialSelectedOptions); 
   const [studentDiscount, setStudentDiscount] = useState(false);
   const [priceModel, setPriceModel] = useState("cost")
   const [totalCost, setTotalCost] = useState(0);
@@ -59,7 +60,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
   }, [selectedOptions,priceModel,fullPassFunction])
   
   useEffect(() => {
-    fullPassFunction(() => selectFullPass)
+    if(fullPassFunction) { fullPassFunction(() => selectFullPass) }
   },[])
 
   useEffect(() => {
@@ -108,54 +109,16 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction:Funct
           isSelected={studentDiscount} onSelect={togglePriceModel} studentDiscount={studentDiscount} />
       </div>
       
-      <table className='option-table w-full mx-auto max-w-4xl table-auto border-collapse border-b border-ch}illired-300'>
-        <thead>
-          <tr className='bg-chillired-300 text-white border-chillired-400'>
-            <th className={headerClasses}>
-              
-            </th>
-            {days.map((day) => (
-              <th key={day} className={headerClasses}>{day}</th> 
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {passTypes.map((passType) => {
-
-            return (
-            <tr key={passType}>
-              <td className={toggleCellClasses}>
-                {passType}
-              </td>
-              {days.map((day) => {
-                const cellProps = {
-                  option: individualTickets[day][passType],
-                  isSelected: selectedOptions[day][passType],
-                  onSelect: setIndividualOption,
-                  studentDiscount: priceModel === "studentCost",
-                  day: day,
-                  passType: passType,
-                } as ICellProps
-                return (
-                
-                  individualTickets[day][passType] && individualTickets[day][passType].isAvailable ? (
-                    <td key={`${day}-${passType}`} className={cellClasses}>
-                    {selectedOptions[day][passType]}
-                    <Cell {...cellProps} />  
-                  </td>
-                  ) : <td key={`${day}-${passType}`} className={cellClasses}></td>
-              )})}
-            </tr>
-          )})}
-        </tbody>
-        <caption className='caption-top pt-6'>
-          <div className='flex justify-between mb-2'>
-            <h2 className="text-xl">Your Current Selection</h2>  
-            <button onClick={clearOptions} id="clear-form" className='border border-gray-300 rounded-md px-3 py-1'>Clear my choices</button>
-          </div>
-        
-        </caption>
-      </table>
+      <OptionsTable 
+        headerClasses={headerClasses}
+        toggleCellClasses={toggleCellClasses}
+        cellClasses={cellClasses}
+        selectedOptions={selectedOptions}
+        clearOptions={clearOptions}
+        setIndividualOption={setIndividualOption}
+        priceModel={priceModel}
+      />
+      
       <div className="mx-auto w-full  max-w-2xl  items-start mt-10 mb-10 rounded-lg border border-gray-900 bg-gray-50 text-richblack-700 shadow-lg">
       { priceModel === 'studentCost' && totalCost && totalCost > 0 ? (
           <div className='rounded-t-md border-t-gray-600 border border-b-0 border-l-0 border-r-0 bg-gold-500 p-2 font-bold text-center'>This is a student only ticket deal!</div>) 

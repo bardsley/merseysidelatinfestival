@@ -6,7 +6,6 @@ export type Ticket = {
   studentPriceId?: string;
 };
 
-
 export type DayTickets = {
   Party: Ticket;
   Classes?: Ticket;
@@ -18,12 +17,6 @@ export type IndividualTickets = {
   Sunday: DayTickets;
 };
 
-export type DayOption = { Party: boolean; Classes?: boolean; Dinner?: boolean; }
-export type SelectedOptions = {
-  Friday: DayOption;
-  Saturday: DayOption;
-  Sunday: DayOption;
-};
 export type PartialDayOption = { Party: boolean; Classes?: boolean; Dinner?: boolean; }
 export type PartialSelectedOptions = {
   Friday?: PartialDayOption;
