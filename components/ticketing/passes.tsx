@@ -1,11 +1,18 @@
 // import { CheckIcon } from '@heroicons/react/20/solid'
 import { fullPassName, passes} from './pricingDefaults'
 import { PassCard } from './PassCard';
-import { itemsFromPassCombination, itemListToOptions, addToOptions, passInCombination } from './pricingUtilities'
+import { itemsFromPassCombination, itemListToOptions, addToOptions, passInCombination, optionsToPassArray} from './pricingUtilities'
+import type { PartialSelectedOptions } from './pricingTypes'
 
 // export default function PassCards({setDayPass,setTypePass,setDinnerPass,priceModel,scrollToElement,selectFullPass,selected,shouldScroll}) {
 export default function PassCards({currentSelectedOptions, setSelectedOptions, priceModel,scrollToElement,selected,shouldScroll, basic} :
-  {currentSelectedOptions:any, setSelectedOptions:any, priceModel: string,scrollToElement:any,selected:any,shouldScroll:boolean, basic?:boolean}
+  { currentSelectedOptions:PartialSelectedOptions, 
+    setSelectedOptions:any, 
+    priceModel: string,
+    scrollToElement:any,
+    selected:any,
+    shouldScroll:boolean, 
+    basic?:boolean}
 ) {
 
   const clickFunctionFromPassName = (passName:string,setTo:boolean) => {
@@ -41,7 +48,8 @@ export default function PassCards({currentSelectedOptions, setSelectedOptions, p
 
           console.log("selected",selected)
           console.log("pass combination",pass.combination)
-          const included = passInCombination(pass,itemsFromPassCombination(selected))
+          const included = passInCombination(pass,optionsToPassArray(currentSelectedOptions))
+
           console.log("include",included)
           const clickFunction = () => clickFunctionFromPassName(passName,!selected.includes(passName))
           return (<PassCard key={passName} 

@@ -4,6 +4,7 @@ import { useFormStatus } from "react-dom"
 import Cell from './Cell';
 import { initialSelectedOptions, fullPassName } from './pricingDefaults'
 import { calculateTotalCost, passOrTicket, getBestCombination, itemsFromPassCombination, itemListToOptions, addToOptions } from './pricingUtilities'
+import type { PartialSelectedOptions } from './pricingTypes'
 import PassCards from './passes'
 import { OptionsTable } from './OptionsTable';
 import { useRouter } from 'next/navigation'
@@ -15,7 +16,7 @@ difference.shim();
 
 
 const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scrollToElement?:Function}) => {
-  const [selectedOptions, setSelectedOptions] = useState(deepCopy(initialSelectedOptions));
+  const [selectedOptions, setSelectedOptions] = useState(deepCopy(initialSelectedOptions) as PartialSelectedOptions); 
   const [studentDiscount, setStudentDiscount] = useState(false);
   const [priceModel, setPriceModel] = useState("cost")
   const [totalCost, setTotalCost] = useState(0);
