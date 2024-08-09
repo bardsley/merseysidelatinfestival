@@ -49,14 +49,14 @@ export const PassCard = ({passName, clickFunction, pass, priceModel, hasASaving,
       </div>
       { selected ? 
           basic ? <div className='w-full h-full opacity-90 bg-richblack-700 absolute left-0 top-0 rounded-3xl flex flex-col items-center justify-center'>Selected</div> 
-            : <div className='w-full h-full opacity-90 bg-richblack-700 absolute left-0 top-0 rounded-3xl flex flex-col items-center justify-center'>
-                <h2 className='font-bold text-3xl'>Currently Selected</h2>
+            : <div className={`w-full h-full opacity-90 bg-richblack-700 absolute left-0 top-0 rounded-3xl flex flex-col items-center justify-center ${passPadding}`}>
+                <h2 className='font-bold text-3xl leading-tight'>Currently Selected</h2>
               <p>This is the best deal for your choices</p>
         </div> : null }
 
         { !selected && included ? 
           basic ? <div className='w-full h-full opacity-95 bg-richblack-700 absolute left-0 top-0 rounded-3xl flex flex-col items-center justify-center'>Included</div> 
-            : <div className='w-full h-full opacity-95 bg-richblack-700 absolute left-0 top-0 rounded-3xl flex flex-col items-center justify-center'>
+            : <div className={`w-full h-full opacity-95 bg-richblack-700 absolute left-0 top-0 rounded-3xl flex flex-col items-center justify-center ${passPadding}`}>
                 <h2 className='font-bold text-gray-400 text-3xl'>Included</h2>
               <p className='text-gray-500'>This item is included in your selection</p>
         </div> : null }
