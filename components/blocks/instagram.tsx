@@ -14,8 +14,16 @@ import useSWR from 'swr'
 import Image from "next/image";
 import Link from "next/link";
 import {Icon} from "../icon"
-import { Carousel } from "@material-tailwind/react";
+import Carousel from 'react-multi-carousel';
+import "react-multi-carousel/lib/styles.css";
 
+const responsive = {
+  mobile: {
+    breakpoint: { max: 16000, min: 0 },
+    items: 1,
+    slidesToSlide: 1
+  }
+};
 const components = { BuyButton, CountdownElement }
 
 const proseClasses = "prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl \
@@ -134,25 +142,14 @@ const InstagramVideo = ({post}: {post: any}) => {
 }
 
 const InstagramCarousel = ({post}: {post: any}) => {
-  const navigationElm = ({ setActiveIndex, activeIndex, length }) => (
-    <div className="absolute bottom-4 left-2/4 z-50 flex -translate-x-2/4 gap-2">
-      {new Array(length).fill("").map((_, i) => (
-        <span
-          key={i}
-          className={`block h-1 cursor-pointer rounded-2xl transition-all content-[''] ${
-            activeIndex === i ? "w-8 bg-white" : "w-4 bg-white/50"
-          }`}
-          onClick={() => setActiveIndex(i)}
-        />
-      ))}
-    </div>
-  )
+  
   return (
     <div key={post.id} className={instaPostClasses} >
       <Carousel
         className={instaMediaClasses + " rounded-t-lg"}
-        navigation={navigationElm}
-        placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}
+        responsive={responsive}
+        showDots={true}
+        infinite={true}
       >
         { post.children.map((child: any) => {
           return (

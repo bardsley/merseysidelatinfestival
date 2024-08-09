@@ -1,10 +1,10 @@
 import colors from "tailwindcss/colors";
 import { fontFamily } from "tailwindcss/defaultTheme";
-const withMT = require("@material-tailwind/react/utils/withMT");
+
 
 
 /** @type {import('tailwindcss').Config} */
-module.exports = withMT({
+module.exports = {
   content: ["./components/**/*.{js,ts,jsx,tsx}", "./app/**/*.{js,ts,jsx,tsx}"],
   darkMode: "class",
   safelist: ["dark", "light"],
@@ -250,4 +250,4 @@ module.exports = withMT({
     extend: { typography: ["tint", "dark", "primary"] },
   },
   plugins: [require("@tailwindcss/typography"),require('@tailwindcss/forms')],
-});
+};
