@@ -40,12 +40,12 @@ const actions = [
   },
   {
     title: 'Sign people in',
-    href: '#',
+    href: '/admin/scan',
     description: "On the day(s) signing people into the event",
     icon: ArrowLeftEndOnRectangleIcon,
     iconForeground: 'text-blue-700',
     iconBackground: 'bg-blue-200',
-    state: 'unreleased',
+    state: 'demo',
   },
   // {
   //   title: 'Class / Session Planner',
