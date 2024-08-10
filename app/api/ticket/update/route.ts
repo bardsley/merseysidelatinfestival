@@ -19,12 +19,12 @@ export async function POST(req: NextRequest) {
     const user = await currentUser() // && user && user.publicMetadata.role === 'admin' ? 'admin' : 'attendee'
     if(!user){ return Response.json({error: "User is not signed in."}, { status: 401 }); }
     if(!user.publicMetadata.admin){ return Response.json({error: "User is does not have change details permissions."}, { status: 401 });}
-    requester = 'admin'
+    requester = `admin#${user.id}#${user.firstName}-${user.lastName}`
   } else {
     requester = 'attendee'
   }
   
-  const apiRequest = `${process.env.LAMBDA_PREFERENCES}?requested=info&email=${orig_email}&ticketnumber=${orig_ticket_number}`
+  const apiRequest = `${process.env.LAMBDA_PREFERENCES}?requested=info&email=${orig_email.replace("+","%2B")}&ticketnumber=${orig_ticket_number}`
 
   const currentAttendeeResponse = await fetch(apiRequest,{
     method: 'GET',
@@ -54,7 +54,8 @@ export async function POST(req: NextRequest) {
     email: orig_email,
     name_to: name,
     email_to: email,
-    phone_to: phone
+    phone_to: phone,
+    source: requester
   }
 
   if(process.env.NEXT_PUBLIC_INTERNAL_DEBUG) { console.log("newTicketInfo",newTicketInfo) }
@@ -76,4 +77,9 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return NextResponse.json({error: error},{status: 500})
   }
+}
+
+export async function GET(_req: NextRequest) {
+  const user = await currentUser() // && user && user.publicMetadata.role === 'admin' ? 'admin' : 'attendee'
+  return NextResponse.json({user: user},{status:200})
 }
