@@ -30,18 +30,18 @@ const ScanSuccessDialog = ({scan,onClick}) => {
     const cancelButton = checked_in ? "border-red-900 text-red-900" : "border-green-900 text-green-900"
     const checkinButton = checked_in ? "bg-red-950" : "bg-green-950"
 
-    return (<div className="absolute top-0 bg-gradient-to-b from-richblack-500 to-richblack-500 w-full h-full mb-12">
-      <div className={`rounded-xl p-8  w-full h-full flex flex-col justify-between ${cardColor}`}> 
+    return (<div className="absolute top-0 left-0 bg-gradient-to-b from-richblack-500 to-richblack-500 w-full px-3  mb-12">
+      <div className={`rounded-xl p-8  w-full flex flex-col justify-between ${cardColor}`}> 
         <div>
-          <h1 className="text-5xl font-bold leading-tight">{attendee.full_name}</h1>
-          <h2 className="text-4xl">{attendee.ticket_number}</h2>
-          { checked_in ? <div className="text-2xl">Checked in already: {checked_in}</div>: <ul className="text-lg list-disc list-inside mt-3">
+          <h1 className="text-2xl md:text-5xl font-bold leading-tight">{attendee.full_name}</h1>
+          <h2 className="text-xl md:text-4xl">{attendee.ticket_number}</h2>
+          { checked_in ? <div className="text-xl">Checked in already: {checked_in}</div>: <ul className="text-lg list-disc list-inside mt-3">
             {access.map(item => <li key={item}>{item}</li>)}
           </ul>}
         </div>
-        <div className="actions flex w-full justify-stretch gap-12 mt-6">
-        <button className={`${cancelButton} border  rounded px-4 py-4 w-full text-xl`} onClick={onClick}>Cancel</button>
-        <button className={`${checkinButton} rounded px-4 py-4 w-full text-xl`} onClick={() => {scanIn(attendee.ticket_number,attendee.email, checked_in ? true : false); onClick();}}>{checked_in ? "Reset" : "Check in"}</button>
+        <div className="actions flex w-full justify-stretch gap-6 mt-6">
+        <button className={`${cancelButton} border  rounded px-4 py-4 w-full text-lg md:text-xl`} onClick={onClick}>Cancel</button>
+        <button className={`${checkinButton} rounded px-4 py-4 w-full text-lg md:text-xl`} onClick={() => {scanIn(attendee.ticket_number,attendee.email, checked_in ? true : false); onClick();}}>{checked_in ? "Reset" : "Check in"}</button>
         </div>
       {/* {data ? <pre className="text-xs">Ticket: {JSON.stringify(data,null,2)}</pre> : <div className="text-white text-xl">Loading</div>} */}
       </div>
