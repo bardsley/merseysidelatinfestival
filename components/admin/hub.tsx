@@ -45,7 +45,7 @@ const actions = [
     icon: ArrowLeftEndOnRectangleIcon,
     iconForeground: 'text-blue-700',
     iconBackground: 'bg-blue-200',
-    state: 'demo',
+    state: 'live',
   },
   // {
   //   title: 'Class / Session Planner',
@@ -63,7 +63,7 @@ const actions = [
     icon: ShoppingCartIcon,
     iconForeground: 'text-yellow-800',
     iconBackground: 'bg-yellow-200',
-    state: 'demo',
+    state: 'live',
   },
   {
     title: 'Dining Information',
