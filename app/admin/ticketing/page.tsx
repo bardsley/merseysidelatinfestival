@@ -4,12 +4,13 @@ import { Container } from "../../../components/layout/container";
 import Navigation from "../../../components/admin/navigation";
 import TicketList from "../../../components/admin/ticketList";
 import StatBlock, {StatLine} from "../../../components/admin/statBlock";
+import { admin_ticketing_url } from "../../../lib/urls";
 
 export default async function AdminDashboardPage() {
 
   const pages = [
     { name: 'Admin', href: '/admin', current: true },
-    { name: 'Ticketing', href: '/admin/ticketing?sortByField=purchased_date&sortByDirection=asc&filter=active:true', current: true },
+    { name: 'Ticketing', href: admin_ticketing_url, current: true },
   ]
 
   const stats = [

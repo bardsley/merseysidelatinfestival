@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { NextRequest} from 'next/server'
+import { admin_ticketing_url } from '../../../../../../lib/urls'
 
 export async function GET(_req: NextRequest, { params}: { params: { email: string }}) {
   const requestHeaders = new Headers(_req.headers)  
@@ -10,5 +11,5 @@ export async function GET(_req: NextRequest, { params}: { params: { email: strin
   console.log("apiRequestUrl", apiRequestUrl)
   const apiResponse = await fetch(apiRequestUrl, { method: 'GET',  headers: { 'Content-Type': 'application/json' }})
   console.log("apiResponse", apiResponse)
-  redirect(referer ? referer : '/admin/ticketing')
+  redirect(referer ? referer : admin_ticketing_url)
 }
