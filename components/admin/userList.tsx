@@ -2,8 +2,7 @@
 import useSWR, {useSWRConfig} from "swr";
 import { EnvelopeIcon, ClockIcon } from '@heroicons/react/20/solid'
 import { format } from "date-fns";
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+import { fetcher } from  "@lib/fetchers";
 
 export default function UserList({loggedInUser}) {
   const { mutate } = useSWRConfig()

@@ -7,8 +7,7 @@ import NameChangeModal from './modals/nameChangeModal';
 import TicketTransferModal from './modals/ticketTransferModal';
 import { filterItems, filter, FilterSelector, FilterLabel } from './lists/filterable';
 import { TicketRow } from './lists/ticketRow';
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+import { fetcher } from  "@lib/fetchers";
 
 export default function TicketList() {
   
