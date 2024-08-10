@@ -6,9 +6,7 @@ import { format, fromUnixTime } from "date-fns";
 import Link from "next/link";
 import NameChangeModal from './modals/nameChangeModal';
 import TicketTransferModal from './modals/ticketTransferModal';
-
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+import { fetcher } from  "@lib/fetchers";
 
 const accessToThings = (access:number[],) => {
   let products = []
