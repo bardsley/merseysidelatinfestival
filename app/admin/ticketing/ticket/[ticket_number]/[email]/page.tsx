@@ -7,7 +7,7 @@ export default async function AdminTicketPage({ params }: { params: { ticket_num
 
   const pages = [
     { name: 'Admin', href: '/admin', current: true },
-    { name: 'Ticketing', href: '/admin/ticketing', current: true },
+    { name: 'Ticketing', href: '/admin/ticketing?sortByField=purchased_date&sortByDirection=asc&filter=active:true', current: true },
     { name: 'View Ticket', href: `/admin/ticketing/${params.ticket_number}/${params.email}`, current: true },
   ]
 

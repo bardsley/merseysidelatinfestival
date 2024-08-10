@@ -21,7 +21,7 @@ export default async function AdminUserPage() {
       <Container width="large" padding="tight" className={`flex-1 pb-2`} size="top">
         <Navigation pages={pages} />
       </Container>        
-      <Container width="large" padding="tight" className={`flex-1 pb-2`} size="large">
+      <Container width="large" padding="tight" className={`flex-1 px-0`} size="large">
         <ScanClient></ScanClient>
       </Container>
     </section>

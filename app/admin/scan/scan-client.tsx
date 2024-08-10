@@ -16,7 +16,7 @@ const ScanClient = () => {
   }, [scannedResult])
   const debug = true
   return (
-    <div className="max-w-screen-sm mx-auto relative">
+    <div className="max-w-screen-sm mx-auto ">
       {debug 
       ? <QrReader active={scannerActive} updateFunction={(value) => {setScannedResult(value)}}></QrReader> 
       : <FakeScanner/> }
@@ -28,9 +28,6 @@ const ScanClient = () => {
     
   )
 }
-
-
-
 
 
 const FakeScanner = () => {

@@ -127,7 +127,7 @@ const QrReader = ({updateFunction, active}: {updateFunction: (result: string) =>
   return (
     <div className="max-w-screen-sm mx-auto">
 
-      <div className="action-bar my-3 flex gap-3">
+      <div className="action-bar my-3 flex gap-3 justify-center">
         {/* 📷 Select Camera */}
         <button className={buttonClassnames} onClick={() => {setScanningPaused(!scanningPaused)}}>{ scanningPaused ? "Restart": "Pause"}</button>
         { selectedCamera ? <button className={buttonClassnames} onClick={() => {setSelectedCamera('')}}>Camera</button> :
