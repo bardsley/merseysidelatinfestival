@@ -4,10 +4,10 @@ import {
   UserButton,
 } from '@clerk/nextjs'
 import React from "react";
-import Layout from "../../components/layout/layout";
-import { Container } from "../../components/layout/container";
-import Navigation from "../../components/admin/navigation";
-import Hub from "../../components/admin/hub";
+import Layout from "@components/layout/layout";
+import { Container } from "@components/layout/container";
+import Navigation from "@components/admin/navigation";
+import Hub from "@components/admin/hub";
 
 export default async function AdminDashboardPage() {
 

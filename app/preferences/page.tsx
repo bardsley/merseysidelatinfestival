@@ -1,5 +1,5 @@
-import Layout from "../../components/layout/layout";
-import {Container} from "../../components/layout/container";
+import Layout from "@components/layout/layout";
+import {Container} from "@components/layout/container";
 import ClientPreferencesForm from "./client-preferences-form";
 import { cookies } from "next/headers"
 

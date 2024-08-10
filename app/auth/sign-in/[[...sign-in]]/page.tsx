@@ -1,8 +1,8 @@
 import { SignIn  } from "@clerk/nextjs";
 import React from "react";
-import Layout from "../../../../components/layout/layout";
-import { Container } from "../../../../components/layout/container";
-import Navigation from "../../../../components/admin/navigation";
+import Layout from "@components/layout/layout";
+import { Container } from "@components/layout/container";
+import Navigation from "@components/admin/navigation";
 
 const pages = [
   { name: 'Dashboard', href: '/admin', current: true },

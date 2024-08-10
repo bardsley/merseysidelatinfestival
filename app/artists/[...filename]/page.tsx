@@ -1,8 +1,8 @@
 import React from "react";
-import client from "../../../tina/__generated__/client";
-import Layout from "../../../components/layout/layout";
+import client from "@tina/__generated__/client";
+import Layout from "@components/layout/layout";
 import ArtistClientPage from "./client-page";
-// import { ArtistQuery } from "../../../tina/__generated__/types";
+// import { ArtistQuery } from "@tina/__generated__/types";
 
 
 

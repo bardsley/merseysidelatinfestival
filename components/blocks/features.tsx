@@ -2,7 +2,7 @@
 import {
   PageBlocksFeatures,
   PageBlocksFeaturesItems,
-} from "../../tina/__generated__/types";
+} from "@tina/__generated__/types";
 import { tinaField } from "tinacms/dist/react";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 import { Icon } from "../icon";

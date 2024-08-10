@@ -7,7 +7,7 @@ import { calculateTotalCost, passOrTicket, getBestCombination, itemsFromPassComb
 import PassCards from '../ticketing/passes'
 import { OptionsTable } from '../ticketing/OptionsTable';
 import { useRouter } from 'next/navigation'
-import { deepCopy } from '../../lib/useful'
+import { deepCopy } from '@lib/useful'
 import { getUnixTime } from 'date-fns';
 import symmetricDifference from 'set.prototype.symmetricdifference'
 import difference from 'set.prototype.difference'
