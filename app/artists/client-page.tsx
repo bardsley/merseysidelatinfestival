@@ -3,7 +3,7 @@
 import Link from "next/link";
 // import Image from "next/image";
 import React from "react";
-// import { useLayout } from "../../components/layout/layout-context";
+// import { useLayout } from "@components/layout/layout-context";
 // import { BsArrowRight } from "react-icons/bs";
 // import { TinaMarkdown } from "tinacms/dist/rich-text";
 import {

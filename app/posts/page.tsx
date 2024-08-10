@@ -1,4 +1,4 @@
-import Layout from "../../components/layout/layout";
+import Layout from "@components/layout/layout";
 import client from "../../tina/__generated__/client";
 import PostsClientPage from "./client-page";
 

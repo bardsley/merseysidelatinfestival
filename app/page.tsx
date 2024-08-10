@@ -1,7 +1,7 @@
 import React from "react";
 import client from "../tina/__generated__/client";
 import ClientPage from "./[...filename]/client-page";
-import Layout from "../components/layout/layout";
+import Layout from "@components/layout/layout";
 
 export default async function Page() {
   const data = await client.queries.page({
