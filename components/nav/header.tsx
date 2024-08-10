@@ -14,7 +14,7 @@ import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useRouter, usePathname  } from 'next/navigation'
 
-import Logo from '../../public/mlf-2.svg';
+import Logo from '@public/mlf-2.svg';
 
 const headerColor = {
   default:

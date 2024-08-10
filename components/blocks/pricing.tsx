@@ -2,7 +2,7 @@
 import React, { useState, useRef } from 'react';
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 import type { Template } from "tinacms";
-import { PageBlocksPricing } from "../../tina/__generated__/types";
+import { PageBlocksPricing } from "@tina/__generated__/types";
 import { tinaField } from "tinacms/dist/react";
 import PricingTable from "../ticketing/PricingTable";
 import { Section } from "../layout/section";

@@ -1,7 +1,7 @@
 'use client'
 import {Fragment } from "react";
 import { format } from "date-fns";
-import { locations } from '../../tina/collection/options'
+import { locations } from '@tina/collection/options'
 import { useSearchParams } from "next/navigation";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 
