@@ -46,11 +46,11 @@ export default function PassCards({currentSelectedOptions, setSelectedOptions, p
           const pass = passes[passName]
           const hasSaving = priceModel == 'studentCost' ? pass.studentSaving > 0 : pass.saving > 0
 
-          console.log("selected",selected)
-          console.log("pass combination",pass.combination)
+          // console.log("selected",selected)
+          // console.log("pass combination",pass.combination)
           const included = passInCombination(pass,optionsToPassArray(currentSelectedOptions))
 
-          console.log("include",included)
+          // console.log("include",included)
           const clickFunction = () => clickFunctionFromPassName(passName,!selected.includes(passName))
           return (<PassCard key={passName} 
             basic={basic} passName={passName} pass={pass}

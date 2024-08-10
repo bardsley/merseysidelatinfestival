@@ -46,17 +46,16 @@ const MealPreferences = ({preferences,setPreferences}) =>{
         <legend className="text-base font-semibold leading-6 text-white">Course</legend>
         <div className="mt-4 divide-y divide-gray-700 border-b border-t border-gray-700">
           {courses.map((course, courseIdx) => (
-            <div key={courseIdx} className="relative grid grid-cols-6 items-center md:items-start justify-between w-full py-4 flex-wrap md:flex-nowrap">
-              <div className="min-w-0 text-sm leading-6 w-full md:w-auto col-span-1 ">
+            <div key={courseIdx} className="relative grid grid-cols-6 items-center md:items-start justify-between w-full py-4 flex-wrap md:flex-nowrap auto-rows-max">
+              <div className="min-w-0 text-sm leading-6 w-full md:w-auto col-span-6 md:col-span-1 ">
                 <span className="select-none  text-white font-bold md:font-medium">
                   {course.name}
                 </span>
               </div>
-              <div className="ml-3 grid grid-cols-3 h-6 items-center justify-end gap-5 col-span-5">
+              <div className="ml-3 grid grid-cols-1 sm:grid-cols-3 items-center justify-end gap-5 col-span-6 md:col-span-5">
                 {course.options.map((option,optionIdx) => {
-                  const startAt = course.options.length < 3 ? `col-start-${4 - course.options.length + optionIdx}` : ''
                   return (
-                    <div key={`c${courseIdx}-${optionIdx}`} className={`flex items-center gap-3 justify-start cols-span-1 ${startAt}`}>
+                    <div key={`c${courseIdx}-${optionIdx}`} className={`flex items-center gap-3 justify-start cols-span-1`}>
                     
                     <input
                       id={`course-${courseIdx}-${optionIdx}`}

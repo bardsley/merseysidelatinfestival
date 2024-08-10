@@ -99,7 +99,7 @@ export default function TicketView({ticket_number, email}: {ticket_number: strin
               <Info label="Passes" info={accessToThings(ticket.access).join(", ")} options={{size: 'lg'}} />
               <Info label="Usage & Elligibility" info={ticketUsage} />  
             </div>
-            <img src={`https://quickchart.io/qr?margin=1&text=${ticket.ticket_number}`} alt={ticket.ticket_number} className="aspect-square" />
+            <img src={`https://quickchart.io/qr?margin=1&text=${ticket.ticket_number}`} alt={ticket.ticket_number} className="w-40 h-40 aspect-square" />
           </div>
         </div>
         
@@ -125,10 +125,12 @@ export default function TicketView({ticket_number, email}: {ticket_number: strin
             </div> : null}
 
             { ticket.history && ticket.history.map((record) => {
+              const transferred_at = record.date ? typeof record.date == 'string' ? Date.parse(record.date) : fromUnixTime(record.date) : false
+              console.log("TD:",record.date)
               return (
                 <div key={`${record.ticket_number}${record.date}`} className="flex gap-3 w-full max-w-full justify-between">
                   <Link href={`/admin/ticketing/ticket/${record.ticket_number}/${record.email}`}> <Info label="Direction" info={ticket.ticket_number == record.ticket_number ? "NAME" : "IN"} options={{size: 'md'}}/></Link>
-                  <Info label="Transferred " info={format(fromUnixTime(record.date),'HH:mm do MMM yyyy ')} options={{size: 'md'}}/>
+                  <Info label="Transferred " info={transferred_at ? format(transferred_at,'HH:mm do MMM yyyy ') : "None"} options={{size: 'md'}}/>
                   <Info label="Previous Name" info={record.full_name} options={{size: 'md', grow: true}}/>
                   <Info label="Previous Email" info={record.email} options={{size: 'sm', grow: true}}/>
                   <Info label="Transfer By" info={record.source} options={{size: 'md'}}/>

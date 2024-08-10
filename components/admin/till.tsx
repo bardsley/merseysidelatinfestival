@@ -63,15 +63,6 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
     if(fullPassFunction) { fullPassFunction(() => selectFullPass) }
   },[])
 
-  useEffect(() => {
-    const storedOptions = localStorage.getItem("selectedOptions")
-    if(storedOptions) { setSelectedOptions(JSON.parse(storedOptions)) }
-    const studentDiscount = localStorage.getItem("student") === 'true'
-    console.log("Student Discount",studentDiscount)
-    setPriceModel(studentDiscount ? "studentCost" : "cost")
-    setStudentDiscount(studentDiscount)
-  },[])
-
   function CheckoutButton() {
     const { pending } = useFormStatus();
     return (
@@ -84,8 +75,8 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
   }
 
   async function checkout(formObject) {
-    // setSelectedOptions(deepCopy(initialSelectedOptions))
-    // setStudentDiscount(false)
+    setSelectedOptions(deepCopy(initialSelectedOptions))
+    setStudentDiscount(false)
 
     // Generate line items for each pass/ticket
     const line_items = packages.map(passName => {

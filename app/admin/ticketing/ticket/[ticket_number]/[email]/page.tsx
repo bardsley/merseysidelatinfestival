@@ -3,11 +3,13 @@ import Layout from "../../../../../../components/layout/layout";
 import { Container } from "../../../../../../components/layout/container";
 import Navigation from "../../../../../../components/admin/navigation";
 import TicketView from "../../../../../../components/admin/ticket";
+import { admin_ticketing_url } from "../../../../../../lib/urls";
+
 export default async function AdminTicketPage({ params }: { params: { ticket_number: string, email: string } }) {
 
   const pages = [
     { name: 'Admin', href: '/admin', current: true },
-    { name: 'Ticketing', href: '/admin/ticketing', current: true },
+    { name: 'Ticketing', href: admin_ticketing_url, current: true },
     { name: 'View Ticket', href: `/admin/ticketing/${params.ticket_number}/${params.email}`, current: true },
   ]
 

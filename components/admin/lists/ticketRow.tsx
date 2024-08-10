@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { BiCreditCard, BiLogoSketch, BiLeftArrowCircle, BiSolidRightArrowSquare } from 'react-icons/bi';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { EllipsisVerticalIcon, CurrencyPoundIcon, ClipboardIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid'
-import { format } from 'date-fns';
+import { format,fromUnixTime } from 'date-fns';
 
 const TicketStatusIcon = ({attendee})  => {
   const PaymentIcon = attendee.status === 'paid_stripe' ? <BiCreditCard title="Paid Online" className='w-6 h-6' /> 
@@ -37,7 +37,7 @@ export const TicketRow = ({attendee,setActiveTicket, setNameChangeModalActive, s
       <td className="hidden px-3 py-4 text-sm text-inherit lg:table-cell">{attendee.email}</td>
       <td className="hidden px-3 py-4 text-sm text-inherit sm:table-cell">{passString}</td>
       <td className="px-3 py-4 text-sm text-gray-200 text-nowrap align-center">
-        {attendee.checkin_at ? format(attendee.checkin_at,'EEE HH:mm') :  <button className='bg-green-700 rounded-full px-4 py-1'>Check in</button>}
+        {attendee.checkin_at ? format(fromUnixTime(attendee.checkin_at),'EEE HH:mm') :  <button className='bg-green-700 rounded-full px-4 py-1'>Check in</button>}
       </td>
       <td className='hidden sm:table-cell px-3 py-0 text-xl align-middle'>
         <TicketStatusIcon attendee={attendee}/>

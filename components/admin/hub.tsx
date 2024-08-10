@@ -1,5 +1,7 @@
 'use client'
 import { useUser } from "@clerk/clerk-react";
+import { admin_ticketing_url } from "../../lib/urls";
+
 import {
   NewspaperIcon,
   TicketIcon,
@@ -22,7 +24,7 @@ const actions = [
   },
   {
     title: 'Attendees',
-    href: '/admin/ticketing?sortByField=purchased_date&sortByDirection=asc&filter=active:true',
+    href: admin_ticketing_url,
     description: "Tickets, passes for the event",
     icon: TicketIcon,
     iconForeground: 'text-purple-700',
@@ -40,12 +42,12 @@ const actions = [
   },
   {
     title: 'Sign people in',
-    href: '#',
+    href: '/admin/scan',
     description: "On the day(s) signing people into the event",
     icon: ArrowLeftEndOnRectangleIcon,
     iconForeground: 'text-blue-700',
     iconBackground: 'bg-blue-200',
-    state: 'unreleased',
+    state: 'live',
   },
   // {
   //   title: 'Class / Session Planner',
@@ -63,7 +65,7 @@ const actions = [
     icon: ShoppingCartIcon,
     iconForeground: 'text-yellow-800',
     iconBackground: 'bg-yellow-200',
-    state: 'demo',
+    state: 'live',
   },
   {
     title: 'Dining Information',
