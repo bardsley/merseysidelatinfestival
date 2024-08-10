@@ -1,8 +1,8 @@
 import React from "react";
-import Layout from "../../../components/layout/layout";
-import { Container } from "../../../components/layout/container";
-import Navigation from "../../../components/admin/navigation";
-import UserList from "../../../components/admin/userList";
+import Layout from "@components/layout/layout";
+import { Container } from "@components/layout/container";
+import Navigation from "@components/admin/navigation";
+import UserList from "@components/admin/userList";
 import { currentUser } from "@clerk/nextjs/server";
 
 export default async function AdminUserPage() {

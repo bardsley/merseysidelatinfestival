@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { itemsFromPassCombination} from '../../../components/ticketing/pricingUtilities'
+import { itemsFromPassCombination} from '@components/ticketing/pricingUtilities'
 import { format } from "date-fns";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());

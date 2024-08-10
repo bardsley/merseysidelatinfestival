@@ -4,7 +4,7 @@ import TicketCheck from "./ticketcheck"
 import { BiAlarmExclamation, BiCheckCircle } from "react-icons/bi";
 import { TicketIcon } from '@heroicons/react/24/solid'
 import { useEffect, useState } from "react";
-import MealPreferences, { blankPreferences } from "../../components/preferences/MealPreferences"
+import MealPreferences, { blankPreferences } from "@components/preferences/MealPreferences"
 
 export default function ClientPreferencesForm(props) {
   const {hasCookie, ticket, email } = props

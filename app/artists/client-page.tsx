@@ -9,7 +9,7 @@ import React from "react";
 import {
   ArtistConnectionQuery,
   ArtistConnectionQueryVariables,
-} from "../../tina/__generated__/types";
+} from "@tina/__generated__/types";
 import { useTina } from "tinacms/dist/react";
 
 // const titleColorClasses = {

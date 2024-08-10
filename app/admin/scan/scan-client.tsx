@@ -1,7 +1,7 @@
 'use client'
-import QrReader from "../../../components/admin/scan/QRReader"
+import QrReader from "@components/admin/scan/QRReader"
 import { useEffect, useState } from "react"
-import ScanSuccessDialog from "../../../components/admin/scan/ScanSuccessDialog"
+import ScanSuccessDialog from "@components/admin/scan/ScanSuccessDialog"
 
 
 const ScanClient = () => {
