@@ -1,12 +1,12 @@
 "use client";
 import { useTina, tinaField } from "tinacms/dist/react";
-import { Section } from "../../../components/layout/section";
-import { Container } from "../../../components/layout/container";
-import { ArtistQuery } from "../../../tina/__generated__/types";
+import { Section } from "@components/layout/section";
+import { Container } from "@components/layout/container";
+import { ArtistQuery } from "@tina/__generated__/types";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 import { FaFacebookSquare, FaYoutube } from "react-icons/fa";
 import { AiFillInstagram } from "react-icons/ai";
-import { ArtistTimetable } from "../../../components/timetable/ArtistTimetable"
+import { ArtistTimetable } from "@components/timetable/ArtistTimetable"
 import React, { Suspense } from "react";
 
 

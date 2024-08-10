@@ -1,9 +1,9 @@
 'use client'
 import { useEffect, useState } from "react";
-import {getBestCombination,priceIds } from "../../components/ticketing/pricingUtilities"
-import MealPreferences, { blankPreferences } from "../../components/preferences/MealPreferences"
-import {Container} from "../../components/layout/container"
-import {Icon} from "../../components/icon"
+import {getBestCombination,priceIds } from "@components/ticketing/pricingUtilities"
+import MealPreferences, { blankPreferences } from "@components/preferences/MealPreferences"
+import {Container} from "@components/layout/container"
+import {Icon} from "@components/icon"
 import { ExclamationCircleIcon } from '@heroicons/react/20/solid'
 import StripeForm from "./stripe"
 

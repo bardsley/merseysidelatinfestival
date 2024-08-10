@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { deepCopy } from '../../lib/useful'
+import { deepCopy } from '@lib/useful'
 export const courses = [
   { name: "Starter", options: ["Vegetable Terrine", "Chicken Liver Pate"]},
   { name: "Main", options: ["Roasted Onion", "Fish & Prawn Risotto", "Chicken Supreme"]},

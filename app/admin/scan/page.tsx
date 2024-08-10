@@ -1,7 +1,7 @@
 import React from "react";
-import Layout from "../../../components/layout/layout";
-import { Container } from "../../../components/layout/container";
-import Navigation from "../../../components/admin/navigation";
+import Layout from "@components/layout/layout";
+import { Container } from "@components/layout/container";
+import Navigation from "@components/admin/navigation";
 import ScanClient from "./scan-client"
 // import { currentUser } from "@clerk/nextjs/server";
 
