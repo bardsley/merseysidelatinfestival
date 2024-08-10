@@ -4,7 +4,7 @@ import { Container } from "@components/layout/container";
 import Navigation from "@components/admin/navigation";
 import TicketList from "@components/admin/ticketList";
 import StatBlock, {StatLine} from "@components/admin/statBlock";
-import { admin_ticketing_url } from "../../../lib/urls";
+import { admin_ticketing_url } from "@lib/urls";
 
 export default async function AdminDashboardPage() {
 

@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { NextRequest} from 'next/server'
-import { admin_ticketing_url } from '../../../../../../lib/urls'
+import { admin_ticketing_url } from '@lib/urls'
 
 export async function GET(_req: NextRequest, { params}: { params: { email: string }}) {
   const requestHeaders = new Headers(_req.headers)  

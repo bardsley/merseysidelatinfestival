@@ -6,7 +6,7 @@ import { Section } from "@components/layout/section";
 import { Container } from "@components/layout/container";
 import { tinaField, useTina } from "tinacms/dist/react";
 import { format } from "date-fns";
-import { PostQuery } from "../../../tina/__generated__/types";
+import { PostQuery } from "@tina/__generated__/types";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 import { components } from "@components/mdx-components";
 

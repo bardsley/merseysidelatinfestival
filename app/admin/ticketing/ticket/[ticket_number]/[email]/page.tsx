@@ -3,7 +3,7 @@ import Layout from "@components/layout/layout";
 import { Container } from "@components/layout/container";
 import Navigation from "@components/admin/navigation";
 import TicketView from "@components/admin/ticket";
-import { admin_ticketing_url } from "../../../../../../lib/urls";
+import { admin_ticketing_url } from "@lib/urls";
 
 export default async function AdminTicketPage({ params }: { params: { ticket_number: string, email: string } }) {
 

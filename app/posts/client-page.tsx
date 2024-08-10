@@ -9,7 +9,7 @@ import { TinaMarkdown } from "tinacms/dist/rich-text";
 import {
   PostConnectionQuery,
   PostConnectionQueryVariables,
-} from "../../tina/__generated__/types";
+} from "@tina/__generated__/types";
 import { useTina } from "tinacms/dist/react";
 
 const titleColorClasses = {
