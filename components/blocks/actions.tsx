@@ -2,7 +2,7 @@
 import Link from "next/link";
 import * as React from "react";
 import { BiRightArrowAlt } from "react-icons/bi";
-import { PageBlocksHeroActions, PageBlocksPricingActions } from "../../tina/__generated__/types";
+import { PageBlocksHeroActions, PageBlocksPricingActions } from "@tina/__generated__/types";
 import { tinaField } from "tinacms/dist/react";
 import { useLayout } from "../layout/layout-context";
 
