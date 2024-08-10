@@ -1,6 +1,6 @@
 'use client'
 import { useUser } from "@clerk/clerk-react";
-import { admin_ticketing_url } from "../../lib/urls";
+import { admin_ticketing_url } from "@lib/urls";
 
 import {
   NewspaperIcon,
