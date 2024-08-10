@@ -1,5 +1,7 @@
 'use client'
 import { useUser } from "@clerk/clerk-react";
+import { admin_ticketing_url } from "../../lib/urls";
+
 import {
   NewspaperIcon,
   TicketIcon,
@@ -22,7 +24,7 @@ const actions = [
   },
   {
     title: 'Attendees',
-    href: '/admin/ticketing?sortByField=purchased_date&sortByDirection=asc&filter=active:true',
+    href: admin_ticketing_url,
     description: "Tickets, passes for the event",
     icon: TicketIcon,
     iconForeground: 'text-purple-700',
