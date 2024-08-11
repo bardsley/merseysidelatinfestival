@@ -10,6 +10,7 @@ import { defineConfig, devices } from '@playwright/test';
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
+console.log("process.env.PLAYWRIGHT_TEST_BASE_URL",process.env.PLAYWRIGHT_TEST_BASE_URL);
 export default defineConfig({
   testDir: './tests',
   /* Run tests in files in parallel */
@@ -25,11 +26,15 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://localhost:3000',
+    baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3000',
     // Populates context with given storage state.
     // storageState: 'state.json',
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+    extraHTTPHeaders: {
+      'x-vercel-protection-bypass': process.env.VERCEL_AUTOMATION_BYPASS_SECRET,
+      'x-vercel-set-bypass-cookie': 'samesitenone'
+    }
   },
 
   /* Configure projects for major browsers */
