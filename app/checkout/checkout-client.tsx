@@ -141,8 +141,8 @@ export default function CheckoutClient() {
        </>
     </Container>) : null }
     
-    <Container size="small" width="medium" className=" text-white w-full rounded-3xl border border-richblack-700 bg-richblack-500 py-0 md:pt-6 md:pb-16 px-3 md:px-0 flex flex-col ">
-      <h2 className="text-xl flex items-center -ml-6">
+    <Container size="small" width="medium" className=" text-white w-full rounded-3xl border border-richblack-700 bg-richblack-500 py-0 md:pt-6 pb-6 md:pb-16 px-3 md:px-0 flex flex-col ">
+      <h2 className="text-xl flex items-center -ml-12 md:-ml-6">
       <Icon data={{name: "BiPound", color: "green", style: "circle", size: "medium"}} className="mr-2 border border-richblack-700"></Icon>
         Payment
       </h2>
