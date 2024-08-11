@@ -28,7 +28,7 @@
         "visible": true
       },
       {
-        "href": "/pricing",
+        "href": "pricing",
         "label": "Passes",
         "visible": false
       },

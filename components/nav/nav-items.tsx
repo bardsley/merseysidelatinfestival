@@ -42,7 +42,7 @@ export default function NavItems({ navs }: { navs: any }) {
   const { theme } = useLayout();
   const searchParams = useSearchParams()
   const draft = searchParams.get('draft')
-  const filteredNavs = draft || process.env.NODE_ENV == 'development' ? navs : navs.filter((item)=>{return item.visible})
+  const filteredNavs = draft ? navs : navs.filter((item)=>{return item.visible})
   return (
     <>
       {draft ? (<a className="block text-xs bg-chillired-800 text-white w-96 text-center rounded-b-md absolute right-0 z-50" href="/">Currently showing Draft Content, Click to Hide</a>) : null}

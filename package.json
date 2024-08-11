@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^14.2.5",
+    "@playwright/test": "^1.46.0",
     "@svgr/webpack": "^8.1.0",
     "@tinacms/cli": "^1.5.53",
     "@types/js-cookie": "^3.0.0",
