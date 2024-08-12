@@ -10,7 +10,6 @@ import { defineConfig, devices } from '@playwright/test';
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-console.log("process.env.PLAYWRIGHT_TEST_BASE_URL",process.env.PLAYWRIGHT_TEST_BASE_URL);
 export default defineConfig({
   testDir: './tests',
   /* Run tests in files in parallel */

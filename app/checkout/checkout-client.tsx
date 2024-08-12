@@ -95,7 +95,7 @@ export default function CheckoutClient() {
               return (
                 <div className="mt-3" key={field.name}>
                   { field.type && field.type == 'hidden' ? null 
-                  : <label htmlFor="email" className="block text-sm font-medium leading-6 text-white capitalize">
+                  : <label htmlFor={field.name} className="block text-sm font-medium leading-6 text-white capitalize">
                       {field.label || field.name }
                     </label>
                   }

@@ -12,6 +12,7 @@
     "dev:build": "next build"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@next/bundle-analyzer": "^14.2.5",
     "@playwright/test": "^1.46.0",
     "@svgr/webpack": "^8.1.0",
