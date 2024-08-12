@@ -38,7 +38,3 @@ yarn-error.log*
 
 .tina/__generated__
 sendgrid.env
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
