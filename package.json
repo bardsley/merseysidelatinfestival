@@ -14,7 +14,7 @@
   "devDependencies": {
     "@next/bundle-analyzer": "^14.2.5",
     "@svgr/webpack": "^8.1.0",
-    "@tinacms/cli": "^1.5.52",
+    "@tinacms/cli": "^1.5.53",
     "@types/js-cookie": "^3.0.0",
     "@types/node": "^20.14.4",
     "@types/react": "^18.3.3",
