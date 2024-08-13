@@ -1,3 +1,6 @@
+Testing the vercel nameing and PRs
+----------------------------------
+
 Useful Links
 ============
 - [Beta site (develop branch)](https://beta.merseysidelatinfestival.co.uk/)
@@ -24,21 +27,20 @@ Both to think and discuss
 
 Adam
 ----
-- [ ] Scanned no signed in
 - [ ] Checked in at, by, using
-- [ ] Build a interface for cash sales
 - [ ] Disclaimer on food choices
 - [ ] Default prose styles e.g. <article class="prose prose-img:rounded-xl prose-headings:underline prose-a:text-blue-600">{{ markdown }}</article>
 - [ ] Return page from checkout
 - [ ] Allow change name / email for attendee. 
 - [ ] Clear cache on purchase
 ---
+- [x] Build a interface for cash sales
+- [x] Scanned no signed in
 - [x] Merseyside small logo
-- [ ] Optimise images
+- [x] Optimise images
 - [x] Video of dancing for hero
 - [x] Add see through option for a section
 - [x] Add title to features section
-
 - [X] Hydration error in production
 - [x] Reverse artist video animation 
 - [x] Student isn't coming through 

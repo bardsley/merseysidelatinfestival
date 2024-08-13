@@ -13,6 +13,7 @@ export const PassCard = ({passName, clickFunction, pass, priceModel, hasASaving,
     <div
       onClick={clickFunction}
       key={passName}
+      title={passName}
       className={`relative flex flex-col justify-between rounded-3xl bg-richblack-600 ${passPadding} shadow-xl 
       ring-1 ring-gray-900/10  text-white border border-richblack-500 ${hoverClasses} ${cardWidthClasses}`}
     >
