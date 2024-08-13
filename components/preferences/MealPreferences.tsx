@@ -101,6 +101,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
 
         { preferences.dietary_requirements.selected.includes('other') ? (
           <div className="mt-6">
+            <label htmlFor="other" className=''>Please give more details</label>
           <textarea
             id="other"
             name="other"

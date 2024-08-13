@@ -119,7 +119,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
         priceModel={priceModel}
       />
       
-      <div className="mx-auto w-full  max-w-2xl  items-start mt-10 mb-10 rounded-lg border border-gray-900 bg-gray-50 text-richblack-700 shadow-lg">
+      <div title="Checkout" className="mx-auto w-full  max-w-2xl  items-start mt-10 mb-10 rounded-lg border border-gray-900 bg-gray-50 text-richblack-700 shadow-lg">
       { priceModel === 'studentCost' && totalCost && totalCost > 0 ? (
           <div className='rounded-t-md border-t-gray-600 border border-b-0 border-l-0 border-r-0 bg-gold-500 p-2 font-bold text-center'>This is a student only ticket deal!</div>) 
         : null }
