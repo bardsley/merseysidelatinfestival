@@ -41,5 +41,8 @@ yarn-error.log*
 /blob-report/
 /playwright/.cache/
 
+# Serverless
+.serverless
+
 .tina/__generated__
 sendgrid.env

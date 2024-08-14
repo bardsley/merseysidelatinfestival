@@ -1,0 +1,21 @@
+org: mrbsoftware
+app: congress-system
+service: congress-system
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: eu-west-1
+layers:
+  dynamodb:
+    path: _layers/python
+functions:
+  scan_ticket:
+    handler: scan_ticket/lambda_function.lambda_handler
+    layers:
+      - !Ref DynamodbLambdaLayer
+    events:
+      - httpApi:
+          path: /
+          method: get
