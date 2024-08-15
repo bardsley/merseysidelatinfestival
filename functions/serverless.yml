@@ -1,7 +1,7 @@
 org: mrbsoftware
-app: congress-system
-service: congress-system
-frameworkVersion: '3'
+app: 
+service: api
+frameworkVersion: '4'
 
 provider:
   name: aws
