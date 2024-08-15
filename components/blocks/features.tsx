@@ -53,7 +53,7 @@ export const Feature = ({
       {data.details && (
         <div
           data-tina-field={tinaField(data, "details")}
-          className={["prose-base leading-tight text-justify",proseClasses].join(',')}
+          className={["prose-lg leading-tight text-justify",proseClasses].join(',')}
         >
           <TinaMarkdown content={data.details} components={components}/> 
         </div>
