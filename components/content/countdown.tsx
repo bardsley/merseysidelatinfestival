@@ -27,8 +27,8 @@ const preEventRenderer = ({ days, hours, minutes, seconds, completed, props }) =
      }
 
       { days > 0 ? <div><span className={valueClasses}>{days}</span> days</div> : null }
-      { hours > 0  && days > 0 ? <div><span className={valueClasses}>{hours}</span> hours</div> :null }
-      { minutes > 0 ? <div><span className={valueClasses}>{minutes}</span> mins</div> : null }
+      { hours > 0 || days > 0 ? <div><span className={valueClasses}>{hours}</span> hours</div> :null }
+      { (minutes > 0 || hours > 0) && days < 10 ? <div><span className={valueClasses}>{minutes}</span> mins</div> : null }
       { days < 1 ?  <div><span className={valueClasses}>{seconds}</span> secs </div> : null }
       </div>
     )
