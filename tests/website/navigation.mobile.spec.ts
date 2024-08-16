@@ -35,18 +35,22 @@ test('Draft content hider', async ({ page }: {page: Page}) => {
   // Check there is a header that hides draft content
   // const draftHeader = await page.getByText('showing Draft Content')
   await expect(page.getByText('showing Draft Content')).toBeVisible()
+  await page.screenshot({ path: './test-screenshots/pass/draft-mode.png' })
 
   // // Click dropdown and check links there
   await page.getByRole('button', { includeHidden: true, name: "Open main menu" }).click();
+  await page.screenshot({ path: './test-screenshots/pass/draft-mode-menu.png' })
   await expect(page.getByRole('link', { name: 'Passes' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Artist' })).toBeVisible();
   await page.getByRole('button', { includeHidden: true, name: "Close menu" }).click();
 
   await page.getByText('showing Draft Content').click();
-  
+  await page.screenshot({ path: './test-screenshots/pass/draft-off.png' })
   await expect(page.getByText('showing Draft Content')).not.toBeVisible();
   // Links taht should no longer be there
   await page.getByRole('button', { includeHidden: true, name: "Open main menu" }).click();
+  await page.screenshot({ path: './test-screenshots/pass/draft-off-menu.png' })
+
   await expect(page.getByRole('link', { name: 'Passes' })).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'Artist' })).toHaveCount(0);
 });
