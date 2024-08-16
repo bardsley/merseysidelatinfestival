@@ -31,7 +31,7 @@ jobs:
     - uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: test-screnshots
-        path: test-screnshots/
+        name: test-screenshots
+        path: test-screenshots/
         retention-days: 10
   
