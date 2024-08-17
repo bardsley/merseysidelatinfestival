@@ -1,19 +1,21 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { useFormStatus } from "react-dom"
 import Cell from '../ticketing/Cell';
 import { initialSelectedOptions, fullPassName, passes, individualTickets } from '../ticketing/pricingDefaults'
 import { calculateTotalCost, passOrTicket, getBestCombination, itemsFromPassCombination, itemListToOptions, addToOptions, thingsToAccess} from '../ticketing/pricingUtilities'
 import PassCards from '../ticketing/passes'
 import { OptionsTable } from '../ticketing/OptionsTable';
-import { useRouter } from 'next/navigation'
+// import { useRouter } from 'next/navigation'
 import { deepCopy } from '@lib/useful'
 import { getUnixTime } from 'date-fns';
+import Pusher from 'pusher-js';
 import symmetricDifference from 'set.prototype.symmetricdifference'
 import difference from 'set.prototype.difference'
 symmetricDifference.shim();
 difference.shim();
 
+const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY, { cluster: 'eu',  });
 
 const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scrollToElement?:Function}) => {
   const [selectedOptions, setSelectedOptions] = useState(deepCopy(initialSelectedOptions));
@@ -22,7 +24,11 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
   const [totalCost, setTotalCost] = useState(0);
   const [packages,setPackages] = useState([])
   const [packageCost, setPackageCost] = useState(0)
-  const router = useRouter()
+  const [till, setTill] = useState(null)
+  const [locked, setLocked] = useState(false)
+  const [channel, setChannel] = useState(null)
+
+  // const router = useRouter()
 
   const togglePriceModel = () => {
     setPriceModel(priceModel === "cost"? "studentCost" : "cost")
@@ -52,6 +58,7 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
     console.log("Options reset to: ", initialSelectedOptions)
     localStorage.removeItem("selectedOptions")
     setSelectedOptions(deepCopy(initialSelectedOptions))
+    setLocked(false)
   }
 
   useEffect(() => {
@@ -61,7 +68,30 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
   
   useEffect(() => {
     if(fullPassFunction) { fullPassFunction(() => selectFullPass) }
+    setChannel(pusher.subscribe('card-payments'))
+    return () => {
+      pusher.unsubscribe('card-payments')
+    }
   },[])
+
+  useEffect(() => {
+    if(till) {
+      channel.bind(till, function(data) {
+        console.log("pusher",data)
+        const products = data.products.filter((product)=> product.till == till ).map((product) => product.name)
+        const itemsInPassName = itemsFromPassCombination(products) as string[]
+        console.log("products",products)
+        console.log("itemsInPassName",itemsInPassName)
+        setSelectedOptions(itemListToOptions(itemsInPassName,true))
+        setLocked(true)
+      }); 
+    }
+  },[till])
+
+  const changeTill = (till) => {
+    if(till) { channel.unbind(till) }
+    setTill(till)
+  }
 
   function CheckoutButton() {
     const { pending } = useFormStatus();
@@ -70,7 +100,6 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
         className='bg-chillired-400 text-white rounded-lg py-3 px-4 hover:bg-chillired-700 text-xl text-nowrap w-full max-w-72 md:w-auto'>
         {pending ? "Storing..." : "Finish Sale"}
       </button>
-
     );
   }
 
@@ -118,7 +147,9 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
     //   body: JSON.stringify(purchaseObj),
     // })
     console.log("Purchase object",purchaseObj)
-    router.push("/admin/epos") //TODO This 100% needs a check for errors
+    // router.push("/admin/epos") //TODO This 100% needs a check for errors
+    // Should reset the thing and unlock the form
+    setLocked(false)
   }
   
   const cellClasses = 'border border-gray-600 text-center py-2 px-3 md:py-2 md:px-4 ';
@@ -127,8 +158,9 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
   const inputClasses = "w-full mb-3 rounded-md border border-gray-600 p-2 bg-gray-50 text-gray-900 w-full\
     focus:border-chillired-400 focus:ring-chillired-400"
 
-  return (
+  return till ?(
     <div className="table-container w-full grid grid-cols-1 gap-3 md:grid-cols-4 justify-center md:pt-12 max-w-full lg:mx-auto md:mx-3 col-span-5 text-xs md:text-base">
+      {locked ? <div className='w-full md:col-span-4 bg-green-900 rounded px-6 py-3'>Payment receieved, Locked Form, Awaiting Details</div> : null}
       <div className='col-span-1'>
         <PassCards 
           currentSelectedOptions={selectedOptions}
@@ -138,11 +170,12 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
           scrollToElement={scrollToElement} 
           shouldScroll={false}
           basic={true}
+          locked={locked}
           ></PassCards>
         
         <div className='mb-12'>
           <Cell option={{name: 'Student Ticket (Check Student ID)', cost: 0, studentCost: 0, isAvailable: true } }
-            isSelected={studentDiscount} onSelect={togglePriceModel} studentDiscount={studentDiscount} />
+            isSelected={studentDiscount} onSelect={togglePriceModel} studentDiscount={studentDiscount} locked={locked}/>
         </div>
       </div>
       
@@ -153,7 +186,9 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
         selectedOptions={selectedOptions}
         clearOptions={clearOptions}
         setIndividualOption={setIndividualOption}
-        priceModel={priceModel} />
+        priceModel={priceModel} 
+        locked={locked}
+      />
       
       <div className="mx-auto w-full  max-w-2xl  items-start mt-10 mb-10 rounded-lg border border-gray-900 bg-gray-50 text-richblack-700 shadow-lg">
       { priceModel === 'studentCost' && totalCost && totalCost > 0 ? (
@@ -194,7 +229,15 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
         </div> : null }      
       
     </div>
-  )
+  ) : <div>
+      <h2 className='text-xl'>Select Till</h2>
+      <div className='flex gap-3'>
+      <button onClick={()=>{ changeTill('till-1')}} className='rounded-md bg-chillired-500 px-6 py-3'>Till 1</button>
+      <button onClick={()=>{ changeTill('till-2')}} className='rounded-md bg-chillired-500 px-6 py-3'>Till 2</button>
+      <button onClick={()=>{ changeTill('till-3')}} className='rounded-md bg-chillired-500 px-6 py-3'>Till 3</button>
+      </div>
+      
+    </div>
 };
 
 export default Till; 

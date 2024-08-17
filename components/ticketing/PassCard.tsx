@@ -1,17 +1,19 @@
 import React from 'react';
 import { fullPassName } from './pricingDefaults';
 
-export const PassCard = ({passName, clickFunction, pass, priceModel, hasASaving, selected, included, basic}:
-  {passName:string, clickFunction:any, pass:any, priceModel:string, hasASaving:boolean, selected:boolean, included?:boolean, basic?:boolean}
+export const PassCard = ({passName, clickFunction, pass, priceModel, hasASaving, selected, included, basic, locked}:
+  {passName:string, clickFunction:any, pass:any, priceModel:string, hasASaving:boolean, selected:boolean, included?:boolean, basic?:boolean, locked?:boolean}
 ) => {
   const cardWidthClasses = passName === fullPassName ? 'col-span-full' : basic ? 'flex-col': 'md:flex-col'
   const passPadding = basic ? 'p-4 md:p-4' : 'p-6 md:p-10'
   const baseTextSize = basic ? 'text-sm md:text-sm' : 'text-xl md:text-base'
   const priceTextSize = basic ? 'text-sm md:text-sm leading-7' : 'text-4xl md:text-4xl'
-  const hoverClasses = selected ? "border-white cursor-pointer" : included ? 'hover:border-richblack-500 cursor-not-allowed' : 'hover:border-white cursor-pointer'
+  const hoverClasses = locked ? 'hover:border-richblack-500 cursor-not-allowed' : 
+    selected ? "border-white cursor-pointer" : 
+    included ? 'hover:border-richblack-500 cursor-not-allowed' : 'hover:border-white cursor-pointer'
   return (
     <div
-      onClick={clickFunction}
+      onClick={locked ? ()=>{console.log('locked')} : clickFunction}
       key={passName}
       title={passName}
       className={`relative flex flex-col justify-between rounded-3xl bg-richblack-600 ${passPadding} shadow-xl 
