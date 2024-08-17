@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect, use } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFormStatus } from "react-dom"
 import Cell from '../ticketing/Cell';
 import { initialSelectedOptions, fullPassName, passes, individualTickets } from '../ticketing/pricingDefaults'
@@ -27,6 +27,8 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
   const [till, setTill] = useState(null)
   const [locked, setLocked] = useState(false)
   const [channel, setChannel] = useState(null)
+  const [cardPayment, setCardPayment] = useState(null)
+  
 
   // const router = useRouter()
 
@@ -59,6 +61,7 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
     localStorage.removeItem("selectedOptions")
     setSelectedOptions(deepCopy(initialSelectedOptions))
     setLocked(false)
+    setCardPayment(false)
   }
 
   useEffect(() => {
@@ -84,6 +87,7 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
         console.log("itemsInPassName",itemsInPassName)
         setSelectedOptions(itemListToOptions(itemsInPassName,true))
         setLocked(true)
+        setCardPayment(data.purchaseUuid)
       }); 
     }
   },[till])
@@ -93,13 +97,21 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
     setTill(till)
   }
 
-  function CheckoutButton() {
+  function CheckoutButtons() {
     const { pending } = useFormStatus();
-    return (
-      <button type="submit" disabled={pending} 
-        className='bg-chillired-400 text-white rounded-lg py-3 px-4 hover:bg-chillired-700 text-xl text-nowrap w-full max-w-72 md:w-auto'>
-        {pending ? "Storing..." : "Finish Sale"}
-      </button>
+    const activeButtonClass = 'disabled:bg-gray-500 disabled:cursor-not-allowed bg-chillired-400 text-white rounded-lg py-3 px-8 hover:bg-chillired-700 text-xl text-nowrap w-full max-w-72 md:w-auto'
+    return(
+      <div className='flex gap-6'>
+        <button type="submit" disabled={pending || cardPayment} 
+          className={activeButtonClass}>
+          {pending ? "Storing..." : "Cash"}
+        </button>
+        <button type="submit" disabled={pending || !cardPayment} 
+        className={activeButtonClass}>
+        {pending ? "Storing..." : "Card"}
+      </button>  
+      </div>
+      
     );
   }
 
@@ -160,7 +172,7 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
 
   return till ?(
     <div className="table-container w-full grid grid-cols-1 gap-3 md:grid-cols-4 justify-center md:pt-12 max-w-full lg:mx-auto md:mx-3 col-span-5 text-xs md:text-base">
-      {locked ? <div className='w-full md:col-span-4 bg-green-900 rounded px-6 py-3'>Payment receieved, Locked Form, Awaiting Details</div> : null}
+      {locked ? <div className='w-full md:col-span-4 bg-green-900 rounded px-6 py-3'>Card Payment receieved, Locked Form, Awaiting Details</div> : null}
       <div className='col-span-1'>
         <PassCards 
           currentSelectedOptions={selectedOptions}
@@ -202,9 +214,10 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
                 <h2 className='text-3xl font-bold'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost}</span>) : null } £{packageCost}</h2>
               </div>
               <form autoComplete="off" action={checkout} className='flex w-full md:w-2/3 flex-col items-center justify-center'>
+                { cardPayment ? <input type="text" autoComplete="off" name="inperson-payment-ref" disabled value={cardPayment} className={inputClasses} /> : null }
                 <input type="text" autoComplete="off" name="inperson-name" placeholder="Name" className={inputClasses} />
                 <input type="text" autoComplete="off" name="inperson-email" placeholder="Email" className={inputClasses}   />
-                <CheckoutButton></CheckoutButton>
+                <CheckoutButtons></CheckoutButtons>
               </form>
               
             </>
