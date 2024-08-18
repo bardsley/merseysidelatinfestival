@@ -43,6 +43,7 @@ yarn-error.log*
 
 # Serverless
 .serverless
+.aws/config
 
 .tina/__generated__
 sendgrid.env

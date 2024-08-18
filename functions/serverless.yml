@@ -1,21 +1,70 @@
-org: mrbsoftware
-app: 
-service: api
-frameworkVersion: '4'
+org: mrbsoftware # Needs a name for the organization
+app: dance-engine # Need to see what connor thinks of name
+service: api # Do we need multiple services? 
+frameworkVersion: '4.1'
+
+stages:
+  default:
+    params:
+      tableName: "${sls:stage}-mlf-attendees"
 
 provider:
   name: aws
-  runtime: python3.9
+  runtime: python3.12
   region: eu-west-1
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - Fn::GetAtt: [AttendeesTable, Arn]
+
 layers:
   dynamodb:
     path: _layers/python
+
+resources:
+  Resources:
+    AttendeesTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        DeletionProtectionEnabled: true
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${param:tableName}
+
 functions:
-  scan_ticket:
+  scanTicket:
     handler: scan_ticket/lambda_function.lambda_handler
     layers:
       - !Ref DynamodbLambdaLayer
     events:
       - httpApi:
-          path: /
+          path: /scan_ticket
           method: get
+  customerPreferences:
+    handler: customer_preferences/lambda_function.lambda_handler
+    layers:
+      - !Ref DynamodbLambdaLayer
+    events:
+      - httpApi:
+          path: /customer_preferences
+          method: get
+      - httpApi:
+          path: /customer_preferences
+          method: post
+
+
