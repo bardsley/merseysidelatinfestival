@@ -57,7 +57,7 @@ def process_event(payload, context):
     # Create the ticket
     logger.info("Invoking create_ticket lambda")
     response = lambda_client.invoke(
-        FunctionName='api-dev-createTicket',
+        FunctionName='dev-create_ticket',
         InvocationType='Event',
         Payload=json.dumps({
             'email': email,      

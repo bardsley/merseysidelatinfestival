@@ -13,7 +13,7 @@ logger.setLevel("INFO")
 # boto3.setup_default_session(profile_name=profile_name)
 
 db = boto3.resource('dynamodb')
-table = db.Table('dev-mlf24_attendees')
+table = db.Table(os.environ.get("ATTENDEES_TABLE_NAME"))
 
 def get_ticket(ticket_number, email):
     '''
