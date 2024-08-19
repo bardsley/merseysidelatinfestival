@@ -28,7 +28,8 @@
     "eslint-config-prettier": "^9.1.0",
     "postcss": "^8.3.11",
     "postcss-import": "^16.1.0",
-    "postcss-nesting": "^12.1.5"
+    "postcss-nesting": "^12.1.5",
+    "serverless-plugin-custom-domain": "^4.0.0"
   },
   "dependencies": {
     "@clerk/nextjs": "^5.2.8",

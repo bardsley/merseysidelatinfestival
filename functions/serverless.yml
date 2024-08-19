@@ -3,14 +3,19 @@ app: dance-engine # Need to see what connor thinks of name
 service: api # Do we need multiple services? 
 frameworkVersion: '4.1'
 
+package:
+  individually: true
+
 stages:
   default:
+    observability: true
     params:
-      tableName: "${sls:stage}-mlf-attendees"
+      attendeesTableName: "${sls:stage}-mlf-attendees"
+      stripeProductsTableName: "${sls:stage}-mlf-stripe-products"
 
 provider:
   name: aws
-  runtime: python3.12
+  runtime: python3.11
   region: eu-west-1
   iam:
     role:
@@ -25,6 +30,10 @@ provider:
             - dynamodb:DeleteItem
           Resource:
             - Fn::GetAtt: [AttendeesTable, Arn]
+            - Fn::GetAtt: [StripeProductsTable, Arn]
+            - { "Fn::Join": [ "/", [ 
+                { "Fn::GetAtt": ["AttendeesTable", "Arn" ] }, "index", "ticket_number-index" 
+              ]]}
 
 layers:
   dynamodb:
@@ -38,25 +47,64 @@ resources:
       Properties:
         DeletionProtectionEnabled: true
         AttributeDefinitions:
-          - AttributeName: userId
+          - AttributeName: email 
+            AttributeType: S
+          - AttributeName: ticket_number 
             AttributeType: S
         KeySchema:
-          - AttributeName: userId
+          - AttributeName: email 
             KeyType: HASH
+          - AttributeName: ticket_number 
+            KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
-        TableName: ${param:tableName}
+        TableName: ${param:attendeesTableName}
+        GlobalSecondaryIndexes:
+          - IndexName: ticket_number-index
+            KeySchema:
+              - AttributeName: ticket_number 
+                KeyType: HASH
+            Projection:
+              ProjectionType: 'ALL'
+    StripeProductsTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        DeletionProtectionEnabled: true
+        AttributeDefinitions:
+          - AttributeName: prod_id 
+            AttributeType: S
+          - AttributeName: price_id  
+            AttributeType: S
+        KeySchema:
+          - AttributeName: prod_id
+            KeyType: HASH
+          - AttributeName: price_id
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${param:stripeProductsTableName}
 
 functions:
   scanTicket:
     handler: scan_ticket/lambda_function.lambda_handler
+    package:
+      patterns:
+        - '!**/**'
+        - "scan_ticket/**"
     layers:
       - !Ref DynamodbLambdaLayer
     events:
       - httpApi:
           path: /scan_ticket
           method: get
+      - httpApi:
+          path: /scan_ticket
+          method: post
   customerPreferences:
     handler: customer_preferences/lambda_function.lambda_handler
+    package:
+      patterns:
+        - '!**/**'
+        - "customer_preferences/**"
     layers:
       - !Ref DynamodbLambdaLayer
     events:
@@ -66,5 +114,28 @@ functions:
       - httpApi:
           path: /customer_preferences
           method: post
-
-
+  transferOwner:
+    handler: transfer_owner/lambda_function.lambda_handler
+    package:
+      patterns:
+        - '!**/**'
+        - "transfer_owner/**"
+    layers:
+      - !Ref DynamodbLambdaLayer
+    events:
+      - httpApi:
+          path: /transfer_owner
+          method: post
+  cardPayment:
+    handler: card_payment/lambda_function.lambda_handler
+    package:
+      patterns:
+        - '!**/**'
+        - "card_payment/**"
+    layers:
+      - !Ref DynamodbLambdaLayer
+    events:
+      - httpApi:
+          path: /card_payment
+          method: post
+  

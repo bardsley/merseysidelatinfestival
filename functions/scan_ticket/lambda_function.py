@@ -3,9 +3,19 @@ from boto3.dynamodb.conditions import Key, Attr
 import json
 import os
 import logging
+from decimal import Decimal
 from json.decoder import JSONDecodeError
 logger = logging.getLogger()
 logger.setLevel("INFO")
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            if float(obj) == int(obj):
+                return int(obj)
+            else:
+                return float(obj)
+        return super().default(obj)
 
 # #* This is not required for deployment only needed for local testing 
 # logging.basicConfig()
@@ -13,7 +23,7 @@ logger.setLevel("INFO")
 # boto3.setup_default_session(profile_name=profile_name)
 
 db = boto3.resource('dynamodb')
-table = db.Table('dev-mlf24_attendees')
+table = db.Table('dev-mlf-attendees')
 
 def get_ticket(ticket_number):
     '''
@@ -49,47 +59,15 @@ def post(event):
     except (TypeError, JSONDecodeError) as e:
         logger.error(e)
         return err("An error has occured with the input you have provided.", event_body=event['body'])
-    
-#     # get the ticket entry from db send error is not exist or not match
-#     # used to check meal option is included and raise error if it is being set and not part of ticket
-#     #? when setting meal options could access be sent with the request from client to save ddb call?
-    
-#     # check that one or both options are set which is required to proceed return error if not
-#     if ('preferences' not in data) and ('schedule' not in data):
-#         return err("Must provide one or both of (preferences, schedule). ")
 
-#     # check that ticket number and email are both set return error if not
+    # check that ticket number and email and check_in are all set return error if not
     if ('ticket_number' not in data) and ('email' not in data) and ('check_in_at' not in data):
         return err("Must provide ticket_number and email and a scan in timestamp.")
     else:
         ticket_number = data['ticket_number'] # Ticket numerbs are strings now
         email = data['email']
         check_in_at = data['check_in_at']
-    
-#     try:
-#         ticket_entry = get_ticket(ticket_number, email)
-#     except ValueError as e:
-#         logger.error(f"GET TICKET FAILED:, {ticket_number} : {email}")
-#         return err(str(e))
-        
-#     # empty variables to be set according to what options are slected (meal_options, schedule)
-#     UpdateExp   = ""
-#     ExpAttrVals = {}
 
-#     # append to the ddb update expression the options which are selected and set the values 
-#     # (meal_options, schedule) are both formatted as JSON
-#     if 'preferences' in data:
-#         # return an error if the meal option is not included in this ticket
-#         if ticket_entry['access'][2] < 1: return err("Attempting to set meal options for a ticket which does not include dinner.")
-
-#         logger.info(f"-SET MEAL OPTIONS:, {data['preferences']}")
-#         UpdateExp += ", meal_preferences = :val1"
-#         ExpAttrVals[':val1'] = data['preferences']
-#     if 'schedule' in data:
-#         logger.info(f"-SET SCHEDULE OPTIONS:, {data['schedule']}")
-#         UpdateExp += ", schedule = :val2"
-#         ExpAttrVals[':val2'] = json.dumps(data['schedule'])    
-#     # define the params for the ddb update
     params = {
         'Key': {
             'email':email,
@@ -118,36 +96,50 @@ def get(event):
 
     '''
     # get data and check that stuff exists
+    logger.info(event)
     data = event['queryStringParameters'] 
     if ('ticket_number' not in data):
         logger.error("ticket_number not set")
         return err("Must provide ticket_number.")
     else:
-        if data['ticket_number'].isnumeric() is False: return err("ticket number not int-like")
+        if data['ticket_number'].isnumeric() is False: 
+            logger.error("ticket_number is not numeric")
+            logger.error(data['ticket_number'])
+            return err("ticket number not int-like")
         ticket_number = data['ticket_number']
 
     # query db for ticket number and email, if don't match or exist return error
     # return internal server error if there is more than one response item as something must have gone wrong
     try:
+        logger.info(ticket_number)
         ticket_entry = get_ticket(ticket_number)
+        logger.info(ticket_entry)
     except ValueError as e:
         return err(str(e))
 
-    return {
+    lambdaResponse = {
             'statusCode': 200,
-            'body': ticket_entry
+            'body': json.dumps(ticket_entry, cls=DecimalEncoder),
+            "headers": {
+                "Content-Type": "application/json"
+            }
         }
+    logger.info(lambdaResponse)
+    return lambdaResponse
 
 def lambda_handler(event, context):
     '''
 
     '''    
-    logger.info('## NEW REQUEST')
+    
     if event['requestContext']['http']['method'] == 'POST':
+        logger.info('## NEW GET REQUEST')
         return post(event)
     elif event['requestContext']['http']['method'] == 'GET':
+        logger.info('## NEW POST REQUEST')
         return get(event)
     else:
+        logger.info('## Weird REQUEST')
         return {
             'statusCode': 405,
             'body': "Method Not Allowed"
