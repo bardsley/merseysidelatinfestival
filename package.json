@@ -29,7 +29,7 @@
     "postcss": "^8.3.11",
     "postcss-import": "^16.1.0",
     "postcss-nesting": "^12.1.5",
-    "serverless-plugin-custom-domain": "^4.0.0"
+    "serverless-prune-plugin": "^2.0.2"
   },
   "dependencies": {
     "@clerk/nextjs": "^5.2.8",
