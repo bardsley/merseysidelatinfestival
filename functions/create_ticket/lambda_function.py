@@ -1,4 +1,4 @@
-import stripe
+# import stripe
 import json
 # from gdrivewrite import update_gs
 # from sendmail import sendemail
@@ -16,11 +16,11 @@ logger.setLevel("INFO")
 # profile_name='AdministratorAccess-645491919786'
 # boto3.setup_default_session(profile_name=profile_name)
 
-stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
+# stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
 
 # get dynamodb table
 db = boto3.resource('dynamodb')
-table = db.Table('dev-mlf24_attendees')
+table = db.Table('dev-mlf-attendees')
 
 lambda_client = boto3.client('lambda')
 

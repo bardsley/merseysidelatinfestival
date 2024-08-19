@@ -1,4 +1,3 @@
-import stripe
 import json
 from random import randint
 import datetime
@@ -11,11 +10,9 @@ from decimal import Decimal
 logger = logging.getLogger()
 logger.setLevel("INFO")
 
-stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
-
 # get dynamodb table
-db = boto3.resource('dynamodb')
-table = db.Table('dev-mlf24_attendees')
+# db = boto3.resource('dynamodb')
+# table = db.Table('dev-mlf24_attendees')
 
 lambda_client = boto3.client('lambda')
 
@@ -31,78 +28,75 @@ class DecimalEncoder(json.JSONEncoder):
 # Will also return a string of the passes the person has purchased.
 def process_line_items(line_items):
     access = [0,0,0,0,0,0]
-    line_items_return = []
-    for item in line_items['data']:
-        access_metadata = json.loads(item['price']['product']['metadata']['access'])
-        access = [sum(i) for i in zip(access, access_metadata)]
+    line_items_return = [] #!TODO This is gonna be more complicated as there's no meta in iZettle
+    # for item in line_items['data']:
+    #     access_metadata = json.loads(item['price']['product']['metadata']['access'])
+    #     access = [sum(i) for i in zip(access, access_metadata)]
 
-        line_items_return.append({
-                'prod_id':item['price']['product']['id'],
-                'price_id':item['price']['id'],
-                'description':item['description'],
-                'amount_total':item['amount_total']
-            })
+    #     line_items_return.append({
+    #             'prod_id':item['price']['product']['id'],
+    #             'price_id':item['price']['id'],
+    #             'description':item['description'],
+    #             'amount_total':item['amount_total']
+    #         })
 
     return access, line_items_return
 
-# put the corresponding data into the dynamodb table
-def update_ddb(Item):
-    table.put_item(Item=Item)
-    return True
-
 # Main function to handle the event
-def process_event(event, context):
-    logger.info(event)
-    # get event data
-    ev_data = json.loads(event['body'])
-    # ev_data = event['body'] # for use if testing with input as json already
+def process_event(payload, context):
+    logger.info(payload)
 
-    # Only execute for a completed checkout session
-    if ev_data['type'] == "checkout.session.completed":
-        # get the checkout session ID
-        CHECKOUT_SESSION_ID = ev_data['data']['object']['id']
-                  
-        # retrieve the full checkout session including the line items
-        #! catch error is checkout session does not exist
-        logger.info("Retrieve Stripe checkout session")
-        stripe_response = stripe.checkout.Session.retrieve(CHECKOUT_SESSION_ID, expand=['line_items', 'line_items.data.price.product'])
-        logger.info(stripe_response)
-
-        access, line_items = process_line_items(stripe_response['line_items'])
-        student_ticket = True if stripe_response['line_items']['data'][0]['price']['nickname' ] == "student_active" else False
-        meal = json.loads(stripe_response['metadata']['preferences']) if 'preferences' in stripe_response['metadata'] else None
-
-        # customer information to keep
-        ateendee_details = json.loads(stripe_response['metadata']['attendee'])
-        full_name = ateendee_details['name']
-        email     = stripe_response['customer_email']
-        phone     = ateendee_details['phone']
-
-        # Create the ticket
-        logger.info("Invoking create_ticket lambda")
-        response = lambda_client.invoke(
-            FunctionName='dev-create_ticket',
-            InvocationType='Event',
-            Payload=json.dumps({
-                'email': email,      
-                'full_name': full_name,
-                'phone':phone,
-                'purchase_date': str(stripe_response['created']),
-                'line_items': line_items,
-                'access': access,
-                'status': "paid_stripe",
-                'student_ticket': student_ticket,
-                'promo_code': None,
-                'meal_preferences': meal,
-                'checkout_session': CHECKOUT_SESSION_ID, 
-                'schedule': None,
-                'heading_message':"THANK YOU FOR YOUR PURCHASE!",
-                'send_standard_ticket': True,
-                },cls=DecimalEncoder),
-            )
-        logger.info(response)
+    CHECKOUT_SESSION_ID = payload['purchaseUuid']
+    access, line_items = process_line_items(payload['products'])
+    student_ticket = True if "Need to write something" == "To check this" else False
+    meal = None
+    full_name = 'Unknown'
+    email = payload['purchaseUuid']
+    phone = 'Unknown'
+    
+    # Create the ticket
+    logger.info("Invoking create_ticket lambda")
+    response = lambda_client.invoke(
+        FunctionName='api-dev-createTicket',
+        InvocationType='Event',
+        Payload=json.dumps({
+            'email': email,      
+            'full_name': full_name,
+            'phone':phone,
+            'purchase_date': payload['timestamp'],
+            'line_items': line_items,
+            'access': access,
+            'status': "paid_izettle",
+            'student_ticket': student_ticket,
+            'promo_code': None,
+            'meal_preferences': meal,
+            'checkout_session': CHECKOUT_SESSION_ID, 
+            'schedule': None,
+            'heading_message':"THANK YOU FOR YOUR PURCHASE!",
+            'send_standard_ticket': False,
+            },cls=DecimalEncoder),
+        )
+    logger.info(response)
             
-    return {'statusCode':200}
+    return {'statusCode':200, 'body': json.dumps({'message':"Ticket Created"})}
 
 def lambda_handler(event, context):
-    return {'statusCode':200, body: { message: "All good!"} }
+    # Check we have a body
+    if 'body' not in event:
+        return {'statusCode': 400, 'body': json.dumps({'error': 'No body in event'})}
+    
+    ev_data = json.loads(event['body'])
+    
+    # Check this is the correct event
+    if ('eventName' not in ev_data and ev_data['eventName'] != 'PurchaseCreated!'):
+        message =  "Event is not a PurchaseCreated event"
+        logger.error(message)
+        logger.error(ev_data)
+        return {'statusCode':400, 'body': json.dumps({ 'error': message})}
+    
+    payload = json.loads(ev_data['payload'])
+    logger.info(payload)
+
+    response = process_event(payload, context)
+    # response = payload
+    return {'statusCode':200, 'body': json.dumps(response) }
