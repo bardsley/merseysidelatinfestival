@@ -25,6 +25,7 @@ stages:
 provider:
   name: aws
   runtime: python3.11
+  memorySize: 128
   region: eu-west-1
   iam:
     role:
@@ -43,6 +44,11 @@ provider:
             - { "Fn::Join": [ "/", [ 
                 { "Fn::GetAtt": ["AttendeesTable", "Arn" ] }, "index", "ticket_number-index" 
               ]]}
+        - Effect: Allow
+          Action:
+            - lambda:InvokeFunction
+          Resource:
+            - '*'
 
 layers:
   dynamodb:
@@ -149,4 +155,11 @@ functions:
       - httpApi:
           path: /card_payment
           method: post
-  
+  createTicket:
+    handler: create_ticket/lambda_function.lambda_handler
+    package:
+      patterns:
+        - '!**/**'
+        - "create_ticket/**"
+    layers:
+      - !Ref DynamodbLambdaLayer
