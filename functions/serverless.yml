@@ -90,6 +90,8 @@ functions:
       patterns:
         - '!**/**'
         - "scan_ticket/**"
+    environment:
+      ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
     layers:
       - !Ref DynamodbLambdaLayer
     events:
