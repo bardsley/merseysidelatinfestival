@@ -21,7 +21,7 @@ git.get_user().login
 git_user_login = git.get_user().login
 
 db = boto3.resource('dynamodb')
-table = db.Table('mlf24_stripe_products')
+table = db.Table(os.environ.get("PRODUCTS_TABLE_NAME"))
 
 def get_blank(prod):
     prod['price_active'] = False

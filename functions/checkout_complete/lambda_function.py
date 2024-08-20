@@ -17,7 +17,7 @@ stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
 
 # get dynamodb table
 db = boto3.resource('dynamodb')
-table = db.Table('dev-mlf24_attendees')
+table = db.Table(os.environ.get("ATTENDEES_TABLE_NAME"))
 
 lambda_client = boto3.client('lambda')
 
