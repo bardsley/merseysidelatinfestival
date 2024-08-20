@@ -57,7 +57,13 @@ provider:
 
 layers:
   dynamodb:
-    path: _layers/python
+    path: _layers/dynamodb/python
+  stripe:
+    path: _layers/stripe/python
+  sendmail:
+    path: _layers/sendmail/python
+  github:
+    path: _layers/github/python
 
 resources:
   Resources:
@@ -133,6 +139,7 @@ functions:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
     layers:
       - !Ref DynamodbLambdaLayer
+      - !Ref SendmailLambdaLayer
     events:
       - httpApi:
           path: /checkout_complete
@@ -161,6 +168,7 @@ functions:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
     layers:
       - !Ref DynamodbLambdaLayer
+      - !Ref GithubLambdaLayer
     events:
       - httpApi:
           path: /customer_preferences
@@ -178,6 +186,8 @@ functions:
         - "gen_price_update/**"
     environment:
       PRODUCTS_TABLE_NAME: ${param:stripeProductsTableName}
+    layers:
+      - !Ref StripeLambdaLayer
 
   GetAttendees:
     handler: get_attendees/lambda_function.lambda_handler
@@ -190,6 +200,7 @@ functions:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
     layers:
       - !Ref DynamodbLambdaLayer
+      - !Ref StripeLambdaLayer
     events:
       - httpApi:
           path: /get_attendees
@@ -206,6 +217,7 @@ functions:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
     layers:
       - !Ref DynamodbLambdaLayer
+      - !Ref GithubLambdaLayer
     events:
       - httpApi:
           path: /scan_ticket
@@ -233,6 +245,8 @@ functions:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
     layers:
       - !Ref DynamodbLambdaLayer
+      - !Ref SendmailLambdaLayer
+      - !Ref GithubLambdaLayer
     events:
       - httpApi:
           path: /send_ticket
