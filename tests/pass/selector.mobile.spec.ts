@@ -17,12 +17,12 @@ test('buying a full pass', async ({ page }: {page: Page}) => {
   await expect(page.getByTitle("Sunday Pass")).toContainText('Included');
   // Check toggles are all set
   const checkBoxTable = page.getByRole('table');
-  await checkBoxTable.screenshot({ path: './test-results/pass/full-pass-options-table.png' })
+  await checkBoxTable.screenshot({ path: './test-screenshots/pass/full-pass-options-table.png' })
   const checkBoxSwitches = checkBoxTable.getByRole('switch');
 
   // const count = await checkBoxSwitches.count();
   // for (let i = 0; i < count; ++i)
-  //   await checkBoxSwitches.nth(i).screenshot({ path: `./test-results/pass/siwtch-${i}.png` })
+  //   await checkBoxSwitches.nth(i).screenshot({ path: `./test-screenshots/pass/siwtch-${i}.png` })
 
   await expect(checkBoxSwitches).toHaveCount(6);
   // Check card mentions Full pass
@@ -43,7 +43,7 @@ test('buying a full pass', async ({ page }: {page: Page}) => {
     };
     await route.continue({ headers });
   });
-  await page.screenshot({ path: './test-results/pass/checkout-page.png', fullPage: true })
+  await page.screenshot({ path: './test-screenshots/pass/checkout-page.png', fullPage: true })
   const firstName = faker.person.firstName();
   const lastName = faker.person.lastName();
   const fullName = `${firstName} ${lastName}`;
@@ -70,7 +70,7 @@ test('buying a full pass', async ({ page }: {page: Page}) => {
   // await stripeFrame.getByPlaceholder('CVC').fill('242');
   // await stripeFrame.getByPlaceholder('Full name on card').fill(fullName);
   // await stripeFrame.getByLabel('Postal code').fill('AB12 3DE');
-  // await page.screenshot({ path: './test-results/pass/checkout-page-filled-out.png', fullPage: true })
+  // await page.screenshot({ path: './test-screenshots/pass/checkout-page-filled-out.png', fullPage: true })
   
   // await stripeFrame.getByTestId('hosted-payment-submit-button').click(); // DEoesn't submit form, not sure why but also we can test other side of it without stripe
 

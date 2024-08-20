@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef} from "react";
+import React, { useState, useRef, useEffect} from "react";
 
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 import type { Template } from "tinacms";
@@ -125,6 +125,16 @@ const InstagramImage = ({post}: {post: any}) => {
 const InstagramVideo = ({post}: {post: any}) => {
   const [play,setPlay] = useState(false)
   const videoRef = useRef(null);
+  
+  useEffect(()=>{
+    if(play) {
+      setTimeout(() => videoRef.current.play(),200)
+    }
+    else {
+      videoRef.current.pause()
+    }
+  },[play])
+
   return (
     <div key={post.id} className={instaPostClasses}>
       <div className={play ? instaLinkClasses.replace('aspect-square','aspect-auto') : instaLinkClasses}>
@@ -132,7 +142,7 @@ const InstagramVideo = ({post}: {post: any}) => {
         <div className="w-full h-full absolute top-0 left-0 flex items-center justify-center z-50" onClick={() => {setPlay(p =>!p); play ? videoRef.current.pause() : videoRef.current.play() }}>
           <Icon data={{name: "BiPlay", color: "red", style: "circle", size: "medium"}} className={play ? "hidden" : ""}></Icon>      
         </div>
-        <video ref={videoRef} className={`absolute top-0 left-0 w-full h-full ${play ? "autoplay": "invisible"}`} loop muted>
+        <video ref={videoRef} className={`absolute top-0 left-0 w-full h-full ${play ? "": "invisible"}`} loop>
           <source src={post.media_url} type="video/mp4" />
         </video>
       </div>

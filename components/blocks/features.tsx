@@ -12,6 +12,16 @@ import { iconSchema } from "../../tina/fields/icon";
 import DiscountCode from "../content/discountCode";
 const components = { DiscountCode }
 
+const proseClasses = "prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl \
+prose-a:text-chillired-600 hover:prose-a:text-chillired-800 \
+prose-blockquote:border prose-blockquote:border-richblack-700 prose-blockquote:p-6 prose-blockquote:rounded-md prose-blockquote:text-xl prose-blockquote:m-3 prose-blockquote:bg-richblack-500 \
+prose-p:mb-3 \
+prose-strong:font-semibold \
+prose-ul:list-disc    prose-ul:list-outside prose-ul:pl-6 prose-ul:mb-6 prose-ul:text-left \
+prose-ol:list-decimal prose-ol:list-outside prose-ol:pl-6 prose-ol:mb-6 \
+prose-li:mb-2\
+"
+
 export const Feature = ({
   featuresColor,
   data,
@@ -43,7 +53,7 @@ export const Feature = ({
       {data.details && (
         <div
           data-tina-field={tinaField(data, "details")}
-          className="prose-base leading-tight text-justify"
+          className={["prose-lg leading-tight text-justify",proseClasses].join(',')}
         >
           <TinaMarkdown content={data.details} components={components}/> 
         </div>
