@@ -13,7 +13,7 @@ logger.setLevel(logging.INFO)
 # logging.basicConfig()
 
 db = boto3.resource('dynamodb')
-table = db.Table('dev-mlf24_attendees')
+table = db.Table(os.environ.get("ATTENDEES_TABLE_NAME"))
 
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
