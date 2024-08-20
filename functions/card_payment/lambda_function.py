@@ -11,8 +11,8 @@ logger = logging.getLogger()
 logger.setLevel("INFO")
 
 # get dynamodb table
-# db = boto3.resource('dynamodb')
-# table = db.Table(os.environ.get("PRODUCTS_TABLE_NAME"))
+db = boto3.resource('dynamodb')
+table = db.Table(os.environ.get("PRODUCTS_TABLE_NAME"))
 
 lambda_client = boto3.client('lambda')
 
@@ -26,19 +26,30 @@ class DecimalEncoder(json.JSONEncoder):
 # parts of the fetival.
 # [Fri-Party, Sat-Class, Sat-Din, Sat-Party, Sun-Class, Sun-Party]
 # Will also return a string of the passes the person has purchased.
+
+#* This really needs to split purchases against till into seperate carts but I am rethinking
+#* how we do this as I see complexity in sync already and it's just testing
 def process_line_items(line_items):
     access = [0,0,0,0,0,0]
+    products = table.scan()['Items']
+    logger.info(products)
+    logger.info(line_items)
     line_items_return = [] #!TODO This is gonna be more complicated as there's no meta in iZettle
-    # for item in line_items['data']:
-    #     access_metadata = json.loads(item['price']['product']['metadata']['access'])
-    #     access = [sum(i) for i in zip(access, access_metadata)]
+    for item in line_items:
+        sku = item['sku']
+        product = list(filter(lambda d: d['prod_name'] == sku, products))
+        logger.info(sku)
+        logger.info(product)
+        access_metadata = product[0]['access'] #! Doesnt deal with student product
+        logger.info(access_metadata)
+        access = [sum(i) for i in zip(access, access_metadata)]
 
-    #     line_items_return.append({
-    #             'prod_id':item['price']['product']['id'],
-    #             'price_id':item['price']['id'],
-    #             'description':item['description'],
-    #             'amount_total':item['amount_total']
-    #         })
+        line_items_return.append({
+            'prod_id':item['productUuid'],
+            'price_id':item['variantUuid'],
+            'description':item['name'],
+            'amount_total':item['unitPrice'] * int(item['quantity']),
+        })
 
     return access, line_items_return
 
@@ -95,7 +106,7 @@ def lambda_handler(event, context):
         return {'statusCode':400, 'body': json.dumps({ 'error': message})}
     
     payload = json.loads(ev_data['payload'])
-    logger.info(payload)
+    # logger.info(payload)
 
     response = process_event(payload, context)
     # response = payload
