@@ -1,4 +1,4 @@
-org: mrbsoftware # Needs a name for the organization
+org: danceenginesystems # Needs a name for the organization
 app: dance-engine # Need to see what connor thinks of name
 service: api # Do we need multiple services? 
 frameworkVersion: '4.1'
@@ -138,7 +138,7 @@ functions:
         - "checkout_complete/**"
     environment:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
-      STRIPE_SECRET_KEY: {param:stripeSecretKey}
+      STRIPE_SECRET_KEY: ${param:stripeSecretKey}
     layers:
       - !Ref DynamodbLambdaLayer
       - !Ref SendmailLambdaLayer
