@@ -72,6 +72,8 @@ resources:
       DeletionPolicy: Retain
       Properties:
         DeletionProtectionEnabled: ${param:isProd}
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: ${param:isProd}
         AttributeDefinitions:
           - AttributeName: email 
             AttributeType: S
