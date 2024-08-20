@@ -20,11 +20,9 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: rm -rf node_modules && yarn install --frozen-lockfile
+    - name: Add serverless
+      run: yarn global add serverless
     - name: Install Plugin & Deploy
-      uses: serverless/github-action@v3.2
-      with:
-        args: -c ""cd ./functions && serverless plugin install --name serverless-prune-plugin && serverless deploy"
-        entrypoint: /bin/sh
+      run: cd ./functions && serverless deploy
       env:
-        SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
-
+        SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}      
