@@ -21,7 +21,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: rm -rf node_modules && yarn install --frozen-lockfile
     - name: Add serverless
-      run: sudo yarn global add serverless
+      run: yarn global add serverless
     - name: Install Plugin & Deploy
       run: cd ./functions && serverless deploy --verbose
       env:
