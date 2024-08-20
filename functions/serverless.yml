@@ -128,7 +128,6 @@ functions:
       - httpApi:
           path: /card_payment
           method: post
-    
 
   CheckoutComplete:
     handler: checkout_complete/lambda_function.lambda_handler
@@ -139,6 +138,7 @@ functions:
         - "checkout_complete/**"
     environment:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+      STRIPE_SECRET_KEY: {param:stripeSecretKey}
     layers:
       - !Ref DynamodbLambdaLayer
       - !Ref SendmailLambdaLayer
@@ -156,6 +156,7 @@ functions:
         - "create_ticket/**"
     environment:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+      STRIPE_SECRET_KEY: ${param:stripeSecretKey}
     layers:
       - !Ref DynamodbLambdaLayer
 
@@ -188,6 +189,8 @@ functions:
         - "gen_price_update/**"
     environment:
       PRODUCTS_TABLE_NAME: ${param:stripeProductsTableName}
+      STRIPE_SECRET_KEY: ${param:stripeSecretKey}
+      GITHUB_TOKEN: ${param:githubToken}
     layers:
       - !Ref StripeLambdaLayer
 
@@ -235,6 +238,8 @@ functions:
       patterns:
         - '!**/**'
         - "send_email/**"
+    environment:
+      SENDGRID_API_KEY: ${param:sendgridApiKey}
 
   SendTicket:
     handler: send_ticket/lambda_function.lambda_handler
@@ -264,6 +269,7 @@ functions:
     environment:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
       PRODUCTS_TABLE_NAME: ${param:stripeProductsTableName}
+      STRIPE_SECRET_KEY: ${param:stripeSecretKey}
     layers:
       - !Ref DynamodbLambdaLayer
     events:
