@@ -2,3 +2,11 @@ org: danceenginesystems # Needs a name for the organization
 app: dance-engine # Need to see what connor thinks of name
 service: api # Do we need multiple services? 
 frameworkVersion: '4.1'
+
+provider:
+  name: aws
+  runtime: python3.11
+
+functions:
+  hello:
+    handler: scan_ticket/lambda_function.lambda_handler
