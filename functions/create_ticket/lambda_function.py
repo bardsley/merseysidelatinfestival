@@ -9,6 +9,8 @@ from boto3.dynamodb.conditions import Key, Attr
 from decimal import Decimal
 import os
 import logging
+from shared import DecimalEncoder as shared
+
 logger = logging.getLogger()
 logger.setLevel("INFO")
 
@@ -24,11 +26,11 @@ table = db.Table(os.environ.get("ATTENDEES_TABLE_NAME"))
 
 lambda_client = boto3.client('lambda')
 
-class DecimalEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Decimal):
-            return str(obj)
-        return super().default(obj)
+# class DecimalEncoder(json.JSONEncoder):
+#     def default(self, obj):
+#         if isinstance(obj, Decimal):
+#             return str(obj)
+#         return super().default(obj)
 
 def process_line_items(line_items):
     return ''.join([", "+i['description'] for i in line_items])[2:], sum([i['amount_total'] for i in line_items])
@@ -127,7 +129,7 @@ def lambda_handler(event, context):
                         'ticket_number':ticket_number, 
                         'line_items':event['line_items'],
                         'heading_message': event['heading_message'] if 'heading_message' in event else "THANK YOU FOR YOUR PURCHASE!"
-                    }, cls=DecimalEncoder),
+                    }, cls=shared.DecimalEncoder),
                 )
             logger.info(response)
 

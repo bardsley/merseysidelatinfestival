@@ -6,6 +6,7 @@ from boto3.dynamodb.conditions import Key, Attr
 import os
 import logging
 from decimal import Decimal
+from shared import DecimalEncoder as shared
 
 logger = logging.getLogger()
 logger.setLevel("INFO")
@@ -15,12 +16,6 @@ db = boto3.resource('dynamodb')
 table = db.Table(os.environ.get("PRODUCTS_TABLE_NAME"))
 
 lambda_client = boto3.client('lambda')
-
-class DecimalEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Decimal):
-            return str(obj)
-        return super().default(obj)
 
 # Turn line items into a array detailing the access the person has i.e. what
 # parts of the fetival.
@@ -37,19 +32,22 @@ def process_line_items(line_items):
     line_items_return = [] #!TODO This is gonna be more complicated as there's no meta in iZettle
     for item in line_items:
         sku = item['sku']
-        product = list(filter(lambda d: d['prod_name'] == sku, products))
         logger.info(sku)
-        logger.info(product)
-        access_metadata = product[0]['access'] #! Doesnt deal with student product
-        logger.info(access_metadata)
-        access = [sum(i) for i in zip(access, access_metadata)]
+        product = list(filter(lambda d: d['prod_name'] == sku, products))
+        if(product == []):
+            logger.info("Product not found")
+        else:
+            logger.info(product)
+            access_metadata = product[0]['access'] #! Doesnt deal with student product
+            logger.info(access_metadata)
+            access = [sum(i) for i in zip(access, access_metadata)]
 
-        line_items_return.append({
-            'prod_id':item['productUuid'],
-            'price_id':item['variantUuid'],
-            'description':item['name'],
-            'amount_total':item['unitPrice'] * int(item['quantity']),
-        })
+            line_items_return.append({
+                'prod_id':item['productUuid'],
+                'price_id':item['variantUuid'],
+                'description':item['name'],
+                'amount_total':item['unitPrice'] * int(item['quantity']),
+            })
 
     return access, line_items_return
 
@@ -64,32 +62,35 @@ def process_event(payload, context):
     full_name = 'Unknown'
     email = payload['purchaseUuid']
     phone = 'Unknown'
-    
-    # Create the ticket
-    logger.info("Invoking create_ticket lambda")
-    response = lambda_client.invoke(
-        FunctionName='dev-create_ticket',
-        InvocationType='Event',
-        Payload=json.dumps({
-            'email': email,      
-            'full_name': full_name,
-            'phone':phone,
-            'purchase_date': payload['timestamp'],
-            'line_items': line_items,
-            'access': access,
-            'status': "paid_izettle",
-            'student_ticket': student_ticket,
-            'promo_code': None,
-            'meal_preferences': meal,
-            'checkout_session': CHECKOUT_SESSION_ID, 
-            'schedule': None,
-            'heading_message':"THANK YOU FOR YOUR PURCHASE!",
-            'send_standard_ticket': False,
-            },cls=DecimalEncoder),
-        )
-    logger.info(response)
+    if(access == [0,0,0,0,0,0]):
+        logger.info("No Ticket provided match")
+        return {'statusCode':404, 'body': json.dumps({'message':"No products Matched", "purchaseUuid": CHECKOUT_SESSION_ID})}
+    else:
+        # Create the ticket
+        logger.info("Invoking create_ticket lambda")
+        response = lambda_client.invoke(
+            FunctionName='dev-create_ticket',
+            InvocationType='Event',
+            Payload=json.dumps({
+                'email': email,      
+                'full_name': full_name,
+                'phone':phone,
+                'purchase_date': payload['timestamp'],
+                'line_items': line_items,
+                'access': access,
+                'status': "paid_izettle",
+                'student_ticket': student_ticket,
+                'promo_code': None,
+                'meal_preferences': meal,
+                'checkout_session': CHECKOUT_SESSION_ID, 
+                'schedule': None,
+                'heading_message':"THANK YOU FOR YOUR PURCHASE!",
+                'send_standard_ticket': False,
+                },cls=shared.DecimalEncoder),
+            )
+        logger.info(response)
             
-    return {'statusCode':200, 'body': json.dumps({'message':"Ticket Created"})}
+        return {'statusCode':200, 'body': json.dumps({'message':"Ticket Created"})}
 
 def lambda_handler(event, context):
     # Check we have a body

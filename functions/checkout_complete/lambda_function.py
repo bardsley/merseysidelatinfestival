@@ -9,6 +9,19 @@ from boto3.dynamodb.conditions import Key, Attr
 import os
 import logging
 from decimal import Decimal
+from shared import DecimalEncoder as shared
+# from json.decoder import JSONDecodeError
+
+# class DecimalEncoder(json.JSONEncoder):
+#     def default(self, obj):
+#         if isinstance(obj, Decimal):
+#             if float(obj) == int(obj):
+#                 return int(obj)
+#             elif str(float(obj)) == str(obj):
+#                 return float(obj)
+#             else:
+#                 return float(obj)
+#         return super().default(obj)
 
 logger = logging.getLogger()
 logger.setLevel("INFO")
@@ -20,12 +33,11 @@ db = boto3.resource('dynamodb')
 table = db.Table(os.environ.get("ATTENDEES_TABLE_NAME"))
 
 lambda_client = boto3.client('lambda')
-
-class DecimalEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Decimal):
-            return str(obj)
-        return super().default(obj)
+# class DecimalEncoder(json.JSONEncoder):
+#     def default(self, obj):
+#         if isinstance(obj, Decimal):
+#             return str(obj)
+#         return super().default(obj)
 
 # Turn line items into a array detailing the access the person has i.e. what
 # parts of the fetival.
@@ -46,11 +58,6 @@ def process_line_items(line_items):
             })
 
     return access, line_items_return
-
-# put the corresponding data into the dynamodb table
-def update_ddb(Item):
-    table.put_item(Item=Item)
-    return True
 
 # Main function to handle the event
 def lambda_handler(event, context):
@@ -83,7 +90,7 @@ def lambda_handler(event, context):
         # Create the ticket
         logger.info("Invoking create_ticket lambda")
         response = lambda_client.invoke(
-            FunctionName='dev-create_ticket',
+            FunctionName=os.environ.get("CREATE_TICKET_LAMBDA"),
             InvocationType='Event',
             Payload=json.dumps({
                 'email': email,      
@@ -100,7 +107,7 @@ def lambda_handler(event, context):
                 'schedule': None,
                 'heading_message':"THANK YOU FOR YOUR PURCHASE!",
                 'send_standard_ticket': True,
-                },cls=DecimalEncoder),
+                },cls=shared.DecimalEncoder),
             )
         logger.info(response)
             

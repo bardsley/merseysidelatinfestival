@@ -17,6 +17,9 @@ from decimal import Decimal
 import boto3
 from boto3.dynamodb.conditions import Key
 
+from shared import DecimalEncoder as shared
+
+
 logger = logging.getLogger()
 logger.setLevel("INFO")
 
@@ -78,11 +81,11 @@ def update_table(input, key, condition=None):
         logger.error("The ticket does not exist")
         raise ValueError("Ticket number does not exist or match email.")
 
-class DecimalEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Decimal):
-            return str(obj)
-        return super().default(obj)
+# class DecimalEncoder(json.JSONEncoder):
+#     def default(self, obj):
+#         if isinstance(obj, Decimal):
+#             return str(obj)
+#         return super().default(obj)
 
 def lambda_handler(event, context):
     try:
@@ -137,7 +140,7 @@ def lambda_handler(event, context):
                     'email_from': ticket_entry['email'],
                     'full_name_from': ticket_entry['full_name'],
                     'heading_message': "A TICKET HAS BEEN TRANSFERRED TO YOU!"
-                }, cls=DecimalEncoder),
+                }, cls=shared.DecimalEncoder),
             )
         logger.info(response)
         
@@ -181,7 +184,7 @@ def lambda_handler(event, context):
                 'checkout_session': None, 
                 'schedule': ticket_entry['schedule'],
                 'history': history
-                },cls=DecimalEncoder),
+                },cls=shared.DecimalEncoder),
             )
         logger.info(create_ticket)
 
@@ -212,7 +215,7 @@ def lambda_handler(event, context):
                     'email_from': ticket_entry['email'],
                     'full_name_from': ticket_entry['full_name'],
                     'heading_message': "A TICKET HAS BEEN TRANSFERRED TO YOU!"
-                }, cls=DecimalEncoder),
+                }, cls=shared.DecimalEncoder),
             )
         logger.info(response)
         

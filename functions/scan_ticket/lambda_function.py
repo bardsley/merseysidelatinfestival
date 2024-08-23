@@ -7,15 +7,7 @@ from decimal import Decimal
 from json.decoder import JSONDecodeError
 logger = logging.getLogger()
 logger.setLevel("INFO")
-
-class DecimalEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Decimal):
-            if float(obj) == int(obj):
-                return int(obj)
-            else:
-                return float(obj)
-        return super().default(obj)
+from shared import DecimalEncoder as shared
 
 # #* This is not required for deployment only needed for local testing 
 # logging.basicConfig()
@@ -119,7 +111,7 @@ def get(event):
 
     lambdaResponse = {
             'statusCode': 200,
-            'body': json.dumps(ticket_entry, cls=DecimalEncoder),
+            'body': json.dumps(ticket_entry, cls=shared.DecimalEncoder),
             "headers": {
                 "Content-Type": "application/json"
             }

@@ -57,11 +57,11 @@ provider:
 
 layers:
   dynamodb:
-    path: _layers/dynamodb/python
+    path: _layers/dynamodb
   stripe:
-    path: _layers/stripe/python
+    path: _layers/stripe
   sendmail:
-    path: _layers/sendmail/python
+    path: _layers/sendmail
   github:
     path: _layers/github/python
 
@@ -121,6 +121,7 @@ functions:
       patterns:
         - '!**/**'
         - "card_payment/**"
+        - "shared/**"
     environment:
       PRODUCTS_TABLE_NAME: ${param:stripeProductsTableName}
     layers:
@@ -138,10 +139,13 @@ functions:
       patterns:
         - '!**/**'
         - "checkout_complete/**"
+        - "shared/**"
     environment:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
       STRIPE_SECRET_KEY: ${param:stripeSecretKey}
+      CREATE_TICKET_LAMBDA: "${sls:stage}-create_ticket" #! Can't find a way to set this other than as a params that gets used byt function and the function itself
     layers:
+      - !Ref StripeLambdaLayer
       - !Ref DynamodbLambdaLayer
       - !Ref SendmailLambdaLayer
     events:
@@ -157,6 +161,7 @@ functions:
       patterns:
         - '!**/**'
         - "create_ticket/**"
+        - "shared/**"
     environment:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
       STRIPE_SECRET_KEY: ${param:stripeSecretKey}
@@ -171,6 +176,7 @@ functions:
       patterns:
         - '!**/**'
         - "customer_preferences/**"
+        - "shared/**"
     environment:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
     layers:
@@ -192,6 +198,7 @@ functions:
       patterns:
         - '!**/**'
         - "gen_price_update/**"
+        - "shared/**"
     environment:
       PRODUCTS_TABLE_NAME: ${param:stripeProductsTableName}
       STRIPE_SECRET_KEY: ${param:stripeSecretKey}
@@ -207,6 +214,7 @@ functions:
       patterns:
         - '!**/**'
         - "get_attendees/**"
+        - "shared/**"
     environment:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
     layers:
@@ -225,6 +233,7 @@ functions:
       patterns:
         - '!**/**'
         - "scan_ticket/**"
+        - "shared/**"
     environment:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
     layers:
@@ -246,6 +255,7 @@ functions:
       patterns:
         - '!**/**'
         - "send_email/**"
+        - "shared/**"
     environment:
       SENDGRID_API_KEY: ${param:sendgridApiKey}
 
@@ -257,6 +267,7 @@ functions:
       patterns:
         - '!**/**'
         - "send_ticket/**"
+        - "shared/**"
     environment:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
     layers:
@@ -276,6 +287,7 @@ functions:
       patterns:
         - '!**/**'
         - "stripe_price_update/**"
+        - "shared/**"
     environment:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
       PRODUCTS_TABLE_NAME: ${param:stripeProductsTableName}
@@ -295,6 +307,7 @@ functions:
       patterns:
         - '!**/**'
         - "transfer_owner/**"
+        -  "shared/**"
     environment:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
     layers:
