@@ -17,7 +17,7 @@ package:
 
 stages:
   default:
-    observability: true
+    observability: false
     params:
       attendeesTableName: "${sls:stage}-mlf-attendees"
       stripeProductsTableName: "${sls:stage}-mlf-stripe-products"
