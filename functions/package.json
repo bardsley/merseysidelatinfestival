@@ -1,0 +1,14 @@
+{
+  "name": "congress-system",
+  "version": "0.3.1",
+  "private": true,
+  "license": "Contact Adam & Connor for details",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "node --version"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}

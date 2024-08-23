@@ -1,0 +1,297 @@
+org: danceenginesystems # Needs a name for the organization
+app: dance-engine # Need to see what connor thinks of name
+service: api # Do we need multiple services? 
+frameworkVersion: '4.1'
+
+plugins:
+  - serverless-prune-plugin
+
+custom:
+  prune:
+    automatic: true
+    includeLayers: true
+    number: 10
+
+package:
+  individually: true
+
+stages:
+  default:
+    observability: true
+    params:
+      attendeesTableName: "${sls:stage}-mlf-attendees"
+      stripeProductsTableName: "${sls:stage}-mlf-stripe-products"
+      isProd: false
+  prod:
+    params:
+      isProd: true
+    
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  memorySize: 128
+  region: eu-west-1
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - Fn::GetAtt: [AttendeesTable, Arn]
+            - Fn::GetAtt: [StripeProductsTable, Arn]
+            - { "Fn::Join": [ "/", [ 
+                { "Fn::GetAtt": ["AttendeesTable", "Arn" ] }, "index", "ticket_number-index" 
+              ]]}
+        - Effect: Allow
+          Action:
+            - lambda:InvokeFunction
+          Resource:
+            - '*'
+
+layers:
+  dynamodb:
+    path: _layers/dynamodb/python
+  stripe:
+    path: _layers/stripe/python
+  sendmail:
+    path: _layers/sendmail/python
+  github:
+    path: _layers/github/python
+
+resources:
+  Resources:
+    AttendeesTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        DeletionProtectionEnabled: ${param:isProd}
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: ${param:isProd}
+        AttributeDefinitions:
+          - AttributeName: email 
+            AttributeType: S
+          - AttributeName: ticket_number 
+            AttributeType: S
+        KeySchema:
+          - AttributeName: email 
+            KeyType: HASH
+          - AttributeName: ticket_number 
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${param:attendeesTableName}
+        GlobalSecondaryIndexes:
+          - IndexName: ticket_number-index
+            KeySchema:
+              - AttributeName: ticket_number 
+                KeyType: HASH
+            Projection:
+              ProjectionType: 'ALL'
+    StripeProductsTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        DeletionProtectionEnabled: ${param:isProd}
+        AttributeDefinitions:
+          - AttributeName: prod_id 
+            AttributeType: S
+          - AttributeName: price_id  
+            AttributeType: S
+        KeySchema:
+          - AttributeName: prod_id
+            KeyType: HASH
+          - AttributeName: price_id
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${param:stripeProductsTableName}
+
+functions:
+  Example:
+    handler: example/lambda_function.example
+
+#   CardPayment:
+#     runtime: python3.11
+#     handler: card_payment/lambda_function.lambda_handler
+#     name: "${sls:stage}-card_payment"
+#     package:
+#       patterns:
+#         - '!**/**'
+#         - "card_payment/**"
+#     environment:
+#       PRODUCTS_TABLE_NAME: ${param:stripeProductsTableName}
+#     layers:
+#       - !Ref DynamodbLambdaLayer
+#     events:
+#       - httpApi:
+#           path: /card_payment
+#           method: post
+
+  # CheckoutComplete:
+  #   handler: checkout_complete/lambda_function.lambda_handler
+  #   name: "${sls:stage}-checkout_complete"
+  #   package:
+  #     patterns:
+  #       - '!**/**'
+  #       - "checkout_complete/**"
+  #   environment:
+  #     ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+  #     STRIPE_SECRET_KEY: ${param:stripeSecretKey}
+  #   layers:
+  #     - !Ref DynamodbLambdaLayer
+  #     - !Ref SendmailLambdaLayer
+  #   events:
+  #     - httpApi:
+  #         path: /checkout_complete
+  #         method: post 
+
+  # CreateTicket:
+  #   handler: create_ticket/lambda_function.lambda_handler
+  #   name: "${sls:stage}-create_ticket"
+  #   package:
+  #     patterns:
+  #       - '!**/**'
+  #       - "create_ticket/**"
+  #   environment:
+  #     ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+  #     STRIPE_SECRET_KEY: ${param:stripeSecretKey}
+  #   layers:
+  #     - !Ref DynamodbLambdaLayer
+
+  # CustomerPreferences:
+  #   handler: customer_preferences/lambda_function.lambda_handler
+  #   name: "${sls:stage}-customer-preferences"
+  #   package:
+  #     patterns:
+  #       - '!**/**'
+  #       - "customer_preferences/**"
+  #   environment:
+  #     ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+  #   layers:
+  #     - !Ref DynamodbLambdaLayer
+  #     - !Ref GithubLambdaLayer
+  #   events:
+  #     - httpApi:
+  #         path: /customer_preferences
+  #         method: get
+  #     - httpApi:
+  #         path: /customer_preferences
+  #         method: post
+
+  # GeneratePricingUpdate:
+  #   handler: gen_price_update/lambda_function.lambda_handler
+  #   name: "${sls:stage}-gen_price_update"
+  #   package:
+  #     patterns:
+  #       - '!**/**'
+  #       - "gen_price_update/**"
+  #   environment:
+  #     PRODUCTS_TABLE_NAME: ${param:stripeProductsTableName}
+  #     STRIPE_SECRET_KEY: ${param:stripeSecretKey}
+  #     GITHUB_TOKEN: ${param:githubToken}
+  #   layers:
+  #     - !Ref StripeLambdaLayer
+
+  # GetAttendees:
+  #   handler: get_attendees/lambda_function.lambda_handler
+  #   name: "${sls:stage}-get_attendees"
+  #   package:
+  #     patterns:
+  #       - '!**/**'
+  #       - "get_attendees/**"
+  #   environment:
+  #     ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+  #   layers:
+  #     - !Ref DynamodbLambdaLayer
+  #     - !Ref StripeLambdaLayer
+  #   events:
+  #     - httpApi:
+  #         path: /get_attendees
+  #         method: get
+
+  # ScanTicket:
+  #   handler: scan_ticket/lambda_function.lambda_handler
+  #   name: "${sls:stage}-scan_ticket"
+  #   package:
+  #     patterns:
+  #       - '!**/**'
+  #       - "scan_ticket/**"
+  #   environment:
+  #     ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+  #   layers:
+  #     - !Ref DynamodbLambdaLayer
+  #     - !Ref GithubLambdaLayer
+  #   events:
+  #     - httpApi:
+  #         path: /scan_ticket
+  #         method: get
+  #     - httpApi:
+  #         path: /scan_ticket
+  #         method: post
+
+  # SendEmail:
+  #   handler: send_email/lambda_function.lambda_handler
+  #   name: "${sls:stage}-send_email"
+  #   package:
+  #     patterns:
+  #       - '!**/**'
+  #       - "send_email/**"
+  #   environment:
+  #     SENDGRID_API_KEY: ${param:sendgridApiKey}
+
+  # SendTicket:
+  #   handler: send_ticket/lambda_function.lambda_handler
+  #   name: "${sls:stage}-send_ticket"
+  #   package:
+  #     patterns:
+  #       - '!**/**'
+  #       - "send_ticket/**"
+  #   environment:
+  #     ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+  #   layers:
+  #     - !Ref DynamodbLambdaLayer
+  #     - !Ref SendmailLambdaLayer
+  #     - !Ref GithubLambdaLayer
+  #   events:
+  #     - httpApi:
+  #         path: /send_ticket
+  #         method: post 
+
+  # StripePriceUpdate:
+  #   handler: stripe_price_update/lambda_function.lambda_handler
+  #   name: "${sls:stage}-stripe_price_update"
+  #   package:
+  #     patterns:
+  #       - '!**/**'
+  #       - "stripe_price_update/**"
+  #   environment:
+  #     ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+  #     PRODUCTS_TABLE_NAME: ${param:stripeProductsTableName}
+  #     STRIPE_SECRET_KEY: ${param:stripeSecretKey}
+  #   layers:
+  #     - !Ref DynamodbLambdaLayer
+  #   events:
+  #     - httpApi:
+  #         path: /stripe_price_update
+  #         method: post 
+
+  # TransferOwner:
+  #   handler: transfer_owner/lambda_function.lambda_handler
+  #   name: "${sls:stage}-transfer_owner"
+  #   package:
+  #     patterns:
+  #       - '!**/**'
+  #       - "transfer_owner/**"
+  #   environment:
+  #     ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+  #   layers:
+  #     - !Ref DynamodbLambdaLayer
+  #   events:
+  #     - httpApi:
+  #         path: /transfer_owner
+  #         method: post
