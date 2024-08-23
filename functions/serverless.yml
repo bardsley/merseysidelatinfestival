@@ -29,7 +29,7 @@ stages:
 
 provider:
   name: aws
-  runtime: nodejs.18.x
+  runtime: nodejs18.x
   memorySize: 128
   region: eu-west-1
   iam:
@@ -114,6 +114,7 @@ resources:
 functions:
 
   CardPayment:
+    runtime: python3.11
     handler: card_payment/lambda_function.lambda_handler
     name: "${sls:stage}-card_payment"
     package:
@@ -130,6 +131,7 @@ functions:
           method: post
 
   CheckoutComplete:
+    runtime: python3.11
     handler: checkout_complete/lambda_function.lambda_handler
     name: "${sls:stage}-checkout_complete"
     package:
@@ -148,6 +150,7 @@ functions:
           method: post 
 
   CreateTicket:
+    runtime: python3.11
     handler: create_ticket/lambda_function.lambda_handler
     name: "${sls:stage}-create_ticket"
     package:
@@ -161,6 +164,7 @@ functions:
       - !Ref DynamodbLambdaLayer
 
   CustomerPreferences:
+    runtime: python3.11
     handler: customer_preferences/lambda_function.lambda_handler
     name: "${sls:stage}-customer-preferences"
     package:
