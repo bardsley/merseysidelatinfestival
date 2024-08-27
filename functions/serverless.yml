@@ -22,9 +22,12 @@ stages:
       attendeesTableName: "${sls:stage}-mlf-attendees"
       stripeProductsTableName: "${sls:stage}-mlf-stripe-products"
       isProd: false
+      deletionPolicy: Delete 
+      skipTables: true
   prod:
     params:
       isProd: true
+      deletionPolicy: Retain  
     
 
 provider:
@@ -70,7 +73,7 @@ resources:
   Resources:
     AttendeesTable:
       Type: AWS::DynamoDB::Table
-      DeletionPolicy: Retain
+      DeletionPolicy: ${param:deletionPolicy}
       Properties:
         DeletionProtectionEnabled: ${param:isProd}
         PointInTimeRecoverySpecification:
@@ -96,9 +99,9 @@ resources:
               ProjectionType: 'ALL'
     StripeProductsTable:
       Type: AWS::DynamoDB::Table
-      DeletionPolicy: Retain
+      DeletionPolicy: ${param:deletionPolicy}
       Properties:
-        DeletionProtectionEnabled: true #${param:isProd}
+        DeletionProtectionEnabled: ${param:isProd}
         AttributeDefinitions:
           - AttributeName: prod_id 
             AttributeType: S
@@ -111,6 +114,13 @@ resources:
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         TableName: ${param:stripeProductsTableName}
+    APIMapping:
+      Type: AWS::ApiGatewayV2::ApiMapping
+      DependsOn: HttpApi
+      Properties:
+        Stage: $default
+        DomainName: "${sls:stage}.api.engine.dance"
+        ApiId: !Ref HttpApi
 
 functions:
 
