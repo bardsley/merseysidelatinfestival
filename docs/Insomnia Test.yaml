@@ -1,8 +1,348 @@
 _type: export
 __export_format: 4
-__export_date: 2024-08-21T21:53:29.503Z
+__export_date: 2024-08-27T13:44:07.713Z
 __export_source: insomnia.desktop.app:v9.3.3
 resources:
+  - _id: req_af6ddb47006c47c583e4e1aac33bfb19
+    parentId: fld_8569c43008204702afbab55af416cef9
+    modified: 1724765319873
+    created: 1724055955321
+    url: "{{ _.baseUrl }}/scan_ticket"
+    name: Mark Ticket Scanned
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-2
+         {
+            "ticket_number": "5510973284",
+            "email": "adam@adambardsley.co.uk",
+            "check_in_at": 1724081587
+          }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/9.3.3
+    authentication: {}
+    metaSortKey: -1724765317539
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_8569c43008204702afbab55af416cef9
+    parentId: fld_df0040b58adc4f028c1fed3f0481beda
+    modified: 1724765311318
+    created: 1724765311318
+    name: Scan
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1724765311318
+    _type: request_group
+  - _id: fld_df0040b58adc4f028c1fed3f0481beda
+    parentId: wrk_25d7cca749e94f8aa85253e7e9c41b5d
+    modified: 1724755448875
+    created: 1724055952445
+    name: MLF Dev
+    description: ""
+    environment:
+      baseUrl: https://preview.api.engine.dance
+    environmentPropertyOrder:
+      "&":
+        - baseUrl
+    metaSortKey: -1724055952446
+    _type: request_group
+  - _id: wrk_25d7cca749e94f8aa85253e7e9c41b5d
+    parentId: null
+    modified: 1723846627191
+    created: 1722441859653
+    name: "MLF "
+    description: ""
+    scope: collection
+    _type: workspace
+  - _id: req_af1b96fd949f4d02a0a23c3123f1b195
+    parentId: fld_8569c43008204702afbab55af416cef9
+    modified: 1724765317486
+    created: 1724056352159
+    url: "{{ _.baseUrl }}/scan_ticket"
+    name: Get Ticket to Scan
+    description: ""
+    method: GET
+    body: {}
+    parameters:
+      - name: ticket_number
+        value: "5510973284"
+        id: pair_b09cd2f5145948c7be1d790a4edaf67c
+    headers:
+      - name: User-Agent
+        value: insomnia/9.3.3
+    authentication: {}
+    metaSortKey: -1724765317439
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_a9739d7d32a84ad1987892b9d22e0607
+    parentId: fld_2f8a4cc6cdcd4a7da773448c899ff15b
+    modified: 1724766093791
+    created: 1724765908527
+    url: "{{ _.baseUrl }}/customer_preferences"
+    name: Update Meal Preferences
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-2
+         {
+            "ticket_number": "7985832222",
+            "email": "salsa@salsaliverpool.com",
+            "preferences": {
+              "choices": [1,1,1],
+              "dietary_requirements": {
+                "selected": ["halal"],
+                "other": "No cheese please"
+              },
+              "seating_preference": [1023,12039]
+            }
+          }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/9.3.3
+    authentication: {}
+    metaSortKey: -1724765908527
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_2f8a4cc6cdcd4a7da773448c899ff15b
+    parentId: fld_df0040b58adc4f028c1fed3f0481beda
+    modified: 1724765293875
+    created: 1724765293875
+    name: Preferences
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1724765293875
+    _type: request_group
+  - _id: req_b4db696a057e481e850ace1a570133b6
+    parentId: fld_2f8a4cc6cdcd4a7da773448c899ff15b
+    modified: 1724765347449
+    created: 1724762479304
+    url: "{{ _.baseUrl }}/customer_preferences"
+    name: Get a Ticket Info
+    description: ""
+    method: GET
+    body: {}
+    parameters:
+      - id: pair_c68d7f68498348a9be017aad59157f38
+        name: requested
+        value: info
+        description: ""
+        disabled: false
+      - id: pair_2d88c876cf854f08b1063d34ea438038
+        name: ticketnumber
+        value: "7985832222"
+        description: ""
+        disabled: false
+      - id: pair_c10f70ce2df44e5fb0657d2e26020540
+        name: email
+        value: salsa@salsaliverpool.com
+        description: ""
+        disabled: false
+    headers:
+      - name: User-Agent
+        value: insomnia/9.3.3
+    authentication: {}
+    metaSortKey: -1724765343537
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_5cec1445bf5641dd96cdbdc2c1931b88
+    parentId: fld_2f8a4cc6cdcd4a7da773448c899ff15b
+    modified: 1724765345111
+    created: 1724764765269
+    url: "{{ _.baseUrl }}/customer_preferences"
+    name: Get a Ticket Validity
+    description: ""
+    method: GET
+    body: {}
+    parameters:
+      - id: pair_c68d7f68498348a9be017aad59157f38
+        name: requested
+        value: validity
+        description: ""
+        disabled: false
+      - id: pair_2d88c876cf854f08b1063d34ea438038
+        name: ticketnumber
+        value: "7985832222"
+        description: ""
+        disabled: false
+      - id: pair_c10f70ce2df44e5fb0657d2e26020540
+        name: email
+        value: salsa@salsaliverpool.com
+        description: ""
+        disabled: false
+    headers:
+      - name: User-Agent
+        value: insomnia/9.3.3
+    authentication: {}
+    metaSortKey: -1724765343437
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_580ef2a48082494a82d2e6200b55040b
+    parentId: fld_2f8a4cc6cdcd4a7da773448c899ff15b
+    modified: 1724766178926
+    created: 1724764732332
+    url: "{{ _.baseUrl }}/customer_preferences"
+    name: Get a Ticket Meal
+    description: ""
+    method: GET
+    body: {}
+    parameters:
+      - id: pair_c68d7f68498348a9be017aad59157f38
+        name: requested
+        value: preferences
+        description: ""
+        disabled: false
+      - id: pair_2d88c876cf854f08b1063d34ea438038
+        name: ticketnumber
+        value: "7985832222"
+        description: ""
+        disabled: false
+      - id: pair_c10f70ce2df44e5fb0657d2e26020540
+        name: email
+        value: salsa@salsaliverpool.com
+        description: ""
+        disabled: false
+    headers:
+      - name: User-Agent
+        value: insomnia/9.3.3
+    authentication: {}
+    metaSortKey: -1724765343337
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_b5d97636eed54916a6706ad828334e9a
+    parentId: fld_195c92ffc1cc459d9da3ca52ae26a655
+    modified: 1724765285929
+    created: 1724501573453
+    url: "{{ _.baseUrl }}/checkout_complete"
+    name: Checkout Complete from Stripe
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: >-
+        {
+        	"type": "checkout.session.completed",
+        	"data": {
+        		"object": {
+        			"id": "cs_test_b147nKONj44fRwfKvVRqiAaU1txZypSuI8c7a6bcYRFIX6EpzHOFer70Gc"
+        		}
+        	}
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/9.3.3
+    authentication: {}
+    metaSortKey: -1724765285883
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_195c92ffc1cc459d9da3ca52ae26a655
+    parentId: fld_df0040b58adc4f028c1fed3f0481beda
+    modified: 1724765281815
+    created: 1724765273036
+    name: Checkout
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1724765273036
+    _type: request_group
+  - _id: req_ce76c452c9b54219b14a01fff65251ad
+    parentId: fld_195c92ffc1cc459d9da3ca52ae26a655
+    modified: 1724765394968
+    created: 1724765387742
+    url: "{{ _.baseUrl }}/checkout_complete"
+    name: Failed Checkout
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"type": "checkout.session.completed",
+        	"data": {
+        		"object": {
+        			"id": "DoesntExist"
+        		}
+        	}
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/9.3.3
+    authentication: {}
+    metaSortKey: -1724433985615.5
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
   - _id: req_93344fcce12e4ffab03108ec949df4b4
     parentId: fld_df0040b58adc4f028c1fed3f0481beda
     modified: 1724103216513
@@ -30,87 +370,6 @@ resources:
         value: insomnia/9.3.3
     authentication: {}
     metaSortKey: -1724102685348
-    isPrivate: false
-    pathParameters: []
-    settingStoreCookies: true
-    settingSendCookies: true
-    settingDisableRenderRequestBody: false
-    settingEncodeUrl: true
-    settingRebuildPath: true
-    settingFollowRedirects: global
-    _type: request
-  - _id: fld_df0040b58adc4f028c1fed3f0481beda
-    parentId: wrk_25d7cca749e94f8aa85253e7e9c41b5d
-    modified: 1724086524527
-    created: 1724055952445
-    name: MLF Dev
-    description: ""
-    environment:
-      baseUrl: https://dev.api.engine.dance
-    environmentPropertyOrder:
-      "&":
-        - baseUrl
-    metaSortKey: -1724055952446
-    _type: request_group
-  - _id: wrk_25d7cca749e94f8aa85253e7e9c41b5d
-    parentId: null
-    modified: 1723846627191
-    created: 1722441859653
-    name: "MLF "
-    description: ""
-    scope: collection
-    _type: workspace
-  - _id: req_af6ddb47006c47c583e4e1aac33bfb19
-    parentId: fld_df0040b58adc4f028c1fed3f0481beda
-    modified: 1724086503476
-    created: 1724055955321
-    url: "{{ _.baseUrl }}/scan_ticket"
-    name: Mark Ticket Scanned
-    description: ""
-    method: POST
-    body:
-      mimeType: application/json
-      text: |-2
-         {
-            "ticket_number": "5510973284",
-            "email": "adam@adambardsley.co.uk",
-            "check_in_at": 1724081587
-          }
-    parameters: []
-    headers:
-      - name: Content-Type
-        value: application/json
-      - name: User-Agent
-        value: insomnia/9.3.3
-    authentication: {}
-    metaSortKey: -1724056328483
-    isPrivate: false
-    pathParameters: []
-    settingStoreCookies: true
-    settingSendCookies: true
-    settingDisableRenderRequestBody: false
-    settingEncodeUrl: true
-    settingRebuildPath: true
-    settingFollowRedirects: global
-    _type: request
-  - _id: req_af1b96fd949f4d02a0a23c3123f1b195
-    parentId: fld_df0040b58adc4f028c1fed3f0481beda
-    modified: 1724086535040
-    created: 1724056352159
-    url: "{{ _.baseUrl }}/scan_ticket"
-    name: Get Ticket to Scan
-    description: ""
-    method: GET
-    body: {}
-    parameters:
-      - name: ticket_number
-        value: "5510973284"
-        id: pair_b09cd2f5145948c7be1d790a4edaf67c
-    headers:
-      - name: User-Agent
-        value: insomnia/9.3.3
-    authentication: {}
-    metaSortKey: -1724056127735
     isPrivate: false
     pathParameters: []
     settingStoreCookies: true
@@ -396,10 +655,10 @@ resources:
     created: 1722441859654
     name: Base Environment
     data:
-      IZETTLE_CLIENT_ID: xxxxxxx
-      IZETTLE_API_KEY: xxxxx
-      IZETTLE_ACCESS_TOKEN: xxx
-      IZETTLE_UID: xxx
+      IZETTLE_CLIENT_ID: xxxxx
+      IZETTLE_API_KEY: xxxxxx
+      IZETTLE_ACCESS_TOKEN: xxxxxx
+      IZETTLE_UID: xxxxxxxx
     dataPropertyOrder:
       "&":
         - IZETTLE_CLIENT_ID
