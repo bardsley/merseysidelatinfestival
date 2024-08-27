@@ -32,6 +32,7 @@ provider:
   runtime: nodejs18.x # Needed to enable serverless to run on github actions
   memorySize: 128 # I think this might be overkill
   region: eu-west-1
+  stage: ${opt:stage, env:stage, 'preview'}
   iam:
     role:
       statements:
@@ -123,7 +124,7 @@ functions:
         - "card_payment/**"
         - "shared/**"
     environment:
-      STAGE_NAME: ${opt:stage}
+      STAGE_NAME: ${sls:stage}
       PRODUCTS_TABLE_NAME: ${param:stripeProductsTableName}
     layers:
       - !Ref DynamodbLambdaLayer
@@ -142,7 +143,7 @@ functions:
         - "checkout_complete/**"
         - "shared/**"
     environment:
-      STAGE_NAME: ${opt:stage}
+      STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
       STRIPE_SECRET_KEY: ${param:stripeSecretKey}
       CREATE_TICKET_LAMBDA: "${sls:stage}-create_ticket" #! Can't find a way to set this other than as a params that gets used byt function and the function itself
@@ -165,7 +166,7 @@ functions:
         - "create_ticket/**"
         - "shared/**"
     environment:
-      STAGE_NAME: ${opt:stage}
+      STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
       STRIPE_SECRET_KEY: ${param:stripeSecretKey}
     layers:
@@ -181,7 +182,7 @@ functions:
         - "customer_preferences/**"
         - "shared/**"
     environment:
-      STAGE_NAME: ${opt:stage}
+      STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
     layers:
       - !Ref DynamodbLambdaLayer
@@ -204,7 +205,7 @@ functions:
         - "gen_price_update/**"
         - "shared/**"
     environment:
-      STAGE_NAME: ${opt:stage}
+      STAGE_NAME: ${sls:stage}
       PRODUCTS_TABLE_NAME: ${param:stripeProductsTableName}
       STRIPE_SECRET_KEY: ${param:stripeSecretKey}
       GITHUB_TOKEN: ${param:githubToken}
@@ -221,7 +222,7 @@ functions:
         - "get_attendees/**"
         - "shared/**"
     environment:
-      STAGE_NAME: ${opt:stage}
+      STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
     layers:
       - !Ref DynamodbLambdaLayer
@@ -241,7 +242,7 @@ functions:
         - "scan_ticket/**"
         - "shared/**"
     environment:
-      STAGE_NAME: ${opt:stage}
+      STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
     layers:
       - !Ref DynamodbLambdaLayer
@@ -264,7 +265,7 @@ functions:
         - "send_email/**"
         - "shared/**"
     environment:
-      STAGE_NAME: ${opt:stage}
+      STAGE_NAME: ${sls:stage}
       SENDGRID_API_KEY: ${param:sendgridApiKey}
 
   SendTicket:
@@ -277,7 +278,7 @@ functions:
         - "send_ticket/**"
         - "shared/**"
     environment:
-      STAGE_NAME: ${opt:stage}
+      STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
     layers:
       - !Ref DynamodbLambdaLayer
@@ -298,7 +299,7 @@ functions:
         - "stripe_price_update/**"
         - "shared/**"
     environment:
-      STAGE_NAME: ${opt:stage}
+      STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
       PRODUCTS_TABLE_NAME: ${param:stripeProductsTableName}
       STRIPE_SECRET_KEY: ${param:stripeSecretKey}
@@ -319,7 +320,7 @@ functions:
         - "transfer_owner/**"
         -  "shared/**"
     environment:
-      STAGE_NAME: ${opt:stage}
+      STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
     layers:
       - !Ref DynamodbLambdaLayer
