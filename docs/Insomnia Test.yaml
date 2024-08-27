@@ -1,6 +1,6 @@
 _type: export
 __export_format: 4
-__export_date: 2024-08-27T13:44:07.713Z
+__export_date: 2024-08-27T13:53:43.007Z
 __export_source: insomnia.desktop.app:v9.3.3
 resources:
   - _id: req_af6ddb47006c47c583e4e1aac33bfb19
@@ -651,20 +651,11 @@ resources:
     _type: request
   - _id: env_0a26668ba1dd2ab5242be1eeb22fc82b0a216478
     parentId: wrk_25d7cca749e94f8aa85253e7e9c41b5d
-    modified: 1724086599565
+    modified: 1724766807900
     created: 1722441859654
     name: Base Environment
-    data:
-      IZETTLE_CLIENT_ID: xxxxx
-      IZETTLE_API_KEY: xxxxxx
-      IZETTLE_ACCESS_TOKEN: xxxxxx
-      IZETTLE_UID: xxxxxxxx
-    dataPropertyOrder:
-      "&":
-        - IZETTLE_CLIENT_ID
-        - IZETTLE_API_KEY
-        - IZETTLE_ACCESS_TOKEN
-        - IZETTLE_UID
+    data: {}
+    dataPropertyOrder: {}
     color: null
     isPrivate: false
     metaSortKey: 1722441859654
