@@ -74,8 +74,15 @@ def lambda_handler(event, context):
         # retrieve the full checkout session including the line items
         #! catch error is checkout session does not exist
         logger.info("Retrieve Stripe checkout session")
-        stripe_response = stripe.checkout.Session.retrieve(CHECKOUT_SESSION_ID, expand=['line_items', 'line_items.data.price.product'])
-        logger.info(stripe_response)
+        try:
+            stripe_response = stripe.checkout.Session.retrieve(CHECKOUT_SESSION_ID, expand=['line_items', 'line_items.data.price.product'])
+            logger.info(stripe_response)
+        except (stripe.error.InvalidRequestError) as e:
+            logger.error(e)
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'error': 'Checkout session does not exist'})
+            }
 
         access, line_items = process_line_items(stripe_response['line_items'])
         student_ticket = True if stripe_response['line_items']['data'][0]['price']['nickname' ] == "student_active" else False
