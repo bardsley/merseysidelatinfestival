@@ -72,9 +72,9 @@ def lambda_handler(event, context):
         CHECKOUT_SESSION_ID = ev_data['data']['object']['id']
                   
         # retrieve the full checkout session including the line items
-        #! catch error is checkout session does not exist
         logger.info("Retrieve Stripe checkout session")
         try:
+            #! Should check if already processed that checkout session ID first, i.e. is it in the DynamoDB
             stripe_response = stripe.checkout.Session.retrieve(CHECKOUT_SESSION_ID, expand=['line_items', 'line_items.data.price.product'])
             logger.info(stripe_response)
         except (stripe.error.InvalidRequestError) as e:
