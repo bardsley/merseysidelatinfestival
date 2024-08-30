@@ -25,6 +25,9 @@
 
 sendgrid.env
 
+# Serverless
+.serverless
+
 # debug
 npm-debug.log*
 yarn-debug.log*

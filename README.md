@@ -1,5 +1,15 @@
-Testing the vercel nameing and PRs
-----------------------------------
+
+Deployment / Development Flow
+=================================
+1. Create a new branch from develop
+2. Make changes until happy
+3. Push to github
+    1. It built successfully and youve playde with the preview?, Carry on to 5 and collect £200
+    2. Do not pass go, fix it and go back to 2
+4. Squash chanegs onto develop with a good message combined mesage
+5. Create a pull request to main if happy to "go live"
+7. Merge Commit to main (one feature = one commit)
+
 
 Useful Links
 ============
