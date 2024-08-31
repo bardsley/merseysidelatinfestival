@@ -4,6 +4,9 @@ import json
 import os
 import logging
 from json.decoder import JSONDecodeError
+from decimal import Decimal
+from shared import DecimalEncoder as shared
+
 logger = logging.getLogger()
 logger.setLevel("INFO")
 
@@ -13,7 +16,7 @@ logger.setLevel("INFO")
 # boto3.setup_default_session(profile_name=profile_name)
 
 db = boto3.resource('dynamodb')
-table = db.Table('dev-mlf24_attendees')
+table = db.Table(os.environ.get("ATTENDEES_TABLE_NAME"))
 
 def get_ticket(ticket_number, email):
     '''
@@ -117,6 +120,7 @@ def get(event):
     '''
     # get data and check that stuff exists
     data = event['queryStringParameters'] 
+    logger.info(data)
     if ('ticketnumber' not in data) and ('email' not in data):
         logger.error("ticketnumber and email not set")
         return err("Must provide ticketnumber and email.")
@@ -130,13 +134,14 @@ def get(event):
     try:
         ticket_entry = get_ticket(ticket_number, email)
     except ValueError as e:
+        logger.error(f"GET TICKET FAILED:, {ticket_number} : {email} - {e}")
         return err(str(e))
 
     response_items = []
     if 'preferences' in event['queryStringParameters']['requested']:
         # check that the meal is included in this ticket, if not return error
-        if ticket_entry['access'][2] < 1: return err("Attempting to get meal options for a ticket which does not include dinner.")
-        
+        if ticket_entry['access'][2] < 1: 
+            return err("Attempting to get meal options for a ticket which does not include dinner.")
         response_items.append({'preferences':ticket_entry['meal_preferences']})
     if 'schedule' in event['queryStringParameters']['requested']:
         response_items.append({'schedule_options':ticket_entry['schedule']})
@@ -144,9 +149,12 @@ def get(event):
         response_items.append({'validity': True})
     if 'info' in event['queryStringParameters']['requested']:
         response_items.append(ticket_entry)
+
+    logger.info(f"Response Items: {response_items}")
+
     return {
             'statusCode': 200,
-            'body': response_items
+            'body': json.dumps(response_items,cls=shared.DecimalEncoder)
         }
 
 def lambda_handler(event, context):
@@ -155,10 +163,13 @@ def lambda_handler(event, context):
     '''    
     logger.info('## NEW REQUEST')
     if event['requestContext']['http']['method'] == 'POST':
+        logger.info('## POST')
         return post(event)
     elif event['requestContext']['http']['method'] == 'GET':
+        logger.info('## GET')
         return get(event)
     else:
+        logger.info('## Erm....')
         return {
             'statusCode': 405,
             'body': "Method Not Allowed"
