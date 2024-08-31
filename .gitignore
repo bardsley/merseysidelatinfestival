@@ -27,6 +27,7 @@ sendgrid.env
 
 # Serverless
 .serverless
+functions/node_modules
 
 # debug
 npm-debug.log*
