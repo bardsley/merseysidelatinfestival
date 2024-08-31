@@ -17,8 +17,8 @@ export async function POST(_req: NextRequest, {params}:{ params: { stripe_id: st
     return Response.json({error: "User is does not have permission to access stripe."}, { status: 401 });
   }
 
-  const newStatus = params.status === "enable" ? true : false;
-
+  const newStatus = params.status === "enable" ? false : true;
+  console.log("newStatus",newStatus)
   const actionOutcome = await stripe.webhookEndpoints.update(
     params.stripe_id,
     {

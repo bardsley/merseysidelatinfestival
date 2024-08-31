@@ -35,9 +35,6 @@ export async function POST(_req: NextRequest) {
   if(!requestingUser.publicMetadata.admin){
     return Response.json({error: "User is does not have permission to access stripe."}, { status: 401 });
   }
-
-  const stripe = require('stripe')('sk_test_26PHem9AhJZvU623DfE1x4sd');
-
   const webhookEndpoint = await stripe.webhookEndpoints.create({
     enabled_events: ['charge.succeeded', 'charge.failed'],
     url: `https://${process.env.VERCEL_ENV}.api.engine.dance/test`,
