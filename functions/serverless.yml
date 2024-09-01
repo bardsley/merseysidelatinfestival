@@ -298,7 +298,7 @@ functions:
     events:
       - httpApi:
           path: /send_ticket
-          method: post 
+          method: get 
 
   StripePriceUpdate:
     runtime: python3.11
