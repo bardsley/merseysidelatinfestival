@@ -136,6 +136,7 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       PRODUCTS_TABLE_NAME: ${param:stripeProductsTableName}
+      CREATE_TICKET_LAMBDA: "${sls:stage}-create_ticket"
     layers:
       - !Ref DynamodbLambdaLayer
     events:
@@ -275,6 +276,7 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       SENDGRID_API_KEY: ${param:sendgridApiKey}
+      SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
 
   SendTicket:
     runtime: python3.11
@@ -288,6 +290,7 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+      SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
     layers:
       - !Ref DynamodbLambdaLayer
       - !Ref SendmailLambdaLayer
@@ -330,6 +333,7 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+      CREATE_TICKET_LAMBDA: "${sls:stage}-create_ticket"
     layers:
       - !Ref DynamodbLambdaLayer
     events:

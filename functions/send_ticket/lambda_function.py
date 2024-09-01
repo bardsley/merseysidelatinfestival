@@ -7,6 +7,7 @@ from decimal import Decimal
 import boto3
 from boto3.dynamodb.conditions import Key
 from shared import DecimalEncoder as shared
+import os
 
 logger = logging.getLogger()
 logger.setLevel("INFO")
@@ -45,7 +46,7 @@ def lambda_handler(event, context):
         # send the email with these details
         logger.info("Invoking send_email lambda")
         response = lambda_client.invoke(
-            FunctionName='dev-send_email',
+            FunctionName=os.environ.get("SEND_EMAIL_LAMBDA"),
             InvocationType='Event',
             Payload=json.dumps({
                     'email_type':"standard_ticket",

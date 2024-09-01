@@ -13,6 +13,7 @@ import json
 import logging
 from json.decoder import JSONDecodeError
 from decimal import Decimal
+import os
 
 import boto3
 from boto3.dynamodb.conditions import Key
@@ -111,6 +112,7 @@ def lambda_handler(event, context):
         return_string += f"It has been refunded. " if "refunded" in ticket_entry['status'] else ""
         return err(return_string)
     
+    # Same Person owns ticket
     if data['email'] == data['email_to']:
         previous_owner = [{
             'date': int(time.time()),
@@ -120,16 +122,19 @@ def lambda_handler(event, context):
             'source': data['source'] if 'source' in data else None #! check this here rather than on client
         }]
 
+        logger.info(f"Previous owner {previous_owner}")
+        logger.info(f"Ticket Enrty owner {ticket_entry}")
+
         input = {
             'full_name': data['name_to'],
-            'history': previous_owner+(ticket_entry['history'] if 'history' in ticket_entry else [])
+            'history': previous_owner+(ticket_entry['history'] if 'history' in ticket_entry else []) #! Null History causes error
         }
         logger.info(input)
         update_table(input, {'email': data['email'], 'ticket_number':data['ticket_number']})
 
         logger.info("Invoking send_email lambda")
         response = lambda_client.invoke(
-            FunctionName='dev-send_email',
+            FunctionName=os.environ.get("SEND_EMAIL_LAMBDA"),
             InvocationType='Event',
             Payload=json.dumps({
                     'email_type':"transfer_ticket",
@@ -168,7 +173,7 @@ def lambda_handler(event, context):
         # Create a new ticket
         logger.info("Invoking create_ticket lambda")
         create_ticket = lambda_client.invoke(
-            FunctionName='dev-create_ticket',
+            FunctionName=os.environ.get("CREATE_TICKET_LAMBDA"),
             InvocationType='RequestResponse',
             Payload=json.dumps({
                 'email': data['email_to'],      
@@ -204,7 +209,7 @@ def lambda_handler(event, context):
 
         logger.info("Invoking send_email lambda")
         response = lambda_client.invoke(
-            FunctionName='dev-send_email',
+            FunctionName=os.environ.get("SEND_EMAIL_LAMBDA"),
             InvocationType='Event',
             Payload=json.dumps({
                     'email_type':"transfer_ticket",
