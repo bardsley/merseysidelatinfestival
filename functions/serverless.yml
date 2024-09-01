@@ -277,6 +277,8 @@ functions:
       STAGE_NAME: ${sls:stage}
       SENDGRID_API_KEY: ${param:sendgridApiKey}
       SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
+    layers:
+      - !Ref GithubLambdaLayer
 
   SendTicket:
     runtime: python3.11

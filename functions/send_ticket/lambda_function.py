@@ -32,6 +32,7 @@ def err(msg:str, code=400, logmsg=None, **kwargs):
         }
 
 def lambda_handler(event, context):
+    logger.info(f"Event {event}")
     if event['requestContext']['http']['method'] != "GET": return err("Method not allowed, make GET request", code=405)
     data = event['queryStringParameters'] 
     if ('email' not in data):
@@ -40,8 +41,11 @@ def lambda_handler(event, context):
     else:
         email = data['email']
 
+    logger.info(f"Send email(s) to {email}")
     response = table.scan(FilterExpression=Key('email').eq(email))
+    logger.info(f"Dynamo DB Results to {response}")
 
+    #! If no matches should problably return a 404
     for item in response['Items']:
         # send the email with these details
         logger.info("Invoking send_email lambda")
