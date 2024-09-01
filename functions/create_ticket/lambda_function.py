@@ -120,7 +120,7 @@ def lambda_handler(event, context):
             # send the email with these details
             logger.info("Invoking send_email lambda")
             response = lambda_client.invoke(
-                FunctionName='dev-send_email',
+                FunctionName=os.environ.get("SEND_EMAIL_LAMBDA"),
                 InvocationType='Event',
                 Payload=json.dumps({
                         'email_type':"standard_ticket",

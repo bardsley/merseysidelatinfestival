@@ -67,7 +67,7 @@ layers:
   sendmail:
     path: _layers/sendmail
   github:
-    path: _layers/github/python
+    path: _layers/github
 
 resources:
   Resources:
@@ -179,6 +179,7 @@ functions:
       STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
       STRIPE_SECRET_KEY: ${param:stripeSecretKey}
+      SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
     layers:
       - !Ref DynamodbLambdaLayer
 
@@ -234,9 +235,6 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
-    layers:
-      - !Ref DynamodbLambdaLayer
-      - !Ref StripeLambdaLayer
     events:
       - httpApi:
           path: /get_attendees
