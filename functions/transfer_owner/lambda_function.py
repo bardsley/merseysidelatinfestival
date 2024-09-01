@@ -125,9 +125,15 @@ def lambda_handler(event, context):
         logger.info(f"Previous owner {previous_owner}")
         logger.info(f"Ticket Enrty owner {ticket_entry}")
 
+        if 'history' in ticket_entry:
+            if ticket_entry['history'] is not None:
+                history = previous_owner+ticket_entry['history']
+            else:
+                history = previous_owner
+
         input = {
             'full_name': data['name_to'],
-            'history': previous_owner+(ticket_entry['history'] if 'history' in ticket_entry else []) #! Null History causes error
+            'history': history
         }
         logger.info(input)
         update_table(input, {'email': data['email'], 'ticket_number':data['ticket_number']})
