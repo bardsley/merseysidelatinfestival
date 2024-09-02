@@ -78,9 +78,9 @@ export default function StripePageClient() {
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-100">
                       URL
                     </th>
-                    <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0">
+                    {/* <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0">
                       <span className="sr-only">Action </span>
-                    </th>
+                    </th> */}
                   </tr>
                 </thead>
 
@@ -110,11 +110,11 @@ export default function StripePageClient() {
                     <td className={baseClasses}>{webHook.description}</td>
                     <td className={baseClasses}>{webHook.enabled_events.map((event) => <Fragment key={event}>{event}<br/></Fragment>)}</td>
                     <td className={baseClasses}>{webHook.url}</td>
-                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+                    {/* <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                       <button className="text-indigo-600 hover:text-indigo-900">
                         Disable <span className="sr-only">, {webHook.description}</span>
                       </button>
-                    </td>
+                    </td> */}
                   </tr>
                 })}
                 </tbody>
