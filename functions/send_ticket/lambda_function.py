@@ -42,7 +42,7 @@ def lambda_handler(event, context):
         email = data['email']
 
     logger.info(f"Send email(s) to {email}")
-    response = table.scan(FilterExpression=Key('email').eq(email))
+    response = table.scan(FilterExpression=Key('email').eq(email) & Key('active').eq(True))
     logger.info(f"Dynamo DB Results to {response}")
 
     #! If no matches should problably return a 404
