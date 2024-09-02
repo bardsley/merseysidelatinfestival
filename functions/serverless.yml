@@ -24,6 +24,7 @@ stages:
       isProd: false
       deletionPolicy: Delete 
       skipTables: true
+      githubBranchDestination: "develop"
   prod:
     params:
       isProd: true
@@ -67,7 +68,7 @@ layers:
   sendmail:
     path: _layers/sendmail
   github:
-    path: _layers/github/python
+    path: _layers/github
 
 resources:
   Resources:
@@ -136,6 +137,7 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       PRODUCTS_TABLE_NAME: ${param:stripeProductsTableName}
+      CREATE_TICKET_LAMBDA: "${sls:stage}-create_ticket"
     layers:
       - !Ref DynamodbLambdaLayer
     events:
@@ -179,6 +181,7 @@ functions:
       STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
       STRIPE_SECRET_KEY: ${param:stripeSecretKey}
+      SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
     layers:
       - !Ref DynamodbLambdaLayer
 
@@ -219,6 +222,8 @@ functions:
       PRODUCTS_TABLE_NAME: ${param:stripeProductsTableName}
       STRIPE_SECRET_KEY: ${param:stripeSecretKey}
       GITHUB_TOKEN: ${param:githubToken}
+      GITHUB_BRANCH_NAME: "pricing-${sls:stage}"
+      GITHUB_BRANCH_DESTINATION: ${param:githubBranchDestination}
     layers:
       - !Ref StripeLambdaLayer
 
@@ -234,9 +239,6 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
-    layers:
-      - !Ref DynamodbLambdaLayer
-      - !Ref StripeLambdaLayer
     events:
       - httpApi:
           path: /get_attendees
@@ -277,6 +279,9 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       SENDGRID_API_KEY: ${param:sendgridApiKey}
+      SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
+    layers:
+      - !Ref GithubLambdaLayer
 
   SendTicket:
     runtime: python3.11
@@ -290,6 +295,7 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+      SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
     layers:
       - !Ref DynamodbLambdaLayer
       - !Ref SendmailLambdaLayer
@@ -297,7 +303,7 @@ functions:
     events:
       - httpApi:
           path: /send_ticket
-          method: post 
+          method: get 
 
   StripePriceUpdate:
     runtime: python3.11
@@ -332,6 +338,8 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+      CREATE_TICKET_LAMBDA: "${sls:stage}-create_ticket"
+      SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
     layers:
       - !Ref DynamodbLambdaLayer
     events:

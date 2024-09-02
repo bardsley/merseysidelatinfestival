@@ -30,7 +30,7 @@ def generate_standard_ticket_body(data):
     total_amount = 0
     # generate table of items purchased
     for i in data['line_items']:
-        with open("./ticket_row.html", 'r') as line_item_row_file:
+        with open("./send_email/ticket_row.html", 'r') as line_item_row_file:
             line_item_tmpl = Template(line_item_row_file.read())
             rows = rows+"\n"+line_item_tmpl.substitute({
                 'tickettype':i['description'], 
@@ -39,7 +39,7 @@ def generate_standard_ticket_body(data):
             })
             total_amount += int(i['amount_total'])
     # create total row
-    with open("./ticket_row.html", 'r') as total_row_file:
+    with open("./send_email/ticket_row.html", 'r') as total_row_file:
         total_tmpl = Template(total_row_file.read())
         total_row = total_tmpl.substitute({
             'tickettype':"", 
@@ -47,7 +47,7 @@ def generate_standard_ticket_body(data):
             'price':"<strong>"+babel.numbers.format_currency(total_amount/100, "GBP", locale='en_UK')+"</strong>"
         })
     
-    with open("./ticket_body.html", "r") as body_file:
+    with open("./send_email/ticket_body.html", "r") as body_file:
         body_tmpl = Template(body_file.read())
         body = body_tmpl.substitute({
             'fullname':data['name'], 
@@ -89,7 +89,7 @@ def lambda_handler(event, context):
         body = generate_standard_ticket_body(event)
 
         # append transfer details at bottom of body
-        with open("./ticket_transfer.html", "r") as transfer_file:
+        with open("./send_email/ticket_transfer.html", "r") as transfer_file:
             logger.info("Insert the body of the email into header and footer")
             transfer_tmpl = Template(transfer_file.read())
             transfer_content = transfer_tmpl.substitute({
@@ -103,7 +103,7 @@ def lambda_handler(event, context):
         return False
 
     # put body in with header
-    with open("./header_footer.html", "r") as header_footer_file:
+    with open("./send_email/header_footer.html", "r") as header_footer_file:
         logger.info("Insert the body of the email into header and footer")
         header_footer_tmpl = Template(header_footer_file.read())
         html_content = header_footer_tmpl.substitute({'body':body})

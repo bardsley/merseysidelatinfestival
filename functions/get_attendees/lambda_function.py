@@ -4,6 +4,7 @@ import logging
 from pprint import pprint
 from decimal import Decimal
 from shared import DecimalEncoder as shared
+import os
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
