@@ -336,6 +336,7 @@ functions:
       STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
       CREATE_TICKET_LAMBDA: "${sls:stage}-create_ticket"
+      SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
     layers:
       - !Ref DynamodbLambdaLayer
     events:
