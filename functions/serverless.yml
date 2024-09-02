@@ -24,6 +24,7 @@ stages:
       isProd: false
       deletionPolicy: Delete 
       skipTables: true
+      githubBranchDestination: "develop"
   prod:
     params:
       isProd: true
@@ -221,6 +222,8 @@ functions:
       PRODUCTS_TABLE_NAME: ${param:stripeProductsTableName}
       STRIPE_SECRET_KEY: ${param:stripeSecretKey}
       GITHUB_TOKEN: ${param:githubToken}
+      GITHUB_BRANCH_NAME: "pricing-${sls:stage}"
+      GITHUB_BRANCH_DESTINATION: ${param:githubBranchDestination}
     layers:
       - !Ref StripeLambdaLayer
 
