@@ -391,6 +391,25 @@ functions:
           path: /transfer_owner
           method: post
 
+  MailDev:
+    runtime: python3.11
+    handler: maildev/lambda_function.maildev
+    name: "${sls:stage}-maildev"
+    package:
+      patterns:
+        - '!**/**'
+        - "maildev/**"
+        -  "shared/**"
+    environment:
+      STAGE_NAME: ${sls:stage}
+      MAILDEV_IP: "3.254.106.153"
+    layers:
+      - !Ref DynamodbLambdaLayer
+    events:
+      - httpApi:
+          path: /maildev
+          method: get
+
 
 
 
