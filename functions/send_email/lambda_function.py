@@ -24,6 +24,12 @@ logger.setLevel("INFO")
 logging.basicConfig()
 
 sendgrid_api_key = os.environ.get("SENDGRID_API_KEY")
+
+def group_add(data):
+    not_ticket = "but when you purchase your ticket which includes dinner you will have the choice to enter a group code."
+    has_ticket = "you ca"
+    button_not_ticket = "BUY YOUR TICKET"
+    button_has_ticket = "MANAGE YOUR TICKET"
     
 def generate_standard_ticket_body(data):
     rows = ""
@@ -77,12 +83,14 @@ def lambda_handler(event, context):
     logger.info(event)
 
     if event['email_type'] == "standard_ticket":
+        #! check has the expected information in event
         attachment = gen_ticket_qr(event['ticket_number'])
 
         logger.info("Generate the body of the email")
         body = generate_standard_ticket_body(event)
         subject = 'Merseyside Latin Festival Ticket Confirmation'
     elif event['email_type'] == "transfer_ticket":
+        #! check has the expected information in event
         # generate as usual the ticket body
         attachment = gen_ticket_qr(event['ticket_number'])
 
@@ -100,6 +108,9 @@ def lambda_handler(event, context):
 
         body += transfer_content
         subject = 'Merseyside Latin Festival Ticket Transfer'
+    elif event['email_type'] == "group_add_no_ticket":
+
+    elif event['email_type'] == "group_add_has_ticket":
     else:
         return False
 
