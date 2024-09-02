@@ -1,9 +1,22 @@
 'use client'
-import useSWR from 'swr';
+import useSWR, {mutate} from 'swr';
 import { fetcher } from  "@lib/fetchers";
+import { Fragment } from 'react';
+
+const toggleApiUrl = "/api/admin/stripe/webhooks"
+
+const addWebhook = async () => {
+                    
+  const createApiCall = `/api/admin/stripe/webhooks`
+  console.log('create',createApiCall)
+  const toggleApiResponse = await fetch(createApiCall, { method: 'POST'})
+  const toggleApiData = await toggleApiResponse.json()
+  console.log('createApiCall',toggleApiData)
+  setTimeout(() => mutate(toggleApiUrl), 300)
+}
 
 export default function StripePageClient() {
-  const {data, error, isLoading, isValidating} = useSWR("/api/admin/stripe", fetcher, { keepPreviousData: false });
+  const {data, error, isLoading, isValidating} = useSWR(toggleApiUrl, fetcher, { keepPreviousData: false });
 
   if(isLoading) { return <p>Loading...</p> }
   else if (error) { return <p>Error on fetch {JSON.stringify(error)}</p> }
@@ -11,6 +24,7 @@ export default function StripePageClient() {
 
   else {
 
+    const webHooks = data.webhooks.data
     return <div>
       
       {isValidating ? 
@@ -19,7 +33,95 @@ export default function StripePageClient() {
             <span className="">Refreshing...</span>
       </div> : null}
 
-      {JSON.stringify(data)}
+      <div className="px-4 sm:px-6 lg:px-8">
+        <div className="sm:flex sm:items-center">
+          <div className="sm:flex-auto">
+            <h1 className="text-base font-semibold leading-6 text-gray-100">Users</h1>
+            <p className="mt-2 text-sm text-gray-100">
+              A list of all the users in your account including their name, title, email and role.
+            </p>
+          </div>
+          <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+            <button
+              type="button"
+              onClick={addWebhook}
+              className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              Add user
+            </button>
+          </div>
+        </div>
+
+        
+        <div className="mt-8 flow-root">
+          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+              <table className="min-w-full divide-y divide-gray-300">
+                <thead>
+                  <tr>
+                    <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-100 sm:pl-0">
+                      Status
+                    </th>
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-100">
+                      Descr.
+                    </th>
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-100">
+                      Events
+                    </th>
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-100">
+                      URL
+                    </th>
+                    <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0">
+                      <span className="sr-only">Action </span>
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody className="divide-y divide-gray-200">
+                {webHooks.map((webHook) => {
+                  const baseClasses = "whitespace-nowrap px-1 py-3 text-xs text-gray-100 "
+                  const baseButtonClasses = "px-3 py-1 rounded-full "
+                  const statusClasses = webHook.status == 'enabled' ? baseButtonClasses + 'bg-green-800 text-green-00' : baseButtonClasses + 'bg-red-800 text-red-100'
+                  const toggleStatus = webHook.status == 'enabled' ? 'disable' : 'enable'
+
+                  const toggleFunction = async (stripe_id, status) => {
+                    
+                    const toggleApiCall = `/api/admin/stripe/webhook/${stripe_id}/${status}`
+                    console.log('toggle',toggleApiCall)
+                    const toggleApiResponse = await fetch(toggleApiCall, { method: 'POST'})
+                    const toggleApiData = await toggleApiResponse.json()
+                    console.log('toggleApiData',toggleApiData)
+                    setTimeout(() => mutate(toggleApiUrl), 300)
+                  }
+
+                  return <tr key={webHook.id}>
+                    <td className={baseClasses}>
+                      <button className={statusClasses} onClick={() => toggleFunction(webHook.id,toggleStatus)}>
+                        {webHook.status}
+                      </button>
+                    </td>
+                    <td className={baseClasses}>{webHook.description}</td>
+                    <td className={baseClasses}>{webHook.enabled_events.map((event) => <Fragment key={event}>{event}<br/></Fragment>)}</td>
+                    <td className={baseClasses}>{webHook.url}</td>
+                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+                      <button className="text-indigo-600 hover:text-indigo-900">
+                        Disable <span className="sr-only">, {webHook.description}</span>
+                      </button>
+                    </td>
+                  </tr>
+                })}
+                </tbody>
+              </table>  
+            </div>
+          </div>
+        </div>  
+
+      </div>
+
+      <pre className='text-xs'>
+
+        {JSON.stringify(webHooks,null,2)}
+      </pre>
 
     </div>
   }
