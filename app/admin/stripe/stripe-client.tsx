@@ -7,15 +7,15 @@ import { priceIds } from '@components/ticketing/pricingUtilities';
 const toggleApiUrl = "/api/admin/stripe/webhooks"
 const productsApiUrl = "/api/admin/stripe/products"
 
-const addWebhook = async () => {
+// const addWebhook = async () => {
                     
-  const createApiCall = `/api/admin/stripe/webhooks`
-  console.log('create',createApiCall)
-  const toggleApiResponse = await fetch(createApiCall, { method: 'POST'})
-  const toggleApiData = await toggleApiResponse.json()
-  console.log('createApiCall',toggleApiData)
-  setTimeout(() => mutate(toggleApiUrl), 300)
-}
+//   const createApiCall = `/api/admin/stripe/webhooks`
+//   console.log('create',createApiCall)
+//   const toggleApiResponse = await fetch(createApiCall, { method: 'POST'})
+//   const toggleApiData = await toggleApiResponse.json()
+//   console.log('createApiCall',toggleApiData)
+//   setTimeout(() => mutate(toggleApiUrl), 300)
+// }
 
 const priceIdArray = Object.keys(priceIds()).map((key) => priceIds()[key] )
 
