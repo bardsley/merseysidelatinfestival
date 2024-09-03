@@ -1,3 +1,15 @@
+Testing the vercel nameing and PRs
+----------------------------------
+Scanner that works
+Till for OTD (and pre pruchase) but no backend
+Serverless ad deploy options
+Diagramming in Miro
+ - Card OTD
+ - Git usage
+ - Infra diagram ToBe and AsIs combo
+Insomnia API Test & Frontend E2E tests
+Name & Logo ideas
+Stripe Admin
 
 Deployment / Development Flow
 =================================
