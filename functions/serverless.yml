@@ -1,5 +1,5 @@
 org: danceenginesystems # Needs a name for the organization
-app: dance-engine # Need to see what connor thinks of name
+app: dance-engine
 service: api # Do we need multiple services? 
 frameworkVersion: '4.1'
 
