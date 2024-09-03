@@ -48,6 +48,10 @@ provider:
             - dynamodb:PutItem
             - dynamodb:UpdateItem
             - dynamodb:DeleteItem
+            - dynamodb:DescribeStream
+            - dynamodb:GetRecords
+            - dynamodb:GetShardIterator
+            - dynamodb:ListStreams
           Resource:
             - Fn::GetAtt: [AttendeesTable, Arn]
             - Fn::GetAtt: [StripeProductsTable, Arn]
@@ -115,6 +119,8 @@ resources:
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         TableName: ${param:stripeProductsTableName}
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
     # APIMapping:
     #   Type: AWS::ApiGatewayV2::ApiMapping
     #   DependsOn: HttpApi
@@ -226,6 +232,17 @@ functions:
       GITHUB_BRANCH_DESTINATION: ${param:githubBranchDestination}
     layers:
       - !Ref StripeLambdaLayer
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Ref: StripeProductsTableStreamArn
+            Fn::GetAtt: [StripeProductsTable, StreamArn]
+          batchSize: 100
+          batchWindow: 300
+          startingPosition: LATEST
+          maximumRetryAttempts: 1
+          enabled: true
 
   GetAttendees:
     runtime: python3.11
