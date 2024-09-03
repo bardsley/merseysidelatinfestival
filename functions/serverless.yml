@@ -15,6 +15,9 @@ custom:
 package:
   individually: true
 
+#######################
+# Stages
+#######################
 stages:
   default:
     observability: false
@@ -30,7 +33,9 @@ stages:
       isProd: true
       deletionPolicy: Retain  
     
-
+#######################
+# Provider Information
+#######################
 provider:
   name: aws
   runtime: nodejs18.x # Needed to enable serverless to run on github actions
@@ -63,6 +68,9 @@ provider:
             - lambda:InvokeFunction
           Resource:
             - '*'
+#######################
+# Layers
+#######################
 
 layers:
   dynamodb:
@@ -74,6 +82,9 @@ layers:
   github:
     path: _layers/github
 
+###########################
+# Resources e.g. DynamoDB
+###########################
 resources:
   Resources:
     AttendeesTable:
@@ -121,13 +132,10 @@ resources:
         TableName: ${param:stripeProductsTableName}
         StreamSpecification:
           StreamViewType: NEW_AND_OLD_IMAGES
-    # APIMapping:
-    #   Type: AWS::ApiGatewayV2::ApiMapping
-    #   DependsOn: HttpApi
-    #   Properties:
-    #     Stage: $default
-    #     DomainName: "${sls:stage}.api.engine.dance"
-    #     ApiId: !Ref HttpApi
+
+#######################
+# Functions
+#######################
 
 functions:
 
@@ -150,6 +158,8 @@ functions:
       - httpApi:
           path: /card_payment
           method: post
+
+#--------------------
 
   CheckoutComplete:
     runtime: python3.11
@@ -174,6 +184,8 @@ functions:
           path: /checkout_complete
           method: post 
 
+#--------------------
+
   CreateTicket:
     runtime: python3.11
     handler: create_ticket/lambda_function.lambda_handler
@@ -190,6 +202,8 @@ functions:
       SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
     layers:
       - !Ref DynamodbLambdaLayer
+
+#--------------------
 
   CustomerPreferences:
     runtime: python3.11
@@ -213,6 +227,8 @@ functions:
       - httpApi:
           path: /customer_preferences
           method: post
+
+#--------------------
 
   GeneratePricingUpdate:
     runtime: python3.11
@@ -243,6 +259,8 @@ functions:
           maximumRetryAttempts: 1
           enabled: true
 
+#--------------------
+
   GetAttendees:
     runtime: python3.11
     handler: get_attendees/lambda_function.lambda_handler
@@ -259,6 +277,8 @@ functions:
       - httpApi:
           path: /get_attendees
           method: get
+
+#--------------------
 
   ScanTicket:
     runtime: python3.11
@@ -283,6 +303,8 @@ functions:
           path: /scan_ticket
           method: post
 
+#--------------------
+
   SendEmail:
     runtime: python3.11
     handler: send_email/lambda_function.lambda_handler
@@ -298,6 +320,8 @@ functions:
       SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
     layers:
       - !Ref GithubLambdaLayer
+
+#--------------------
 
   SendTicket:
     runtime: python3.11
@@ -321,6 +345,8 @@ functions:
           path: /send_ticket
           method: get 
 
+#--------------------
+
   StripePriceUpdate:
     runtime: python3.11
     handler: stripe_price_update/lambda_function.lambda_handler
@@ -341,6 +367,8 @@ functions:
       - httpApi:
           path: /stripe_price_update
           method: post 
+
+#--------------------
 
   TransferOwner:
     runtime: python3.11
