@@ -173,7 +173,6 @@ def lambda_handler(event, context):
     try:
         response = repo.merge(os.environment.get("GITHUB_BRANCH_DESTINATION"), 
             branch, 
-            commit_message=f"merge '{os.environment.get("GITHUB_BRANCH_NAME")}' into '{os.environment.get("GITHUB_BRANCH_DESTINATION")}'")
-        logger.info(response)
+            commit_message="merge {} into {}".format(os.environment.get("GITHUB_BRANCH_NAME"),os.environment.get("GITHUB_BRANCH_DESTINATION")))        logger.info(response)
     except GithubException as ge:
         logger.error(ge) 
