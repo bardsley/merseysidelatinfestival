@@ -236,7 +236,6 @@ functions:
       - stream:
           type: dynamodb
           arn:
-            Ref: StripeProductsTableStreamArn
             Fn::GetAtt: [StripeProductsTable, StreamArn]
           batchSize: 100
           batchWindow: 300
