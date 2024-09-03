@@ -15,7 +15,7 @@ logger.setLevel("INFO")
 # boto3.setup_default_session(profile_name=profile_name)
 
 db = boto3.resource('dynamodb')
-table = db.Table('mlf24_stripe_products')
+table = db.Table(os.environ.get("PRODUCTS_TABLE_NAME"))
 
 def update_table(input, key):
     if key['price_id'] is None:

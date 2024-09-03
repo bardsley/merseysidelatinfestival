@@ -3,6 +3,8 @@ import boto3
 import logging
 from pprint import pprint
 from decimal import Decimal
+from shared import DecimalEncoder as shared
+import os
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -13,17 +15,17 @@ logger.setLevel(logging.INFO)
 # logging.basicConfig()
 
 db = boto3.resource('dynamodb')
-table = db.Table('dev-mlf24_attendees')
+table = db.Table(os.environ.get("ATTENDEES_TABLE_NAME"))
 
-class DecimalEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Decimal):
-            return str(obj)
-        return super().default(obj)
+# class DecimalEncoder(json.JSONEncoder):
+#     def default(self, obj):
+#         if isinstance(obj, Decimal):
+#             return str(obj)
+#         return super().default(obj)
 
 def lambda_handler(event, context):
     response = table.scan()    
     return {
         'statusCode': 200,
-        'body': json.dumps(response, cls=DecimalEncoder)
+        'body': json.dumps(response, cls=shared.DecimalEncoder)
     }

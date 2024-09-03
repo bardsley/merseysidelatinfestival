@@ -9,6 +9,19 @@ from boto3.dynamodb.conditions import Key, Attr
 import os
 import logging
 from decimal import Decimal
+from shared import DecimalEncoder as shared
+# from json.decoder import JSONDecodeError
+
+# class DecimalEncoder(json.JSONEncoder):
+#     def default(self, obj):
+#         if isinstance(obj, Decimal):
+#             if float(obj) == int(obj):
+#                 return int(obj)
+#             elif str(float(obj)) == str(obj):
+#                 return float(obj)
+#             else:
+#                 return float(obj)
+#         return super().default(obj)
 
 logger = logging.getLogger()
 logger.setLevel("INFO")
@@ -17,15 +30,14 @@ stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
 
 # get dynamodb table
 db = boto3.resource('dynamodb')
-table = db.Table('dev-mlf24_attendees')
+table = db.Table(os.environ.get("ATTENDEES_TABLE_NAME"))
 
 lambda_client = boto3.client('lambda')
-
-class DecimalEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Decimal):
-            return str(obj)
-        return super().default(obj)
+# class DecimalEncoder(json.JSONEncoder):
+#     def default(self, obj):
+#         if isinstance(obj, Decimal):
+#             return str(obj)
+#         return super().default(obj)
 
 # Turn line items into a array detailing the access the person has i.e. what
 # parts of the fetival.
@@ -47,11 +59,6 @@ def process_line_items(line_items):
 
     return access, line_items_return
 
-# put the corresponding data into the dynamodb table
-def update_ddb(Item):
-    table.put_item(Item=Item)
-    return True
-
 # Main function to handle the event
 def lambda_handler(event, context):
     logger.info(event)
@@ -65,10 +72,17 @@ def lambda_handler(event, context):
         CHECKOUT_SESSION_ID = ev_data['data']['object']['id']
                   
         # retrieve the full checkout session including the line items
-        #! catch error is checkout session does not exist
         logger.info("Retrieve Stripe checkout session")
-        stripe_response = stripe.checkout.Session.retrieve(CHECKOUT_SESSION_ID, expand=['line_items', 'line_items.data.price.product'])
-        logger.info(stripe_response)
+        try:
+            #! Should check if already processed that checkout session ID first, i.e. is it in the DynamoDB
+            stripe_response = stripe.checkout.Session.retrieve(CHECKOUT_SESSION_ID, expand=['line_items', 'line_items.data.price.product'])
+            logger.info(stripe_response)
+        except (stripe.error.InvalidRequestError) as e:
+            logger.error(e)
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'error': 'Checkout session does not exist'})
+            }
 
         access, line_items = process_line_items(stripe_response['line_items'])
         student_ticket = True if stripe_response['line_items']['data'][0]['price']['nickname' ] == "student_active" else False
@@ -83,7 +97,7 @@ def lambda_handler(event, context):
         # Create the ticket
         logger.info("Invoking create_ticket lambda")
         response = lambda_client.invoke(
-            FunctionName='dev-create_ticket',
+            FunctionName=os.environ.get("CREATE_TICKET_LAMBDA"),
             InvocationType='Event',
             Payload=json.dumps({
                 'email': email,      
@@ -100,7 +114,7 @@ def lambda_handler(event, context):
                 'schedule': None,
                 'heading_message':"THANK YOU FOR YOUR PURCHASE!",
                 'send_standard_ticket': True,
-                },cls=DecimalEncoder),
+                },cls=shared.DecimalEncoder),
             )
         logger.info(response)
             

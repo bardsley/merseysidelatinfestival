@@ -13,9 +13,13 @@ import json
 import logging
 from json.decoder import JSONDecodeError
 from decimal import Decimal
+import os
 
 import boto3
 from boto3.dynamodb.conditions import Key
+
+from shared import DecimalEncoder as shared
+
 
 logger = logging.getLogger()
 logger.setLevel("INFO")
@@ -27,7 +31,7 @@ logger.setLevel("INFO")
 
 
 db = boto3.resource('dynamodb')
-table = db.Table('dev-mlf24_attendees')
+table = db.Table(os.environ.get("ATTENDEES_TABLE_NAME"))
 
 lambda_client = boto3.client('lambda')
  
@@ -78,11 +82,11 @@ def update_table(input, key, condition=None):
         logger.error("The ticket does not exist")
         raise ValueError("Ticket number does not exist or match email.")
 
-class DecimalEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Decimal):
-            return str(obj)
-        return super().default(obj)
+# class DecimalEncoder(json.JSONEncoder):
+#     def default(self, obj):
+#         if isinstance(obj, Decimal):
+#             return str(obj)
+#         return super().default(obj)
 
 def lambda_handler(event, context):
     try:
@@ -108,6 +112,7 @@ def lambda_handler(event, context):
         return_string += f"It has been refunded. " if "refunded" in ticket_entry['status'] else ""
         return err(return_string)
     
+    # Same Person owns ticket
     if data['email'] == data['email_to']:
         previous_owner = [{
             'date': int(time.time()),
@@ -117,16 +122,25 @@ def lambda_handler(event, context):
             'source': data['source'] if 'source' in data else None #! check this here rather than on client
         }]
 
+        logger.info(f"Previous owner {previous_owner}")
+        logger.info(f"Ticket Enrty owner {ticket_entry}")
+
+        if 'history' in ticket_entry:
+            if ticket_entry['history'] is not None:
+                history = previous_owner+ticket_entry['history']
+            else:
+                history = previous_owner
+
         input = {
             'full_name': data['name_to'],
-            'history': previous_owner+(ticket_entry['history'] if 'history' in ticket_entry else [])
+            'history': history
         }
         logger.info(input)
         update_table(input, {'email': data['email'], 'ticket_number':data['ticket_number']})
 
         logger.info("Invoking send_email lambda")
         response = lambda_client.invoke(
-            FunctionName='dev-send_email',
+            FunctionName=os.environ.get("SEND_EMAIL_LAMBDA"),
             InvocationType='Event',
             Payload=json.dumps({
                     'email_type':"transfer_ticket",
@@ -137,7 +151,7 @@ def lambda_handler(event, context):
                     'email_from': ticket_entry['email'],
                     'full_name_from': ticket_entry['full_name'],
                     'heading_message': "A TICKET HAS BEEN TRANSFERRED TO YOU!"
-                }, cls=DecimalEncoder),
+                }, cls=shared.DecimalEncoder),
             )
         logger.info(response)
         
@@ -165,7 +179,7 @@ def lambda_handler(event, context):
         # Create a new ticket
         logger.info("Invoking create_ticket lambda")
         create_ticket = lambda_client.invoke(
-            FunctionName='dev-create_ticket',
+            FunctionName=os.environ.get("CREATE_TICKET_LAMBDA"),
             InvocationType='RequestResponse',
             Payload=json.dumps({
                 'email': data['email_to'],      
@@ -181,7 +195,7 @@ def lambda_handler(event, context):
                 'checkout_session': None, 
                 'schedule': ticket_entry['schedule'],
                 'history': history
-                },cls=DecimalEncoder),
+                },cls=shared.DecimalEncoder),
             )
         logger.info(create_ticket)
 
@@ -201,7 +215,7 @@ def lambda_handler(event, context):
 
         logger.info("Invoking send_email lambda")
         response = lambda_client.invoke(
-            FunctionName='dev-send_email',
+            FunctionName=os.environ.get("SEND_EMAIL_LAMBDA"),
             InvocationType='Event',
             Payload=json.dumps({
                     'email_type':"transfer_ticket",
@@ -212,7 +226,7 @@ def lambda_handler(event, context):
                     'email_from': ticket_entry['email'],
                     'full_name_from': ticket_entry['full_name'],
                     'heading_message': "A TICKET HAS BEEN TRANSFERRED TO YOU!"
-                }, cls=DecimalEncoder),
+                }, cls=shared.DecimalEncoder),
             )
         logger.info(response)
         
