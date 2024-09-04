@@ -75,7 +75,7 @@ class CustomerSessionService(StripeService):
         """
         payment_method_redisplay_limit: NotRequired[int]
         """
-        Determines the max number of saved payment methods for the Payment Element to display. This parameter defaults to `10`.
+        Determines the max number of saved payment methods for the Payment Element to display. This parameter defaults to `3`.
         """
         payment_method_remove: NotRequired[Literal["disabled", "enabled"]]
         """
@@ -117,7 +117,6 @@ class CustomerSessionService(StripeService):
             self._request(
                 "post",
                 "/v1/customer_sessions",
-                api_mode="V1",
                 base_address="api",
                 params=params,
                 options=options,
@@ -137,7 +136,6 @@ class CustomerSessionService(StripeService):
             await self._request_async(
                 "post",
                 "/v1/customer_sessions",
-                api_mode="V1",
                 base_address="api",
                 params=params,
                 options=options,

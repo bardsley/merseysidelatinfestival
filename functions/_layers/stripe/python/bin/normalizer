@@ -1,4 +1,4 @@
-#!/home/cloudshell-user/packages/venv3.12/bin/python
+#!/usr/bin/python3.11
 # -*- coding: utf-8 -*-
 import re
 import sys
