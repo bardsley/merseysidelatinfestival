@@ -155,7 +155,7 @@ def lambda_handler(event, context):
     dt_string = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     message = "Update prices "+dt_string
     path = "components/ticketing/pricingDefaultsDynamic.ts"
-    branch = os.environment.get("GITHUB_BRANCH_NAME")
+    branch = os.environ.get("GITHUB_BRANCH_NAME")
     author = InputGitAuthor(
         "DanceBot", 
         "bot@engine.dance"
@@ -171,8 +171,9 @@ def lambda_handler(event, context):
 
     logger.info("merge")
     try:
-        response = repo.merge(os.environment.get("GITHUB_BRANCH_DESTINATION"), 
+        response = repo.merge(os.environ.get("GITHUB_BRANCH_DESTINATION"), 
             branch, 
-            commit_message="merge {} into {}".format(os.environment.get("GITHUB_BRANCH_NAME"),os.environment.get("GITHUB_BRANCH_DESTINATION")))        logger.info(response)
+            commit_message="merge {} into {}".format(os.environ.get("GITHUB_BRANCH_NAME"),os.environ.get("GITHUB_BRANCH_DESTINATION")))
+        logger.info(response)
     except GithubException as ge:
         logger.error(ge) 
