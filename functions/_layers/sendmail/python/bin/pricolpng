@@ -1,4 +1,4 @@
-#!/Users/connormonaghan/Documents/Projects/dance-engine-python3.11-venv/bin/python
+#!/usr/bin/python3.11
 
 # http://www.python.org/doc/2.4.4/lib/module-itertools.html
 import itertools

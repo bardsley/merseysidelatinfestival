@@ -1,4 +1,4 @@
-#!/Users/connormonaghan/Documents/Projects/dance-engine-python3.11-venv/bin/python
+#!/usr/bin/python3.11
 
 # priweavepng
 # Weave selected channels from input PNG files into
