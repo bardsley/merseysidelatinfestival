@@ -21,7 +21,7 @@ git.get_user().login
 git_user_login = git.get_user().login
 
 db = boto3.resource('dynamodb')
-table = db.Table('mlf24_stripe_products')
+table = db.Table(os.environ.get("PRODUCTS_TABLE_NAME"))
 
 def get_blank(prod):
     prod['price_active'] = False
@@ -138,7 +138,7 @@ def lambda_handler(event, context):
 
     # load the template
     logger.debug("load template and substitute")
-    with open("./pricingDefaults.template", 'r') as file:
+    with open("./gen_price_update/pricingDefaults.template", 'r') as file:
         tmpl_f = Template(file.read())
     new_file = tmpl_f.substitute(generate_info='', 
                         individual_tickets=''.join(lines_ind_tickets), 
@@ -146,7 +146,7 @@ def lambda_handler(event, context):
                         passes=''.join(lines_passes),
                         days=days,
                         full_pass_loc=full_pass_loc)
-    # with open("./pricingDefaults.test.ts", 'w') as file:     
+    # with open("./gen_price_update/pricingDefaults.test.ts", 'w') as file:     
     #     file.write(new_file)    
 
     logger.debug("get repo")
@@ -155,10 +155,10 @@ def lambda_handler(event, context):
     dt_string = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     message = "Update prices "+dt_string
     path = "components/ticketing/pricingDefaultsDynamic.ts"
-    branch = "pricing-dev"
+    branch = os.environment.get("GITHUB_BRANCH_NAME")
     author = InputGitAuthor(
-        "connorkm2",
-        "connor1monaghan@gmail.com"
+        "DanceBot", 
+        "bot@engine.dance"
         )
 
     logger.info(f"Creating commit to {branch}")
@@ -171,7 +171,9 @@ def lambda_handler(event, context):
 
     logger.info("merge")
     try:
-        response = repo.merge("develop", branch, commit_message="merge 'pricing-dev' into 'develop'")
+        response = repo.merge(os.environment.get("GITHUB_BRANCH_DESTINATION"), 
+            branch, 
+            commit_message=f"merge '{os.environment.get("GITHUB_BRANCH_NAME")}' into '{os.environment.get("GITHUB_BRANCH_DESTINATION")}'")
         logger.info(response)
     except GithubException as ge:
         logger.error(ge) 
