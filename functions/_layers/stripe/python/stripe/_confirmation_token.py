@@ -218,6 +218,10 @@ class ConfirmationToken(APIResource["ConfirmationToken"]):
                             """
                             Time at which the payment was collected while offline
                             """
+                            type: Optional[Literal["deferred"]]
+                            """
+                            The method used to process this payment method offline. Only deferred is allowed.
+                            """
 
                         class Receipt(StripeObject):
                             account_type: Optional[
@@ -259,6 +263,17 @@ class ConfirmationToken(APIResource["ConfirmationToken"]):
                             transaction_status_information: Optional[str]
                             """
                             An indication of various EMV functions performed during the transaction.
+                            """
+
+                        class Wallet(StripeObject):
+                            type: Literal[
+                                "apple_pay",
+                                "google_pay",
+                                "samsung_pay",
+                                "unknown",
+                            ]
+                            """
+                            The type of mobile wallet, one of `apple_pay`, `google_pay`, `samsung_pay`, or `unknown`.
                             """
 
                         amount_authorized: Optional[int]
@@ -337,10 +352,7 @@ class ConfirmationToken(APIResource["ConfirmationToken"]):
                         """
                         network_transaction_id: Optional[str]
                         """
-                        This is used by the financial networks to identify a transaction.
-                        Visa calls this the Transaction ID, Mastercard calls this the Trace ID, and American Express calls this the Acquirer Reference Data.
-                        The first three digits of the Trace ID is the Financial Network Code, the next 6 digits is the Banknet Reference Number, and the last 4 digits represent the date (MM/DD).
-                        This field will be available for successful Visa, Mastercard, or American Express transactions and always null for other card brands.
+                        This is used by the financial networks to identify a transaction. Visa calls this the Transaction ID, Mastercard calls this the Trace ID, and American Express calls this the Acquirer Reference Data. The first three digits of the Trace ID is the Financial Network Code, the next 6 digits is the Banknet Reference Number, and the last 4 digits represent the date (MM/DD). This field will be available for successful Visa, Mastercard, or American Express transactions and always null for other card brands.
                         """
                         offline: Optional[Offline]
                         """
@@ -370,9 +382,11 @@ class ConfirmationToken(APIResource["ConfirmationToken"]):
                         """
                         A collection of fields required to be displayed on receipts. Only required for EMV transactions.
                         """
+                        wallet: Optional[Wallet]
                         _inner_class_types = {
                             "offline": Offline,
                             "receipt": Receipt,
+                            "wallet": Wallet,
                         }
 
                     card_present: Optional[CardPresent]
@@ -696,6 +710,24 @@ class ConfirmationToken(APIResource["ConfirmationToken"]):
                 The preferred network for the card.
                 """
 
+            class Offline(StripeObject):
+                stored_at: Optional[int]
+                """
+                Time at which the payment was collected while offline
+                """
+                type: Optional[Literal["deferred"]]
+                """
+                The method used to process this payment method offline. Only deferred is allowed.
+                """
+
+            class Wallet(StripeObject):
+                type: Literal[
+                    "apple_pay", "google_pay", "samsung_pay", "unknown"
+                ]
+                """
+                The type of mobile wallet, one of `apple_pay`, `google_pay`, `samsung_pay`, or `unknown`.
+                """
+
             brand: Optional[str]
             """
             Card brand. Can be `amex`, `diners`, `discover`, `eftpos_au`, `jcb`, `mastercard`, `unionpay`, `visa`, or `unknown`.
@@ -750,6 +782,10 @@ class ConfirmationToken(APIResource["ConfirmationToken"]):
             """
             Contains information about card networks that can be used to process the payment.
             """
+            offline: Optional[Offline]
+            """
+            Details about payment methods collected offline.
+            """
             preferred_locales: Optional[List[str]]
             """
             EMV tag 5F2D. Preferred languages specified by the integrated circuit chip.
@@ -766,7 +802,12 @@ class ConfirmationToken(APIResource["ConfirmationToken"]):
             """
             How card details were read in this transaction.
             """
-            _inner_class_types = {"networks": Networks}
+            wallet: Optional[Wallet]
+            _inner_class_types = {
+                "networks": Networks,
+                "offline": Offline,
+                "wallet": Wallet,
+            }
 
         class Cashapp(StripeObject):
             buyer_id: Optional[str]
