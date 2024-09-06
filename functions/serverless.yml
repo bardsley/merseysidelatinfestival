@@ -28,10 +28,12 @@ stages:
       deletionPolicy: Delete 
       skipTables: true
       githubBranchDestination: "develop"
+      stripeSecretKey: ${param:testStripeSecretKey}
   prod:
     params:
       isProd: true
-      deletionPolicy: Retain  
+      deletionPolicy: Retain
+      stripeSecretKey: ${param:prodStripeSecretKey}
     
 #######################
 # Provider Information
