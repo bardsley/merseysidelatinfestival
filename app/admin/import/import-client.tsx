@@ -60,7 +60,7 @@ export default function ImportPageClient() {
       phone: row.telephone,
       checkin_at: row.ticket_used || '',
       passes: isStudentTicket ? [row.type.replace(" (Student)", "")] : [row.type || ''],  
-      purchased_at: row.purchase_date ? new Date(parseInt(row.purchase_date) * 1000).toISOString() : '',
+      purchased_at: row.purchase_date ? new Date(parseInt(row.purchase_date_unix) * 1000).toISOString() : '',
       ticket_number: row.ticket_number || null,
       active: true,
       status: 'paid_stripe',
@@ -70,7 +70,7 @@ export default function ImportPageClient() {
       name_changed: false,
       transferred: null,
       history: [],
-      unit_amount: Number(row.amount.substring(1)),
+      unit_amount: Number(row.unit_amount.substring(1)),
       cs_id: row.cs_id
     };
   };
