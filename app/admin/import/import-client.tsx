@@ -2,59 +2,162 @@
 import useSWR, {mutate} from 'swr';
 import { fetcher } from  "@lib/fetchers";
 import { Fragment } from 'react';
-import {useState} from 'react';
+import { BiAlarmExclamation, BiCheckCircle } from "react-icons/bi";
+import { useSearchParams } from "next/navigation"
+import {useEffect, useState} from 'react';
 import { TicketRow } from '@components/admin/lists/importRow';
 import Papa from 'papaparse';
 
+const emailOptions = [
+  { value: 'everyone', label: 'Everyone' },
+  { value: 'new', label: 'New Ticket Numbers Only' },
+  { value: 'none', label: 'None' },
+]
+export const optionsDefault = {
+  sendTicketEmails: 'none',
+
+}
+
 export default function ImportPageClient() {
   const [data, setData] = useState<any[][]>([]);
+  const [options, setOptions] = useState(optionsDefault);
+  const [error, setError] = useState(false as boolean | string)
+  const [messageShown, setMessageShown] = useState(true)
+  const params = useSearchParams()
 
+  const message = params.get('message') || error
+  const messageType = params.get('messageType') ? params.get('messageType') : error ? 'bad' : 'good'
+
+  useEffect(() => {
+    if(message && messageType == 'good') {
+      setTimeout(() => {
+        setMessageShown(false) 
+      }, 3000)
+    }
+  }, [])
+  
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setData([])
       Papa.parse(file, {
         complete: (result) => {
-          setData(result.data);
+          const transformedData = result.data.map((row: any) => transformAttendee(row));
+          setData(transformedData);
+          console.log(transformedData)
         },
         header: true,
-      });
+      })
     }
-  };
-
+  }
+  
   const transformAttendee = (row: any) => {
-    // Convert the raw CSV data to match the attendee structure
-    const transferred_in = row.history && row.history.length > 0;
-    const transferred_out = row.transferred && row.transferred.ticket_number;
-    const name_changed = row.history ? row.history.some(h => h.name_changed) : false;
+    const isStudentTicket = row.type.includes(' (Student)');
 
     return {
       name: row.name || '',
       email: row.email || '',
+      phone: row.telephone,
       checkin_at: row.ticket_used || '',
-      passes: row.type.includes(' (Student)') ? [row.type.replace(" (Student)", "")] : [row.type], // ? row.line_items.map((item: any) => item.description) : [],
+      passes: isStudentTicket ? [row.type.replace(" (Student)", "")] : [row.type || ''],  
       purchased_at: row.purchase_date ? new Date(parseInt(row.purchase_date) * 1000).toISOString() : '',
       ticket_number: row.ticket_number || null,
       active: true,
       status: 'paid_stripe',
-      student_ticket: row.type.includes('Student') ? true : false,
+      student_ticket: isStudentTicket,
       transferred_in: false,
       transferred_out: false,
       name_changed: false,
       transferred: null,
       history: [],
-      unit_amount: row.amount
+      unit_amount: Number(row.amount.substring(1)),
+      cs_id: row.cs_id
     };
   };
+  
+  const handleSaveChanges = (updatedAttendee) => {
+    console.log(data)
+    setData((prevData) =>
+    prevData.map((attendee) =>
+      attendee.ticket_number === updatedAttendee.ticket_number
+      ? updatedAttendee
+      : attendee
+      )
+    )
+    console.log(data)
+  }
 
+  const handleOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setOptions((prevOptions) => ({
+      ...prevOptions,
+      sendTicketEmails: value, 
+    }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const payload = {
+      attendees: data, 
+      options: options, 
+    }
+
+    const response = await fetch('/api/admin/import', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    })
+
+  }
+  
   const headerClassNames = "p-0 text-left text-sm font-semibold text-white "
   const headerContainerClassNames = "flex justify-between"
   const labelClassNames = "py-3.5 pl-4 block"
 
+  const messageClassesBase = "message py-2 pl-4 pr-2 text-white rounded-md flex justify-between items-center transition ease-in-out delay-150 duration-500"
+  const messageClassType = messageType =='good' ? 'bg-green-600' : 'bg-red-600'
+  const messageIconClasses = "w-6 h-6"
+  const messageClassIcon = messageType =='good' ? (<BiCheckCircle className={messageIconClasses}/>) : <BiAlarmExclamation className={messageIconClasses}/>
+  const messageClasses = [messageClassesBase,messageClassType].join(' ')
+  
   return (
     <div>
+      { message ? (<div className={messageClasses + (messageShown ? "" : " opacity-0")} onClick={() => setMessageShown(false)}>{message} {messageClassIcon}</div>) : null }
       <input type="file" accept=".csv .txt" onChange={handleFileUpload} />
       {data.length > 0 ? (
-      <div className="-mx-4 sm:mx-0 mt-3 ">
+        <div className="-mx-4 sm:mx-0 mt-3 ">
+          <div className="mx-auto max-w-7xl rounded-lg">
+            <div className="grid gap-px bg-red/5 grid-cols-2 md:grid-cols-2">
+              <div key="" className=" bg-richblack-700 rounded-md px-4 pt-0 pb-2 sm:py-6 sm:px-6 lg:px-8 flex sm:block">
+                <p className="text-sm text-gray-300 mb-2">Send Ticket Emails:</p>
+                  
+                  {/* Dynamically generate radio buttons from the emailOptions array */}
+                  {emailOptions.map((option) => (
+                    <div className="flex items-center mb-2" key={option.value}>
+                      <input
+                        id={`sendTicketEmails-${option.value}`}
+                        name="sendTicketEmails"
+                        type="radio"
+                        value={option.value}
+                        checked={options.sendTicketEmails === option.value}
+                        onChange={handleOptionChange}
+                        className="h-4 w-4 border-gray-700 text-indigo-600 focus:ring-indigo-600"
+                      />
+                      <label
+                        htmlFor={`sendTicketEmails-${option.value}`}
+                        className="ml-2 text-sm text-gray-300"
+                      >
+                        {option.label}
+                      </label>
+                    </div>
+                  ))}
+                  <button onClick={handleSubmit} className="py-3 px-6 mt-3 float-right bg-chillired-500 rounded-lg block">Submit</button>
+              </div>
+            </div>
+          </div><br />
           <table className="min-w-full">
             <thead className="bg-richblack-700">
               <tr className=''>
@@ -69,6 +172,11 @@ export default function ImportPageClient() {
                 <th scope="col" className={`${headerClassNames} hidden lg:table-cell`}>
                   <span className={headerContainerClassNames}>
                     <span className={`${labelClassNames}`}>Email</span>
+                  </span>
+                </th>
+                <th scope="col" className={`${headerClassNames} hidden lg:table-cell`}>
+                  <span className={headerContainerClassNames}>
+                    <span className={`${labelClassNames}`}>Phone</span>
                   </span>
                 </th>
                 <th scope="col" className={`${headerClassNames} hidden sm:table-cell`}>
@@ -93,16 +201,17 @@ export default function ImportPageClient() {
             </thead>
             <tbody className="divide-y divide-gray-800 bg-none">
               {data.map((row) => 
-              <TicketRow 
+              <TicketRow
                 key={row.ticket_number} 
-                attendee={transformAttendee(row)}
+                attendee={row}
+                handleSaveChanges={handleSaveChanges}
                 setActiveTicket={true} 
                 setNameChangeModalActive={false} 
                 setTicketTransferModalActive={false} />
+
               )}
             </tbody>
           </table>
-          
         </div>
       ): ''}
     </div>
