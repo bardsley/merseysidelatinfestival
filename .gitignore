@@ -49,6 +49,8 @@ functions/node_modules
 # Serverless
 .serverless
 .aws/config
+functions/node_modules
+
 
 .tina/__generated__
 sendgrid.env

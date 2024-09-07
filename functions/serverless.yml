@@ -1,4 +1,5 @@
 org: danceenginesystems # Needs a name for the organization
+
 app: dance-engine
 service: api # Do we need multiple services? 
 frameworkVersion: '4.1'
@@ -410,10 +411,3 @@ functions:
       - httpApi:
           path: /maildev
           method: get
-
-
-
-
-
-
-
