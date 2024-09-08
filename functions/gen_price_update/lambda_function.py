@@ -85,10 +85,10 @@ def lambda_handler(event, context):
     repo = git.get_repo("bardsley/merseysidelatinfestival")
     pulls = repo.get_pulls()
     for pr in pulls:
-        if pr.base.ref == destination_branch & pr.head.ref == branch:
+        if (pr.base.ref == destination_branch) & (pr.head.ref == branch):
             logger.info("A PR already exists, attempting to Merge")
             try:
-                response = pr.merge(commit_title=message+" #{}".format(pr.number))
+                response = pr.merge(commit_title="Update prices - "+datetime.now().strftime("%d-%m-%Y %H:%M:%S")+" #{}".format(pr.number))
                 logger.info(response)
                 return {'statusCode': 200}
             except GithubException as ge:
