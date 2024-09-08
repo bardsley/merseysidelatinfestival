@@ -9,31 +9,31 @@ export const individualTickets: IndividualTickets = {
 			 cost: 20,
 			 studentCost: 15,
 			 isAvailable: true,
-			 priceId: 'price_1PwAoLEWkmdeWsQPhKuSbZsG',
-			 studentPriceId: 'price_1PwAofEWkmdeWsQPCooNqfSK'
+			 priceId: 'price_1PwoMhEWkmdeWsQPEenyN1wb',
+			 studentPriceId: 'price_1PwoN0EWkmdeWsQP0p4tP5QK'
 			 },
 		},
 	Saturday: { 
-		 Dinner:{
-			 cost: 42.5,
-			 studentCost: 38.5,
-			 isAvailable: true,
-			 priceId: 'price_1PwAtHEWkmdeWsQPfqWoTVqK',
-			 studentPriceId: 'price_1PwAtbEWkmdeWsQPBogwBiqz'
-			 },
 		 Party:{
 			 cost: 25,
 			 studentCost: 22,
 			 isAvailable: true,
-			 priceId: 'price_1PwAozEWkmdeWsQPdB2L4baa',
-			 studentPriceId: 'price_1PwApKEWkmdeWsQP92641eG7'
+			 priceId: 'price_1PwoNnEWkmdeWsQPVKV6v05d',
+			 studentPriceId: 'price_1PwoO4EWkmdeWsQPKvKLoBI6'
+			 },
+		 Dinner:{
+			 cost: 42.5,
+			 studentCost: 38.5,
+			 isAvailable: true,
+			 priceId: 'price_1PwoQbEWkmdeWsQPz0vieQFz',
+			 studentPriceId: 'price_1PwoQrEWkmdeWsQPx6rcHJ8V'
 			 },
 		 Classes:{
 			 cost: 55,
 			 studentCost: 55,
 			 isAvailable: true,
-			 priceId: 'price_1PiMe5EWkmdeWsQP1s1BhBsv',
-			 studentPriceId: 'price_1PwAsbEWkmdeWsQPQOCb4Nnv'
+			 priceId: 'price_1PwoPREWkmdeWsQPIB87h5gN',
+			 studentPriceId: 'price_1PwoPREWkmdeWsQPIB87h5gN'
 			 },
 		},
 	Sunday: { 
@@ -41,15 +41,15 @@ export const individualTickets: IndividualTickets = {
 			 cost: 55,
 			 studentCost: 55,
 			 isAvailable: true,
-			 priceId: 'price_1PiMwyEWkmdeWsQPo5Tl0V6k',
-			 studentPriceId: 'price_1PwAssEWkmdeWsQPf5izl6wp'
+			 priceId: 'price_1PwoPvEWkmdeWsQPpJTEre5x',
+			 studentPriceId: 'price_1PwoPvEWkmdeWsQPpJTEre5x'
 			 },
 		 Party:{
 			 cost: 20,
 			 studentCost: 15,
 			 isAvailable: true,
-			 priceId: 'price_1PwArnEWkmdeWsQPVPmw34jm',
-			 studentPriceId: 'price_1PwAsBEWkmdeWsQPr7nYUKnu'
+			 priceId: 'price_1PwoOYEWkmdeWsQPxRBOlFgr',
+			 studentPriceId: 'price_1PwoOqEWkmdeWsQPYGIhbZJZ'
 			 },
 		},
  }
@@ -59,8 +59,8 @@ export const initialSelectedOptions = {
 		Party: false,
 		},
 	Saturday: { 
-		Dinner: false,
 		Party: false,
+		Dinner: false,
 		Classes: false,
 		},
 	Sunday: { 
@@ -71,26 +71,6 @@ export const initialSelectedOptions = {
 
 // Binary version = [Friday BiParty,Saturday Class Pass,Saturday Dinner,Saturday Party,Sunday Class Pass,Sunday Party]
 export const passes: Passes = {
-	'Saturday Pass': {
-		 cost: 95,
-		 studentCost: 95,
-		 isAvailable: true,
-		 saving: 27.5,
-		 studentSaving: 20.5,
-		 combination: ['Saturday Classes', 'Saturday Dinner', 'Saturday Party'],
-		 description: "The entire Saturday experience",
-		 priceId: 'price_1PZcrKEWkmdeWsQPl1h22Dk4',
-		 studentPriceId: 'price_1PiNkwEWkmdeWsQPWabYCO4U'},
-	'Class Pass': {
-		 cost: 95,
-		 studentCost: 95,
-		 isAvailable: true,
-		 saving: 15,
-		 studentSaving: 15,
-		 combination: ['Saturday Classes', 'Sunday Classes'],
-		 description: "All the classes for the weekend",
-		 priceId: 'price_1PiGlOEWkmdeWsQP7DrG63Bh',
-		 studentPriceId: 'price_1PwAnJEWkmdeWsQP5nxx9WVb'},
 	'Party Pass': {
 		 cost: 45,
 		 studentCost: 35,
@@ -99,28 +79,8 @@ export const passes: Passes = {
 		 studentSaving: 17,
 		 combination: ['Friday Party', 'Saturday Party', 'Sunday Party'],
 		 description: "Party away every single night, the ultimate party weekend",
-		 priceId: 'price_1PZctuEWkmdeWsQP4gPCbeER',
-		 studentPriceId: 'price_1PgTOHEWkmdeWsQPNMogFUVa'},
-	'Dine and Dance Pass': {
-		 cost: 60,
-		 studentCost: 55,
-		 isAvailable: true,
-		 saving: 7.5,
-		 studentSaving: 5.5,
-		 combination: ['Saturday Dinner', 'Saturday Party'],
-		 description: "Saturday evening is covered including your food",
-		 priceId: 'price_1PwAnfEWkmdeWsQPnaBU07nh',
-		 studentPriceId: 'price_1PwAnsEWkmdeWsQPH2MrprVg'},
-	'Full Pass': {
-		 cost: 105,
-		 studentCost: 85,
-		 isAvailable: true,
-		 saving: 112.5,
-		 studentSaving: 115.5,
-		 combination: ['Friday Party', 'Saturday Classes', 'Saturday Dinner', 'Saturday Party', 'Sunday Classes', 'Sunday Party'],
-		 description: "Everything the festival has at the best rate! If you're looking for the best deal this is it",
-		 priceId: 'price_1PwAjVEWkmdeWsQPZ3X074YG',
-		 studentPriceId: 'price_1PwAkKEWkmdeWsQPD3GZd6nV'},
+		 priceId: 'price_1PwoJTEWkmdeWsQPsjvndOcy',
+		 studentPriceId: 'price_1PwoJoEWkmdeWsQPl331ijir'},
 	'Sunday Pass': {
 		 cost: 59,
 		 studentCost: 59,
@@ -129,8 +89,48 @@ export const passes: Passes = {
 		 studentSaving: 11,
 		 combination: ['Sunday Classes', 'Sunday Party'],
 		 description: "The whole Sunday experience",
-		 priceId: 'price_1PiGJpEWkmdeWsQPbocbo6df',
-		 studentPriceId: 'price_1PwAmZEWkmdeWsQP4ytObuGc'},
+		 priceId: 'price_1PwoI8EWkmdeWsQPpVotxewC',
+		 studentPriceId: 'price_1PwoI8EWkmdeWsQPpVotxewC'},
+	'Dine and Dance Pass': {
+		 cost: 60,
+		 studentCost: 55,
+		 isAvailable: true,
+		 saving: 7.5,
+		 studentSaving: 5.5,
+		 combination: ['Saturday Dinner', 'Saturday Party'],
+		 description: "Saturday evening is covered including the gala dinner",
+		 priceId: 'price_1PwoLAEWkmdeWsQPg2p9IcuJ',
+		 studentPriceId: 'price_1PwoLsEWkmdeWsQPreRyDhg2'},
+	'Saturday Pass': {
+		 cost: 95,
+		 studentCost: 95,
+		 isAvailable: true,
+		 saving: 27.5,
+		 studentSaving: 20.5,
+		 combination: ['Saturday Classes', 'Saturday Dinner', 'Saturday Party'],
+		 description: "The entire Saturday experience",
+		 priceId: 'price_1PwoHBEWkmdeWsQPJNJ1Xh4N',
+		 studentPriceId: 'price_1PwoHUEWkmdeWsQPh7QCjrOi'},
+	'Full Pass': {
+		 cost: 105,
+		 studentCost: 85,
+		 isAvailable: true,
+		 saving: 112.5,
+		 studentSaving: 115.5,
+		 combination: ['Friday Party', 'Saturday Classes', 'Saturday Dinner', 'Saturday Party', 'Sunday Classes', 'Sunday Party'],
+		 description: "Everything the festival has at the best rate! If you're looking for the best deal this is it",
+		 priceId: 'price_1PwoFBEWkmdeWsQP9hXHC09H',
+		 studentPriceId: 'price_1PwoGAEWkmdeWsQPuFGN302A'},
+	'Class Pass': {
+		 cost: 95,
+		 studentCost: 95,
+		 isAvailable: true,
+		 saving: 15,
+		 studentSaving: 15,
+		 combination: ['Saturday Classes', 'Sunday Classes'],
+		 description: "All the daytime classes for the weekend",
+		 priceId: 'price_1PwoKTEWkmdeWsQP3pYUjaMp',
+		 studentPriceId: 'price_1PwoKTEWkmdeWsQP3pYUjaMp'},
 
 }
 
