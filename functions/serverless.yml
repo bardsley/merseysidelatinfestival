@@ -252,6 +252,9 @@ functions:
       - !Ref StripeLambdaLayer
       - !Ref GithubLambdaLayer
     events:
+      - httpApi:
+          path: /gen_price_update
+          method: get
       - stream:
           type: dynamodb
           arn:
