@@ -153,9 +153,10 @@ def lambda_handler(event, context):
     repo = git.get_repo("bardsley/merseysidelatinfestival")
 
     dt_string = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-    message = "Update prices "+dt_string
+    message = "Update prices - "+dt_string
     path = "components/ticketing/pricingDefaultsDynamic.ts"
     branch = os.environ.get("GITHUB_BRANCH_NAME")
+    destination_branch = os.environ.get("GITHUB_BRANCH_DESTINATION")
     author = InputGitAuthor(
         "DanceBot", 
         "bot@engine.dance"
@@ -169,11 +170,21 @@ def lambda_handler(event, context):
         logger.info("File not found, creating it")
         repo.create_file(path, message, new_file, branch=branch, author=author)
 
-    logger.info("merge")
+    logger.info("Creating a pull request")
     try:
-        response = repo.merge(os.environ.get("GITHUB_BRANCH_DESTINATION"), 
-            branch, 
-            commit_message="merge {} into {}".format(os.environ.get("GITHUB_BRANCH_NAME"),os.environ.get("GITHUB_BRANCH_DESTINATION")))
+        pull_request = repo.create_pull(
+            title=message,
+            body="Dynamically generated prices",
+            head=branch,
+            base=destination_branch
+        )
+        pr_number = pull_request.number
+        logger.info("Created pull request #{}".format(pr_number))
+
+        logger.info("Merging PR")
+        response = pull_request.merge(
+            title=message+" #{}".format(pr_number),
+        )
         logger.info(response)
     except GithubException as ge:
         logger.error(ge) 
