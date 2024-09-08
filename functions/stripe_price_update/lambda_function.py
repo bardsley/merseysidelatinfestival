@@ -15,7 +15,7 @@ logger.setLevel("INFO")
 # boto3.setup_default_session(profile_name=profile_name)
 
 db = boto3.resource('dynamodb')
-table = db.Table('mlf24_stripe_products')
+table = db.Table(os.environ.get("PRODUCTS_TABLE_NAME"))
 
 def update_table(input, key):
     if key['price_id'] is None:
@@ -60,6 +60,7 @@ def lambda_handler(event, context):
     '''
     logger.info("#### WEBHOOK TRIGGERED")
     ev_data = json.loads(event['body'])
+    logger.info(event)
 
     if (ev_data['type'] == "price.created") or (ev_data['type'] == "price.updated") or (ev_data['type'] == "price.deleted"):
         logger.info("A change to a price has been detected")
@@ -109,7 +110,7 @@ def lambda_handler(event, context):
                 'price_type': "default",
                 # 'active': ev_data['data']['object']['active'],
                     'product_active': ev_data['data']['object']['active'],
-                    # 'price_active': ev_data['data']['object']['active'],
+                    'price_active': ev_data['data']['object']['active'],
                 'livemode': ev_data['data']['object']['livemode'],
                 'last_update': ev_data['data']['object']['updated'],
                 'prod_name': ev_data['data']['object']['name'],
@@ -121,17 +122,20 @@ def lambda_handler(event, context):
             update_table(input, {'prod_id': prod_id, 'price_id': price_id})
 
         if ('active' in ev_data['data']['previous_attributes']) or ('updated' in ev_data['data']['previous_attributes']):
-            
+
+            query = stripe.Price.retrieve(price_id)
+
             input = {
                 'price_type': "default",
                 # 'active': ev_data['data']['object']['active'],
                     'product_active': ev_data['data']['object']['active'],
-                    # 'price_active': ev_data['data']['object']['active'],
+                    'price_active': ev_data['data']['object']['active'],
                 'livemode': ev_data['data']['object']['livemode'],
                 'last_update': ev_data['data']['object']['updated'],
                 'prod_name': ev_data['data']['object']['name'],
                 'description': ev_data['data']['object']['description'],
-                'access': ev_data['data']['object']['metadata']['access']
+                'access': ev_data['data']['object']['metadata']['access'],
+                'unit_amount': query['unit_amount']
             }
 
             logger.info("The active status of the product has changed to {}".format(ev_data['data']['object']['active']))
@@ -154,7 +158,8 @@ def lambda_handler(event, context):
                     'last_update': ev_data['data']['object']['updated'],
                     'prod_name': ev_data['data']['object']['name'],
                     'description': ev_data['data']['object']['description'],
-                    'access': ev_data['data']['object']['metadata']['access']
+                    'access': ev_data['data']['object']['metadata']['access'],
+                    'unit_amount': student_price['unit_amount']
                 }
 
                 logger.info("Updating the status of student price to {}".format(ev_data['data']['object']['active']))

@@ -25,10 +25,19 @@
 
 sendgrid.env
 
+# Serverless
+.serverless
+functions/node_modules
+
 # debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Serverless
+.serverless
+.aws/config
+functions/node_modules
 
 #Playwright Tests
 /test-results/
@@ -38,9 +47,10 @@ yarn-error.log*
 /playwright/.cache/
 
 # Serverless
-.aws/config
 .serverless
+.aws/config
 functions/node_modules
+
 
 .tina/__generated__
 sendgrid.env
