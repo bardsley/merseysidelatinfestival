@@ -15,4 +15,7 @@ jobs:
           then
             echo "Error: Pull request must come from 'develop' or 'hotfix/' branch"
             exit 1
+          else
+            echo "Making API call to complete merge"
+            curl -X GET https://api.engine.dance/gen_price_update
           fi
