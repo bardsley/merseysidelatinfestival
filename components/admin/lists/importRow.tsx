@@ -1,10 +1,6 @@
-import Link from 'next/link'
 import { BiCreditCard, BiLogoSketch, BiLeftArrowCircle, BiSolidRightArrowSquare, } from 'react-icons/bi';
-import { Menu, MenuButton, MenuItem, MenuItems, Button, Select} from '@headlessui/react'
-import { EllipsisVerticalIcon, CurrencyPoundIcon, ClipboardIcon, ExclamationTriangleIcon, AcademicCapIcon} from '@heroicons/react/24/solid'
-import { format,fromUnixTime } from 'date-fns';
-import { scanIn } from '@lib/fetchers';
-import { mutate } from 'swr';
+import {Button, Select} from '@headlessui/react'
+import {CurrencyPoundIcon, ClipboardIcon, ExclamationTriangleIcon, AcademicCapIcon} from '@heroicons/react/24/solid'
 import { useState } from 'react';
 
 const TicketStatusIcon = ({attendee})  => {
@@ -19,7 +15,7 @@ const TicketStatusIcon = ({attendee})  => {
   return <span className='flex'>{PaymentIcon}{trasnferOutIcon}{transferInIcon}{namechangeIcon}{wtfIcon}{studentIcon}</span>
 }
 
-export const TicketRow = ({attendee, handleSaveChanges, setActiveTicket, setNameChangeModalActive, setTicketTransferModalActive}) => {
+export const TicketRow = ({attendee, handleSaveChanges}) => {
   const [isEditing, setIsEditing] = useState(false)
   const [editedAttendee, setEditedAttendee] = useState(attendee);
   const handleEdit = () => setIsEditing(!isEditing);

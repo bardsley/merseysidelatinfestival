@@ -1,12 +1,30 @@
 'use client'
-import useSWR, {mutate} from 'swr';
-import { fetcher } from  "@lib/fetchers";
-import { Fragment } from 'react';
 import { BiAlarmExclamation, BiCheckCircle } from "react-icons/bi";
 import { useSearchParams } from "next/navigation"
 import {useEffect, useState} from 'react';
+import React from "react";
 import { TicketRow } from '@components/admin/lists/importRow';
 import Papa from 'papaparse';
+
+type Attendee = {
+  name: string
+  email: string
+  phone: string
+  checkin_at: string
+  passes: string[]
+  purchased_at: string
+  ticket_number: string | null
+  active: boolean
+  status: string
+  student_ticket: boolean
+  transferred_in: boolean
+  transferred_out: boolean
+  name_changed: boolean
+  transferred: boolean
+  history: any[]
+  unit_amount: number
+  cs_id: string
+}
 
 const emailOptions = [
   { value: 'everyone', label: 'Everyone' },
@@ -20,8 +38,9 @@ export const optionsDefault = {
 
 export default function ImportPageClient() {
   const [data, setData] = useState<any[][]>([]);
+  const [attendeesData, setAttendeesData] = useState<Attendee[]>([]);
   const [options, setOptions] = useState(optionsDefault);
-  const [error, setError] = useState(false as boolean | string)
+  const [error] = useState(false as boolean | string)
   const [messageShown, setMessageShown] = useState(true)
   const params = useSearchParams()
 
@@ -43,7 +62,7 @@ export default function ImportPageClient() {
       Papa.parse(file, {
         complete: (result) => {
           const transformedData = result.data.map((row: any) => transformAttendee(row));
-          setData(transformedData);
+          setAttendeesData(transformedData);
           console.log(transformedData)
         },
         header: true,
@@ -76,8 +95,7 @@ export default function ImportPageClient() {
   };
   
   const handleSaveChanges = (updatedAttendee) => {
-    console.log(data)
-    setData((prevData) =>
+    setAttendeesData((prevData) =>
     prevData.map((attendee) =>
       attendee.ticket_number === updatedAttendee.ticket_number
       ? updatedAttendee
@@ -95,7 +113,7 @@ export default function ImportPageClient() {
     }))
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const payload = {
@@ -110,6 +128,7 @@ export default function ImportPageClient() {
       },
       body: JSON.stringify(payload),
     })
+    console.log(response)
 
   }
   
@@ -127,7 +146,7 @@ export default function ImportPageClient() {
     <div>
       { message ? (<div className={messageClasses + (messageShown ? "" : " opacity-0")} onClick={() => setMessageShown(false)}>{message} {messageClassIcon}</div>) : null }
       <input type="file" accept=".csv .txt" onChange={handleFileUpload} />
-      {data.length > 0 ? (
+      {attendeesData.length > 0 ? (
         <div className="-mx-4 sm:mx-0 mt-3 ">
           <div className="mx-auto max-w-7xl rounded-lg">
             <div className="grid gap-px bg-red/5 grid-cols-2 md:grid-cols-2">
@@ -200,15 +219,12 @@ export default function ImportPageClient() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800 bg-none">
-              {data.map((row) => 
+              {attendeesData.map((row) => 
               <TicketRow
                 key={row.ticket_number} 
                 attendee={row}
                 handleSaveChanges={handleSaveChanges}
-                setActiveTicket={true} 
-                setNameChangeModalActive={false} 
-                setTicketTransferModalActive={false} />
-
+                />
               )}
             </tbody>
           </table>
