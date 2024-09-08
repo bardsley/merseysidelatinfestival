@@ -168,6 +168,7 @@ def lambda_handler(event, context):
     dt_string = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     message = "Update prices - "+dt_string
     path = "components/ticketing/pricingDefaultsDynamic.ts"
+
     author = InputGitAuthor(
         "DanceBot", 
         "bot@engine.dance"
