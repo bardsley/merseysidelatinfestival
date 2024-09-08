@@ -183,7 +183,7 @@ def lambda_handler(event, context):
 
         logger.info("Merging PR")
         response = pull_request.merge(
-            title=message+" #{}".format(pr_number),
+            commit_title=message+" #{}".format(pr_number),
         )
         logger.info(response)
     except GithubException as ge:
