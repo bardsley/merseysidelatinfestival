@@ -9,7 +9,8 @@ import {
   // CalendarDaysIcon,
   ShoppingCartIcon,
   CakeIcon,
-  LightBulbIcon
+  LightBulbIcon,
+  FolderPlusIcon,
 } from '@heroicons/react/24/solid'
 
 const actions = [
@@ -81,6 +82,15 @@ const actions = [
     href: '/admin/stripe',
     description: "Check product pricing",
     icon: CakeIcon,
+    iconForeground: 'text-green-800',
+    iconBackground: 'bg-green-200',
+    state: 'unreleased',
+  },
+  {
+    title: 'Import',
+    href: '/admin/import',
+    description: "Import tickets from csv",
+    icon: FolderPlusIcon,
     iconForeground: 'text-green-800',
     iconBackground: 'bg-green-200',
     state: 'unreleased',
