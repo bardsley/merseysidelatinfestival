@@ -102,7 +102,7 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
             <div className='rounded-3xl md:w-full max-w-lg mx-auto mb-6 md:mb-12 bg-richblack-600 border-gray-700 border text-white p-8 text-center z-30'>
               <h2 className='text-2xl md:text-3xl font-bold'>Limited time deal</h2>
               <p className=''>
-                Currently we are offering an early bird price at an incredible £125! <br/>
+                Currently we are offering an early bird price at an incredible saving <br/>
                 <button className={ `${packages.length == 1 && packages[0] == fullPassName ? "text-chillired-500" : "text-white bg-chillired-500 0"} text-xl border border-chillired-500 rounded-md p-6 mt-6 z-30`} 
                   onClick={() => {fullPassSelectFunction(true); scrollToElement(); }}>
                   { packages.length == 1 && packages[0] == fullPassName ? `Already selected` : `Give me the ${fullPassName}`}

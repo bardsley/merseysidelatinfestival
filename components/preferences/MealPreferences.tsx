@@ -119,7 +119,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
 
       </fieldset>
       
-      <div className='my-6'>
+      {/* <div className='my-6'>
         <label htmlFor="email" className="text-base font-semibold leading-6 text-white block">
         Seating
         </label>
@@ -140,7 +140,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
         <p id="seating-preference" className="mt-2 text-sm text-gray-300">
         Whilst we will endeavour to match everyone who sets a preference this cannot be guaranteed
         </p>
-      </div>
+      </div> */}
       { process.env.NODE_ENV == 'development' && process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' ? <>
       <hr />
       <h2>Debug Ignore below the line</h2>
