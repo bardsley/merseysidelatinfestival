@@ -54,6 +54,8 @@
 # Copyright 2023 adosibalo <94008816+adosibalo@users.noreply.github.com>       #
 # Copyright 2024 Enrico Minack <github@enrico.minack.dev>                      #
 # Copyright 2024 Jirka Borovec <6035284+Borda@users.noreply.github.com>        #
+# Copyright 2024 Jonathan Kliem <jonathan.kliem@gmail.com>                     #
+# Copyright 2024 Kobbi Gal <85439776+kgal-pan@users.noreply.github.com>        #
 #                                                                              #
 # This file is part of PyGithub.                                               #
 # http://pygithub.readthedocs.io/                                              #
@@ -454,7 +456,7 @@ class Requester:
         self.__custom_connections = deque()
 
     @staticmethod
-    # replace with str.removesuffix once support for Python 3.7 is dropped
+    # replace with str.removesuffix once support for Python 3.8 is dropped
     def remove_suffix(string: str, suffix: str) -> str:
         if string.endswith(suffix):
             return string[: -len(suffix)]
@@ -572,7 +574,7 @@ class Requester:
         """
         :calls: `POST /graphql <https://docs.github.com/en/graphql>`_
         """
-        input_ = {"query": query, "variables": {"input": variables}}
+        input_ = {"query": query, "variables": variables}
 
         response_headers, data = self.requestJsonAndCheck("POST", self.graphql_url, input=input_)
         if "errors" in data:
@@ -795,7 +797,7 @@ class Requester:
             requestHeaders = {}
 
         if self.__auth is not None:
-            requestHeaders["Authorization"] = f"{self.__auth.token_type} {self.__auth.token}"
+            self.__auth.authentication(requestHeaders)
         requestHeaders["User-Agent"] = self.__userAgent
 
         url = self.__makeAbsoluteUrl(url)
@@ -985,17 +987,8 @@ class Requester:
     ) -> None:
         if self._logger.isEnabledFor(logging.DEBUG):
             headersForRequest = requestHeaders.copy()
-            if "Authorization" in requestHeaders:
-                if requestHeaders["Authorization"].startswith("Basic"):
-                    headersForRequest["Authorization"] = "Basic (login and password removed)"
-                elif requestHeaders["Authorization"].startswith("token"):
-                    headersForRequest["Authorization"] = "token (oauth token removed)"
-                elif requestHeaders["Authorization"].startswith("Bearer"):
-                    headersForRequest["Authorization"] = "Bearer (jwt removed)"
-                else:  # pragma no cover (Cannot happen, but could if we add an authentication method => be prepared)
-                    headersForRequest[
-                        "Authorization"
-                    ] = "(unknown auth removed)"  # pragma no cover (Cannot happen, but could if we add an authentication method => be prepared)
+            if self.__auth:
+                self.__auth.mask_authentication(headersForRequest)
             self._logger.debug(
                 "%s %s://%s%s %s %s ==> %i %s %s",
                 verb,

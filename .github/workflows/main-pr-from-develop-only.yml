@@ -11,8 +11,11 @@ jobs:
     steps:
       - name: Check branch
         run: |
-          if [[ ${GITHUB_HEAD_REF} != develop ]] && ! [[ ${GITHUB_HEAD_REF} =~ ^hotfix/ ]] && ! [[ ${GITHUB_HEAD_REF} =~ ^dependabot/ ]]; 
+          if [[ ${GITHUB_HEAD_REF} != develop ]] && ! [[ ${GITHUB_HEAD_REF} =~ ^hotfix/ ]] && ! [[ ${GITHUB_HEAD_REF} =~ ^dependabot/ ]] && ! [[ ${GITHUB_HEAD_REF} =~ ^pricing-prod ]]; 
           then
             echo "Error: Pull request must come from 'develop' or 'hotfix/' branch"
             exit 1
+          else
+            echo "Making API call to complete merge"
+            curl -X GET https://api.engine.dance/gen_price_update
           fi

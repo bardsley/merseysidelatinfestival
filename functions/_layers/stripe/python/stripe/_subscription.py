@@ -220,6 +220,7 @@ class Subscription(
                         "diners",
                         "discover",
                         "eftpos_au",
+                        "girocard",
                         "interac",
                         "jcb",
                         "mastercard",
@@ -529,7 +530,7 @@ class Subscription(
         """
         cancel_at_period_end: NotRequired[bool]
         """
-        Boolean indicating whether this subscription should cancel at the end of the current period.
+        Indicate whether this subscription should cancel at the end of the current period (`current_period_end`). Defaults to `false`.
         """
         collection_method: NotRequired[
             Literal["charge_automatically", "send_invoice"]
@@ -595,7 +596,7 @@ class Subscription(
         """
         off_session: NotRequired[bool]
         """
-        Indicates if a customer is on or off-session while an invoice payment is attempted.
+        Indicates if a customer is on or off-session while an invoice payment is attempted. Defaults to `false` (on-session).
         """
         on_behalf_of: NotRequired["Literal['']|str"]
         """
@@ -636,7 +637,7 @@ class Subscription(
         """
         promotion_code: NotRequired[str]
         """
-        The ID of a promotion code to apply to this subscription. A promotion code applied to a subscription will only affect invoices created for that particular subscription. This field has been deprecated and will be removed in a future API version. Use `discounts` instead.
+        The promotion code to apply to this subscription. A promotion code applied to a subscription will only affect invoices created for that particular subscription. This field has been deprecated and will be removed in a future API version. Use `discounts` instead.
         """
         proration_behavior: NotRequired[
             Literal["always_invoice", "create_prorations", "none"]
@@ -722,7 +723,7 @@ class Subscription(
         """
         unit_amount: NotRequired[int]
         """
-        A positive integer in cents (or local equivalent) (or 0 for a free price) representing how much to charge.
+        A positive integer in cents (or local equivalent) (or 0 for a free price) representing how much to charge or a negative integer representing the amount to credit to the customer.
         """
         unit_amount_decimal: NotRequired[str]
         """
@@ -1019,6 +1020,7 @@ class Subscription(
                 "diners",
                 "discover",
                 "eftpos_au",
+                "girocard",
                 "interac",
                 "jcb",
                 "mastercard",
@@ -1344,7 +1346,7 @@ class Subscription(
         """
         cancel_at_period_end: NotRequired[bool]
         """
-        Boolean indicating whether this subscription should cancel at the end of the current period.
+        Indicate whether this subscription should cancel at the end of the current period (`current_period_end`). Defaults to `false`.
         """
         cancellation_details: NotRequired[
             "Subscription.ModifyParamsCancellationDetails"
@@ -1408,7 +1410,7 @@ class Subscription(
         """
         off_session: NotRequired[bool]
         """
-        Indicates if a customer is on or off-session while an invoice payment is attempted.
+        Indicates if a customer is on or off-session while an invoice payment is attempted. Defaults to `false` (on-session).
         """
         on_behalf_of: NotRequired["Literal['']|str"]
         """
@@ -1451,7 +1453,7 @@ class Subscription(
         """
         promotion_code: NotRequired[str]
         """
-        The promotion code to apply to this subscription. A promotion code applied to a subscription will only affect invoices created for that particular subscription.
+        The promotion code to apply to this subscription. A promotion code applied to a subscription will only affect invoices created for that particular subscription. This field has been deprecated and will be removed in a future API version. Use `discounts` instead.
         """
         proration_behavior: NotRequired[
             Literal["always_invoice", "create_prorations", "none"]
@@ -1539,7 +1541,7 @@ class Subscription(
         """
         unit_amount: NotRequired[int]
         """
-        A positive integer in cents (or local equivalent) (or 0 for a free price) representing how much to charge.
+        A positive integer in cents (or local equivalent) (or 0 for a free price) representing how much to charge or a negative integer representing the amount to credit to the customer.
         """
         unit_amount_decimal: NotRequired[str]
         """
@@ -1848,6 +1850,7 @@ class Subscription(
                 "diners",
                 "discover",
                 "eftpos_au",
+                "girocard",
                 "interac",
                 "jcb",
                 "mastercard",
@@ -2079,7 +2082,7 @@ class Subscription(
     """
     cancel_at_period_end: bool
     """
-    If the subscription has been canceled with the `at_period_end` flag set to `true`, `cancel_at_period_end` on the subscription will be true. You can use this attribute to determine whether a subscription that has a status of active is scheduled to be canceled at the end of the current period.
+    Whether this subscription will (if `status=active`) or did (if `status=canceled`) cancel at the end of the current billing period.
     """
     canceled_at: Optional[int]
     """

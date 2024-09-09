@@ -7,7 +7,7 @@ export async function GET(_req: NextRequest, { params}: { params: { email: strin
   const referer = requestHeaders.get('referer')
   console.log("headers", )
   console.log("params", params)
-  const apiRequestUrl = `${process.env.LAMBDA_SEND_TICKET_EMAIL}?email=${params.email}`
+  const apiRequestUrl = `${process.env.LAMBDA_SEND_TICKET_EMAIL}?email=${encodeURIComponent(params.email)}`
   console.log("apiRequestUrl", apiRequestUrl)
   const apiResponse = await fetch(apiRequestUrl, { method: 'GET',  headers: { 'Content-Type': 'application/json' }})
   console.log("apiResponse", apiResponse)

@@ -76,6 +76,15 @@ const actions = [
     iconBackground: 'bg-green-200',
     state: 'unreleased',
   },
+  {
+    title: 'Stripe',
+    href: '/admin/stripe',
+    description: "Check product pricing",
+    icon: CakeIcon,
+    iconForeground: 'text-green-800',
+    iconBackground: 'bg-green-200',
+    state: 'unreleased',
+  },
 ]
 
 function classNames(...classes) {

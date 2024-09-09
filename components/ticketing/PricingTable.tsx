@@ -130,8 +130,8 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
                 
                 <p>{packages.length == 1 && packages[0] == fullPassName ?  "Best deal" : "Best option for you"}</p>
                 <h2 className='text-2xl'>{packages.map((packageName) => `${packageName} ${passOrTicket(packageName)}`).join(', ').replace('Saturday Dinner Ticket','Dinner Ticket')}</h2>
-                <h2 className='text-3xl font-bold'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost}</span>) : null } £{packageCost}</h2>
-                { totalCost - packageCost > 0 ? (<p>Saving you £{totalCost - packageCost} on the full cost of those options!</p>) : null }
+                <h2 className='text-3xl font-bold'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost % 1 != 0 ? totalCost.toFixed(2) : totalCost}</span>) : null } £{packageCost % 1 !=0 ? packageCost.toFixed(2) : packageCost}</h2>
+                { totalCost - packageCost > 0 ? (<p>Saving you £{(totalCost - packageCost) % 1 !=0 ?  (totalCost - packageCost).toFixed(2) : (totalCost - packageCost)} on the full cost of those options!</p>) : null }
               </div>
               <form action={checkout} className='flex w-full md:w-auto flex-col md:flex-row items-center justify-center'>
               <CheckoutButton></CheckoutButton>

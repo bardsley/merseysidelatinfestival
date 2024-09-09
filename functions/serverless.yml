@@ -1,5 +1,6 @@
 org: danceenginesystems # Needs a name for the organization
-app: dance-engine # Need to see what connor thinks of name
+
+app: dance-engine
 service: api # Do we need multiple services? 
 frameworkVersion: '4.1'
 
@@ -15,6 +16,9 @@ custom:
 package:
   individually: true
 
+#######################
+# Stages
+#######################
 stages:
   default:
     observability: false
@@ -24,12 +28,19 @@ stages:
       isProd: false
       deletionPolicy: Delete 
       skipTables: true
+      githubBranchDestination: "develop"
+      stripeSecretKey: ${param:testStripeSecretKey}
   prod:
     params:
       isProd: true
-      deletionPolicy: Retain  
+      deletionPolicy: Retain
+      stripeSecretKey: ${param:prodStripeSecretKey}
+      githubBranchDestination: "main"
+      
     
-
+#######################
+# Provider Information
+#######################
 provider:
   name: aws
   runtime: nodejs18.x # Needed to enable serverless to run on github actions
@@ -47,6 +58,10 @@ provider:
             - dynamodb:PutItem
             - dynamodb:UpdateItem
             - dynamodb:DeleteItem
+            - dynamodb:DescribeStream
+            - dynamodb:GetRecords
+            - dynamodb:GetShardIterator
+            - dynamodb:ListStreams
           Resource:
             - Fn::GetAtt: [AttendeesTable, Arn]
             - Fn::GetAtt: [StripeProductsTable, Arn]
@@ -58,17 +73,21 @@ provider:
             - lambda:InvokeFunction
           Resource:
             - '*'
+#######################
+# Layers
+#######################
 
 layers:
-  dynamodb:
-    path: _layers/dynamodb
   stripe:
     path: _layers/stripe
   sendmail:
     path: _layers/sendmail
   github:
-    path: _layers/github/python
+    path: _layers/github
 
+###########################
+# Resources e.g. DynamoDB
+###########################
 resources:
   Resources:
     AttendeesTable:
@@ -114,13 +133,12 @@ resources:
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         TableName: ${param:stripeProductsTableName}
-    # APIMapping:
-    #   Type: AWS::ApiGatewayV2::ApiMapping
-    #   DependsOn: HttpApi
-    #   Properties:
-    #     Stage: $default
-    #     DomainName: "${sls:stage}.api.engine.dance"
-    #     ApiId: !Ref HttpApi
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
+
+#######################
+# Functions
+#######################
 
 functions:
 
@@ -136,12 +154,15 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       PRODUCTS_TABLE_NAME: ${param:stripeProductsTableName}
-    layers:
-      - !Ref DynamodbLambdaLayer
+      CREATE_TICKET_LAMBDA: "${sls:stage}-create_ticket"
+    # layers:
+    #   - !Ref DynamodbLambdaLayer
     events:
       - httpApi:
           path: /card_payment
           method: post
+
+#--------------------
 
   CheckoutComplete:
     runtime: python3.11
@@ -159,12 +180,13 @@ functions:
       CREATE_TICKET_LAMBDA: "${sls:stage}-create_ticket" #! Can't find a way to set this other than as a params that gets used byt function and the function itself
     layers:
       - !Ref StripeLambdaLayer
-      - !Ref DynamodbLambdaLayer
-      - !Ref SendmailLambdaLayer
+      # - !Ref DynamodbLambdaLayer
     events:
       - httpApi:
           path: /checkout_complete
           method: post 
+
+#--------------------
 
   CreateTicket:
     runtime: python3.11
@@ -179,8 +201,11 @@ functions:
       STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
       STRIPE_SECRET_KEY: ${param:stripeSecretKey}
-    layers:
-      - !Ref DynamodbLambdaLayer
+      SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
+    # layers:
+    #   - !Ref DynamodbLambdaLayer
+
+#--------------------
 
   CustomerPreferences:
     runtime: python3.11
@@ -194,9 +219,9 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
-    layers:
-      - !Ref DynamodbLambdaLayer
-      - !Ref GithubLambdaLayer
+    # layers:
+    #   - !Ref DynamodbLambdaLayer
+    #   - !Ref GithubLambdaLayer
     events:
       - httpApi:
           path: /customer_preferences
@@ -204,6 +229,8 @@ functions:
       - httpApi:
           path: /customer_preferences
           method: post
+
+#--------------------
 
   GeneratePricingUpdate:
     runtime: python3.11
@@ -219,8 +246,26 @@ functions:
       PRODUCTS_TABLE_NAME: ${param:stripeProductsTableName}
       STRIPE_SECRET_KEY: ${param:stripeSecretKey}
       GITHUB_TOKEN: ${param:githubToken}
+      GITHUB_BRANCH_NAME: "pricing-${sls:stage}"
+      GITHUB_BRANCH_DESTINATION: ${param:githubBranchDestination}
     layers:
       - !Ref StripeLambdaLayer
+      - !Ref GithubLambdaLayer
+    events:
+      - httpApi:
+          path: /gen_price_update
+          method: get
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt: [StripeProductsTable, StreamArn]
+          batchSize: 100
+          batchWindow: 300
+          startingPosition: LATEST
+          maximumRetryAttempts: 1
+          enabled: true
+
+#--------------------
 
   GetAttendees:
     runtime: python3.11
@@ -234,13 +279,12 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
-    layers:
-      - !Ref DynamodbLambdaLayer
-      - !Ref StripeLambdaLayer
     events:
       - httpApi:
           path: /get_attendees
           method: get
+
+#--------------------
 
   ScanTicket:
     runtime: python3.11
@@ -254,9 +298,9 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
-    layers:
-      - !Ref DynamodbLambdaLayer
-      - !Ref GithubLambdaLayer
+    # layers:
+    #   - !Ref DynamodbLambdaLayer
+    #   - !Ref GithubLambdaLayer
     events:
       - httpApi:
           path: /scan_ticket
@@ -264,6 +308,8 @@ functions:
       - httpApi:
           path: /scan_ticket
           method: post
+
+#--------------------
 
   SendEmail:
     runtime: python3.11
@@ -277,6 +323,11 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       SENDGRID_API_KEY: ${param:sendgridApiKey}
+      SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
+    layers:
+      - !Ref SendmailLambdaLayer
+
+#--------------------
 
   SendTicket:
     runtime: python3.11
@@ -290,14 +341,16 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
-    layers:
-      - !Ref DynamodbLambdaLayer
-      - !Ref SendmailLambdaLayer
-      - !Ref GithubLambdaLayer
+      SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
+    # layers:
+    #   - !Ref DynamodbLambdaLayer
+    #   - !Ref GithubLambdaLayer
     events:
       - httpApi:
           path: /send_ticket
-          method: post 
+          method: get 
+
+#--------------------
 
   StripePriceUpdate:
     runtime: python3.11
@@ -314,11 +367,13 @@ functions:
       PRODUCTS_TABLE_NAME: ${param:stripeProductsTableName}
       STRIPE_SECRET_KEY: ${param:stripeSecretKey}
     layers:
-      - !Ref DynamodbLambdaLayer
+      - !Ref StripeLambdaLayer
     events:
       - httpApi:
           path: /stripe_price_update
           method: post 
+
+#--------------------
 
   TransferOwner:
     runtime: python3.11
@@ -332,16 +387,30 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
-    layers:
-      - !Ref DynamodbLambdaLayer
+      CREATE_TICKET_LAMBDA: "${sls:stage}-create_ticket"
+      SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
+    # layers:
+    #   - !Ref SendmailLambdaLayer
     events:
       - httpApi:
           path: /transfer_owner
           method: post
 
-
-
-
-
-
-
+  MailDev:
+    runtime: python3.11
+    handler: maildev/lambda_function.maildev
+    name: "${sls:stage}-maildev"
+    package:
+      patterns:
+        - '!**/**'
+        - "maildev/**"
+        -  "shared/**"
+    environment:
+      STAGE_NAME: ${sls:stage}
+      MAILDEV_IP: "3.254.106.153"
+    # layers:
+    #   - !Ref DynamodbLambdaLayer
+    events:
+      - httpApi:
+          path: /maildev
+          method: get
