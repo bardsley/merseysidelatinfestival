@@ -82,7 +82,7 @@ export default function ImportPageClient() {
       purchased_at: row.purchase_date ? new Date(parseInt(row.purchase_date_unix) * 1000).toISOString() : '',
       ticket_number: row.ticket_number || null,
       active: true,
-      status: 'paid_stripe',
+      status: 'paid_legacy',
       student_ticket: isStudentTicket,
       transferred_in: false,
       transferred_out: false,
