@@ -73,8 +73,8 @@ def lambda_handler(event, context):
     attendees = data['attendees']
     options   = data['options']
 
-    line_items = get_line_items(attendee['passes'], attendee['unit_amount'])
-    ticket_number = str(attendee['ticket_number']) if not None else str(get_ticket_number(attendee['email'], event['student_ticket']))
+    line_items = get_line_items(attendees['passes'], attendees['unit_amount'])
+    ticket_number = str(attendees['ticket_number']) if not None else str(get_ticket_number(attendees['email'], event['student_ticket']))
 
     for attendee in attendees:
         input = {

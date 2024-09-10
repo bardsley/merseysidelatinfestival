@@ -117,7 +117,7 @@ export default function ImportPageClient() {
     e.preventDefault();
 
     const payload = {
-      attendees: data, 
+      attendees: attendeesData, 
       options: options, 
     }
 
