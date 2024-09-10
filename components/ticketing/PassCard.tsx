@@ -26,7 +26,7 @@ export const PassCard = ({passName, clickFunction, pass, priceModel, hasASaving,
           </h3>
           
           {basic ? null : <p className="mt-2 text-sm md:text-base leading-7 col-span-3 text-white">
-            {pass.description} {included ? "included" : "not included"}
+            {pass.description}
           </p> }
 
         </div>
