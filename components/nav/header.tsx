@@ -12,7 +12,7 @@ import NavMobile from "../nav/nav-mobile";
 
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import { useRouter, usePathname  } from 'next/navigation'
+import { usePathname  } from 'next/navigation'
 
 import Logo from '@public/mlf-2.svg';
 
@@ -36,7 +36,6 @@ export default function Header() {
   const { globalSettings, theme } = useLayout();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const header = globalSettings.header;
-  const router = useRouter()
   const pathname = usePathname()
 
   const headerColorCss =
@@ -66,9 +65,7 @@ export default function Header() {
                   style: header.icon.style,
                 }}
               /> */}
-              <Logo className="w-24 h-24" onDragLeave={() => {
-                router.push(`${origPath}?draft=yup`)
-              }}></Logo>
+              <Logo className="w-24 h-24" />
               {" "}
               <span data-tina-field={tinaField(header, "name")} className="ml-2 hidden xs:inline">
                 
