@@ -1,4 +1,5 @@
 'use client'
+
 import { useSearchParams, useRouter, usePathname} from 'next/navigation'
 import { useState} from 'react';
 import { ChevronDownIcon, ChevronUpIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid'
@@ -10,7 +11,6 @@ import { TicketRow } from './lists/ticketRow';
 import { fetcher } from  "@lib/fetchers";
 
 export default function TicketList() {
-  
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const router = useRouter()
@@ -73,6 +73,8 @@ export default function TicketList() {
   const headerClassNames = "p-0 text-left text-sm font-semibold text-white "
   const headerContainerClassNames = "flex justify-between"
   const labelClassNames = "py-3.5 pl-4 block"
+
+  
 
   if(isLoading) { return <p>Loading...</p> }
   // else if (isValidating) { return <p>Validating...plz</p>} 
