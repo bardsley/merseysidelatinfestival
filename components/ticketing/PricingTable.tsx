@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useFormStatus } from "react-dom"
 import Cell from './Cell';
 import { initialSelectedOptions, fullPassName } from './pricingDefaults'
-import { calculateTotalCost, passOrTicket, getBestCombination, itemsFromPassCombination, itemListToOptions, addToOptions } from './pricingUtilities'
+import { calculateTotalCost, passOrTicket, getBestCombination, itemsFromPassCombination, itemListToOptions, addToOptions, emptyCart } from './pricingUtilities'
 import type { PartialSelectedOptions } from './pricingTypes'
 import PassCards from './passes'
 import { OptionsTable } from './OptionsTable';
@@ -18,6 +18,7 @@ difference.shim();
 const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scrollToElement?:Function}) => {
   const [selectedOptions, setSelectedOptions] = useState(deepCopy(initialSelectedOptions) as PartialSelectedOptions); 
   const [studentDiscount, setStudentDiscount] = useState(false);
+  const [cart,setCart] = useState([])
   const [priceModel, setPriceModel] = useState("cost")
   const [totalCost, setTotalCost] = useState(0);
   const [packages,setPackages] = useState([])
@@ -77,15 +78,41 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
     return (
       <button type="submit" disabled={pending} 
         className='bg-chillired-400 text-white rounded-lg py-6 px-12 hover:bg-chillired-700 text-nowrap w-full max-w-72 md:w-auto'>
-        {pending ? "Checking Out..." : "Buy Now"}
+        {pending ? "Checking Out..." : "Checkout Now"}
       </button>
 
     );
   }
 
+  function AddToCartButton() {
+    const { pending } = useFormStatus();
+    return (
+      <button type="submit" disabled={pending} 
+        className='bg-chillired-400 text-white rounded-lg py-6 px-12 hover:bg-chillired-700 text-nowrap w-full max-w-72 md:w-auto'>
+        Add to Cart
+      </button>
+
+    );
+  }
+
+  async function addToCart() {
+    if(!emptyCart(selectedOptions)) {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]")
+      const newCart = [...cart,selectedOptions]
+      const packageTypes = JSON.parse(localStorage.getItem("packageTypes") || "[]")
+      const student = priceModel === "cost" ? false : true
+      const newPackageTypes = [...packageTypes,student]
+      localStorage.setItem("cart", JSON.stringify(newCart))
+      localStorage.setItem("packageTypes", JSON.stringify(newPackageTypes))
+      setCart([...cart,{ options: newCart, packageTypes: newPackageTypes }])
+      clearOptions()
+    }
+  }
+
   async function checkout() {
-    localStorage.setItem("selectedOptions", JSON.stringify(selectedOptions))
-    localStorage.setItem("student",priceModel === "cost" ? "false" : "true")
+    // localStorage.setItem("selectedOptions", JSON.stringify(selectedOptions))
+    // localStorage.setItem("student",priceModel === "cost" ? "false" : "true")
+    addToCart()
     router.push("/checkout") //TODO This 100% needs a check for errors
   }
   
@@ -133,12 +160,15 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
                 <h2 className='text-3xl font-bold'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost % 1 != 0 ? totalCost.toFixed(2) : totalCost}</span>) : null } £{packageCost % 1 !=0 ? packageCost.toFixed(2) : packageCost}</h2>
                 { totalCost - packageCost > 0 ? (<p>Saving you £{(totalCost - packageCost) % 1 !=0 ?  (totalCost - packageCost).toFixed(2) : (totalCost - packageCost)} on the full cost of those options!</p>) : null }
               </div>
-              <form action={checkout} className='flex w-full md:w-auto flex-col md:flex-row items-center justify-center'>
-              <CheckoutButton></CheckoutButton>
-              </form>
+              <div className='flex w-full md:w-auto flex-row gap-3 sm:flex-col items-center justify-center'>
+                <form action={addToCart} ><AddToCartButton></AddToCartButton></form>
+                <form action={checkout} ><CheckoutButton></CheckoutButton></form>
+              </div>
+              
+              
               
             </>
-          ) : "Select options in the table above to see the suggested packages" }
+          ) : cart && cart.length > 0 ? <>Add More options above or checkout current basket <form action={checkout} ><CheckoutButton></CheckoutButton></form></>: "Select options in the table above to see the suggested packages you can add to cart" }
         </div>
         
       </div>
@@ -149,6 +179,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
       <div className='flex'>
         <pre>Selected -- {JSON.stringify(selectedOptions,null,2)}</pre>
         <pre>Packages--{JSON.stringify(packages,null,2)}</pre>
+        <pre>Cart--{JSON.stringify(cart,null,2)}</pre>
       </div>
       </> : null }
       

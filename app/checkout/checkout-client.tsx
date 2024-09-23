@@ -4,19 +4,21 @@ import {getBestCombination,priceIds } from "@components/ticketing/pricingUtiliti
 import MealPreferences, { blankPreferences } from "@components/preferences/MealPreferences"
 import {Container} from "@components/layout/container"
 import {Icon} from "@components/icon"
-import { ExclamationCircleIcon } from '@heroicons/react/20/solid'
+import { ExclamationCircleIcon, TrashIcon } from '@heroicons/react/20/solid'
 import StripeForm from "./stripe"
 
 type fieldEntry = {name: string, label?: string, placeholder?: string, type?: string, value?: string | number, error?: string, width?: string  }
 
+
+
 export default function CheckoutClient() {
-  const [preferences, setPreferences] = useState(blankPreferences)
-  const [selectedOptions, setSelectedOptions] = useState({} as any)
-  const [stripeProducts,setStripeProducts] = useState(false as boolean | string[])
+  const [preferences, setPreferences] = useState([])
+  const [selectedOptions, setSelectedOptions] = useState([] as any)
+  const [stripeProducts,setStripeProducts] = useState(false as boolean | string[][])
   const [userData, setUserData] = useState(false as any)
   const [student, setStudent] = useState(false as boolean)
   const [steps, setSteps] = useState({details: false, meal: false, payment: false})
-  const [bestCombo,setBestCombo] = useState({price:0, options: []})
+  const [bestCombo,setBestCombo] = useState([{price:0, options: []}])
 
   const yourDetailsFields: fieldEntry[] = [
     {name: 'name', placeholder: "Johnn Salsa", width: "w-80", label: "Full Name"},
@@ -31,47 +33,80 @@ export default function CheckoutClient() {
     setSteps(newSteps)
   }
 
-  useEffect(() => {
-    const loadedOptions = JSON.parse(localStorage.getItem("selectedOptions"))
-    const loadedStudent = JSON.parse(localStorage.getItem("student"))
+  const removeFromCart =(idx) => {
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]")
+    const packageTypes = JSON.parse(localStorage.getItem("packageTypes") || "[]")
+    const updatedCart = [...cart].filter((_,i) => i !== idx)
+    const updatedPackageTypes = [...packageTypes].filter((_,i) => i !== idx)
+    localStorage.setItem("cart",JSON.stringify(updatedCart))
+    localStorage.setItem("packageTypes",JSON.stringify(updatedPackageTypes))
+    loadCartFromLocalStorage()
+  }
+
+  const loadCartFromLocalStorage = () => {
+    const loadedOptions = JSON.parse(localStorage.getItem("cart"))
+    const loadedStudent = JSON.parse(localStorage.getItem("packageTypes"))
     setSelectedOptions(loadedOptions)
     setStudent(loadedStudent)
+    setPreferences(loadedOptions.map((option) => { return option['Saturday'] && option['Saturday']['Dinner'] ? blankPreferences : null}))
     console.log("Loaded Options",loadedOptions)
+  }
 
+  const updateSpecificPreference = (idx,preference) => {
+    const updatedPreferences = [...preferences]
+    updatedPreferences[idx] = preference
+    setPreferences(updatedPreferences)
+  }
+
+  useEffect(() => {
+    loadCartFromLocalStorage()
   },[])
 
   useEffect(() => {
-    const calculatedBestCombo = getBestCombination(selectedOptions,student ? 'studentCost':'cost')
-    setBestCombo(calculatedBestCombo)
+    const calculatedBestCombos = selectedOptions ? selectedOptions.map((options,idx) => { return getBestCombination(options,student[idx] ? 'studentCost':'cost') }) : []
+    setBestCombo(calculatedBestCombos)
     console.log("Best Combo",bestCombo)
   },[selectedOptions,student])
 
   useEffect(() => {
-    const allPassAndTicketPriceIds = priceIds(student)
-    console.log("All Pass and Ticket Price Ids",allPassAndTicketPriceIds)
-    const selectedPassPriceIds = bestCombo.options.map(pass => allPassAndTicketPriceIds[pass])
+    const normalPassAndTicketPriceIds = priceIds(false)
+    const studentPassAndTicketPriceIds = priceIds(true)
+    console.log("All Pass and Ticket Price Ids",normalPassAndTicketPriceIds,studentPassAndTicketPriceIds)
+    const selectedPassPriceIds = bestCombo.map((options,idx) => { return options.options.map(pass => student[idx] ? studentPassAndTicketPriceIds[pass] : normalPassAndTicketPriceIds[pass]) })
     console.log("Selected Pass Price Ids",selectedPassPriceIds)
     setStripeProducts(selectedPassPriceIds)
   },[bestCombo,student])
 
-  const dinnerInfoRequired = selectedOptions && selectedOptions['Saturday'] && selectedOptions['Saturday']['Dinner']
+  const dinnerInfoRequired = selectedOptions && selectedOptions.some((option) => { return option['Saturday'] && option['Saturday']['Dinner']})
   const stripeReady = stripeProducts && typeof stripeProducts === "object" && stripeProducts.length > 0
-  const dinnerInfoProvided = (!dinnerInfoRequired || (preferences && preferences.choices && preferences.choices.every((choice) => choice >= 0)))
-  return (
+  const optionsRequiringDinner = selectedOptions && selectedOptions.map((option,idx) => { return (option['Saturday'] && option['Saturday']['Dinner']) ? idx : null }).filter(Boolean)
+  const dinnerInfoProvided = (!dinnerInfoRequired || (preferences && preferences.every((pref,idx) => { return !optionsRequiringDinner.includes[idx] || (pref.choices && pref.choices.every((choice) => choice >= 0))}))) 
+  return selectedOptions && selectedOptions.length > 0 ? (
     <div className="">
       <Container size="small" width="medium" className=" text-white w-full py-0">
       <div className="intro">
         <h1 className="text-3xl font-bold text-white">Checkout</h1>
         <p>Nearly there! We just need a few details from you (and some money of course) and you&apos;ll be all booked in.</p>
+
+        {JSON.stringify(preferences)}
       </div>
       </Container>
 
       <Container size="small" width="medium" className=" text-white w-full rounded-3xl border border-richblack-700 bg-richblack-500 py-6 transition-all	">
         <h2 className="text-xl flex items-center -ml-14 ">
           <Icon data={{name: "BiCart", color: "purple", style: "circle", size: "medium"}} className="mr-2 border border-richblack-700"></Icon>
-          {student ? "Student " : null}Passes selected
+          Passes selected
         </h2>
-        {bestCombo.options.join(', ')} : £{bestCombo.price}
+        {bestCombo.map((options,idx) => { 
+          return (
+            <p key={`pass-${idx}`} className="flex w-fulll gap-6 items-center justify-between mb-2">
+              <span className="w-[10%] min-w-24">Pass #{idx+1}</span>
+              <span className="w-full">{student[idx] ? "Student " : ""} {options.options.join(', ')}</span>  
+              <span className="w-[10%]" >£{options.price}</span>
+              <span className="w-[20%]"><TrashIcon aria-hidden="true" className="h-5 w-5 text-red-500" onClick={() => removeFromCart(idx)}/></span>
+            </p> 
+          )
+        })}
       </Container>
 
       <Container size="small" width="medium" className=" text-white w-full rounded-3xl border border-richblack-700 bg-richblack-500 py-6 transition-all	">
@@ -87,7 +122,7 @@ export default function CheckoutClient() {
             <button className="mt-3 border px-6 py-1 border-white rounded-md" onClick={() => setSteps({...steps,details:false})}>Edit</button>
           </>) :
           (<>
-            <p className="text-sm">These ones should be relatively easy to fill out</p>
+            <p className="text-sm">These ones should be relatively easy to fill out, you can transfer tickets to individuals after if you wish</p>
           
             {yourDetailsFields.map((field) => {
                 const statusClass = field.error ? "text-red-900 ring-red-300 placeholder:text-red-300 focus:ring-red-500" : ""
@@ -134,10 +169,12 @@ export default function CheckoutClient() {
         Dinner Preferences
       </h2>
       { steps.details && !steps.meal ? <>
-      <p className="text-sm">If you don&apos;t know the answer to some of these things you can always update preferences later</p>
-      <MealPreferences preferences={preferences} setPreferences={setPreferences}></MealPreferences>
+      <p className="text-sm">If you don&apos;t know the answer to some of these things you can always update preferences later</p>      
+      { preferences.map((pref,idx) => {
+        return pref ? <MealPreferences key={`pref-${idx}`} idx={idx} preferences={pref} setPreferences={(pref) => {updateSpecificPreference(idx,pref)}}></MealPreferences> : null
+      })}
       <button className="bg-chillired-400 px-6 py-2 rounded" onClick={() => nextStep("meal")}>Continue</button>
-      </> : steps.meal ? (<><p>Meal details entered</p><button className="mt-3 border px-6 py-1 border-white rounded-md" onClick={() => setSteps({...steps,meal:false})}>Edit</button></>) : "Complete attendee details first " }
+      </> : steps.meal ? (<><p>Meal details entered {dinnerInfoProvided ? "true" : "false"} {JSON.stringify(optionsRequiringDinner,null,2)}</p><button className="mt-3 border px-6 py-1 border-white rounded-md" onClick={() => setSteps({...steps,meal:false})}>Edit</button></>) : "Complete attendee details first " }
        </>
     </Container>) : null }
     
@@ -160,6 +197,15 @@ export default function CheckoutClient() {
       </> : null }
     </div>
     
+  ) : (
+    <div className="">
+      <Container size="small" width="medium" className=" text-white w-full py-0">
+      <div className="intro">
+        <h1 className="text-3xl font-bold text-white">Checkout</h1>
+        <p>Cart Empty</p>
+      </div>
+      </Container>
+    </div>
   )
 
 }

@@ -10,7 +10,7 @@ export const PassCard = ({passName, clickFunction, pass, priceModel, hasASaving,
   const priceTextSize = basic ? 'text-sm md:text-sm leading-7' : 'text-4xl md:text-4xl'
   const hoverClasses = selected ? "border-white cursor-pointer" : included ? 'hover:border-richblack-500 cursor-not-allowed' : 'hover:border-white cursor-pointer'
   return (
-    <div
+    <button
       onClick={clickFunction}
       key={passName}
       title={passName}
@@ -61,6 +61,6 @@ export const PassCard = ({passName, clickFunction, pass, priceModel, hasASaving,
                 <h2 className='font-bold text-gray-400 text-3xl'>Included</h2>
               <p className='text-gray-500'>This item is included in your selection</p>
         </div> : null }
-    </div>
+    </button>
   );
 };

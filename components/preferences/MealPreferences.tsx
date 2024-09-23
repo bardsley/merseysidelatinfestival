@@ -10,14 +10,14 @@ export const blankPreferences = {choices: [-1,-1,-1], dietary_requirements : { s
 const dietaryRequirements = ["vegan","gluten free","lactose free","nut alergy","kosher","halal","other"]
 const veganChoices = Object.keys(courses).map((key) => courses[key].options[0])
 
-const MealPreferences = ({preferences,setPreferences}) =>{
+const MealPreferences = ({preferences,setPreferences,idx}) =>{
 
   const choicesValid = (preferences) => preferences.choices && preferences.choices.length > 0 // Choices is and array of stuff 
   const seatingValid = (preferences) => preferences.seating_preference && preferences.seating_preference.length >= 0 // Preferences is an array of stuff
   const dietValid = (preferences) => preferences.dietary_requirements && Object.keys(preferences.dietary_requirements).length > 0 // Dietary requirements is a dict of stuff
     && preferences.dietary_requirements.selected && preferences.dietary_requirements.selected.length >= 0 // Dietary requirements selected is an array or empty array
   const checkInputOk = (preferences) => {
-    process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' && console.log(choicesValid(preferences),seatingValid(preferences),dietValid(preferences))
+    // process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' && console.log(choicesValid(preferences),seatingValid(preferences),dietValid(preferences))
     return choicesValid(preferences) && seatingValid(preferences) && dietValid(preferences)
   }
   
@@ -46,20 +46,20 @@ const MealPreferences = ({preferences,setPreferences}) =>{
         <legend className="text-base font-semibold leading-6 text-white">Course</legend>
         <div className="mt-4 divide-y divide-gray-700 border-b border-t border-gray-700">
           {courses.map((course, courseIdx) => (
-            <div key={courseIdx} className="relative grid grid-cols-6 items-center md:items-start justify-between w-full py-4 flex-wrap md:flex-nowrap auto-rows-max">
+            <div key={`${idx}-${courseIdx}`} className="relative grid grid-cols-6 items-center md:items-start justify-between w-full py-4 flex-wrap md:flex-nowrap auto-rows-max">
               <div className="min-w-0 text-sm leading-6 w-full md:w-auto col-span-6 md:col-span-1 ">
                 <span className="select-none  text-white font-bold md:font-medium">
-                  {course.name}
+                  {course.name} 
                 </span>
               </div>
               <div className="ml-3 grid grid-cols-1 sm:grid-cols-3 items-center justify-end gap-5 col-span-6 md:col-span-5">
                 {course.options.map((option,optionIdx) => {
                   return (
-                    <div key={`c${courseIdx}-${optionIdx}`} className={`flex items-center gap-3 justify-start cols-span-1`}>
+                    <div key={`${idx}-c${courseIdx}-${optionIdx}`} className={`flex items-center gap-3 justify-start cols-span-1`}>
                     
                     <input
-                      id={`course-${courseIdx}-${optionIdx}`}
-                      name={`course-${courseIdx}`}
+                      id={`${idx}-course-${courseIdx}-${optionIdx}`}
+                      name={`${idx}-course-${courseIdx}`}
                       type="radio"
                       value={optionIdx}
                       defaultChecked={preferences && preferences.choices && preferences.choices[courseIdx] == optionIdx}
@@ -69,7 +69,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
                         
                       }
                     />
-                    <label htmlFor={`course-${courseIdx}-${optionIdx}`}>{option}</label>
+                    <label htmlFor={`${idx}-course-${courseIdx}-${optionIdx}`}>{option} </label>
                     </div>
                   )
                 })}
@@ -88,11 +88,11 @@ const MealPreferences = ({preferences,setPreferences}) =>{
           const dietSlug = diet.toLowerCase().replaceAll(' ','-')
           const checked = preferences.dietary_requirements.selected.includes(dietSlug)
           return (
-            <li key={diet}>
-              <input className="rounded mr-2" type="checkbox" name={`selected[${dietSlug}]`} id={`selected[${dietSlug}]`} defaultChecked={checked} value={dietSlug} onChange={(event) => {
-                setDietTo(event.target.value,event.target.checked)}}
+            <li key={`${idx}-${diet}`}>
+              <input className="rounded mr-2" type="checkbox" name={`${idx}-selected[${dietSlug}]`} id={`${idx}-selected[${dietSlug}]`} defaultChecked={checked} value={dietSlug} onChange={(event) => {
+                setDietTo(event.target.value,event.target.checked)}} 
                 />{' '}
-              <label htmlFor={`selected[${diet}]`} className='capitalize'>{diet}</label> 
+              <label htmlFor={`${idx}-selected[${diet}]`} className='capitalize'>{diet} </label> 
             </li>
           )
         })}
@@ -101,10 +101,10 @@ const MealPreferences = ({preferences,setPreferences}) =>{
 
         { preferences.dietary_requirements.selected.includes('other') ? (
           <div className="mt-6">
-            <label htmlFor="other" className=''>Please give more details</label>
+            <label htmlFor={`${idx}-other`} className=''>Please give more details</label>
           <textarea
-            id="other"
-            name="other"
+            id={`${idx}-other`}
+            name={`${idx}-other`}
             defaultValue = {preferences.dietary_requirements.other}
             rows={2}
             onChange={(event) => {

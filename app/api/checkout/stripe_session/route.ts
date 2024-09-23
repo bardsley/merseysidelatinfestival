@@ -10,7 +10,8 @@ export async function POST(request: NextRequest) {
     phone: userData.phone,
   }
   const preferences = data.preferences
-  const lineItems = data.products.map((priceId)=>{
+  console.log(data.products)
+  const lineItems = data.products.flat().map((priceId)=>{
     return {
       price: priceId,
       quantity: 1 //TODO This should come from the client eventually
@@ -35,10 +36,10 @@ export async function POST(request: NextRequest) {
   try {
     // Create Checkout Sessions from body params.
     const session = await stripe.checkout.sessions.create(checkoutSessionObject);
-    console.log("session:",session)
+    // console.log("session:",session)
     return NextResponse.json({clientSecret: session.client_secret});
   } catch (err) {
-    console.log("Stripe Error:",err)
+    // console.log("Stripe Error:",err)
     return NextResponse.json({error: err.message}, {status: err.statusCode || 500});
   }
 }

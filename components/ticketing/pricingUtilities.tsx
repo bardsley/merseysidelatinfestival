@@ -1,5 +1,5 @@
 import { PartialSelectedOptions, Pass } from './pricingTypes'
-import { individualTickets, passes, fullPassName} from './pricingDefaults'
+import { individualTickets, passes, fullPassName, initialSelectedOptions} from './pricingDefaults'
 import power from 'power-set'
 import isubsetof from 'set.prototype.issubsetof'
 isubsetof.shim();
@@ -179,4 +179,9 @@ const passInCombination = (pass:Pass, combinations: string[]) => {
   return subSet.isSubsetOf(superSet)
 
 }
-export { calculateTotalCost, passOrTicket, optionsToPassArray, availableOptionsForDay, isAllDayOptions, isAllPassOptions, priceForPassCombination, itemsFromPassCombination, priceForIndividualItems, itemsNotCovered, getBestCombination, priceIds, thingsToAccess, passInCombination}
+
+const emptyCart = (options) => {
+  return JSON.stringify(options) == JSON.stringify(initialSelectedOptions)
+}
+
+export { calculateTotalCost, passOrTicket, optionsToPassArray, availableOptionsForDay, isAllDayOptions, isAllPassOptions, priceForPassCombination, itemsFromPassCombination, priceForIndividualItems, itemsNotCovered, getBestCombination, priceIds, thingsToAccess, passInCombination, emptyCart }
