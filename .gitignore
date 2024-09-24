@@ -20,7 +20,7 @@
 .env.local
 .env.production
 .idea
-
+desktop.ini
 .vercel
 
 sendgrid.env

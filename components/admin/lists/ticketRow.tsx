@@ -24,7 +24,8 @@ export const TicketRow = ({attendee,setActiveTicket, setNameChangeModalActive, s
       <td className="w-full max-w-0 py-4 pl-4 pr-3 text-sm  font-medium sm:w-auto sm:max-w-none sm:pl-2 vertical-align-top">
         <Link href={`/admin/ticketing/ticket/${attendee.ticket_number}/${attendee.email}`} className={`${attendee.active ? 'text-chillired-600 hover:text-chillired-700' : "text-gray-600"}`}>
           <span className="text-lg leading-6 sm:text-base md:text-base">{attendee.name}</span><br/>
-          <span className="text-xs leading-6 text-gray-300">#{attendee.ticket_number}</span>
+          <span className="text-xs leading-6 text-gray-300">#{attendee.ticket_number}</span><br/>
+          <span className="text-xs leading-6 text-gray-300">{format(Date.parse(attendee.purchased_date),'h:mmaaa EEE do LLL yyyy')}</span>
         </Link>
         <dl className="font-normal lg:hidden text-inherit">
           <dt className="sr-only">Email</dt>
