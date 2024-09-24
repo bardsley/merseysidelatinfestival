@@ -85,6 +85,7 @@ export default function TicketList() {
   else {
     
     const sortedAttendees = attendees.sort((a, b) => {
+      // console.log("Sorting",sortByField,a,b)
       if (sortByDirection === 'desc') {
         return (0 - (a[sortByField] > b[sortByField] ? 1 : -1))
       } else {
@@ -120,7 +121,7 @@ export default function TicketList() {
                     <FilterLabel fieldname={"name"} addFilterFunction={addFilter}>
                       <span className={`${labelClassNames} sm:pl-2 `}>Name 
                         <span className='sm:hidden'> & Details</span>
-                        <span className='hidden sm:inline lg:hidden'>& Email</span>
+                        <span className='sm:inline lg:hidden'>& Email</span>
                       </span>
                     </FilterLabel>
                     
