@@ -7,7 +7,7 @@ import { guaranteeTimestampFromDate } from '@lib/useful';
 
 
 export default function AttendeeStats() {
-  const {data, error, isLoading, isValidating} = useSWR("/api/admin/attendees", fetcher, { keepPreviousData: false });
+  const {data, error, isLoading} = useSWR("/api/admin/attendees", fetcher, { keepPreviousData: false });
 
   const stats =  isLoading ? 
     [
