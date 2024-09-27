@@ -15,7 +15,7 @@ const TicketStatusIcon = ({attendee})  => {
   return <span className='flex'>{PaymentIcon}{trasnferOutIcon}{transferInIcon}{namechangeIcon}{wtfIcon}{studentIcon}</span>
 }
 
-export const TicketRow = ({attendee, handleSaveChanges}) => {
+export const ImportRow = ({attendee, handleSaveChanges}) => {
   const [isEditing, setIsEditing] = useState(false)
   const [editedAttendee, setEditedAttendee] = useState(attendee);
   const handleEdit = () => setIsEditing(!isEditing);
@@ -62,7 +62,7 @@ export const TicketRow = ({attendee, handleSaveChanges}) => {
             className={`align-middle block rounded-md border-0 py-1.5 my-2.5 ring-1 ring-inset focus:ring-2 focus:ring-inset text-gray-900 sm:text-sm sm:leading-6 w-full`}
           />
         ) : (
-          <td className="hidden px-3 py-4 text-sm text-inherit lg:table-cell">{attendee.email}</td>
+          <span className="hidden px-3 py-4 text-sm text-inherit lg:table-cell">{attendee.email}</span>
         )}
       </td>
       <td className="w-full max-w-0 py-3 pl-4 pr-3 text-sm  font-medium sm:w-auto sm:max-w-none sm:pl-2 vertical-align-top">
@@ -75,7 +75,7 @@ export const TicketRow = ({attendee, handleSaveChanges}) => {
             className={`align-middle block rounded-md border-0 py-1.5 my-2.5 ring-1 ring-inset focus:ring-2 focus:ring-inset text-gray-900 sm:text-sm sm:leading-6 w-full`}
           />
         ) : (
-          <td className="hidden px-3 py-4 text-sm text-inherit lg:table-cell">{attendee.phone}</td>
+          <span className="hidden px-3 py-4 text-sm text-inherit lg:table-cell">{attendee.phone}</span>
         )}
       </td>
       <td className="hidden px-3 py-4 text-sm text-inherit sm:table-cell">{passString}</td>
@@ -89,7 +89,7 @@ export const TicketRow = ({attendee, handleSaveChanges}) => {
             className={`align-middle block rounded-md border-0 py-1.5 my-2.5 ring-1 ring-inset focus:ring-2 focus:ring-inset text-gray-900 sm:text-sm sm:leading-6 w-28`}
           />
         ) : (
-          <td className="hidden px-3 py-4 text-sm text-inherit lg:table-cell">£{attendee.unit_amount/100}</td>
+          <span className="hidden px-3 py-4 text-sm text-inherit lg:table-cell">£{attendee.unit_amount/100}</span>
         )}
       </td>
 
