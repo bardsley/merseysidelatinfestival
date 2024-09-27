@@ -145,7 +145,7 @@ export default function ImportPageClient() {
   return (
     <div>
       { message ? (<div className={messageClasses + (messageShown ? "" : " opacity-0")} onClick={() => setMessageShown(false)}>{message} {messageClassIcon}</div>) : null }
-      <input type="file" accept=".csv .txt" onChange={handleFileUpload} />
+      <input type="file" accept=".csv,.txt" onChange={handleFileUpload} />
       {attendeesData.length > 0 ? (
         <div className="-mx-4 sm:mx-0 mt-3 ">
           <div className="mx-auto max-w-7xl rounded-lg">
