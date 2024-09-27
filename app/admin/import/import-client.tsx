@@ -3,8 +3,9 @@ import { BiAlarmExclamation, BiCheckCircle } from "react-icons/bi";
 import { useSearchParams } from "next/navigation"
 import {useEffect, useState} from 'react';
 import React from "react";
-import { TicketRow } from '@components/admin/lists/importRow';
+import { ImportRow } from '@components/admin/lists/importRow';
 import Papa from 'papaparse';
+import {guaranteeISOstringFromDate} from '@lib/useful'
 
 type Attendee = {
   name: string
@@ -61,7 +62,7 @@ export default function ImportPageClient() {
       setData([])
       Papa.parse(file, {
         complete: (result) => {
-          const transformedData = result.data.map((row: any) => transformAttendee(row));
+          const transformedData = result.data.map((row: any, index: number) => { console.log(index,row); return transformAttendee(row)})  ;
           setAttendeesData(transformedData);
           console.log(transformedData)
         },
@@ -79,7 +80,7 @@ export default function ImportPageClient() {
       phone: row.telephone,
       checkin_at: row.ticket_used || '',
       passes: isStudentTicket ? [row.type.replace(" (Student)", "")] : [row.type || ''],  
-      purchased_at: row.purchase_date ? new Date(parseInt(row.purchase_date_unix) * 1000).toISOString() : '',
+      purchased_at: row.purchase_date ? guaranteeISOstringFromDate(row.purchase_date) : '',
       ticket_number: row.ticket_number || null,
       active: true,
       status: 'paid_legacy',
@@ -89,7 +90,7 @@ export default function ImportPageClient() {
       name_changed: false,
       transferred: null,
       history: [],
-      unit_amount: Number(row.unit_amount.substring(1))*100,
+      unit_amount: row.unit_amount ? Number(row.unit_amount.substring(1))*100 : 999999999999, 
       cs_id: row.cs_id
     };
   };
@@ -150,12 +151,12 @@ export default function ImportPageClient() {
         <div className="-mx-4 sm:mx-0 mt-3 ">
           <div className="mx-auto max-w-7xl rounded-lg">
             <div className="grid gap-px bg-red/5 grid-cols-2 md:grid-cols-2">
-              <div key="" className=" bg-richblack-700 rounded-md px-4 pt-0 pb-2 sm:py-6 sm:px-6 lg:px-8 flex sm:block">
+              <div className=" bg-richblack-700 rounded-md px-4 pt-0 pb-2 sm:py-6 sm:px-6 lg:px-8 flex sm:block">
                 <p className="text-sm text-gray-300 mb-2">Send Ticket Emails:</p>
                   
                   {/* Dynamically generate radio buttons from the emailOptions array */}
-                  {emailOptions.map((option) => (
-                    <div className="flex items-center mb-2" key={option.value}>
+                  {emailOptions.map((option,index) => (
+                    <div className="flex items-center mb-2" key={`${option.value}-${index}`}>
                       <input
                         id={`sendTicketEmails-${option.value}`}
                         name="sendTicketEmails"
@@ -219,9 +220,9 @@ export default function ImportPageClient() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800 bg-none">
-              {attendeesData.map((row) => 
-              <TicketRow
-                key={row.ticket_number} 
+              {attendeesData.map((row,index) => 
+              <ImportRow
+                key={`${row.ticket_number}-${index}`}
                 attendee={row}
                 handleSaveChanges={handleSaveChanges}
                 />
