@@ -1,20 +1,11 @@
-"use client";
-
 import React, { Suspense } from "react";
-import { useState } from 'react'
 import Link from "next/link";
 import { Container } from "../layout/container";
 import { cn } from "../../lib/utils";
 import { tinaField } from "tinacms/dist/react";
 import NavItems from "./nav-items";
-import { useLayout } from "../layout/layout-context";
-import NavMobile from "../nav/nav-mobile";
-
-import { Dialog, DialogPanel } from '@headlessui/react'
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import { useRouter, usePathname  } from 'next/navigation'
-
-import Logo from '@public/mlf-2.svg';
+import NavMobile from "./nav-mobile";
+import Logo from './logo'
 
 const headerColor = {
   default:
@@ -32,18 +23,12 @@ const headerColor = {
   },
 };
 
-export default function Header() {
-  const { globalSettings, theme } = useLayout();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const header = globalSettings.header;
-  const router = useRouter()
-  const pathname = usePathname()
+export default function Header({header, theme}:any) {
 
   const headerColorCss =
     header.color === "primary"
       ? headerColor.primary[theme.color]
       : headerColor.default;
-  const origPath = pathname
   
   return (
     <div
@@ -57,18 +42,7 @@ export default function Header() {
               className="flex gap-1 items-center whitespace-nowrap tracking-[.002em]"
               
             >
-              {/* <Icon
-                tinaField={tinaField(header, "icon")}
-                parentColor={header.color}
-                data={{
-                  name: header.icon.name,
-                  color: header.icon.color,
-                  style: header.icon.style,
-                }}
-              /> */}
-              <Logo className="w-24 h-24" onDragLeave={() => {
-                router.push(`${origPath}?draft=yup`)
-              }}></Logo>
+              <Logo className="w-24 h-24" />
               {" "}
               <span data-tina-field={tinaField(header, "name")} className="ml-2 hidden xs:inline">
                 
@@ -81,14 +55,8 @@ export default function Header() {
             <NavItems navs={header.nav} />
           </Suspense>
           
-          <button 
-            type="button"
-            onClick={() => setMobileMenuOpen(true)}
-            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-150 hover:text-white md:hidden "
-          >
-            <span className="sr-only">Open main menu</span>
-            <Bars3Icon aria-hidden="true" className="h-6 w-6" />
-          </button>
+          <NavMobile title={header.name} navs={header.nav} />
+
         </div>
         <div
           className={cn(
@@ -99,123 +67,8 @@ export default function Header() {
             "to-transparent bottom-0 left-4 right-4 -z-1 opacity-20"
           )}
         />
-        <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="2xl:hidden border-l-chillired-300">
-         <div className="fixed inset-0 z-10" />
-         <DialogPanel className="shadow-2xl shadow-black  fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-richblack-500 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-           <div className="flex items-center justify-between">
-             <a href="#" className="-m-1.5 p-1.5">
-               <span className="sr-only">{header.name}</span>
-               <Link href='/'><Logo className="w-12 h-12"></Logo></Link>
-             </a>
-             <button
-               type="button"
-               onClick={() => setMobileMenuOpen(false)}
-               className="-m-2.5 rounded-md p-2.5 text-gray-700"
-             >
-               <span className="sr-only">Close menu</span>
-               <XMarkIcon aria-hidden="true" className="h-6 w-6" />
-             </button>
-           </div>
-           <Suspense>
-            <NavMobile navs={header.nav} />
-          </Suspense>
-         </DialogPanel>
-       </Dialog>
+        
       </Container>
     </div>
   );
 }
-
-// 'use client'
-
-// import { useState } from 'react'
-// import { Dialog, DialogPanel } from '@headlessui/react'
-// import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-
-// const navigation = [
-//   { name: 'Product', href: '#' },
-//   { name: 'Features', href: '#' },
-//   { name: 'Marketplace', href: '#' },
-//   { name: 'Company', href: '#' },
-// ]
-
-// export default function Example() {
-//   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
-//   return (
-//     <header className="bg-white">
-//       <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
-//         <a href="#" className="-m-1.5 p-1.5">
-//           <span className="sr-only">Your Company</span>
-//           <img alt="" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" className="h-8 w-auto" />
-//         </a>
-//         <div className="flex lg:hidden">
-//           <button
-//             type="button"
-//             onClick={() => setMobileMenuOpen(true)}
-//             className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
-//           >
-//             <span className="sr-only">Open main menu</span>
-//             <Bars3Icon aria-hidden="true" className="h-6 w-6" />
-//           </button>
-//         </div>
-//         <div className="hidden lg:flex lg:gap-x-12">
-//           {navigation.map((item) => (
-//             <a key={item.name} href={item.href} className="text-sm font-semibold leading-6 text-gray-900">
-//               {item.name}
-//             </a>
-//           ))}
-//           <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-//             Log in <span aria-hidden="true">&rarr;</span>
-//           </a>
-//         </div>
-//       </nav>
-//       <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
-//         <div className="fixed inset-0 z-10" />
-//         <DialogPanel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-//           <div className="flex items-center justify-between">
-//             <a href="#" className="-m-1.5 p-1.5">
-//               <span className="sr-only">Your Company</span>
-//               <img
-//                 alt=""
-//                 src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-//                 className="h-8 w-auto"
-//               />
-//             </a>
-//             <button
-//               type="button"
-//               onClick={() => setMobileMenuOpen(false)}
-//               className="-m-2.5 rounded-md p-2.5 text-gray-700"
-//             >
-//               <span className="sr-only">Close menu</span>
-//               <XMarkIcon aria-hidden="true" className="h-6 w-6" />
-//             </button>
-//           </div>
-//           <div className="mt-6 flow-root">
-//             <div className="-my-6 divide-y divide-gray-500/10">
-//               <div className="space-y-2 py-6">
-//                 {navigation.map((item) => (
-//                   <a
-//                     key={item.name}
-//                     href={item.href}
-//                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-//                   >
-//                     {item.name}
-//                   </a>
-//                 ))}
-//               </div>
-//               <div className="py-6">
-//                 <a
-//                   href="#"
-//                   className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-//                 >
-//                   Log in
-//                 </a>
-//               </div>
-//             </div>
-//           </div>
-//         </DialogPanel>
-//       </Dialog>
-//     </header>
-//   )
-// }

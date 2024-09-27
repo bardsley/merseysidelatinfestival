@@ -49,12 +49,13 @@ def generate_standard_ticket_body(data):
     
     with open("./send_email/ticket_body.html", "r") as body_file:
         body_tmpl = Template(body_file.read())
+        subdomain = "www" if os.environ.get("STAGE_NAME") == "prod" else os.environ.get("STAGE_NAME")
         body = body_tmpl.substitute({
             'fullname':data['name'], 
             'email':data['email'], 
             'ticketnumber':data['ticket_number'], 
             'rows':rows, 
-            'ticket_link':"http://merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(data['email'], data['ticket_number']), 
+            'ticket_link':"http://{}.merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(subdomain,data['email'], data['ticket_number']), 
             'total_row':total_row,
             'heading_message':data['heading_message'],
         })   

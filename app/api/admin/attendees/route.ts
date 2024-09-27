@@ -2,6 +2,7 @@ import { createClerkClient } from '@clerk/backend';
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
+import { guaranteeISOstringFromDate } from '@lib/useful';
 
 export async function GET() {
   const {userId} = auth();
@@ -32,13 +33,12 @@ export async function GET() {
     const name_changed = attendee.transferred && attendee.transferred.ticket_number == attendee.ticket_number
     const transferred_in = !name_changed && attendee.history
     // console.log(attendee.full_name,attendee.ticket_number,attendee.transferred?.ticket_number, attendee.transferred?.ticket_number != attendee.ticket_number)
-
     return {
       name: attendee.full_name,
       email: attendee.email,
       checkin_at: attendee.ticket_used,
       passes: attendee.line_items.map((item) => item.description),
-      purchased_at: new Date(parseInt(attendee.purchase_date) * 1000).toISOString(),
+      purchased_date: guaranteeISOstringFromDate(attendee.purchase_date), 
       ticket_number: attendee.ticket_number,
       active: attendee.active,
       status: attendee.status,
@@ -48,7 +48,7 @@ export async function GET() {
       name_changed: name_changed,
       transferred: attendee.transferred,
       history: attendee.history,
-
+      meal_preferences: attendee.meal_preferences,
     };
   })
 
