@@ -9,6 +9,7 @@ export async function POST(request: Request) {
     attendees: attendees,
     }
   console.log("POST -> Connor: ",apiRequestBody)
+  console.log("API", process.env.LAMBDA_IMPORT_TICKETS)
   const apiResponse = await fetch(process.env.LAMBDA_IMPORT_TICKETS, {
     method: 'POST',
     body: JSON.stringify(apiRequestBody)

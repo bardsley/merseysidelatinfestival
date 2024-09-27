@@ -89,7 +89,7 @@ export default function ImportPageClient() {
       name_changed: false,
       transferred: null,
       history: [],
-      unit_amount: Number(row.unit_amount.substring(1)),
+      unit_amount: Number(row.unit_amount.substring(1))*100,
       cs_id: row.cs_id
     };
   };

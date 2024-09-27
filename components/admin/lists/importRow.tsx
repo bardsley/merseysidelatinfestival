@@ -89,7 +89,7 @@ export const TicketRow = ({attendee, handleSaveChanges}) => {
             className={`align-middle block rounded-md border-0 py-1.5 my-2.5 ring-1 ring-inset focus:ring-2 focus:ring-inset text-gray-900 sm:text-sm sm:leading-6 w-28`}
           />
         ) : (
-          <td className="hidden px-3 py-4 text-sm text-inherit lg:table-cell">£{attendee.unit_amount}</td>
+          <td className="hidden px-3 py-4 text-sm text-inherit lg:table-cell">£{attendee.unit_amount/100}</td>
         )}
       </td>
 

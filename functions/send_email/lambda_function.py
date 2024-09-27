@@ -54,7 +54,7 @@ def generate_standard_ticket_body(data):
             'email':data['email'], 
             'ticketnumber':data['ticket_number'], 
             'rows':rows, 
-            'ticket_link':"http://app.merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(data['email'], data['ticket_number']), 
+            'ticket_link':"http://merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(data['email'], data['ticket_number']), 
             'total_row':total_row,
             'heading_message':data['heading_message'],
         })   

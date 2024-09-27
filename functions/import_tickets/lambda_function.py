@@ -8,6 +8,8 @@ from decimal import Decimal
 from shared import DecimalEncoder as shared
 from json.decoder import JSONDecodeError
 import os
+from datetime import datetime
+import time
 
 
 logger = logging.getLogger()
@@ -28,6 +30,7 @@ def err(msg:str, code=400, logmsg=None, **kwargs):
         }
 
 def send_email(name, email, ticket_number, line_items):
+    logger.info(os.environ.get("SEND_EMAIL_LAMBDA"))
     # send the email with these details
     logger.info("Invoking send_email lambda")
     response = lambda_client.invoke(
@@ -39,7 +42,7 @@ def send_email(name, email, ticket_number, line_items):
                 'email':email, 
                 'ticket_number': ticket_number,
                 'line_items':line_items,
-                'heading_message': "THANK YOU FOR YOUR PURCHASE!"
+                'heading_message': "A REMINDER OF YOUR TICKET"
             }, cls=shared.DecimalEncoder),
         )
     logger.info(response)
@@ -73,30 +76,30 @@ def lambda_handler(event, context):
     attendees = data['attendees']
     options   = data['options']
 
-    line_items = get_line_items(attendees['passes'], attendees['unit_amount'])
-    ticket_number = str(attendees['ticket_number']) if not None else str(get_ticket_number(attendees['email'], event['student_ticket']))
-
     for attendee in attendees:
+        line_items = get_line_items(attendee['passes'], attendee['unit_amount']*100)
+        ticket_number = str(attendee['ticket_number']) if attendee['ticket_number'] is not None else str(get_ticket_number(attendee['email'], attendee['student_ticket']))
+        purchased_at = int(time.mktime(datetime.strptime(attendee['purchased_at'], '%Y-%m-%dT%H:%M:%S.000Z').timetuple()))
         input = {
             'ticket_number': ticket_number,
             'email': attendee['email'],      
             'full_name':attendee['name'],
             'phone': attendee['phone'],
             'active': True,
-            'purchase_date':attendee['purchased_at'],
+            'purchase_date':purchased_at,
             'line_items': line_items,
             'access':[1,1,1,1,1,1] if 'Full Pass' in attendee['passes'] else [0,0,0,0,0,0],
             'ticket_used': False,
-            'status':attendee['attendee'],
-            'student_ticket': event['student_ticket'],
+            'status':attendee['status'],
+            'student_ticket': attendee['student_ticket'],
             'schedule': None,
-            'checkout_session':attendee['cs_id'] if 'cs_id' in event else None,
+            'checkout_session':attendee['cs_id'] if 'cs_id' in attendee else None,
             'meal_preferences': None,
             'promo_code': None,
             'history': None,
         }
 
-        update_ddb(input)
+        respponse = update_ddb(input)
 
         if options['sendTicketEmails'] == "everyone":
             send_email(attendee['name'], attendee['email'], ticket_number, line_items)
