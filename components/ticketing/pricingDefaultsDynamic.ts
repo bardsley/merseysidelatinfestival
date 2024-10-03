@@ -119,8 +119,8 @@ export const passes: Passes = {
 		 studentSaving: 115.5,
 		 combination: ['Friday Party', 'Saturday Classes', 'Saturday Dinner', 'Saturday Party', 'Sunday Classes', 'Sunday Party'],
 		 description: "Everything the festival has at the best rate! If you're looking for the best deal this is it",
-		 priceId: 'price_1PwoFBEWkmdeWsQP9hXHC09H',
-		 studentPriceId: 'price_1PwoGAEWkmdeWsQPuFGN302A'},
+		 priceId: 'price_1Q5jj9EWkmdeWsQPrXlbM3qn', //'price_1PwoFBEWkmdeWsQP9hXHC09H',
+		 studentPriceId: 'price_1Q5jipEWkmdeWsQPUu9aarKa' }, // 'price_1PwoGAEWkmdeWsQPuFGN302A'},
 	'Class Pass': {
 		 cost: 95,
 		 studentCost: 95,
