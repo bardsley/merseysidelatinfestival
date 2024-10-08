@@ -12,8 +12,8 @@ export async function POST(request: Request) {
   console.log("courseInfo", courseInfo)
   console.log("Diet",dietChoices)
   const apiRequestBody = {
-    ticket_number: ticket.value,
-    email: email.value,
+    ticket_number: ticket.value.trim(),
+    email: email.value.trim(),
     preferences: {
       choices: courseInfo,
       dietary_requirements: {
