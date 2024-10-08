@@ -77,7 +77,7 @@ def lambda_handler(event, context):
     options   = data['options']
 
     for attendee in attendees:
-        line_items = get_line_items(attendee['passes'], attendee['unit_amount']*100)
+        line_items = get_line_items(attendee['passes'], attendee['unit_amount'])
         ticket_number = str(attendee['ticket_number']) if attendee['ticket_number'] is not None else str(get_ticket_number(attendee['email'], attendee['student_ticket']))
         purchased_at = int(time.mktime(datetime.strptime(attendee['purchased_at'], '%Y-%m-%dT%H:%M:%S.000Z').timetuple()))
         input = {
