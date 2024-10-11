@@ -27,9 +27,17 @@ sendgrid_api_key = os.environ.get("SENDGRID_API_KEY")
 
 def group_add(data):
     not_ticket = "but when you purchase your ticket which includes dinner you will have the choice to enter a group code."
-    has_ticket = "you ca"
+    has_ticket = "you can join by changing your preferences with the link below."
     button_not_ticket = "BUY YOUR TICKET"
     button_has_ticket = "MANAGE YOUR TICKET"
+    with open("./send_email/group_body.html", 'r') as total_row_file:
+        total_tmpl = Template(total_row_file.read())
+        total_row = total_tmpl.substitute({
+            'tickettype' : "", 
+            'group_code' : "", 
+            'ticket_link': "",
+            'button_text': "", 
+        })    
     
 def generate_standard_ticket_body(data):
     rows = ""
