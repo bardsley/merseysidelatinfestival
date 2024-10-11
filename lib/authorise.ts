@@ -1,17 +1,13 @@
 const superuser = "superadmin"
+
+// These control access to various admin functionalities. Either direct path without querystring or regular expressions
 const grantUsage = {
-  "all-admins": ["/admin"],
+  "all-admins": ["/admin"], // Everyone gets this set
   "developer": ["#","/admin/users","/admin/stripe","/admin/import"],
   "content-manager": ['/admin/content'],
   "door-staff": ['/admin/ticketing','/admin/scan', '/admin/epos'],
+  "event-manager": ['/admin/ticketing.*'] // Everything under ticketing
 }
-// const grantView = {
-//   "developer": { 
-//     "thing": ["create","update","read","delete"],
-//     "otherthing": ["create","update","read","delete"] 
-//   }
-// }
-
 
 export const authUsage = (user,path) => {
   // Check could ever be allowed to do anything
@@ -21,10 +17,12 @@ export const authUsage = (user,path) => {
   const roles = user.publicMetadata.roles
   // Superuser gets set to true always
   if(roles.includes(superuser)) return true
+  // Check against all admins stuff
+  if(grantUsage['all-admins'].includes(pathWithoutQueryString)) return true
   // check through roles to see if any of them allow access to path
   return roles.some((role) => {
     if(!grantUsage[role]) return false // Roles doesn't exist in permissions
-    return grantUsage[role] && grantUsage[role].includes(pathWithoutQueryString) 
+    return grantUsage[role] && grantUsage[role].some((pattern) => { return pathWithoutQueryString == pattern || new RegExp(`^${pattern}$`).test(pathWithoutQueryString)}) 
   })
 }
 
