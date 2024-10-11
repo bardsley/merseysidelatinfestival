@@ -60,10 +60,12 @@ def add_group(ticket_number, email, group_id, timestamp):
         InvocationType='Event',
         Payload=json.dumps({
                 'requestContext':{'http': {'method': "POST"}},
-                'ticket_number':ticket_number, 
-                'email':email, 
-                'group_id':group_id, 
-                'timestamp': timestamp
+                'body': json.dumps({
+                    'ticket_number':ticket_number, 
+                    'email':email, 
+                    'group_id':group_id, 
+                    'timestamp': timestamp
+                })
             }, cls=shared.DecimalEncoder),
         )
     logger.info(response)    
@@ -131,7 +133,8 @@ def lambda_handler(event, context):
     logger.info(update_ddb)
 
     if 'group' in event:
-        add_group(ticket_number, email, event['group']['id'], time.time())
+        group = json.loads(event['group']) if type(event['group']) != dict else event['group']
+        add_group(ticket_number, email, group['id'], time.time())
     
     if ('send_standard_ticket' in event):
         if event['send_standard_ticket']:

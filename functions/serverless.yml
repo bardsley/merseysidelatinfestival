@@ -64,6 +64,7 @@ provider:
           Resource:
             - Fn::GetAtt: [AttendeesTable, Arn]
             - Fn::GetAtt: [StripeProductsTable, Arn]
+            - Fn::GetAtt: [MLF24Table, Arn]
             - { "Fn::Join": [ "/", [ 
                 { "Fn::GetAtt": ["AttendeesTable", "Arn" ] }, "index", "ticket_number-index" 
               ]]}
@@ -472,7 +473,7 @@ functions:
     package:
       patterns:
         - '!**/**'
-        - "table_groups/**"
+        - "attendee_groups/**"
         -  "shared/**"
     environment:
       STAGE_NAME: ${sls:stage}

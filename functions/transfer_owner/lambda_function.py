@@ -52,9 +52,11 @@ def delete_from_group(ticket_number, email, group_id):
         InvocationType='Event',
         Payload=json.dumps({
                 'requestContext':{'http': {'method': "DELETE"}},
-                'ticket_number':ticket_number, 
-                'email':email, 
-                'group_id':group_id, 
+                'body': json.dumps({
+                    'ticket_number':ticket_number, 
+                    'email':email, 
+                    'group_id':group_id, 
+                })
             }, cls=shared.DecimalEncoder),
         )
     logger.info(response)    

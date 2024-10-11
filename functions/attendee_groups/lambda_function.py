@@ -47,7 +47,7 @@ def post(event):
         logger.info(data)
     except (TypeError, JSONDecodeError) as e:
         logger.error(e)
-        return err("An error has occured with the input you have provied.", event_body=event['body'])
+        return err("An error has occured with the input you have provied.")
     
     if ('ticket_number' not in data) and ('email' not in data) and ('group_id' not in data) and ('timestamp' not in data):
         return err("Must provide ticket_number, email, timestamp, and group_id.")    
@@ -61,7 +61,7 @@ def _post(group_id, ticket_number, email, timestamp):
         'PK': "GROUP#{}".format(group_id),
         'SK': "ATTENDEE#{}".format(ticket_number),
         'email': email,
-        'timestamp': timestamp
+        'timestamp': int(timestamp)
     })
 
     return True
@@ -73,7 +73,8 @@ def delete(event):
         logger.info(data)
     except (TypeError, JSONDecodeError) as e:
         logger.error(e)
-        return err("An error has occured with the input you have provied.", event_body=event['body'])
+        logger.info(event['body'])
+        return err("An error has occured with the input you have provied.")
 
     if ('ticket_number' not in data) and ('email' not in data) and ('group_id' not in data):
         return err("Must provide ticket_number, email, and group_id.")    
@@ -83,12 +84,13 @@ def delete(event):
     return True
 
 def _delete(group_id, ticket_number):    
-    table.delete_item(
+    response = table.delete_item(
         Key={
             'PK': "GROUP#{}".format(group_id),
             'SK': "ATTENDEE#{}".format(ticket_number)           
         }
     )
+    logger.info(response)
     return True
 
 def patch(event):
@@ -100,8 +102,10 @@ def patch(event):
         logger.error(e)
         return err("An error has occured with the input you have provied.", event_body=event['body'])
     
+    logger.info("Delete old group entry")
     _delete(data['old']['group_id'], data['old']['ticket_number'])
 
+    logger.info("Make new entry")
     _post(data['new']['group_id'], data['new']['ticket_number'], data['new']['email'], time.time())
 
     return True
@@ -111,6 +115,7 @@ def lambda_handler(event, context):
 
     '''    
     logger.info('## NEW REQUEST')
+    logger.info(event)
     if event['requestContext']['http']['method'] == 'GET':
         logger.info('## GET')
         return get(event)

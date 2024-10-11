@@ -19,7 +19,6 @@ lambda_client = boto3.client('lambda')
 
 db = boto3.resource('dynamodb')
 table = db.Table(os.environ.get("ATTENDEES_TABLE_NAME"))
-event_table = db.Table(os.environ.get("EVENT_TABLE_NAME"))
 
 def get_ticket(ticket_number, email):
     '''
@@ -41,8 +40,10 @@ def update_group(new_ticket_number, new_email, new_group_id, old_ticket_number, 
         InvocationType='Event',
         Payload=json.dumps({
                 'requestContext':{'http': {'method': "PATCH"}},
-                'new':{'ticket_number': new_ticket_number, 'group_id': new_group_id, 'email':new_email}, 
-                'old':{'ticket_number': old_ticket_number, 'group_id': old_group_id, 'email':old_email}, 
+                'body':json.dumps({
+                    'new':{'ticket_number': new_ticket_number, 'group_id': new_group_id, 'email':new_email}, 
+                    'old':{'ticket_number': old_ticket_number, 'group_id': old_group_id, 'email':old_email}, 
+                })
             }, cls=shared.DecimalEncoder),
         )
     logger.info(response)    
