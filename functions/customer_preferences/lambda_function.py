@@ -15,8 +15,11 @@ logger.setLevel("INFO")
 # profile_name='AdministratorAccess-645491919786'
 # boto3.setup_default_session(profile_name=profile_name)
 
+lambda_client = boto3.client('lambda')
+
 db = boto3.resource('dynamodb')
 table = db.Table(os.environ.get("ATTENDEES_TABLE_NAME"))
+event_table = db.Table(os.environ.get("EVENT_TABLE_NAME"))
 
 def get_ticket(ticket_number, email):
     '''
@@ -30,6 +33,19 @@ def get_ticket(ticket_number, email):
         raise ValueError("An internal error has occured.")
     else:
         return response['Items'][0]
+
+def update_group(new_ticket_number, new_email, new_group_id, old_ticket_number, old_email, old_group_id):
+    logger.info("Invoking group lambda")
+    response = lambda_client.invoke(
+        FunctionName=os.environ.get("GROUP_LAMBDA"),
+        InvocationType='Event',
+        Payload=json.dumps({
+                'requestContext':{'http': {'method': "PATCH"}},
+                'new':{'ticket_number': new_ticket_number, 'group_id': new_group_id, 'email':new_email}, 
+                'old':{'ticket_number': old_ticket_number, 'group_id': old_group_id, 'email':old_email}, 
+            }, cls=shared.DecimalEncoder),
+        )
+    logger.info(response)    
 
 def err(msg:str, code=400, logmsg=None, **kwargs):
     logmsg = logmsg if logmsg else msg
@@ -91,7 +107,11 @@ def post(event):
     if 'schedule' in data:
         logger.info(f"-SET SCHEDULE OPTIONS:, {data['schedule']}")
         UpdateExp += ", schedule = :val2"
-        ExpAttrVals[':val2'] = json.dumps(data['schedule'])    
+        ExpAttrVals[':val2'] = json.dumps(data['schedule']) 
+    if 'group' in data:
+        logger.info(f"-SET GROUP OPTIONS:, {data['group']}")
+        update_group(ticket_number, email, data['group']['id'], ticket_number, email, ticket_entry['meal_preferences']['seating_preference'])
+
     # define the params for the ddb update
     params = {
         'Key': {
