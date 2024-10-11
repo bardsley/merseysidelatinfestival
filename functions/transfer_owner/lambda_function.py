@@ -48,7 +48,7 @@ def err(msg:str, code=400, logmsg=None, **kwargs):
 def delete_from_group(ticket_number, email, group_id):
     logger.info("Invoking group lambda")
     response = lambda_client.invoke(
-        FunctionName=os.environ.get("GROUP_LAMBDA"),
+        FunctionName=os.environ.get("ATTENDEE_GROUPS_LAMBDA"),
         InvocationType='Event',
         Payload=json.dumps({
                 'requestContext':{'http': {'method': "DELETE"}},

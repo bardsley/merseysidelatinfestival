@@ -152,7 +152,10 @@ resources:
         BillingMode: PAY_PER_REQUEST
         TableName: ${param:eventTableName}
         StreamSpecification:
-          StreamViewType: NEW_AND_OLD_IMAGES           
+          StreamViewType: NEW_AND_OLD_IMAGES   
+        TimeToLiveSpecification:
+          AttributeName: expires
+          Enabled: true                  
 
 #######################
 # Functions
@@ -196,6 +199,7 @@ functions:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
       STRIPE_SECRET_KEY: ${param:stripeSecretKey}
       CREATE_TICKET_LAMBDA: "${sls:stage}-create_ticket" #! Can't find a way to set this other than as a params that gets used byt function and the function itself
+      ATTENDEE_GROUPS_LAMBDA: "${sls:stage}-attendee_groups"
     layers:
       - !Ref StripeLambdaLayer
       # - !Ref DynamodbLambdaLayer
@@ -220,6 +224,7 @@ functions:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
       STRIPE_SECRET_KEY: ${param:stripeSecretKey}
       SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
+      ATTENDEE_GROUPS_LAMBDA: "${sls:stage}-attendee_groups"
     # layers:
     #   - !Ref DynamodbLambdaLayer
 
@@ -237,6 +242,7 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+      ATTENDEE_GROUPS_LAMBDA: "${sls:stage}-attendee_groups"
     # layers:
     #   - !Ref DynamodbLambdaLayer
     #   - !Ref GithubLambdaLayer
@@ -407,6 +413,7 @@ functions:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
       CREATE_TICKET_LAMBDA: "${sls:stage}-create_ticket"
       SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
+      ATTENDEE_GROUPS_LAMBDA: "${sls:stage}-attendee_groups"
     # layers:
     #   - !Ref SendmailLambdaLayer
     events:
@@ -458,10 +465,10 @@ functions:
 
 #--------------------
 
-  TableGroups:
+  AttendeeGroups:
     runtime: python3.11
-    handler: table_groups/lambda_function.lambda_handler
-    name: "${sls:stage}-table_group"
+    handler: attendee_groups/lambda_function.lambda_handler
+    name: "${sls:stage}-attendee_groups"
     package:
       patterns:
         - '!**/**'
@@ -472,14 +479,17 @@ functions:
       EVENT_TABLE_NAME: ${param:eventTableName}
     events:
       - httpApi:
-          path: /table_group
+          path: /attendee_groups
           method: post
       - httpApi:
-          path: /table_group
+          path: /attendee_groups
           method: get          
       - httpApi:
-          path: /table_group
+          path: /attendee_groups
           method: delete   
+      - httpApi:
+          path: /attendee_groups
+          method: patch   
 
 
 

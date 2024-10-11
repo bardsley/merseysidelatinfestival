@@ -56,7 +56,7 @@ def update_ddb(Item):
 def add_group(ticket_number, email, group_id, timestamp):
     logger.info("Invoking group lambda")
     response = lambda_client.invoke(
-        FunctionName=os.environ.get("GROUP_LAMBDA"),
+        FunctionName=os.environ.get("ATTENDEE_GROUPS_LAMBDA"),
         InvocationType='Event',
         Payload=json.dumps({
                 'requestContext':{'http': {'method': "POST"}},

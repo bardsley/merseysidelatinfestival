@@ -37,7 +37,7 @@ def get_ticket(ticket_number, email):
 def update_group(new_ticket_number, new_email, new_group_id, old_ticket_number, old_email, old_group_id):
     logger.info("Invoking group lambda")
     response = lambda_client.invoke(
-        FunctionName=os.environ.get("GROUP_LAMBDA"),
+        FunctionName=os.environ.get("ATTENDEE_GROUPS_LAMBDA"),
         InvocationType='Event',
         Payload=json.dumps({
                 'requestContext':{'http': {'method': "PATCH"}},
