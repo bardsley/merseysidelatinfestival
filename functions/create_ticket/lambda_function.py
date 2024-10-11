@@ -3,7 +3,7 @@ import json
 # from gdrivewrite import update_gs
 # from sendmail import sendemail
 from random import randint
-import datetime
+import time
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 from decimal import Decimal
@@ -52,6 +52,21 @@ def get_ticket_number(email, student_ticket):
 def update_ddb(Item):
     table.put_item(Item=Item)
     return True
+
+def add_group(ticket_number, email, group_id, timestamp):
+    logger.info("Invoking group lambda")
+    response = lambda_client.invoke(
+        FunctionName=os.environ.get("GROUP_LAMBDA"),
+        InvocationType='Event',
+        Payload=json.dumps({
+                'requestContext':{'http': {'method': "POST"}},
+                'ticket_number':ticket_number, 
+                'email':email, 
+                'group_id':group_id, 
+                'timestamp': timestamp
+            }, cls=shared.DecimalEncoder),
+        )
+    logger.info(response)    
 
 # Main function to handle the event
 def lambda_handler(event, context):
@@ -114,6 +129,9 @@ def lambda_handler(event, context):
     }
     update_ddb = table.put_item(Item=Item)
     logger.info(update_ddb)
+
+    if 'group' in event:
+        add_group(ticket_number, email, event['group']['id'], time.time())
     
     if ('send_standard_ticket' in event):
         if event['send_standard_ticket']:
