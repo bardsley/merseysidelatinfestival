@@ -47,6 +47,7 @@ def group_rec(data):
             'group_code' : data['group_id'], 
             'ticket_link': ticket_link,
             'button_text': button_text, 
+            'rec_name': data['name']
         }) 
     return group_body
     

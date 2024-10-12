@@ -53,7 +53,7 @@ def update_ddb(Item):
     table.put_item(Item=Item)
     return True
 
-def add_group(ticket_number, email, group_id, timestamp, recs):
+def add_group(ticket_number, email, name, group_id, timestamp, recs):
     logger.info("Invoking group lambda")
     response = lambda_client.invoke(
         FunctionName=os.environ.get("ATTENDEE_GROUPS_LAMBDA"),
@@ -62,7 +62,8 @@ def add_group(ticket_number, email, group_id, timestamp, recs):
                 'requestContext':{'http': {'method': "POST"}},
                 'body': json.dumps({
                     'ticket_number':ticket_number, 
-                    'email':email, 
+                    'email':email,
+                    'full_name': name,
                     'group_id':group_id, 
                     'timestamp': timestamp,
                     'recs': recs,
@@ -136,7 +137,7 @@ def lambda_handler(event, context):
     if 'group' in event:
         group = json.loads(event['group']) if type(event['group']) != dict else event['group']
         recs = group['recommendations'] if 'recommendations' in group else None
-        add_group(ticket_number, email, group['id'], time.time(), recs)
+        add_group(ticket_number, email, event['full_name'], group['id'], time.time(), recs)
     
     if ('send_standard_ticket' in event):
         if event['send_standard_ticket']:

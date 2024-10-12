@@ -27,7 +27,7 @@ def err(msg:str, code=400, logmsg=None, **kwargs):
         'body': json.dumps({'error': msg})
         }
 
-def process_emails(recs, group_id):
+def process_emails(recs, group_id, name):
     # batch get from GROUPREC#groupid
         # if exists and not expire ignore that email
         # with remaining batch get from attendees
@@ -87,7 +87,8 @@ def process_emails(recs, group_id):
                                 'email_type':"group_rec",
                                 'email':email, 
                                 'ticket_number':attendee['ticket_number'], 
-                                'group_id':group_id
+                                'group_id':group_id,
+                                'name':name
                             }, cls=shared.DecimalEncoder),
                         )
 
@@ -108,7 +109,8 @@ def process_emails(recs, group_id):
                     Payload=json.dumps({
                             'email_type':"group_rec",
                             'email':email, 
-                            'group_id':group_id
+                            'group_id':group_id,
+                            'name':name
                         }, cls=shared.DecimalEncoder),
                     )
                 logger.info(response)       
@@ -142,18 +144,19 @@ def post(event):
     if ('ticket_number' not in data) and ('email' not in data) and ('group_id' not in data) and ('timestamp' not in data):
         return err("Must provide ticket_number, email, timestamp, and group_id.")    
 
-    _post(data['group_id'], data['ticket_number'], data['email'], data['timestamp'], data['recs'])
+    _post(data['group_id'], data['ticket_number'], data['email'], data['full_name'], data['timestamp'], data['recs'])
 
     return True
 
-def _post(group_id, ticket_number, email, timestamp, recs):
+def _post(group_id, ticket_number, email, full_name, timestamp, recs):
     if recs is not None:
-        process_emails(recs, group_id)
+        process_emails(recs, group_id, full_name)
         
     table.put_item(Item={
         'PK': "GROUP#{}".format(group_id),
         'SK': "ATTENDEE#{}".format(ticket_number),
         'email': email,
+        'full_name':full_name,
         'timestamp': int(timestamp)
     })
 
@@ -199,7 +202,7 @@ def patch(event):
     _delete(data['old']['group_id'], data['old']['ticket_number'])
 
     logger.info("Make new entry")
-    _post(data['new']['group_id'], data['new']['ticket_number'], data['new']['email'], time.time(), data['recs'])
+    _post(data['new']['group_id'], data['new']['ticket_number'], data['new']['email'], data['new']['full_name'], time.time(), data['recs'])
 
     return True
 
