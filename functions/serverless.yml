@@ -61,6 +61,7 @@ provider:
             - dynamodb:GetRecords
             - dynamodb:GetShardIterator
             - dynamodb:ListStreams
+            - dynamodb:BatchGetItem
           Resource:
             - Fn::GetAtt: [AttendeesTable, Arn]
             - Fn::GetAtt: [StripeProductsTable, Arn]
@@ -478,6 +479,8 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       EVENT_TABLE_NAME: ${param:eventTableName}
+      ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+      SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
     events:
       - httpApi:
           path: /attendee_groups

@@ -55,7 +55,7 @@ def delete_from_group(ticket_number, email, group_id):
                 'body': json.dumps({
                     'ticket_number':ticket_number, 
                     'email':email, 
-                    'group_id':group_id, 
+                    'group_id':group_id , 
                 })
             }, cls=shared.DecimalEncoder),
         )

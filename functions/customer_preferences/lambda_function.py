@@ -33,7 +33,7 @@ def get_ticket(ticket_number, email):
     else:
         return response['Items'][0]
 
-def update_group(new_ticket_number, new_email, new_group_id, old_ticket_number, old_email, old_group_id):
+def update_group(new_ticket_number, new_email, new_group_id, old_ticket_number, old_email, old_group_id, recs):
     logger.info("Invoking group lambda")
     response = lambda_client.invoke(
         FunctionName=os.environ.get("ATTENDEE_GROUPS_LAMBDA"),
@@ -43,6 +43,7 @@ def update_group(new_ticket_number, new_email, new_group_id, old_ticket_number, 
                 'body':json.dumps({
                     'new':{'ticket_number': new_ticket_number, 'group_id': new_group_id, 'email':new_email}, 
                     'old':{'ticket_number': old_ticket_number, 'group_id': old_group_id, 'email':old_email}, 
+                    'recs': recs,
                 })
             }, cls=shared.DecimalEncoder),
         )
@@ -111,7 +112,8 @@ def post(event):
         ExpAttrVals[':val2'] = json.dumps(data['schedule']) 
     if 'group' in data:
         logger.info(f"-SET GROUP OPTIONS:, {data['group']}")
-        update_group(ticket_number, email, data['group']['id'], ticket_number, email, ticket_entry['meal_preferences']['seating_preference'])
+        recs = data['group']['recommendations'] if 'recommendations' in data['group'] else None
+        update_group(ticket_number, email, data['group']['id'], ticket_number, email, ticket_entry['meal_preferences']['seating_preference'], recs)
 
     # define the params for the ddb update
     params = {

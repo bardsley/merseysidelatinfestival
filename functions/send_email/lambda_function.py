@@ -25,19 +25,30 @@ logging.basicConfig()
 
 sendgrid_api_key = os.environ.get("SENDGRID_API_KEY")
 
-def group_add(data):
-    not_ticket = "but when you purchase your ticket which includes dinner you will have the choice to enter a group code."
-    has_ticket = "you can join by changing your preferences with the link below."
-    button_not_ticket = "BUY YOUR TICKET"
-    button_has_ticket = "MANAGE YOUR TICKET"
-    with open("./send_email/group_body.html", 'r') as total_row_file:
-        total_tmpl = Template(total_row_file.read())
-        total_row = total_tmpl.substitute({
-            'tickettype' : "", 
-            'group_code' : "", 
-            'ticket_link': "",
-            'button_text': "", 
-        })    
+def group_rec(data):
+    '''
+    Expects in data: email, group_id, [ticket_number]
+    '''
+    has_ticket = True if "ticket_number" in data else False
+
+    body_text = "you can join by changing your preferences with the link below." if has_ticket \
+        else "but when you purchase your ticket which includes dinner you will have the choice to enter a group code."
+    
+    subdomain = "www" if os.environ.get("STAGE_NAME") == "prod" else os.environ.get("STAGE_NAME")
+    ticket_link = "http://{}.merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(subdomain,data['email'], data['ticket_number']) if has_ticket \
+        else "https://{}.merseysidelatinfestival.co.uk/tickets".format(subdomain)
+    
+    button_text = "MANAGE YOUR TICKET" if has_ticket else "BUY YOUR TICKET"
+
+    with open("./send_email/group_body.html", 'r') as group_body_file:
+        group_tmpl = Template(group_body_file.read())
+        group_body = group_tmpl.substitute({
+            'body_text' : body_text, 
+            'group_code' : data['group_id'], 
+            'ticket_link': ticket_link,
+            'button_text': button_text, 
+        }) 
+    return group_body
     
 def generate_standard_ticket_body(data):
     rows = ""
@@ -116,9 +127,11 @@ def lambda_handler(event, context):
 
         body += transfer_content
         subject = 'Merseyside Latin Festival Ticket Transfer'
-    elif event['email_type'] == "group_add_no_ticket":
+    elif event['email_type'] == "group_rec":
+        body = group_rec(event)
 
-    elif event['email_type'] == "group_add_has_ticket":
+        subject = "Merseyside Latin Festival Group Recommendation"
+        attachment = None
     else:
         return False
 
@@ -138,7 +151,8 @@ def lambda_handler(event, context):
         )
     
     logger.info("Adding attachements if any exist")
-    message.attachment = attachment if attachment else None
+    if attachment is not None:
+        message.attachment = attachment
 
     logger.info("Attempting to send email")
     try:
@@ -146,5 +160,5 @@ def lambda_handler(event, context):
         response = sg.send(message)
         return "Success"
     except Exception as e:
-        print(e.message)
+        print(e)
         return e

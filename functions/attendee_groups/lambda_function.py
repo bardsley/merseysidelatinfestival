@@ -10,8 +10,12 @@ import time
 logger = logging.getLogger()
 logger.setLevel("INFO")
 
+lambda_client = boto3.client('lambda')
+
+dynamodb_client = boto3.client('dynamodb')
 db = boto3.resource('dynamodb')
 table = db.Table(os.environ.get("EVENT_TABLE_NAME"))
+attendees_table = db.Table(os.environ.get("ATTENDEES_TABLE_NAME"))
 
 def err(msg:str, code=400, logmsg=None, **kwargs):
     logmsg = logmsg if logmsg else msg
@@ -22,6 +26,92 @@ def err(msg:str, code=400, logmsg=None, **kwargs):
         'statusCode': code, 
         'body': json.dumps({'error': msg})
         }
+
+def process_emails(recs, group_id):
+    # batch get from GROUPREC#groupid
+        # if exists and not expire ignore that email
+        # with remaining batch get from attendees
+        # if has ticket
+        #   check if is already in group - discard if it is
+        #   send rec email with link to manage ticket
+        #   add to db with GROUPREC and expires after 1 week
+        # else if not have ticket
+        #   send rec with link to buy ticket
+        #   add to db with GROUPREC and expires after 1 week
+        logger.info("Processing emails for recommendation")
+
+        logger.info("Searching to check if recomemndation email has been sent in the last week")
+        keys = [{'PK': {'S': "GROUPREC#{}".format(group_id)}, 'SK': {'S': "EMAIL#{}".format(email)}} for email in recs]
+        response = dynamodb_client.batch_get_item(
+            RequestItems={
+                os.environ.get("EVENT_TABLE_NAME"): {
+                    'Keys': keys
+                }
+            }
+        )
+
+        retrieved_items =  response.get('Responses', {}).get(os.environ.get("EVENT_TABLE_NAME"), [])
+        logger.info(retrieved_items)
+        retrieved_emails = {item['SK']['S'].split('#')[1] for item in retrieved_items if int(item.get('expires', '')['N']) > int(time.time())}
+        remaining_emails = [email for email in recs if email not in retrieved_emails]
+
+        logger.info("Searhcing if any emails that have not already recieved a recommendation already have a ticket")
+        attendee_with_tickets = []
+        for email in remaining_emails:
+            attendee_response = attendees_table.query(
+                KeyConditionExpression=Key('email').eq(email),
+                FilterExpression=Attr('active').eq(True)
+            )
+            if attendee_response.get('Items'):
+                attendee_with_tickets.extend(attendee_response['Items'])
+
+        logger.info("Sending emails to recommendations with tickets")
+        processed_emails = set()
+        for attendee in attendee_with_tickets:
+            email = attendee['email']
+            if (email not in processed_emails):
+                processed_emails.add(email)
+                if attendee['meal_preferences']['seating_preference'] != group_id:
+                    table.put_item(
+                        Item={
+                            'PK': "GROUPREC#{}".format(group_id),
+                            'SK': "EMAIL#{}".format(attendee['email']),
+                            'expires': int(time.time()+604800)
+                        }
+                    )
+                    logger.info("Invoking send_email lambda")
+                    response = lambda_client.invoke(
+                        FunctionName=os.environ.get("SEND_EMAIL_LAMBDA"),
+                        InvocationType='Event',
+                        Payload=json.dumps({
+                                'email_type':"group_rec",
+                                'email':email, 
+                                'ticket_number':attendee['ticket_number'], 
+                                'group_id':group_id
+                            }, cls=shared.DecimalEncoder),
+                        )
+
+        logger.info("Sending emails for remaining emails without ticketes")
+        for email in remaining_emails:
+            if email not in processed_emails:
+                table.put_item(
+                    Item={
+                        'PK': "GROUPREC#{}".format(group_id),
+                        'SK': "EMAIL#{}".format(email),
+                        'expires': int(time.time()+604800)
+                    }
+                )
+                logger.info("Invoking send_email lambda")
+                response = lambda_client.invoke(
+                    FunctionName=os.environ.get("SEND_EMAIL_LAMBDA"),
+                    InvocationType='Event',
+                    Payload=json.dumps({
+                            'email_type':"group_rec",
+                            'email':email, 
+                            'group_id':group_id
+                        }, cls=shared.DecimalEncoder),
+                    )
+                logger.info(response)       
 
 def get(event):
     # Lookup table group name to check it
@@ -52,11 +142,14 @@ def post(event):
     if ('ticket_number' not in data) and ('email' not in data) and ('group_id' not in data) and ('timestamp' not in data):
         return err("Must provide ticket_number, email, timestamp, and group_id.")    
 
-    _post(data['group_id'], data['ticket_number'], data['email'], data['timestamp'])
+    _post(data['group_id'], data['ticket_number'], data['email'], data['timestamp'], data['recs'])
 
     return True
 
-def _post(group_id, ticket_number, email, timestamp):
+def _post(group_id, ticket_number, email, timestamp, recs):
+    if recs is not None:
+        process_emails(recs, group_id)
+        
     table.put_item(Item={
         'PK': "GROUP#{}".format(group_id),
         'SK': "ATTENDEE#{}".format(ticket_number),
@@ -106,7 +199,7 @@ def patch(event):
     _delete(data['old']['group_id'], data['old']['ticket_number'])
 
     logger.info("Make new entry")
-    _post(data['new']['group_id'], data['new']['ticket_number'], data['new']['email'], time.time())
+    _post(data['new']['group_id'], data['new']['ticket_number'], data['new']['email'], time.time(), data['recs'])
 
     return True
 
