@@ -10,6 +10,7 @@ export async function POST(request: NextRequest) {
     phone: userData.phone,
   }
   const preferences = data.preferences
+  const group = { id: data.preferences.seating_preference, recommendations: data.preferences.recommendations }
   const lineItems = data.products.map((priceId)=>{
     return {
       price: priceId,
@@ -25,6 +26,7 @@ export async function POST(request: NextRequest) {
     metadata: {
       attendee: JSON.stringify(attendee),
       preferences: JSON.stringify(preferences),
+      group: JSON.stringify(group)
     },
     allow_promotion_codes: true,
     return_url:

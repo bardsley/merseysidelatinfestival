@@ -94,12 +94,7 @@ def lambda_handler(event, context):
         email     = stripe_response['customer_email']
         phone     = ateendee_details['phone']
 
-        # Create the ticket
-        logger.info("Invoking create_ticket lambda")
-        response = lambda_client.invoke(
-            FunctionName=os.environ.get("CREATE_TICKET_LAMBDA"),
-            InvocationType='Event',
-            Payload=json.dumps({
+        payload = {
                 'email': email,      
                 'full_name': full_name,
                 'phone':phone,
@@ -114,7 +109,17 @@ def lambda_handler(event, context):
                 'schedule': None,
                 'heading_message':"THANK YOU FOR YOUR PURCHASE!",
                 'send_standard_ticket': True,
-                },cls=shared.DecimalEncoder),
+                }
+        
+        if 'group' in stripe_response['metadata']:
+            payload['group'] = stripe_response['metadata']['group']
+
+        # Create the ticket
+        logger.info("Invoking create_ticket lambda")
+        response = lambda_client.invoke(
+            FunctionName=os.environ.get("CREATE_TICKET_LAMBDA"),
+            InvocationType='Event',
+            Payload=json.dumps(payload, cls=shared.DecimalEncoder),
             )
         logger.info(response)
             

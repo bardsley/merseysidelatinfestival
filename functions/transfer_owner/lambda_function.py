@@ -45,6 +45,22 @@ def err(msg:str, code=400, logmsg=None, **kwargs):
         'body': json.dumps({'error': msg})
         }
 
+def delete_from_group(ticket_number, email, group_id):
+    logger.info("Invoking group lambda")
+    response = lambda_client.invoke(
+        FunctionName=os.environ.get("ATTENDEE_GROUPS_LAMBDA"),
+        InvocationType='Event',
+        Payload=json.dumps({
+                'requestContext':{'http': {'method': "DELETE"}},
+                'body': json.dumps({
+                    'ticket_number':ticket_number, 
+                    'email':email, 
+                    'group_id':group_id , 
+                })
+            }, cls=shared.DecimalEncoder),
+        )
+    logger.info(response)    
+
 def get_ticket(ticket_number, email):
     '''
 
@@ -87,6 +103,8 @@ def update_table(input, key, condition=None):
 #         if isinstance(obj, Decimal):
 #             return str(obj)
 #         return super().default(obj)
+    
+    
 
 def lambda_handler(event, context):
     try:
@@ -176,12 +194,7 @@ def lambda_handler(event, context):
             else:
                 history = previous_owner
 
-        # Create a new ticket
-        logger.info("Invoking create_ticket lambda")
-        create_ticket = lambda_client.invoke(
-            FunctionName=os.environ.get("CREATE_TICKET_LAMBDA"),
-            InvocationType='RequestResponse',
-            Payload=json.dumps({
+        payload = {
                 'email': data['email_to'],      
                 'full_name': data['name_to'],
                 'phone': data['phone_to'],
@@ -195,7 +208,23 @@ def lambda_handler(event, context):
                 'checkout_session': None, 
                 'schedule': ticket_entry['schedule'],
                 'history': history
-                },cls=shared.DecimalEncoder),
+                }
+
+        if ticket_entry['meal_preferences'] is not None:
+            if ticket_entry['meal_preferences']['seating_preference'] is not None:
+                group_id = ticket_entry['meal_preferences']['seating_preference']
+                payload['group'] = {'id': group_id}
+                delete_from_group(ticket_number, data['email'], group_id)
+
+        # if 'group' in stripe_response['metadata']:
+            # payload['group'] = stripe_response['metadata']['group']
+
+        # Create a new ticket
+        logger.info("Invoking create_ticket lambda")
+        create_ticket = lambda_client.invoke(
+            FunctionName=os.environ.get("CREATE_TICKET_LAMBDA"),
+            InvocationType='RequestResponse',
+            Payload=json.dumps(payload, cls=shared.DecimalEncoder),
             )
         logger.info(create_ticket)
 

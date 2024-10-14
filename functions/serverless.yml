@@ -23,6 +23,7 @@ stages:
   default:
     observability: false
     params:
+      eventTableName: "${sls:stage}-MLF24"
       attendeesTableName: "${sls:stage}-mlf-attendees"
       stripeProductsTableName: "${sls:stage}-mlf-stripe-products"
       isProd: false
@@ -60,9 +61,11 @@ provider:
             - dynamodb:GetRecords
             - dynamodb:GetShardIterator
             - dynamodb:ListStreams
+            - dynamodb:BatchGetItem
           Resource:
             - Fn::GetAtt: [AttendeesTable, Arn]
             - Fn::GetAtt: [StripeProductsTable, Arn]
+            - Fn::GetAtt: [MLF24Table, Arn]
             - { "Fn::Join": [ "/", [ 
                 { "Fn::GetAtt": ["AttendeesTable", "Arn" ] }, "index", "ticket_number-index" 
               ]]}
@@ -133,6 +136,28 @@ resources:
         TableName: ${param:stripeProductsTableName}
         StreamSpecification:
           StreamViewType: NEW_AND_OLD_IMAGES
+    MLF24Table:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: ${param:deletionPolicy}
+      Properties:
+        DeletionProtectionEnabled: ${param:isProd}
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${param:eventTableName}
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES   
+        TimeToLiveSpecification:
+          AttributeName: expires
+          Enabled: true                  
 
 #######################
 # Functions
@@ -176,6 +201,7 @@ functions:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
       STRIPE_SECRET_KEY: ${param:stripeSecretKey}
       CREATE_TICKET_LAMBDA: "${sls:stage}-create_ticket" #! Can't find a way to set this other than as a params that gets used byt function and the function itself
+      ATTENDEE_GROUPS_LAMBDA: "${sls:stage}-attendee_groups"
     layers:
       - !Ref StripeLambdaLayer
       # - !Ref DynamodbLambdaLayer
@@ -200,6 +226,7 @@ functions:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
       STRIPE_SECRET_KEY: ${param:stripeSecretKey}
       SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
+      ATTENDEE_GROUPS_LAMBDA: "${sls:stage}-attendee_groups"
     # layers:
     #   - !Ref DynamodbLambdaLayer
 
@@ -217,6 +244,7 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+      ATTENDEE_GROUPS_LAMBDA: "${sls:stage}-attendee_groups"
     # layers:
     #   - !Ref DynamodbLambdaLayer
     #   - !Ref GithubLambdaLayer
@@ -387,6 +415,7 @@ functions:
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
       CREATE_TICKET_LAMBDA: "${sls:stage}-create_ticket"
       SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
+      ATTENDEE_GROUPS_LAMBDA: "${sls:stage}-attendee_groups"
     # layers:
     #   - !Ref SendmailLambdaLayer
     events:
@@ -436,7 +465,35 @@ functions:
           path: /import_tickets
           method: post
 
+#--------------------
 
+  AttendeeGroups:
+    runtime: python3.11
+    handler: attendee_groups/lambda_function.lambda_handler
+    name: "${sls:stage}-attendee_groups"
+    package:
+      patterns:
+        - '!**/**'
+        - "attendee_groups/**"
+        -  "shared/**"
+    environment:
+      STAGE_NAME: ${sls:stage}
+      EVENT_TABLE_NAME: ${param:eventTableName}
+      ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+      SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
+    events:
+      - httpApi:
+          path: /attendee_groups
+          method: post
+      - httpApi:
+          path: /attendee_groups
+          method: get          
+      - httpApi:
+          path: /attendee_groups
+          method: delete   
+      - httpApi:
+          path: /attendee_groups
+          method: patch   
 
 
 
