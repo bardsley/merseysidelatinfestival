@@ -128,9 +128,9 @@ def get(event):
     response = table.query(KeyConditionExpression=Key('PK').eq("GROUP#{}".format(group_id)))
 
     if response['Count'] == 0:
-        return {'statusCode': 200, 'body': {'code': 1, 'text': "Group does not exist."}}
+        return {'statusCode': 404, 'body': json.dumps({'code': 1, 'text': "Group does not exist."})}
     else:
-        return {'statusCode': 200, 'body': {'code': 2, 'text': "Group exists."}}
+        return {'statusCode': 200, 'body': json.dumps({'code': 2, 'text': "Group exists."})}
 
 def post(event):
     # create new entry
@@ -149,7 +149,7 @@ def post(event):
     return True
 
 def _post(group_id, ticket_number, email, full_name, timestamp, recs):
-    if recs is not None:
+    if recs: # recs could be None or []
         process_emails(recs, group_id, full_name)
         
     table.put_item(Item={
