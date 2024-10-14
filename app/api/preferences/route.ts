@@ -21,7 +21,8 @@ export async function POST(request: Request) {
         other: data.get('other'),
       },
       seating_preference: data.get('seating_preference') ? data.get('seating_preference').toString().split(',').filter((item)=>{ return item.length > 0}) : [],
-    }
+    },
+    group: { id: data.get('seating_preference'), recommendations: data.get('recommendations')}
   }
   console.log("POST -> Conor: ",apiRequestBody)
   const apiResponse = await fetch(process.env.LAMBDA_PREFERENCES, {
