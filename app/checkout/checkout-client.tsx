@@ -156,6 +156,7 @@ export default function CheckoutClient() {
       <h2>Debug Ignore below the line</h2>
       <div className='flex'>
         <pre>userData -- {JSON.stringify(userData,null,2)}</pre>
+        <pre>Info for Stripe -- {dinnerInfoProvided ? "true" : "false"} {userData.email} {stripeReady ? "true" : "false"} {JSON.stringify(steps)} </pre>
       </div>
       </> : null }
     </div>
