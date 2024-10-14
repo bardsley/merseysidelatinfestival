@@ -41,7 +41,7 @@ def process_emails(recs, group_id, name):
         logger.info("Processing emails for recommendation")
 
         logger.info("Searching to check if recomemndation email has been sent in the last week")
-        keys = [{'PK': {'S': "GROUPREC#{}".format(group_id)}, 'SK': {'S': "EMAIL#{}".format(email)}} for email in recs if "@" in email]
+        keys = [{'PK': {'S': "GROUPREC#{}".format(group_id)}, 'SK': {'S': "EMAIL#{}".format(email)}} for email in recs if (isinstance(email, str)) & ("@" in email)]
         response = dynamodb_client.batch_get_item(
             RequestItems={
                 os.environ.get("EVENT_TABLE_NAME"): {
