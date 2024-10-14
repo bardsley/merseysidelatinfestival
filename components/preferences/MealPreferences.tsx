@@ -162,7 +162,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
       <div className='mb-3'>
         <h2 className='text-xl'>Email people to join this group</h2>
         <p className='text-gray-300'>Optional: Send an email to other to get them to join your group, just type emails below with each seperated by a comma.</p>
-        <input type="text" name="recomendations" key="rec-idx" id="recommendations"
+        <input type="text" name="recommendations" key="rec-idx" id="recommendations"
           className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6' 
           defaultValue={preferences.recommendations} onChange={(event)=>{
             setPreferences({...preferences, recommendations: event.target.value.split(',').map((email) => {
