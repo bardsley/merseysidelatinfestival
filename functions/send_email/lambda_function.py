@@ -133,6 +133,26 @@ def lambda_handler(event, context):
 
         subject = "Merseyside Latin Festival Group Recommendation"
         attachment = None
+    elif event['email_type'] == "meal_reminder":
+        if 'subject' in event:
+            subject = event['subject']
+        else:
+            subject = "MLF - Choose Your Meal"
+
+        deadline_date = "2nd November"
+        with open("./send_email/meal_body.html", "r") as body_file:
+            body_tmpl = Template(body_file.read())
+            subdomain = "www" if os.environ.get("STAGE_NAME") == "prod" else os.environ.get("STAGE_NAME")
+            body = body_tmpl.substitute({
+                'deanline_date':deadline_date, 
+                'ticket_link':"http://{}.merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(subdomain, event['email'], event['ticket_number']), 
+            })
+            attachment = None
+    elif event['email_type'] == "basic_message":
+        body        = event['message_body']
+        subject     = event['subject']
+        attachment  = None
+        
     else:
         return False
 
