@@ -6,15 +6,19 @@ from boto3.dynamodb.conditions import Key, Attr
 from shared import DecimalEncoder
 import os
 
+## ENV
+attendees_table_name = os.environ.get("ATTENDEES_TABLE_NAME")
+send_email_lambda    = os.environ.get("SEND_EMAIL_LAMBDA")
+
 logger = logging.getLogger()
 logger.setLevel("INFO")
 
-profile_name='danceengine-admin'
-boto3.setup_default_session(profile_name=profile_name)
-logging.basicConfig()
+# profile_name='danceengine-admin'
+# boto3.setup_default_session(profile_name=profile_name)
+# logging.basicConfig()
 
 db = boto3.resource('dynamodb')
-table = db.Table(os.environ.get("ATTENDEES_TABLE_NAME"))
+table = db.Table(attendees_table_name)
 
 lambda_client = boto3.client('lambda')
 
@@ -42,7 +46,7 @@ def lambda_handler(event, context):
         # send the email with these details
         logger.info("Invoking send_email lambda")
         response = lambda_client.invoke(
-            FunctionName=os.environ.get("SEND_EMAIL_LAMBDA"),
+            FunctionName=send_email_lambda,
             InvocationType='Event',
             Payload=json.dumps({
                     'email_type':"meal_reminder",
@@ -54,4 +58,4 @@ def lambda_handler(event, context):
 
     return {'statusCode': 200 }
 
-lambda_handler({'requestContext':{'http':{'method':"GET"}}}, None)
+# lambda_handler({'requestContext':{'http':{'method':"GET"}}}, None)
