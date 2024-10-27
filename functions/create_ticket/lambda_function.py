@@ -134,10 +134,11 @@ def lambda_handler(event, context):
     update_ddb = table.put_item(Item=Item)
     logger.info(update_ddb)
 
-    if 'group' in event:
+    if ('group' in event):
         group = json.loads(event['group']) if type(event['group']) != dict else event['group']
         recs = group['recommendations'] if 'recommendations' in group else None
-        add_group(ticket_number, email, event['full_name'], group['id'], time.time(), recs)
+        if group['id'] != "":
+            add_group(ticket_number, email, event['full_name'], group['id'], time.time(), recs)
     
     if ('send_standard_ticket' in event):
         if event['send_standard_ticket']:
