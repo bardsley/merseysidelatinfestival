@@ -510,6 +510,7 @@ functions:
       STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
       SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
+      EVENT_TABLE_NAME: ${param:eventTableName}
     events:
       - httpApi:
           path: /meal/send_reminder
