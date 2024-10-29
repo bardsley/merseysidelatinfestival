@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from "react";
 
-export default function DiningPageClient({}) {
+export default function DiningPageClient() {
   const [status,setStatus] = useState({} as any)
   const handleSubmit = async (e) => {
     e.preventDefault();

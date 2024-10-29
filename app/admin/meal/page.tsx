@@ -2,7 +2,7 @@ import React from "react";
 import Layout from "@components/layout/layout";
 import { Container } from "@components/layout/container";
 import Navigation from "@components/admin/navigation";
-import DiningPageClient from "@app/admin/meal/meal-client"
+import DiningPageClient from "./meal-client"
 // import { currentUser } from "@clerk/nextjs/server";
 
 const pages = [
