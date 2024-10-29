@@ -5,6 +5,7 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 from shared import DecimalEncoder
 import os
+import time
 
 ## ENV
 attendees_table_name = os.environ.get("ATTENDEES_TABLE_NAME")
