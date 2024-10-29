@@ -548,6 +548,7 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       EVENT_TABLE_NAME: ${param:eventTableName}
+      ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
     events:
       - httpApi:
           path: /meal/summary
