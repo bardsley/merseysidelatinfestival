@@ -513,7 +513,7 @@ functions:
     events:
       - httpApi:
           path: /meal/send_reminder
-          method: get          
+          method: post          
 
 #--------------------
 

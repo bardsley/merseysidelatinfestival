@@ -8,6 +8,7 @@ import os
 
 ## ENV
 attendees_table_name = os.environ.get("ATTENDEES_TABLE_NAME")
+event_table_name = os.environ.get("EVENT_TABLE_NAME")
 
 logger = logging.getLogger()
 logger.setLevel("INFO")
@@ -18,6 +19,7 @@ logger.setLevel("INFO")
 
 db = boto3.resource('dynamodb')
 table = db.Table(attendees_table_name)
+event_table = db.Table(event_table_name)
 
 lambda_client = boto3.client('lambda')
 
@@ -30,6 +32,9 @@ def err(msg:str, code=400, logmsg=None, **kwargs):
         'statusCode': code, 
         'body': json.dumps({'error': msg})
         }
+
+def get_last_email():
+    return
 
 def lambda_handler(event, context):
     logger.info(f"Event {event}")
@@ -50,14 +55,17 @@ def lambda_handler(event, context):
     not_wanted_count = 0     # Any choice is -99 (not wanted)
     selected_count = 0       # All choices are >= 0 (options selected)
     
-    filtered_items = [item for item in response['Items']if (item['access'][2] == 1)]
+    filtered_items = [item for item in response['Items'] if (item['access'][2] == 1)]
     
     #! If no matches should problably return a 404
     for item in filtered_items:
-        if 'meal_preferences' not in item:
+        if ('meal_preferences' not in item):
             not_selected_count += 1
             continue
-
+        elif (item['meal_preferences'] is None):
+            not_selected_count += 1
+            continue
+        
         meal_prefs = item['meal_preferences']
         if meal_prefs and 'choices' in meal_prefs:
             choices = meal_prefs['choices']

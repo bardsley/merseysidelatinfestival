@@ -9,6 +9,7 @@ import os
 ## ENV
 attendees_table_name = os.environ.get("ATTENDEES_TABLE_NAME")
 send_email_lambda    = os.environ.get("SEND_EMAIL_LAMBDA")
+event_table_name     = os.environ.get("EVENT_TABLE_NAME")
 
 logger = logging.getLogger()
 logger.setLevel("INFO")
@@ -19,6 +20,7 @@ logger.setLevel("INFO")
 
 db = boto3.resource('dynamodb')
 table = db.Table(attendees_table_name)
+event_table = db.Table(event_table_name)
 
 lambda_client = boto3.client('lambda')
 
@@ -34,7 +36,7 @@ def err(msg:str, code=400, logmsg=None, **kwargs):
 
 def lambda_handler(event, context):
     logger.info(f"Event {event}")
-    if event['requestContext']['http']['method'] != "GET": return err("Method not allowed, make GET request", code=405)
+    if event['requestContext']['http']['method'] != "POST": return err("Method not allowed, make POST request", code=405)
 
     response = table.scan(FilterExpression=Key('active').eq(True))
 
@@ -55,6 +57,14 @@ def lambda_handler(event, context):
                 }, cls=DecimalEncoder.DecimalEncoder),
             )
         logger.info(response)
+
+    event_table.put_item(
+        Item={
+            'PK': "DETAIL#".format(),
+            'SK': "EMAIL#{}".format(email),
+            'expires': int(time.time()+604800)
+        }
+    )        
 
     return {'statusCode': 200 }
 
