@@ -12,9 +12,9 @@ attendees_table_name = os.environ.get("ATTENDEES_TABLE_NAME")
 logger = logging.getLogger()
 logger.setLevel("INFO")
 
-profile_name='danceengine-admin'
-boto3.setup_default_session(profile_name=profile_name)
-logging.basicConfig()
+# profile_name='danceengine-admin'
+# boto3.setup_default_session(profile_name=profile_name)
+# logging.basicConfig()
 
 db = boto3.resource('dynamodb')
 table = db.Table(attendees_table_name)
@@ -94,5 +94,5 @@ def lambda_handler(event, context):
             }}, cls=DecimalEncoder.DecimalEncoder)
     }
 
-from pprint import pprint
-pprint(lambda_handler({'requestContext':{'http':{'method':"GET"}}}, None))
+# from pprint import pprint
+# pprint(lambda_handler({'requestContext':{'http':{'method':"GET"}}}, None))
