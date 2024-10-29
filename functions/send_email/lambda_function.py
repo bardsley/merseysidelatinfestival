@@ -144,7 +144,7 @@ def lambda_handler(event, context):
             body_tmpl = Template(body_file.read())
             subdomain = "www" if os.environ.get("STAGE_NAME") == "prod" else os.environ.get("STAGE_NAME")
             body = body_tmpl.substitute({
-                'deanline_date':deadline_date, 
+                'deadline_date':deadline_date, 
                 'ticket_link':"http://{}.merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(subdomain, event['email'], event['ticket_number']), 
             })
             attachment = None
