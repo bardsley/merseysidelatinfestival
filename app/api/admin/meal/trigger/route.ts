@@ -3,7 +3,6 @@ import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
 export async function POST(_req: NextRequest) {
-  console.log("hello")
   const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
   const {userId} = auth();
 
