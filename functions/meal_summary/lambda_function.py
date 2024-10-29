@@ -34,7 +34,10 @@ def err(msg:str, code=400, logmsg=None, **kwargs):
         }
 
 def get_last_email():
-    return
+    response = table.scan(FilterExpression=Key('PK').eq("EMAIL#MEALREMINDER"))
+    sorted_list = sorted(response['Items'], key=lambda item: item['timestamp']) if len(response['Items'] > 0) else None
+
+    return sorted_list
 
 def lambda_handler(event, context):
     logger.info(f"Event {event}")
@@ -98,7 +101,8 @@ def lambda_handler(event, context):
                 'incomplete_count': incomplete_count,
                 'not_wanted_count': not_wanted_count,
                 'selected_count': selected_count,
-                'course_frequencies': course_frequencies
+                'course_frequencies': course_frequencies,
+                'reminders_sent': get_last_email()
             }}, cls=DecimalEncoder.DecimalEncoder)
     }
 

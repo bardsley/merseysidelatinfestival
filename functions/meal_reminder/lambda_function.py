@@ -60,10 +60,10 @@ def lambda_handler(event, context):
 
     event_table.put_item(
         Item={
-            'PK': "DETAIL#".format(),
-            'SK': "EMAIL#{}".format(email),
-            'expires': int(time.time()+604800)
-        }
+            'PK': "EMAIL#MEALREMINDER".format(),
+            'SK': "DETAIL#{}".format(time.time()),
+            'timestamp': "{}".format(time.time())
+            }
     )        
 
     return {'statusCode': 200 }
