@@ -534,5 +534,23 @@ functions:
           path: /meal/groups
           method: get          
 
+#--------------------
+
+  MealSummary:
+    runtime: python3.11
+    handler: meal_summary/lambda_function.lambda_handler
+    name: "${sls:stage}-meal_summary"
+    package:
+      patterns:
+        - '!**/**'
+        - "meal_summary/**"
+        - "shared/**"
+    environment:
+      STAGE_NAME: ${sls:stage}
+      EVENT_TABLE_NAME: ${param:eventTableName}
+    events:
+      - httpApi:
+          path: /meal/summary
+          method: get          
 
 
