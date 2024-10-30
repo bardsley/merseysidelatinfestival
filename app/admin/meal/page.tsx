@@ -3,10 +3,11 @@ import Layout from "@components/layout/layout";
 import { Container } from "@components/layout/container";
 import Navigation from "@components/admin/navigation";
 import DiningPageClient from "./meal-client"
+import MealStats from "@components/admin/mealStats";
 // import { currentUser } from "@clerk/nextjs/server";
 
 const pages = [
-  { name: 'Admin', href: '/admin', current: true },
+  { name: 'Admin', href: '/admin' },
   { name: 'Dining', href: '/admin/dining', current: true },
 ]
 
@@ -21,6 +22,7 @@ export default async function AdminUserPage() {
         <Navigation pages={pages} />
       </Container>        
       <Container width="large" padding="tight" className={`flex-1 pb-2`} size="none">
+        <MealStats/>
         <DiningPageClient />
       </Container>
     </section>
