@@ -3,6 +3,7 @@ import React, { useState } from "react";
 
 export default function DiningPageClient() {
   const [status,setStatus] = useState({} as any)
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -18,7 +19,7 @@ export default function DiningPageClient() {
   }
 
   return (
-    <div>
+    <div className="mb-6 overflow-hidden pt-3 ">
       {JSON.stringify(status) == "{}" ? null : <p className={`w-full p-3 rounded-lg ${status.success ? "bg-green-800": "bg-red-600"}`}>{status.message}</p> }
       <button onClick={handleSubmit} className="py-3 px-6 mt-3 float-right bg-chillired-500 rounded-lg block">Trigger Meal Reminder</button>
     </div>
