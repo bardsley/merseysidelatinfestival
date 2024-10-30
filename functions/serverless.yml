@@ -495,6 +495,64 @@ functions:
           path: /attendee_groups
           method: patch   
 
+#--------------------
 
+  MealReminder:
+    runtime: python3.11
+    handler: meal_reminder/lambda_function.lambda_handler
+    name: "${sls:stage}-meal_reminder"
+    package:
+      patterns:
+        - '!**/**'
+        - "meal_reminder/**"
+        - "shared/**"
+    environment:
+      STAGE_NAME: ${sls:stage}
+      ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+      SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
+      EVENT_TABLE_NAME: ${param:eventTableName}
+    events:
+      - httpApi:
+          path: /meal/send_reminder
+          method: post          
+
+#--------------------
+
+  MealGroups:
+    runtime: python3.11
+    handler: meal_groups/lambda_function.lambda_handler
+    name: "${sls:stage}-meal_groups"
+    package:
+      patterns:
+        - '!**/**'
+        - "meal_groups/**"
+        - "shared/**"
+    environment:
+      STAGE_NAME: ${sls:stage}
+      EVENT_TABLE_NAME: ${param:eventTableName}
+    events:
+      - httpApi:
+          path: /meal/groups
+          method: get          
+
+#--------------------
+
+  MealSummary:
+    runtime: python3.11
+    handler: meal_summary/lambda_function.lambda_handler
+    name: "${sls:stage}-meal_summary"
+    package:
+      patterns:
+        - '!**/**'
+        - "meal_summary/**"
+        - "shared/**"
+    environment:
+      STAGE_NAME: ${sls:stage}
+      EVENT_TABLE_NAME: ${param:eventTableName}
+      ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+    events:
+      - httpApi:
+          path: /meal/summary
+          method: get          
 
 

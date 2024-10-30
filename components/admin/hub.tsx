@@ -70,8 +70,8 @@ const actions = [
     state: 'live',
   },
   {
-    title: 'Dining Information',
-    href: '#',
+    title: 'Meal Information',
+    href: '/admin/meal',
     description: "Meal information and seating plans",
     icon: CakeIcon,
     iconForeground: 'text-green-800',
