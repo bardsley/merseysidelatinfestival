@@ -111,9 +111,10 @@ def post(event):
         UpdateExp += ", schedule = :val2"
         ExpAttrVals[':val2'] = json.dumps(data['schedule']) 
     if ('group' in data) & (data['group']['id'] != ''):
+        group_name = data['group']['id'] 
         logger.info(f"-SET GROUP OPTIONS:, {data['group']}")
         recs = data['group']['recommendations'] if 'recommendations' in data['group'] else None
-        update_group(ticket_number, email, data['group']['id'], ticket_entry['full_name'], ticket_number, email, ticket_entry['meal_preferences']['seating_preference'], ticket_entry['full_name'], recs)
+        update_group(ticket_number, email, data['group']['id'], ticket_entry['full_name'], ticket_number, email, group_name, ticket_entry['full_name'], recs)
 
     # define the params for the ddb update
     params = {
