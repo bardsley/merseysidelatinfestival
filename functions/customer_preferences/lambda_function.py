@@ -134,8 +134,8 @@ def post(event):
                     )
             logger.info(response)   
         elif ('meal_preferences' in ticket_entry):
-            if ticket_entry['meal_preferences']['seating_preference'] != data['group']['id']:
-                update_group(ticket_number, email, data['group']['id'], ticket_entry['full_name'], ticket_number, email, ticket_entry['meal_preferences']['seating_preference'], ticket_entry['full_name'], recs)
+            if ticket_entry['meal_preferences']['seating_preference'][0] != data['group']['id']:
+                update_group(ticket_number, email, data['group']['id'], ticket_entry['full_name'], ticket_number, email, ticket_entry['meal_preferences']['seating_preference'][0], ticket_entry['full_name'], recs)
 
     # define the params for the ddb update
     params = {
