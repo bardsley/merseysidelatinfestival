@@ -71,7 +71,7 @@ def process_emails(recs, group_id, name):
             email = attendee['email']
             if (email not in processed_emails):
                 processed_emails.add(email)
-                if ('meal_preferences' not in attendee) or attendee['meal_preferences']['seating_preference'] != group_id:
+                if (attendee['meal_preferences'] is None) or (attendee['meal_preferences']['seating_preference'] != group_id):
                     table.put_item(
                         Item={
                             'PK': "GROUPREC#{}".format(group_id),
