@@ -34,8 +34,8 @@ def err(msg:str, code=400, logmsg=None, **kwargs):
         }
 
 def get_last_email():
-    response = table.scan(FilterExpression=Key('PK').eq("EMAIL#MEALREMINDER"))
-    sorted_list = sorted(response['Items'], key=lambda item: item['timestamp']) if len(response['Items'] > 0) else None
+    response = event_table.scan(FilterExpression=Key('PK').eq("EMAIL#MEALREMINDER"))
+    sorted_list = sorted(response['Items'], key=lambda item: item['timestamp']) if len(response['Items']) > 0 else None
 
     return sorted_list
 
