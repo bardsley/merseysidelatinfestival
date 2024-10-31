@@ -6,6 +6,7 @@ import logging
 from json.decoder import JSONDecodeError
 from decimal import Decimal
 from shared import DecimalEncoder as shared
+import time
 
 logger = logging.getLogger()
 logger.setLevel("INFO")
@@ -111,10 +112,30 @@ def post(event):
         UpdateExp += ", schedule = :val2"
         ExpAttrVals[':val2'] = json.dumps(data['schedule']) 
     if ('group' in data) & (data['group']['id'] != ''):
-        group_name = data['group']['id'] 
         logger.info(f"-SET GROUP OPTIONS:, {data['group']}")
         recs = data['group']['recommendations'] if 'recommendations' in data['group'] else None
-        update_group(ticket_number, email, data['group']['id'], ticket_entry['full_name'], ticket_number, email, group_name, ticket_entry['full_name'], recs)
+        new_group = data['group']['id']
+        if ('meal_preferences' not in ticket_entry) or (ticket_entry['meal_preferences'] is None):
+            logger.info("Invoking group lambda")
+            response = lambda_client.invoke(
+                    FunctionName=os.environ.get("ATTENDEE_GROUPS_LAMBDA"),
+                    InvocationType='Event',
+                    Payload=json.dumps({
+                            'requestContext':{'http': {'method': "POST"}},
+                            'body':json.dumps({
+                                'ticket_number': ticket_number, 
+                                'group_id': data['group']['id'], 
+                                'email':email, 
+                                'full_name':ticket_entry['full_name'], 
+                                'recs': recs,
+                                'timestamp':time.time()
+                            })
+                        }, cls=shared.DecimalEncoder),
+                    )
+            logger.info(response)   
+        elif ('meal_preferences' in ticket_entry):
+            if ticket_entry['meal_preferences']['seating_preference'][0] != data['group']['id']:
+                update_group(ticket_number, email, data['group']['id'], ticket_entry['full_name'], ticket_number, email, ticket_entry['meal_preferences']['seating_preference'][0], ticket_entry['full_name'], recs)
 
     # define the params for the ddb update
     params = {
