@@ -52,7 +52,7 @@ export default function ArtistClientPage(props: ArtistClientPageProps) {
 
         <div className="md:col-start-5 md:col-end-6 flex flex-wrap justify-center items-center md:justify-start mt-6 md:mt-0 gap-6 md:gap-2">
           <h2 className="text-3xl mb-4 md:mb-0 mt-6 md:mt-0 hidden md:block">Socials</h2>
-          {artist.socials.map((social) => (
+          {artist.socials && artist.socials.map((social) => (
             <div key={social.handle} className="text-lg" data-tina-field={tinaField(social, "handle")}>
               <a href={social.url} target="_blank" rel="noreferrer" className="text-sm flex items-center gap-2">
                 {social.type === "facebook" && (
