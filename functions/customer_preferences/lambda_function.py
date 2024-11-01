@@ -115,7 +115,7 @@ def post(event):
         logger.info(f"-SET GROUP OPTIONS:, {data['group']}")
         recs = data['group']['recommendations'] if 'recommendations' in data['group'] else None
         new_group = data['group']['id']
-        if ('meal_preferences' not in ticket_entry) or (ticket_entry['meal_preferences'] is None):
+        if ('meal_preferences' not in ticket_entry) or (ticket_entry['meal_preferences'] is None or not ticket_entry['meal_preferences']['seating_preference'] ):
             logger.info("Invoking group lambda")
             response = lambda_client.invoke(
                     FunctionName=os.environ.get("ATTENDEE_GROUPS_LAMBDA"),
