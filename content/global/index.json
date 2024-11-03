@@ -30,7 +30,7 @@
       {
         "href": "artists",
         "label": "Artist",
-        "visible": false
+        "visible": true
       }
     ]
   },
