@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { BiCreditCard, BiLogoSketch, BiLeftArrowCircle, BiSolidRightArrowSquare } from 'react-icons/bi';
+import { BiCreditCard, BiLogoSketch, BiLeftArrowCircle, BiSolidRightArrowSquare, BiSolidGroup } from 'react-icons/bi';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { EllipsisVerticalIcon, CurrencyPoundIcon, ClipboardIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { format,fromUnixTime } from 'date-fns';
@@ -8,8 +8,10 @@ import { mutate } from 'swr';
 
 const TicketStatusIcon = ({attendee})  => {
   const PaymentIcon = attendee.status === 'paid_stripe' ? <BiCreditCard title="Paid Online" className='w-6 h-6' /> 
-    : attendee.status === 'paid_cash' ? <CurrencyPoundIcon title="Paid Cash" className='w-6 h-6' /> :
-      attendee.status === 'gratis' ? <BiLogoSketch title="Free Ticket" className='w-6 h-6' /> : null //TODO should have a icon for wtf paid for this
+    : attendee.status === 'paid_cash' ? <CurrencyPoundIcon title="Paid Cash" className='w-6 h-6' /> 
+    : attendee.status === 'gratis' ? <BiLogoSketch title="Free Ticket" className='w-6 h-6' /> 
+    : attendee.status.includes('volunteer') ? <BiSolidGroup title="Free Ticket" className='w-6 h-6' /> 
+    : null //TODO should have a icon for wtf paid for this
   const trasnferOutIcon = attendee.transferred_out ? <BiSolidRightArrowSquare title={`Transferred to ${attendee.transferred_out}`} className='w-6 h-6' /> : null
   const transferInIcon =  attendee.transferred_in ? <BiLeftArrowCircle title={`Transferred from ${attendee.transferred_in}`} className='w-6 h-6' /> : null
   const namechangeIcon = attendee.name_changed ? <ClipboardIcon className='w-6 h-6' /> : null
