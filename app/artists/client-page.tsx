@@ -34,7 +34,7 @@ export default function ArtistClientPage(props: ClientPostProps) {
 
   return (
     <div className="text-white grid grid-cols-2 md:grid-cols-3 gap-4 lg:grid-cols-4 max-w-5xl mx-auto my-6 w-full ">
-      <h1 className="col-span-2 md:col-span2 lg:col-span-4 text-5xl font-bold">Artists</h1>
+      <h1 className="col-span-2 md:col-span-3 lg:col-span-4 text-5xl font-bold">Artists</h1>
       {data?.artistConnection.edges.map((artistData,index) => {
         const artist = artistData.node;
         // const date = new Date(post.date);
