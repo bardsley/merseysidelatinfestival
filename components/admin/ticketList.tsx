@@ -152,9 +152,10 @@ export default function TicketList() {
                     { sortFieldToggler('signed_in') }
                   </span>
                 </th>
-                <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0 min-w-20 hidden sm:table-cell">
-                  <span className="sr-only">Status</span>
-                  {}
+                <th scope="col" className={`${headerClassNames} relative py-3.5 pl-3 pr-4 sm:pr-0 min-w-20 hidden sm:table-cell`}>
+                  <FilterLabel fieldname={"status"} addFilterFunction={addFilter}>
+                    <span className={`${labelClassNames} text-nowrap`}>Status</span>
+                  </FilterLabel>
                 </th>
                 <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0 min-w-20">
                   <span className="sr-only">Edit</span>
