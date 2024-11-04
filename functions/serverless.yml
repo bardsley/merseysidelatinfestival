@@ -556,4 +556,22 @@ functions:
           path: /meal/summary
           method: get          
 
+#--------------------
 
+  TicketUpgrade:
+    runtime: python3.11
+    handler: ticket_upgrade/lambda_function.lambda_handler
+    name: "${sls:stage}-ticket_upgrade"
+    package:
+      patterns:
+        - '!**/**'
+        - "ticket_upgrade/**"
+        - "shared/**"
+    environment:
+      STAGE_NAME: ${sls:stage}
+      EVENT_TABLE_NAME: ${param:eventTableName}
+      ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+    events:
+      - httpApi:
+          path: /ticket_upgrade
+          method: post
