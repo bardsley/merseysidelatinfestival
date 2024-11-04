@@ -152,7 +152,23 @@ def lambda_handler(event, context):
         body        = event['message_body']
         subject     = event['subject']
         attachment  = None
+
+    elif event['email_type'] == "ticket_upgrade_notification":
+
+        subject = "Merseyside Latin Festival - Ticket Upgrade Confirmation"
+        subdomain = "www" if os.environ.get("STAGE_NAME") == "prod" else os.environ.get("STAGE_NAME")
+        manage_ticket_link = "http://{}.merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(subdomain, event['email'], event['ticket_number'])
         
+        upgrade_details = "Your ticket has been upgraded to include: {}".format(event['upgrade_details'].replace("_", " "))
+
+        with open("./send_email/upgrade_notification.html", "r") as body_file:
+            body_tmpl = Template(body_file.read())
+            subdomain = "www" if os.environ.get("STAGE_NAME") == "prod" else os.environ.get("STAGE_NAME")
+            body = body_tmpl.substitute({
+                'upgrade_details': upgrade_details, 
+                'ticket_link':manage_ticket_link, 
+            })
+            attachment = None        
     else:
         return False
 
