@@ -84,6 +84,25 @@ def lambda_handler(event, context):
                 'body': json.dumps({'error': 'Checkout session does not exist'})
             }
 
+        if stripe_response['metadata'].get('ticket_upgrade', False):
+            ticket_number = stripe_response.get('client_reference_id', None)
+            full_name = next((item for item in stripe_response['custom_fields'] if item["key"] == "fullname"), {})['text'].get('value', "unknown")
+            payload = {
+                    'ticket_number': ticket_number,
+                    'source': "stripe_checkout",
+                    'upgrade_type': stripe_response['metadata'].get('upgrade_type', 'unknown'),
+                    'full_name': full_name
+                    }
+
+            # upgrade the ticket
+            logger.info("Invoking ticket_upgrade lambda")
+            response = lambda_client.invoke(
+                FunctionName=os.environ.get("TICKET_UPGRADE_LAMBDA"),
+                InvocationType='Event',
+                Payload=json.dumps(payload, cls=shared.DecimalEncoder),
+                )
+            logger.info(response)                        
+
         access, line_items = process_line_items(stripe_response['line_items'])
         student_ticket = True if stripe_response['line_items']['data'][0]['price']['nickname' ] == "student_active" else False
         meal = json.loads(stripe_response['metadata']['preferences']) if 'preferences' in stripe_response['metadata'] else None

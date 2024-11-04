@@ -202,6 +202,7 @@ functions:
       STRIPE_SECRET_KEY: ${param:stripeSecretKey}
       CREATE_TICKET_LAMBDA: "${sls:stage}-create_ticket" #! Can't find a way to set this other than as a params that gets used byt function and the function itself
       ATTENDEE_GROUPS_LAMBDA: "${sls:stage}-attendee_groups"
+      TICKET_UPGRADE_LAMBDA: "${sls:stage}-ticket_upgrade"
     layers:
       - !Ref StripeLambdaLayer
       # - !Ref DynamodbLambdaLayer
