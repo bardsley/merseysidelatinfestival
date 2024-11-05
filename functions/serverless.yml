@@ -501,6 +501,7 @@ functions:
     runtime: python3.11
     handler: meal_reminder/lambda_function.lambda_handler
     name: "${sls:stage}-meal_reminder"
+    timeout: 60
     package:
       patterns:
         - '!**/**'
