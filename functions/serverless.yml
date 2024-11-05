@@ -572,6 +572,7 @@ functions:
       STAGE_NAME: ${sls:stage}
       EVENT_TABLE_NAME: ${param:eventTableName}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+      SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
     events:
       - httpApi:
           path: /ticket_upgrade

@@ -11,6 +11,7 @@ from shared.parser import parse_event, validate_event
 #ENV
 attendees_table_name = os.environ.get("ATTENDEES_TABLE_NAME")
 event_table_name     = os.environ.get("EVENT_TABLE_NAME")
+send_email_lambda    = os.environ.get("SEND_EMAIL_LAMBDA")
 
 logger = logging.getLogger()
 logger.setLevel("INFO")
@@ -32,7 +33,7 @@ def record_failed_upgrade(event, reason):
     logger.info("Recording failed upgrade attempt.")
     current_time = int(time.time())
     pk = f"UPGRADEFAIL#{event.get('ticket_number', 'unknown')}"
-    sk = f"ERROR"
+    sk = f"ERROR#{current_time}"
 
     backup_entry = {
         'PK': pk,
@@ -140,8 +141,12 @@ def lambda_handler(event, context):
 
     try:
         ticket['access'] = apply_upgrade(current_access, upgrade_type)
+
+        if ticket.get('history', []) == None:
+            ticket['history'] = []
+
         ticket['history'] = ticket.get('history', []) + [{
-            "timestamp": time.time(),
+            "timestamp": int(time.time()),
             "action": "upgrade",
             "type": upgrade_type,
             "source": source  # Include source of the upgrade in the history
@@ -163,7 +168,7 @@ def lambda_handler(event, context):
         try:
             logger.info("Invoking send_email lambda function")
             response = lambda_client.invoke(
-                FunctionName=os.environ.get("SEND_EMAIL_LAMBDA"),
+                FunctionName=send_email_lambda,
                 InvocationType='Event',
                 Payload=json.dumps({
                     'email_type': "ticket_upgrade_notification",
