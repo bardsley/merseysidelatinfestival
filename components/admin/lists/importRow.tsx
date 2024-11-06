@@ -36,7 +36,7 @@ export const ImportRow = ({attendee, handleSaveChanges, onDelete, isEditing, tog
       <tr className="bg-gray-100 p-2 rounded-md shadow-lg transition-all">
         <td colSpan={7}>
           <div className="grid grid-cols-4 gap-4 p-2">
-            
+
             {/* Column 1 */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -59,6 +59,16 @@ export const ImportRow = ({attendee, handleSaveChanges, onDelete, isEditing, tog
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 />
               </label>
+              <label className="block text-sm font-medium text-gray-700">
+                Phone
+                <input
+                  type="tel"
+                  name="phone"
+                  value={editedAttendee.phone}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                />
+              </label>                 
             </div>
 
 
@@ -103,17 +113,6 @@ export const ImportRow = ({attendee, handleSaveChanges, onDelete, isEditing, tog
             {/* Column 3 */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Phone
-                <input
-                  type="tel"
-                  name="phone"
-                  value={editedAttendee.phone}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                />
-              </label>   
-
-              <label className="block text-sm font-medium text-gray-700">
                 Status
                 <Select
                   name="status"
@@ -125,6 +124,19 @@ export const ImportRow = ({attendee, handleSaveChanges, onDelete, isEditing, tog
                   <option value="paid_cash">Paid Cash</option>
                   <option value="gratis">Free Ticket</option>
                 </Select>
+              </label>
+              <label className="block text-sm font-medium text-gray-700">
+                Student Ticket
+                <select
+                  name="student_ticket"
+                  value={editedAttendee.student_ticket ? 'true' : 'false'}
+                  onChange={(e) =>
+                    setEditedAttendee({ ...editedAttendee, student_ticket: e.target.value === 'true' })
+                  }
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                  <option value="true">True</option>
+                  <option value="false">False</option>
+                </select>
               </label>
             </div>
 

@@ -208,7 +208,7 @@ export default function ImportPageClient() {
     const formData = new FormData(e.target as HTMLFormElement);
     const passType = formData.get('passType') as string;
     const unitAmount = formData.get('unitAmount') as string;
-    const studentTicket = formData.get('studentTicket') === 'on';
+    const studentTicket = formData.get('studentTicket') === 'true';
     const status = formData.get('status') as string;
 
     const updatedData = attendeesData.map((attendee) => {
@@ -359,21 +359,21 @@ export default function ImportPageClient() {
                     <select
                       name="passType"
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-gray-800 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                      <option value="general">Full Pass</option>
-                      <option value="vip">Artist Pass</option>
-                      <option value="vip">Full Pass (without dinner)</option>
-                      <option value="vip">Volunteer Pass (without dinner)</option>
-                      <option value="vip">Artist Pass (without dinner)</option>
-                      <option value="student">Party Pass</option>
-                      <option value="press">Saturday Pass</option>
-                      <option value="press">Sunday Pass</option>
-                      <option value="press">Class Pass</option>
-                      <option value="press">Saturday - Party</option>
-                      <option value="press">Saturday - Class</option>
-                      <option value="press">Saturday - Dinner</option>
-                      <option value="press">Friday - Party</option>
-                      <option value="press">Sunday - Party</option>
-                      <option value="press">Sunday - Class</option>
+                      <option value="Full Pass">Full Pass</option>
+                      <option value="Artist Pass">Artist Pass</option>
+                      <option value="Full Pass (without dinner)">Full Pass (without dinner)</option>
+                      <option value="Volunteer Pass (without dinner)">Volunteer Pass (without dinner)</option>
+                      <option value="Artist Pass (without dinner)">Artist Pass (without dinner)</option>
+                      <option value="Party Pass">Party Pass</option>
+                      <option value="Saturday Pass">Saturday Pass</option>
+                      <option value="Sunday Pass">Sunday Pass</option>
+                      <option value="Class Pass<">Class Pass</option>
+                      <option value="Saturday - Party">Saturday - Party</option>
+                      <option value="Saturday - Class">Saturday - Class</option>
+                      <option value="Saturday - Dinner">Saturday - Dinner</option>
+                      <option value="Friday - Party">Friday - Party</option>
+                      <option value="Sunday - Party">Sunday - Party</option>
+                      <option value="Sunday - Class">Sunday - Class</option>
                     </select>
                   </label>
 
@@ -399,12 +399,15 @@ export default function ImportPageClient() {
                   </label>
 
                   <label className="block text-sm font-medium text-gray-300 col-span-2 m-1 mt-3">
-                    <input
-                      type="checkbox"
+                    Student Ticket
+                    <select
                       name="studentTicket"
-                      className="mr-2 h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                    />
-                    Student
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-gray-800 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    >
+                      <option value="">Select Status</option>
+                      <option value="true">True</option>
+                      <option value="false">False</option>
+                    </select>
                   </label>
                   <div className="col-span-2 mt-4">
                     <div className="flex justify-between items-center mb-2">
