@@ -124,14 +124,6 @@ export default function ImportPageClient() {
       history: [],
     }
   }
-  
-  const handleOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setOptions((prevOptions) => ({
-      ...prevOptions,
-      sendTicketEmails: value, 
-    }))
-  }
 
   const handleAddRow = () => {
     const newIndex = attendeesData.length;
