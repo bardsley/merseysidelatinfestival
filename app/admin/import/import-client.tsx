@@ -1,6 +1,5 @@
 'use client'
 import { BiAlarmExclamation, BiCheckCircle } from "react-icons/bi";
-import { useSearchParams } from "next/navigation"
 import {useEffect, useState} from 'react';
 import React from "react";
 import { ImportRow } from '@components/admin/lists/importRow';
