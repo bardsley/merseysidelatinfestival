@@ -202,6 +202,7 @@ functions:
       STRIPE_SECRET_KEY: ${param:stripeSecretKey}
       CREATE_TICKET_LAMBDA: "${sls:stage}-create_ticket" #! Can't find a way to set this other than as a params that gets used byt function and the function itself
       ATTENDEE_GROUPS_LAMBDA: "${sls:stage}-attendee_groups"
+      TICKET_UPGRADE_LAMBDA: "${sls:stage}-ticket_upgrade"
     layers:
       - !Ref StripeLambdaLayer
       # - !Ref DynamodbLambdaLayer
@@ -556,4 +557,23 @@ functions:
           path: /meal/summary
           method: get          
 
+#--------------------
 
+  TicketUpgrade:
+    runtime: python3.11
+    handler: ticket_upgrade/lambda_function.lambda_handler
+    name: "${sls:stage}-ticket_upgrade"
+    package:
+      patterns:
+        - '!**/**'
+        - "ticket_upgrade/**"
+        - "shared/**"
+    environment:
+      STAGE_NAME: ${sls:stage}
+      EVENT_TABLE_NAME: ${param:eventTableName}
+      ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+      SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
+    events:
+      - httpApi:
+          path: /ticket_upgrade
+          method: post
