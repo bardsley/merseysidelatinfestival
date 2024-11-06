@@ -47,23 +47,28 @@ export default function ImportPageClient() {
   const [attendeesData, setAttendeesData] = useState<Attendee[]>([]);
   const [isEditingIndex, setIsEditingIndex] = useState<number | null>(null);
   const [options, setOptions] = useState(optionsDefault);
-  const [error] = useState(false as boolean | string)
-  const [messageShown, setMessageShown] = useState(true)
-  const params = useSearchParams()
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [columnMappings, setColumnMappings] = useState<{ [key: string]: string }>({});
   const [rawImportedData, setRawImportedData] = useState<any[]>([]);
+  const [error] = useState(false as boolean | string)
+  const [messageShown, setMessageShown] = useState(true)
+  const [message, setMessage] = useState('')
+  const [messageType, setMessageType] = useState('')
 
-  const message = params.get('message') || error
-  const messageType = params.get('messageType') ? params.get('messageType') : error ? 'bad' : 'good'
+  // const message = params.get('message') || error
+  // const messageType = params.get('messageType') ? params.get('messageType') : error ? 'bad' : 'good'
 
   useEffect(() => {
-    if(message && messageType == 'good') {
-      setTimeout(() => {
-        setMessageShown(false) 
-      }, 3000)
+    if (message) {
+      setMessageShown(true);
+      const timer = setTimeout(() => {
+        setMessageShown(false);
+        setMessage('');
+        setMessageType('');
+      }, 3000);
+      return () => clearTimeout(timer);
     }
-  }, [])
+  }, [message, messageType]);
 
   const toggleRowSelection = (index: number) => {
     setSelectedRows((prevSelected) => {
@@ -180,6 +185,7 @@ export default function ImportPageClient() {
       attendees: attendeesData, 
       options: options, 
     }
+    
 
     const response = await fetch('/api/admin/import', {
       method: 'POST',
@@ -188,8 +194,26 @@ export default function ImportPageClient() {
       },
       body: JSON.stringify(payload),
     })
-    console.log(response)
+    
+    const result = await response.json();
+    console.log(result.message)
 
+    if (response.ok) {
+      setMessage(result.message);
+      setMessageType(result.messageType);
+      if (response.status === 207 && result.failed_imports && result.failed_imports.length > 0) {
+        const failedIndexes = result.failed_imports.map((item) => item.attendee.index);
+          attendeesData.forEach((attendee, index) => {
+          if (!failedIndexes.includes(index)) {
+            handleDeleteRow(index);
+          }
+        })
+      }
+    } else {
+      setMessage(result.message);
+      setMessageType(result.messageType);
+      setAttendeesData([])
+    }
   }
 
   const handleBulkEdit = (e: React.FormEvent) => {
