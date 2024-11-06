@@ -29,6 +29,10 @@ type Attendee = {
   cs_id: string
 }
 
+type MappedRow = {
+  [key: string]: any;
+}
+
 const emailOptions = [
   { value: 'everyone', label: 'Everyone' },
   { value: 'new', label: 'New Ticket Numbers Only' },
@@ -49,6 +53,8 @@ export default function ImportPageClient() {
   const [messageShown, setMessageShown] = useState(true)
   const params = useSearchParams()
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [columnMappings, setColumnMappings] = useState<{ [key: string]: string }>({});
+  const [rawImportedData, setRawImportedData] = useState<any[]>([]);
 
   const message = params.get('message') || error
   const messageType = params.get('messageType') ? params.get('messageType') : error ? 'bad' : 'good'
@@ -74,42 +80,52 @@ export default function ImportPageClient() {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setData([])
+      setData([]);
       Papa.parse(file, {
-        complete: (result) => {
-          const transformedData = result.data.map((row: any, index: number) => { console.log(index,row); return transformAttendee(row, index)})  ;
-          setAttendeesData(transformedData);
-          console.log(transformedData)
-        },
-        header: true,
+        complete: (result) => {setRawImportedData(result.data)}, header: true,
       })
     }
   }
-  
-  const transformAttendee = (row: any, index: number) => {
-    const isStudentTicket = row.type.includes(' (Student)');
 
+  const handleColumnMappingChange = (csvColumn: string, attendeeField: string) => {
+    setColumnMappings((prevMappings) => ({...prevMappings, [csvColumn]: attendeeField}))
+  }
+
+  const handleImportData = () => {
+    const transformedData = rawImportedData.map((row, index) => transformAttendee(row, index, columnMappings));
+    setAttendeesData(transformedData)
+    setRawImportedData([])
+    setColumnMappings({})
+  }
+  
+  const transformAttendee = (row: any, index: number, mappings: { [key: string]: string }) => {
+    const mappedRow: MappedRow = Object.keys(mappings).reduce((acc, key) => {
+      acc[mappings[key]] = row[key] || ''
+      return acc
+    }, {});
+  
     return {
       index,
-      name: row.name || '',
-      email: row.email || '',
-      phone: row.telephone,
-      checkin_at: row.ticket_used || '',
-      passes: isStudentTicket ? [row.type.replace(" (Student)", "")] : [row.type || ''],  
-      purchased_at: row.purchase_date ? guaranteeISOstringFromDate(row.purchase_date) : '',
-      ticket_number: row.ticket_number || null,
-      active: true,
-      status: 'paid_legacy',
-      student_ticket: isStudentTicket,
+      name: mappedRow.name || '',
+      email: mappedRow.email || '',
+      phone: mappedRow.phone || '',
+      passes: mappedRow.passes ? [mappedRow.passes] : [],
+      purchased_at: mappedRow.purchased_at || '',
+      ticket_number: mappedRow.ticket_number || null,
+      active: mappedRow.active !== 'false',
+      status: mappedRow.status || 'draft',
+      student_ticket: mappings['student_ticket'] ? mappedRow.student_ticket === 'true' : (mappedRow.passes && mappedRow.passes.toLowerCase().includes('student')),
+
+      unit_amount: mappedRow.unit_amount ? Number(mappedRow.unit_amount.substring(1))*100 : 999999999999,
+      cs_id: row.cs_id || '',
+      checkin_at: row.checkin_at || '',
       transferred_in: false,
       transferred_out: false,
       name_changed: false,
       transferred: null,
       history: [],
-      unit_amount: row.unit_amount ? Number(row.unit_amount.substring(1))*100 : 999999999999, 
-      cs_id: row.cs_id
-    };
-  };
+    }
+  }
   
   const handleOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -151,10 +167,8 @@ export default function ImportPageClient() {
 
   const handleSaveChanges = (updatedAttendee) => {
     setAttendeesData((prevData) =>
-    prevData.map((attendee) =>
-      attendee.index === updatedAttendee.index
-      ? updatedAttendee
-      : attendee
+      prevData.map((attendee) =>
+        attendee.index === updatedAttendee.index ? updatedAttendee : attendee
       )
     )
     console.log(data)
@@ -162,16 +176,12 @@ export default function ImportPageClient() {
   }
 
   const handleDeleteRow = (indexToDelete: number | null) => {
-    const updatedAttendees = attendeesData.filter((_, index) => index !== indexToDelete)
+    const updatedAttendees   = attendeesData.filter((_, index) => index !== indexToDelete)
+    const reindexedAttendees = updatedAttendees.map((attendee, newIndex) => ({...attendee, index: newIndex}))
 
-    const reindexedAttendees = updatedAttendees.map((attendee, newIndex) => ({
-      ...attendee,
-      index: newIndex
-    }))
-
-    setIsEditingIndex(null);
-    setAttendeesData(reindexedAttendees);
-  };  
+    setIsEditingIndex(null)
+    setAttendeesData(reindexedAttendees)
+  }; 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -193,7 +203,7 @@ export default function ImportPageClient() {
   }
 
   const handleBulkEdit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     const formData = new FormData(e.target as HTMLFormElement);
     const passType = formData.get('passType') as string;
@@ -209,14 +219,13 @@ export default function ImportPageClient() {
           unit_amount: unitAmount ? parseInt(unitAmount, 10) : attendee.unit_amount,
           student_ticket: studentTicket,
           status: status || attendee.status,
-        };
+        }
       }
-      return attendee;
-    });
+      return attendee
+    })
 
     setAttendeesData(updatedData);
     setSelectedRows([]); 
-    // e.target.reset(); 
   }
 
   const deselectAll = () => setSelectedRows([]);
@@ -234,7 +243,65 @@ export default function ImportPageClient() {
   return (
     <div>
       { message ? (<div className={messageClasses + (messageShown ? "" : " opacity-0")} onClick={() => setMessageShown(false)}>{message} {messageClassIcon}</div>) : null }
-      <input type="file" accept=".csv,.txt" onChange={handleFileUpload} />
+      <div className="bg-gray-800 p-4 rounded-lg mb-4">
+        <h2 className="text-lg text-white mb-2">Import Data</h2>
+        
+        {/* File Upload Input */}
+        <input 
+          type="file" 
+          accept=".csv,.txt" 
+          onChange={handleFileUpload} 
+          className="block mb-2 w-full text-gray-800"
+        />
+
+        {/* Buttons */}
+        <div className="flex justify-end mt-4">
+          <button
+            type="button"
+            onClick={handleImportData}
+            className="py-2 px-4 bg-green-500 text-white rounded-lg font-semibold mr-2">
+            Import
+          </button>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="py-2 px-4 bg-red-500 text-white rounded-lg font-semibold">
+            Reset
+          </button>
+        </div>
+
+        {/* Mapping Section (only shown after file upload) */}
+        {rawImportedData.length > 0 && (
+          <div className="mt-4">
+            <h3 className="text-md text-white mb-2">Map Imported Columns</h3>
+            <form>
+              <div className="grid grid-cols-2 gap-4">
+                {Object.keys(rawImportedData[0]).map((column, idx) => (
+                  <div key={idx} className="flex justify-between items-center mb-2">
+                    <label className="text-sm text-gray-300">{column}</label>
+                    <select
+                      onChange={(e) => handleColumnMappingChange(column, e.target.value)}
+                      className="block w-1/2 rounded-md border-gray-300 text-gray-800 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                      <option value="">Unmapped</option>
+                      <option value="name">Name</option>
+                      <option value="email">Email</option>
+                      <option value="phone">Phone</option>
+                      <option value="passes">Passes</option>
+                      <option value="purchased_at">Purchased At</option>
+                      <option value="ticket_number">Ticket Number</option>
+                      <option value="active">Active</option>
+                      <option value="status">Status</option>
+                      <option value="student_ticket">Student Ticket</option>
+                      <option value="unit_amount">Unit Amount</option>
+                    </select>
+                  </div>
+                ))}
+              </div>
+            </form>
+          </div>
+        )}
+      </div>
+
         <div className="-mx-4 sm:mx-0 mt-3 ">
           <div className="mx-auto max-w-7xl rounded-lg">
             <div className="grid gap-px bg-red/5 grid-cols-3 md:grid-cols-3">
@@ -248,8 +315,7 @@ export default function ImportPageClient() {
                     name="sendTicketEmails"
                     value={options.sendTicketEmails}
                     onChange={(e) => setOptions({ ...options, sendTicketEmails: e.target.value })}
-                    className="ml-2 block w-2/3 rounded-md border-gray-300 shadow-sm text-gray-800 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  >
+                    className="ml-2 block w-2/3 rounded-md border-gray-300 shadow-sm text-gray-800 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     {emailOptions.map((option) => (
                       <option key={option.value} value={option.value}>
                         {option.label}
@@ -273,8 +339,7 @@ export default function ImportPageClient() {
                       onChange={(e) =>
                         setOptions({ ...options, sendMealUpgrade: e.target.value === 'true' })
                       }
-                      className="ml-2 block w-2/3 rounded-md border-gray-300 shadow-sm text-gray-800 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    >
+                      className="ml-2 block w-2/3 rounded-md border-gray-300 shadow-sm text-gray-800 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                       <option value="false">No</option>
                       <option value="true">Yes</option>
                     </select>
@@ -293,13 +358,22 @@ export default function ImportPageClient() {
                     Pass Type
                     <select
                       name="passType"
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-gray-800 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    >
-                      <option value="">Select Pass Type</option>
-                      <option value="general">General Admission</option>
-                      <option value="vip">VIP</option>
-                      <option value="student">Student</option>
-                      <option value="press">Press</option>
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-gray-800 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                      <option value="general">Full Pass</option>
+                      <option value="vip">Artist Pass</option>
+                      <option value="vip">Full Pass (without dinner)</option>
+                      <option value="vip">Volunteer Pass (without dinner)</option>
+                      <option value="vip">Artist Pass (without dinner)</option>
+                      <option value="student">Party Pass</option>
+                      <option value="press">Saturday Pass</option>
+                      <option value="press">Sunday Pass</option>
+                      <option value="press">Class Pass</option>
+                      <option value="press">Saturday - Party</option>
+                      <option value="press">Saturday - Class</option>
+                      <option value="press">Saturday - Dinner</option>
+                      <option value="press">Friday - Party</option>
+                      <option value="press">Sunday - Party</option>
+                      <option value="press">Sunday - Class</option>
                     </select>
                   </label>
 
@@ -316,8 +390,7 @@ export default function ImportPageClient() {
                     Status
                     <select
                       name="status"
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-gray-800 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    >
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-gray-800 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                       <option value="">Select Status</option>
                       <option value="paid_stripe">Paid Online</option>
                       <option value="paid_cash">Paid Cash</option>
@@ -333,23 +406,31 @@ export default function ImportPageClient() {
                     />
                     Student
                   </label>
-                  <div className="flex justify-between items-center col-span-2 mt-4">
-                    <div className="flex items-center">
-                      <span className="text-xs text-gray-400 mr-2">Selected Rows: {selectedRows.length}</span>
+                  <div className="col-span-2 mt-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="flex items-center">
+                        <span className="text-xs text-gray-400 mr-2">Selected Rows: {selectedRows.length}</span>
+                        <button
+                          type="button"
+                          onClick={deselectAll}
+                          className="text-xs text-blue-400 underline mr-2">
+                          Deselect All
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedRows(attendeesData.map((row) => row.index))}
+                          className="text-xs text-blue-400 underline">
+                          Select All
+                        </button>
+                      </div>
+                    </div>
+                    <div className="flex justify-end">
                       <button
-                        type="button"
-                        onClick={deselectAll}
-                        className="text-xs text-blue-400 underline"
-                      >
-                        Deselect All
+                        type="submit"
+                        className="py-2 px-4 bg-blue-500 text-white rounded-lg font-semibold shadow-sm">
+                        Apply Bulk Edit
                       </button>
                     </div>
-                    <button
-                      type="submit"
-                      className="py-2 px-4 bg-blue-500 text-white rounded-lg font-semibold shadow-sm"
-                    >
-                      Apply Bulk Edit
-                    </button>
                   </div>
                 </form>
               </div>

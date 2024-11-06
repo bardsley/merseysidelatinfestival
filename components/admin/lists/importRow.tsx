@@ -36,6 +36,7 @@ export const ImportRow = ({attendee, handleSaveChanges, onDelete, isEditing, tog
       <tr className="bg-gray-100 p-2 rounded-md shadow-lg transition-all">
         <td colSpan={7}>
           <div className="grid grid-cols-4 gap-4 p-2">
+            
             {/* Column 1 */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -51,8 +52,7 @@ export const ImportRow = ({attendee, handleSaveChanges, onDelete, isEditing, tog
 
               <label className="block text-sm font-medium text-gray-700">
                 Email
-                <input
-                  type="email"
+                <input type="email"
                   name="email"
                   value={editedAttendee.email}
                   onChange={handleChange}
@@ -66,16 +66,24 @@ export const ImportRow = ({attendee, handleSaveChanges, onDelete, isEditing, tog
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Passes
-                <Select
-                  name="passes"
-                  value={editedAttendee.passes}
+                <Select name="passes" value={editedAttendee.passes}
                   onChange={(e) => setEditedAttendee({ ...editedAttendee, passes: [e.target.value] })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                >
-                  <option value="general">General Admission</option>
-                  <option value="vip">VIP</option>
-                  <option value="student">Student</option>
-                  <option value="press">Press</option>
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                  <option value="general">Full Pass</option>
+                  <option value="vip">Artist Pass</option>
+                  <option value="vip">Full Pass (without dinner)</option>
+                  <option value="vip">Volunteer Pass (without dinner)</option>
+                  <option value="vip">Artist Pass (without dinner)</option>
+                  <option value="student">Party Pass</option>
+                  <option value="press">Saturday Pass</option>
+                  <option value="press">Sunday Pass</option>
+                  <option value="press">Class Pass</option>
+                  <option value="press">Saturday - Party</option>
+                  <option value="press">Saturday - Class</option>
+                  <option value="press">Saturday - Dinner</option>
+                  <option value="press">Friday - Party</option>
+                  <option value="press">Sunday - Party</option>
+                  <option value="press">Sunday - Class</option>
                 </Select>
               </label>
 
