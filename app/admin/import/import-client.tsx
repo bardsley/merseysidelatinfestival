@@ -5,8 +5,6 @@ import {useEffect, useState} from 'react';
 import React from "react";
 import { ImportRow } from '@components/admin/lists/importRow';
 import Papa from 'papaparse';
-import {guaranteeISOstringFromDate} from '@lib/useful'
-import { IndexKind } from "typescript";
 
 type Attendee = {
   index: number
