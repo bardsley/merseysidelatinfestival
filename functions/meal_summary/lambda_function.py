@@ -13,9 +13,9 @@ event_table_name = os.environ.get("EVENT_TABLE_NAME")
 logger = logging.getLogger()
 logger.setLevel("INFO")
 
-# profile_name='danceengine-admin'
-# boto3.setup_default_session(profile_name=profile_name)
-# logging.basicConfig()
+profile_name='danceengine-admin'
+boto3.setup_default_session(profile_name=profile_name)
+logging.basicConfig()
 
 db = boto3.resource('dynamodb')
 table = db.Table(attendees_table_name)
@@ -32,6 +32,19 @@ def err(msg:str, code=400, logmsg=None, **kwargs):
         'statusCode': code, 
         'body': json.dumps({'error': msg})
         }
+
+def get_dinner_pass_names():
+    return ["Full Pass", "Artist Pass", "Volunteer Pass", "Saturday - Dinner"]
+
+def extract_pass_type(line_items):
+    pass_names = get_dinner_pass_names()
+    if len(line_items) == 1:
+        return line_items[0]['description']
+    else:
+        for item in line_items:
+            if item['description'] in pass_names:
+                return item['description']
+    return "unknown"
 
 def get_last_email():
     response = event_table.scan(FilterExpression=Key('PK').eq("EMAIL#MEALREMINDER"))
@@ -52,6 +65,8 @@ def lambda_handler(event, context):
         ]
     num_courses = 3
     course_frequencies = [{} for _ in range(num_courses)]
+    
+    dietary_frequencies = {}
 
     not_selected_count = 0   # All choices are -1 (not selected)
     incomplete_count = 0     # Some choices are -1 (incomplete selection)
@@ -59,39 +74,62 @@ def lambda_handler(event, context):
     selected_count = 0       # All choices are >= 0 (options selected)
     
     filtered_items = [item for item in response['Items'] if (item['access'][2] == 1)]
+
+    meal_attendees_list = []
     
     #! If no matches should problably return a 404
     for item in filtered_items:
-        if ('meal_preferences' not in item):
-            not_selected_count += 1
-            continue
-        elif (item['meal_preferences'] is None):
-            not_selected_count += 1
-            continue
-        
-        meal_prefs = item['meal_preferences']
-        if meal_prefs and 'choices' in meal_prefs:
-            choices = meal_prefs['choices']
+        meal_prefs           = item.get('meal_preferences', {}) or {}
+        ticket_number        = item.get('ticket_number', 'unknown')
+        full_name            = item.get('full_name', 'unknown')
+        choices              = meal_prefs.get('choices', [-1,-1,-1,-1,-1,-1])
+        assigned_table       = meal_prefs.get('table', '0')
+        dietary_requirements = meal_prefs.get('dietary_requirements', {})
+        is_selected          = all(choice >= 0 for choice in choices)
+        not_wanted           = all(choice == -99 for choice in choices)
 
-            if all(choice == -1 for choice in choices):
-                not_selected_count += 1
-            elif any(choice == -1 for choice in choices):
-                incomplete_count += 1
-            elif any(choice == -99 for choice in choices):
-                not_wanted_count += 1
-            elif all(choice >= 0 for choice in choices):
-                selected_count += 1
-                
-                for i, choice in enumerate(choices):
-                    if choice >= 0 and choice in course_mappings[i]:
-                        dish_name = course_mappings[i][choice]
-                        if dish_name in course_frequencies[i]:
-                            course_frequencies[i][dish_name] += 1
-                        else:
-                            course_frequencies[i][dish_name] = 1
+        pass_type = extract_pass_type(item.get('line_items', []))
+
+        meal_attendees_list.append({
+            'ticket_number': ticket_number,
+            'full_name': full_name,
+            'pass_type': pass_type,
+            'choices': choices,
+            'dietary_requirements': dietary_requirements,
+            'assigned_table': assigned_table,
+            'is_selected': is_selected,
+            'not_wanted': not_wanted
+        })
+        
+        if not meal_prefs or all(choice == -1 for choice in choices):
+            not_selected_count += 1
+            continue
+
+        if any(choice == -1 for choice in choices):
+            incomplete_count += 1
+        elif all(choice == -99 for choice in choices):
+            not_wanted_count += 1
+        elif all(choice >= 0 for choice in choices):
+            selected_count += 1
+
+            dietary_selected = dietary_requirements.get('selected', [])
+            for keyword in dietary_selected:
+                if keyword in dietary_frequencies:
+                    dietary_frequencies[keyword] += 1
+                else:
+                    dietary_frequencies[keyword] = 1            
+
+            for i, choice in enumerate(choices):
+                if choice >= 0 and choice in course_mappings[i]:
+                    dish_name = course_mappings[i][choice]
+                    if dish_name in course_frequencies[i]:
+                        course_frequencies[i][dish_name] += 1
+                    else:
+                        course_frequencies[i][dish_name] = 1
 
     logger.info(f"Statistics: Not selected: {not_selected_count}, Incomplete: {incomplete_count}, Not wanted: {not_wanted_count}, Selected: {selected_count}")
     logger.info(f"Course Frequencies: {course_frequencies}")
+    logger.info(f"Dietary Frequencies: {dietary_frequencies}")
 
     return {
         'statusCode': 200,
@@ -102,9 +140,12 @@ def lambda_handler(event, context):
                 'not_wanted_count': not_wanted_count,
                 'selected_count': selected_count,
                 'course_frequencies': course_frequencies,
-                'reminders_sent': get_last_email()
-            }}, cls=DecimalEncoder.DecimalEncoder)
+                'dietary_frequencies': dietary_frequencies,
+            },
+            'reminders_sent': get_last_email(),
+            'meal_attendees_list': meal_attendees_list,
+        }, cls=DecimalEncoder.DecimalEncoder)
     }
 
-# from pprint import pprint
-# pprint(lambda_handler({'requestContext':{'http':{'method':"GET"}}}, None))
+from pprint import pprint
+pprint(lambda_handler({'requestContext':{'http':{'method':"GET"}}}, None))
