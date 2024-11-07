@@ -97,7 +97,7 @@ def lambda_handler(event, context):
     logger.info("#### UPGRADING TICKET ####")
     logger.info("Event received: %s", json.dumps(event, indent=2, cls=DecimalEncoder))
     
-    ticket_number = event['ticket_number']
+    ticket_number = event['ticket_number'].strip()
     upgrade_type = event['upgrade_type']
     source = event.get('source', 'unknown')
     full_name = event.get('full_name', 'unknown')
