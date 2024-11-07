@@ -8,23 +8,26 @@ export default function MealStats() {
 
   const statsTopLine =  isLoading ? 
     [
+      { name: 'Not selected', value: 'Loading...', unit: '' },
       { name: 'Complete', value: 'Loading...', unit: '' },
-      { name: 'Incomplete', value: 'Loading...', unit: '' },
+      { name: 'Partial', value: 'Loading...', unit: '' },
       { name: 'Not wanted', value: 'Loading...', unit: '' },
       { name: 'Total', value: 'Loading...', unit: '' }
     ] as StatLine[]
     : error ? [
+      { name: 'Not selected', value: 'Error', unit: '' },
       { name: 'Complete', value:  "Error", unit: '' },
-      { name: 'Incomplete', value: 'Error', unit: '' },
+      { name: 'Partial', value: 'Error', unit: '' },
       { name: 'Not wanted', value: 'Error', unit: '' },
       { name: 'Total', value: 'Error', unit: '' }
     ] as StatLine[]
     : [
-        { name: 'Complete', value:  data.statistics.not_selected_count, unit: '' },
-        { name: 'Incomplete', value: data.statistics.incomplete_count, unit: '' },
+        { name: 'Not selected', value: data.statistics.not_selected_count, unit: '' },
+        { name: 'Complete', value: data.statistics.selected_count, unit: '' },
+        { name: 'Partial', value:  data.statistics.incomplete_count, unit: '' },
         { name: 'Not wanted', value: data.statistics.not_wanted_count, unit: '' },
-        { name: 'Total', value: data.statistics.selected_count, unit: '' }
-    ] as StatLine[]
+        { name: 'Total', value: data.statistics.not_selected_count + data.statistics.selected_count, unit: '' }
+      ] as StatLine[]
 
   const starterStats = isLoading ?
     [
@@ -73,10 +76,13 @@ export default function MealStats() {
   return (
     <div>
       <StatBlock stats={statsTopLine}></StatBlock>
+      <br />
       <h1>Starters</h1>
       <StatBlock stats={starterStats}></StatBlock>
+      <br />
       <h1>Mains</h1>
       <StatBlock stats={mainStats}></StatBlock>
+      <br />
       <h1>Deserts</h1>
       <StatBlock stats={desertStats}></StatBlock>
       
