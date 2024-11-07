@@ -13,13 +13,15 @@ from shared.parser import parse_event, validate_event
 
 # ENV
 attendees_table_name = os.environ.get("ATTENDEES_TABLE_NAME")
-send_email_lambda = os.environ.get("SEND_EMAIL_LAMBDA")
+send_email_lambda    = os.environ.get("SEND_EMAIL_LAMBDA")
+event_table_name     = os.environ.get("EVENT_TABLE_NAME")
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 db = boto3.resource('dynamodb')
 attendees_table = db.Table(attendees_table_name)
+event_table = db.Table(event_table_name)
 lambda_client = boto3.client('lambda')
 
 def err(msg:str, code=400, logmsg=None, **kwargs):
@@ -32,7 +34,7 @@ def err(msg:str, code=400, logmsg=None, **kwargs):
         'body': json.dumps({'error': msg})
         }
 
-def send_email(name, email, ticket_number, line_items):
+def send_email(name, email, ticket_number, line_items, meal_upgrade, meal_upgrade_base_link, pass_type):
     logger.info(os.environ.get("SEND_EMAIL_LAMBDA"))
     # send the email with these details
     logger.info("Invoking send_email lambda")
@@ -40,12 +42,13 @@ def send_email(name, email, ticket_number, line_items):
         FunctionName=os.environ.get("SEND_EMAIL_LAMBDA"),
         InvocationType='Event',
         Payload=json.dumps({
-                'email_type':"standard_ticket",
+                'email_type':"standard_ticket" if not meal_upgrade else "meal_upgrade_ticket",
                 'name':name, 
                 'email':email, 
                 'ticket_number': ticket_number,
                 'line_items':line_items,
-                'heading_message': "YOUR TICKET FOR MLF24"
+                'heading_message': "YOUR TICKET FOR MLF24" if "Artist Pass" not in pass_type else "YOUR ARTIST PASS FOR MLF24", 
+                'meal_link':meal_upgrade_base_link+"?prefilled_promo_code=VOLUNTEER&client_reference_id={}".format(ticket_number)
             }, cls=DecimalEncoder),
         )
     logger.info(response)
@@ -98,6 +101,7 @@ def lambda_handler(event, context):
     try:
         event = parse_event(event)
         event = validate_event(event, ['attendees', 'options'])
+        logger.info(event)
     except (ValueError, TypeError, KeyError) as e:
         logger.error("Event validation failed: %s", str(e))
         logger.error(event)
@@ -108,8 +112,15 @@ def lambda_handler(event, context):
 
     attendees = event['attendees']
     options   = event['options']
+    meal_upgrade_base_link = ''
 
     failed_imports = []
+
+    if options.get('sendMealUpgrade', False):
+        response = event_table.scan(FilterExpression=Key('PK').eq("UPGRADE#VOLUNTEER"))
+        sorted_list = sorted(response['Items'], key=lambda item: item.get('timestamp', time.time())) if len(response['Items']) > 0 else None
+
+        meal_upgrade_base_link = sorted_list[0].get('payment_link', '')
 
     for attendee in attendees:
         try:
@@ -159,11 +170,8 @@ def lambda_handler(event, context):
 
             respone = attendees_table.put_item(Item=input)
 
-            if options['sendTicketEmails'] == "everyone":
-                send_email(attendee['name'], attendee['email'], ticket_number, line_items)
-            elif options['sendTicketEmails'] == "new":
-                if str(attendee['ticket_number']) is None:
-                    send_email(attendee['name'], attendee['email'], ticket_number, line_items)
+            if (options['sendTicketEmails'] == "everyone") or (options['sendTicketEmails'] == "new" and not str(attendee['ticket_number'])) or (options.get('sendMealUpgrade', False)):
+                send_email(attendee['name'], attendee['email'], ticket_number, line_items, options.get('sendMealUpgrade', False), meal_upgrade_base_link, pass_type)
     
         except (ValueError, KeyError, boto3.exceptions.Boto3Error) as e:
             logger.error(f"Failed to process attendee: {attendee}")
