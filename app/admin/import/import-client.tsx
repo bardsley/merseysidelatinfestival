@@ -49,7 +49,6 @@ export default function ImportPageClient() {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [columnMappings, setColumnMappings] = useState<{ [key: string]: string }>({});
   const [rawImportedData, setRawImportedData] = useState<any[]>([]);
-  const [error] = useState(false as boolean | string)
   const [messageShown, setMessageShown] = useState(true)
   const [message, setMessage] = useState('')
   const [messageType, setMessageType] = useState('')
@@ -202,9 +201,9 @@ export default function ImportPageClient() {
       setMessageType(result.messageType);
       if (response.status === 207 && result.failed_imports && result.failed_imports.length > 0) {
         const failedIndexes = result.failed_imports.map((item) => item.attendee.index);
-          attendeesData.forEach((attendee, index) => {
-          if (!failedIndexes.includes(index)) {
-            handleDeleteRow(index);
+          attendeesData.forEach((attendee) => {
+          if (!failedIndexes.includes(attendee.index)) {
+            handleDeleteRow(attendee.index);
           }
         })
       }
