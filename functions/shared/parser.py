@@ -41,3 +41,21 @@ def validate_event(event, required_fields):
         raise KeyError(f"Missing required fields: {missing_fields}")
 
     return event
+
+def validate_line_item(line_item):
+    '''
+    Validates the line_item structure to ensure it includes at least amount_total and description
+    '''
+    if not isinstance(line_item, dict):
+        raise ValueError("Line item must be a dictionary.")
+    if 'amount_total' not in line_item or 'description' not in line_item:
+        raise ValueError("Line item must include 'amount_total' and 'description'.")
+
+def validate_line_items(line_items):
+    '''
+    Validates each line item in the line_items list
+    '''
+    if not isinstance(line_items, list):
+        raise ValueError("Line items must be a list.")
+    for item in line_items:
+        validate_line_item(item)

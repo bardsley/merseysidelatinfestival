@@ -6,7 +6,7 @@ import time
 import boto3
 from boto3.dynamodb.conditions import Key
 from shared.DecimalEncoder import DecimalEncoder
-from shared.parser import parse_event, validate_event
+from shared.parser import parse_event, validate_event, validate_line_items
 
 #ENV
 attendees_table_name = os.environ.get("ATTENDEES_TABLE_NAME")
@@ -84,7 +84,8 @@ def lambda_handler(event, context):
 
     try:
         event = parse_event(event)
-        event = validate_event(event, ['ticket_number', 'upgrade_type', 'source'])
+        event = validate_event(event, ['ticket_number', 'upgrade_type', 'source', 'line_items'])
+        validate_line_items(event['line_items'])
     except (ValueError, TypeError, KeyError) as e:
         logger.error("Event validation failed: %s", str(e))
         logger.error(event)
@@ -101,6 +102,8 @@ def lambda_handler(event, context):
     upgrade_type = event['upgrade_type']
     source = event.get('source', 'unknown')
     full_name = event.get('full_name', 'unknown')
+    line_items = event['line_items']
+
     logger.info("Processing upgrade for ticket number: %s, upgrade type: %s, source: %s", ticket_number, upgrade_type, source)
 
     if upgrade_type not in UPGRADE_MAP:
@@ -151,6 +154,10 @@ def lambda_handler(event, context):
             "type": upgrade_type,
             "source": source  # Include source of the upgrade in the history
         }]
+
+        if ticket.get('line_items', []) is None:
+            ticket['line_items'] = []
+        ticket['line_items'].extend(line_items)
         
         logger.info("Updating ticket in DynamoDB...")
         attendees_table.put_item(Item=ticket)
