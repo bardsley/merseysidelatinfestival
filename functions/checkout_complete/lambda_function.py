@@ -68,7 +68,7 @@ def process_line_items(line_items, stripe_response):
             discount_data = discount['discount']
             coupon = discount_data.get('coupon', {})
             line_items_return.append({
-                'unit_amount': discount['amount'],
+                'amount_total': discount['amount'],
                 'description': 'discount',
                 'discount_id': discount_data.get('id', 'unknown'),
                 'coupon_id': coupon.get('id', 'unknown'),
