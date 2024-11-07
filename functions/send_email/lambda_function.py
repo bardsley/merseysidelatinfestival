@@ -87,6 +87,43 @@ def generate_standard_ticket_body(data):
         })   
     return body
 
+def generate_meal_upgrade_ticket_body(data):
+    rows = ""
+    total_amount = 0
+    # generate table of items purchased
+    for i in data['line_items']:
+        with open("./send_email/ticket_row.html", 'r') as line_item_row_file:
+            line_item_tmpl = Template(line_item_row_file.read())
+            rows = rows+"\n"+line_item_tmpl.substitute({
+                'tickettype':i['description'], 
+                'qty':1, 
+                'price':babel.numbers.format_currency(int(i['amount_total'])/100, "GBP", locale='en_UK')
+            })
+            total_amount += int(i['amount_total'])
+    # create total row
+    with open("./send_email/ticket_row.html", 'r') as total_row_file:
+        total_tmpl = Template(total_row_file.read())
+        total_row = total_tmpl.substitute({
+            'tickettype':"", 
+            'qty':"<strong>Total</strong>", 
+            'price':"<strong>"+babel.numbers.format_currency(total_amount/100, "GBP", locale='en_UK')+"</strong>"
+        })
+    
+    with open("./send_email/meal_upgrade_ticket_body.html", "r") as body_file:
+        body_tmpl = Template(body_file.read())
+        subdomain = "www" if os.environ.get("STAGE_NAME") == "prod" else os.environ.get("STAGE_NAME")
+        body = body_tmpl.substitute({
+            'fullname':data['name'], 
+            'email':data['email'], 
+            'ticketnumber':data['ticket_number'], 
+            'rows':rows, 
+            'ticket_link':"http://{}.merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(subdomain,data['email'], data['ticket_number']), 
+            'total_row':total_row,
+            'heading_message':data['heading_message'],
+            'upgrade_link': data.get('meal_link', ''),
+        })   
+    return body
+
 def gen_ticket_qr(ticket_number):
     logger.info("Generating a standard ticket email")
     # generate qr code
@@ -152,7 +189,29 @@ def lambda_handler(event, context):
         body        = event['message_body']
         subject     = event['subject']
         attachment  = None
+
+    elif event['email_type'] == "ticket_upgrade_notification":
+
+        subject = "Merseyside Latin Festival - Ticket Upgrade Confirmation"
+        subdomain = "www" if os.environ.get("STAGE_NAME") == "prod" else os.environ.get("STAGE_NAME")
+        manage_ticket_link = "http://{}.merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(subdomain, event['email'], event['ticket_number'])
         
+        upgrade_details = "Your ticket has been upgraded to include: {}".format(event['upgrade_details'].replace("_", " "))
+
+        with open("./send_email/upgrade_notification.html", "r") as body_file:
+            body_tmpl = Template(body_file.read())
+            subdomain = "www" if os.environ.get("STAGE_NAME") == "prod" else os.environ.get("STAGE_NAME")
+            body = body_tmpl.substitute({
+                'upgrade_details': upgrade_details, 
+                'ticket_link':manage_ticket_link, 
+            })
+            attachment = None
+    elif event['email_type'] == "meal_upgrade_ticket":
+        attachment = gen_ticket_qr(event['ticket_number'])
+
+        logger.info("Generate the body of the email")
+        body = generate_meal_upgrade_ticket_body(event)
+        subject = 'Your Pass - Merseyside Latin Festival'            
     else:
         return False
 
