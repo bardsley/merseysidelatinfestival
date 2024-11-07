@@ -13,9 +13,9 @@ event_table_name = os.environ.get("EVENT_TABLE_NAME")
 logger = logging.getLogger()
 logger.setLevel("INFO")
 
-profile_name='danceengine-admin'
-boto3.setup_default_session(profile_name=profile_name)
-logging.basicConfig()
+# profile_name='danceengine-admin'
+# boto3.setup_default_session(profile_name=profile_name)
+# logging.basicConfig()
 
 db = boto3.resource('dynamodb')
 table = db.Table(attendees_table_name)
@@ -82,8 +82,9 @@ def lambda_handler(event, context):
         meal_prefs           = item.get('meal_preferences', {}) or {}
         ticket_number        = item.get('ticket_number', 'unknown')
         full_name            = item.get('full_name', 'unknown')
-        choices              = meal_prefs.get('choices', [-1,-1,-1,-1,-1,-1])
-        assigned_table       = meal_prefs.get('table', '0')
+        choices              = meal_prefs.get('choices', [-1,-1,-1])
+        assigned_table       = meal_prefs.get('table', None)
+        group                = meal_prefs.get('seating_preference', [None])
         dietary_requirements = meal_prefs.get('dietary_requirements', {})
         is_selected          = all(choice >= 0 for choice in choices)
         not_wanted           = all(choice == -99 for choice in choices)
@@ -98,7 +99,8 @@ def lambda_handler(event, context):
             'dietary_requirements': dietary_requirements,
             'assigned_table': assigned_table,
             'is_selected': is_selected,
-            'not_wanted': not_wanted
+            'not_wanted': not_wanted,
+            'group': group
         })
         
         if not meal_prefs or all(choice == -1 for choice in choices):
@@ -127,7 +129,7 @@ def lambda_handler(event, context):
                     else:
                         course_frequencies[i][dish_name] = 1
 
-    logger.info(f"Statistics: Not selected: {not_selected_count}, Incomplete: {incomplete_count}, Not wanted: {not_wanted_count}, Selected: {selected_count}")
+    logger.info(f"Statistics: Not selected: {not_selected_count}, Incomplete: {incomplete_count}, Not wanted: {not_wanted_count}, Selected: {selected_count}, Total number of attendees with dinner: {len(meal_attendees_list)}")
     logger.info(f"Course Frequencies: {course_frequencies}")
     logger.info(f"Dietary Frequencies: {dietary_frequencies}")
 
@@ -147,5 +149,6 @@ def lambda_handler(event, context):
         }, cls=DecimalEncoder.DecimalEncoder)
     }
 
-from pprint import pprint
-pprint(lambda_handler({'requestContext':{'http':{'method':"GET"}}}, None))
+# from pprint import pprint
+# pprint(lambda_handler({'requestContext':{'http':{'method':"GET"}}}, None))
+# lambda_handler({'requestContext':{'http':{'method':"GET"}}}, None)
