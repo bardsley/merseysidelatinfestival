@@ -187,7 +187,7 @@ def get(event):
         # check that the meal is included in this ticket, if not return error
         if ticket_entry['access'][2] < 1: 
             return err("Attempting to get meal options for a ticket which does not include dinner.")
-        response_items.append({'preferences':ticket_entry['meal_preferences']})
+        response_items.append({'preferences':ticket_entry.get('meal_preferences', None)})
     if 'schedule' in event['queryStringParameters']['requested']:
         response_items.append({'schedule_options':ticket_entry['schedule']})
     if 'validity' in event['queryStringParameters']['requested']:

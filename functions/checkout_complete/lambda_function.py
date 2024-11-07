@@ -101,7 +101,10 @@ def lambda_handler(event, context):
                 InvocationType='Event',
                 Payload=json.dumps(payload, cls=shared.DecimalEncoder),
                 )
-            logger.info(response)                        
+            logger.info(response)  
+            
+            return {'statusCode':200}
+                                
 
         access, line_items = process_line_items(stripe_response['line_items'])
         student_ticket = True if stripe_response['line_items']['data'][0]['price']['nickname' ] == "student_active" else False
