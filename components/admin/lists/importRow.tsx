@@ -81,6 +81,7 @@ export const ImportRow = ({attendee, handleSaveChanges, onDelete, isEditing, tog
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     <option value="Full Pass">Full Pass</option>
                     <option value="Artist Pass">Artist Pass</option>
+                    <option value="Staff Pass">Staff Pass</option>
                     <option value="Full Pass (without dinner)">Full Pass (without dinner)</option>
                     <option value="Volunteer Pass (without dinner)">Volunteer Pass (without dinner)</option>
                     <option value="Artist Pass (without dinner)">Artist Pass (without dinner)</option>
