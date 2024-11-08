@@ -169,9 +169,10 @@ def lambda_handler(event, context):
             input = {k: v for k, v in input.items() if v is not None}
 
             respone = attendees_table.put_item(Item=input)
+            send_meal_upgrade = True if options.get('sendMealUpgrade', False) and access_array[2] == 0 else False
 
             if (options['sendTicketEmails'] == "everyone") or (options['sendTicketEmails'] == "new" and not str(attendee['ticket_number'])) or (options.get('sendMealUpgrade', False)):
-                send_email(attendee['name'], attendee['email'], ticket_number, line_items, options.get('sendMealUpgrade', False), meal_upgrade_base_link, pass_type)
+                send_email(attendee['name'], attendee['email'], ticket_number, line_items, send_meal_upgrade, meal_upgrade_base_link, pass_type)
     
         except (ValueError, KeyError, boto3.exceptions.Boto3Error) as e:
             logger.error(f"Failed to process attendee: {attendee}")
