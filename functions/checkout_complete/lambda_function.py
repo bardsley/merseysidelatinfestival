@@ -105,7 +105,7 @@ def lambda_handler(event, context):
 
         if stripe_response['metadata'].get('ticket_upgrade', False):
             ticket_number = stripe_response.get('client_reference_id', None)
-            full_name = next((item for item in stripe_response['custom_fields'] if item["key"] == "fullname"), {})['text'].get('value', "unknown")
+            full_name = next((item for item in stripe_response['custom_fields'] if item["key"] == "fullname"), {}).get('text', {}).get('value', "unknown")
             access, line_items = process_line_items(stripe_response['line_items'], stripe_response)
 
             payload = {
