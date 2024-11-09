@@ -18,19 +18,14 @@
         "visible": true
       },
       {
-        "href": "tickets",
-        "label": "Early Bird",
-        "visible": true
-      },
-      {
         "href": "accomodation",
         "label": "Hotel",
         "visible": true
       },
       {
-        "href": "pricing",
-        "label": "Passes",
-        "visible": false
+        "href": "tickets",
+        "label": "Tickets",
+        "visible": true
       },
       {
         "href": "artists",

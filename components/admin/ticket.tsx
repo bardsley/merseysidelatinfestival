@@ -7,6 +7,7 @@ import Link from "next/link";
 import NameChangeModal from './modals/nameChangeModal';
 import TicketTransferModal from './modals/ticketTransferModal';
 import { fetcher } from  "@lib/fetchers";
+import { guaranteeTimestampFromDate } from "@lib/useful";
 
 const accessToThings = (access:number[],) => {
   let products = []
@@ -52,7 +53,7 @@ export default function TicketView({ticket_number, email}: {ticket_number: strin
   if(ticket) {
     
     const ticketUsage = ticket.active ? ticket.ticket_used ? `Used @ ${format(ticket.ticket_used,' eee')}` : "Active & Unused" : "Deactivated"
-    const purchaseData = fromUnixTime(ticket.purchase_date)
+    const purchaseDate = fromUnixTime(guaranteeTimestampFromDate(ticket.purchase_date) / 1000)
     const purchasedThings = ticket.line_items ? ticket.line_items.map((item) => {return `${item.description} £${item.amount_total / 100}`}): []
 
     return ( data && <div className="w-full md:flex justify-center items-start gap-3 max-w-full">
@@ -104,7 +105,7 @@ export default function TicketView({ticket_number, email}: {ticket_number: strin
         <div className="rounded-lg shadow-lg bg-richblack-600 border-gray-500 border my-4">
           <h3 className="font-bold uppercase border-b border-gray-500 py-2 px-4">Purchase</h3>
           <div className="p-4">
-            <Info label="Purchased" info={format(purchaseData,'HH:mm do MMMM yyyy ')} options={{size: 'xl'}}/>
+            <Info label="Purchased" info={format(purchaseDate,'HH:mm do MMMM yyyy ')} options={{size: 'xl'}}/>
             <Info label="Bought" info={purchasedThings} options={{size: 'lg'}} />
             { ticket.promo_code ? <Info label="Promo Code" info={ticket.promo_code} /> : null }
             <Info label="Payment Method" info={ticket.status.replace('paid_','')} options={{size: '2xl'}} />

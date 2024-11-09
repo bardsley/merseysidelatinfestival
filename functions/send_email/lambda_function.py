@@ -24,6 +24,32 @@ logger.setLevel("INFO")
 logging.basicConfig()
 
 sendgrid_api_key = os.environ.get("SENDGRID_API_KEY")
+
+def group_rec(data):
+    '''
+    Expects in data: email, group_id, [ticket_number]
+    '''
+    has_ticket = True if "ticket_number" in data else False
+
+    body_text = "you can join by changing your preferences with the link below." if has_ticket \
+        else "but when you purchase your ticket which includes dinner you will have the choice to enter a group code."
+    
+    subdomain = "www" if os.environ.get("STAGE_NAME") == "prod" else os.environ.get("STAGE_NAME")
+    ticket_link = "http://{}.merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(subdomain,data['email'], data['ticket_number']) if has_ticket \
+        else "https://{}.merseysidelatinfestival.co.uk/tickets".format(subdomain)
+    
+    button_text = "MANAGE YOUR TICKET" if has_ticket else "BUY YOUR TICKET"
+
+    with open("./send_email/group_body.html", 'r') as group_body_file:
+        group_tmpl = Template(group_body_file.read())
+        group_body = group_tmpl.substitute({
+            'body_text' : body_text, 
+            'group_code' : data['group_id'], 
+            'ticket_link': ticket_link,
+            'button_text': button_text, 
+            'rec_name': data['name']
+        }) 
+    return group_body
     
 def generate_standard_ticket_body(data):
     rows = ""
@@ -49,14 +75,52 @@ def generate_standard_ticket_body(data):
     
     with open("./send_email/ticket_body.html", "r") as body_file:
         body_tmpl = Template(body_file.read())
+        subdomain = "www" if os.environ.get("STAGE_NAME") == "prod" else os.environ.get("STAGE_NAME")
         body = body_tmpl.substitute({
             'fullname':data['name'], 
             'email':data['email'], 
             'ticketnumber':data['ticket_number'], 
             'rows':rows, 
-            'ticket_link':"http://app.merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(data['email'], data['ticket_number']), 
+            'ticket_link':"http://{}.merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(subdomain,data['email'], data['ticket_number']), 
             'total_row':total_row,
             'heading_message':data['heading_message'],
+        })   
+    return body
+
+def generate_meal_upgrade_ticket_body(data):
+    rows = ""
+    total_amount = 0
+    # generate table of items purchased
+    for i in data['line_items']:
+        with open("./send_email/ticket_row.html", 'r') as line_item_row_file:
+            line_item_tmpl = Template(line_item_row_file.read())
+            rows = rows+"\n"+line_item_tmpl.substitute({
+                'tickettype':i['description'], 
+                'qty':1, 
+                'price':babel.numbers.format_currency(int(i['amount_total'])/100, "GBP", locale='en_UK')
+            })
+            total_amount += int(i['amount_total'])
+    # create total row
+    with open("./send_email/ticket_row.html", 'r') as total_row_file:
+        total_tmpl = Template(total_row_file.read())
+        total_row = total_tmpl.substitute({
+            'tickettype':"", 
+            'qty':"<strong>Total</strong>", 
+            'price':"<strong>"+babel.numbers.format_currency(total_amount/100, "GBP", locale='en_UK')+"</strong>"
+        })
+    
+    with open("./send_email/meal_upgrade_ticket_body.html", "r") as body_file:
+        body_tmpl = Template(body_file.read())
+        subdomain = "www" if os.environ.get("STAGE_NAME") == "prod" else os.environ.get("STAGE_NAME")
+        body = body_tmpl.substitute({
+            'fullname':data['name'], 
+            'email':data['email'], 
+            'ticketnumber':data['ticket_number'], 
+            'rows':rows, 
+            'ticket_link':"http://{}.merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(subdomain,data['email'], data['ticket_number']), 
+            'total_row':total_row,
+            'heading_message':data['heading_message'],
+            'upgrade_link': data.get('meal_link', ''),
         })   
     return body
 
@@ -76,12 +140,14 @@ def lambda_handler(event, context):
     logger.info(event)
 
     if event['email_type'] == "standard_ticket":
+        #! check has the expected information in event
         attachment = gen_ticket_qr(event['ticket_number'])
 
         logger.info("Generate the body of the email")
         body = generate_standard_ticket_body(event)
         subject = 'Merseyside Latin Festival Ticket Confirmation'
     elif event['email_type'] == "transfer_ticket":
+        #! check has the expected information in event
         # generate as usual the ticket body
         attachment = gen_ticket_qr(event['ticket_number'])
 
@@ -99,6 +165,53 @@ def lambda_handler(event, context):
 
         body += transfer_content
         subject = 'Merseyside Latin Festival Ticket Transfer'
+    elif event['email_type'] == "group_rec":
+        body = group_rec(event)
+
+        subject = "Merseyside Latin Festival Group Recommendation"
+        attachment = None
+    elif event['email_type'] == "meal_reminder":
+        if 'subject' in event:
+            subject = event['subject']
+        else:
+            subject = "MLF - Choose Your Meal"
+
+        deadline_date = "2nd November"
+        with open("./send_email/meal_body.html", "r") as body_file:
+            body_tmpl = Template(body_file.read())
+            subdomain = "www" if os.environ.get("STAGE_NAME") == "prod" else os.environ.get("STAGE_NAME")
+            body = body_tmpl.substitute({
+                'deadline_date':deadline_date, 
+                'ticket_link':"http://{}.merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(subdomain, event['email'], event['ticket_number']), 
+            })
+            attachment = None
+    elif event['email_type'] == "basic_message":
+        body        = event['message_body']
+        subject     = event['subject']
+        attachment  = None
+
+    elif event['email_type'] == "ticket_upgrade_notification":
+
+        subject = "Merseyside Latin Festival - Ticket Upgrade Confirmation"
+        subdomain = "www" if os.environ.get("STAGE_NAME") == "prod" else os.environ.get("STAGE_NAME")
+        manage_ticket_link = "http://{}.merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(subdomain, event['email'], event['ticket_number'])
+        
+        upgrade_details = "Your ticket has been upgraded to include: {}".format(event['upgrade_details'].replace("_", " "))
+
+        with open("./send_email/upgrade_notification.html", "r") as body_file:
+            body_tmpl = Template(body_file.read())
+            subdomain = "www" if os.environ.get("STAGE_NAME") == "prod" else os.environ.get("STAGE_NAME")
+            body = body_tmpl.substitute({
+                'upgrade_details': upgrade_details, 
+                'ticket_link':manage_ticket_link, 
+            })
+            attachment = None
+    elif event['email_type'] == "meal_upgrade_ticket":
+        attachment = gen_ticket_qr(event['ticket_number'])
+
+        logger.info("Generate the body of the email")
+        body = generate_meal_upgrade_ticket_body(event)
+        subject = 'Your Pass - Merseyside Latin Festival'            
     else:
         return False
 
@@ -111,14 +224,15 @@ def lambda_handler(event, context):
     # Generate the sendgrid message
     logger.info("Create the Mail object")
     message = Mail(
-        from_email='do-not-reply@em4840.merseysidelatinfestival.co.uk',
+        from_email='do-not-reply@email.merseysidelatinfestival.co.uk',
         to_emails=event['email'],
         subject=subject,
         html_content=html_content
         )
     
     logger.info("Adding attachements if any exist")
-    message.attachment = attachment if attachment else None
+    if attachment is not None:
+        message.attachment = attachment
 
     logger.info("Attempting to send email")
     try:
@@ -126,5 +240,5 @@ def lambda_handler(event, context):
         response = sg.send(message)
         return "Success"
     except Exception as e:
-        print(e.message)
+        print(e)
         return e

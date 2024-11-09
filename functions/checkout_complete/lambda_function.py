@@ -43,18 +43,37 @@ lambda_client = boto3.client('lambda')
 # parts of the fetival.
 # [Fri-Party, Sat-Class, Sat-Din, Sat-Party, Sun-Class, Sun-Party]
 # Will also return a string of the passes the person has purchased.
-def process_line_items(line_items):
+def process_line_items(line_items, stripe_response):
     access = [0,0,0,0,0,0]
     line_items_return = []
     for item in line_items['data']:
-        access_metadata = json.loads(item['price']['product']['metadata']['access'])
-        access = [sum(i) for i in zip(access, access_metadata)]
+        try:
+            access_metadata = json.loads(item['price']['product']['metadata']['access'])
+            access = [sum(i) for i in zip(access, access_metadata)]
+        except (KeyError, json.JSONDecodeError, TypeError):
+            logger.warning("Access metadata not available or invalid for item: %s", item)
+            access = None
+            break
 
         line_items_return.append({
                 'prod_id':item['price']['product']['id'],
                 'price_id':item['price']['id'],
                 'description':item['description'],
                 'amount_total':item['amount_total']
+            })
+
+    if 'total_details' in stripe_response and 'breakdown' in stripe_response['total_details']:
+        discounts = stripe_response['total_details']['breakdown'].get('discounts', [])
+        for discount in discounts:
+            discount_data = discount['discount']
+            coupon = discount_data.get('coupon', {})
+            line_items_return.append({
+                'amount_total': discount['amount'],
+                'description': 'discount',
+                'discount_id': discount_data.get('id', 'unknown'),
+                'coupon_id': coupon.get('id', 'unknown'),
+                'coupon_name': coupon.get('name', 'unknown'),
+                'promotion_code': discount_data.get('promotion_code', 'unknown')
             })
 
     return access, line_items_return
@@ -75,7 +94,7 @@ def lambda_handler(event, context):
         logger.info("Retrieve Stripe checkout session")
         try:
             #! Should check if already processed that checkout session ID first, i.e. is it in the DynamoDB
-            stripe_response = stripe.checkout.Session.retrieve(CHECKOUT_SESSION_ID, expand=['line_items', 'line_items.data.price.product'])
+            stripe_response = stripe.checkout.Session.retrieve(CHECKOUT_SESSION_ID, expand=['line_items', 'line_items.data.price.product', 'total_details.breakdown.discounts'])
             logger.info(stripe_response)
         except (stripe.error.InvalidRequestError) as e:
             logger.error(e)
@@ -84,7 +103,32 @@ def lambda_handler(event, context):
                 'body': json.dumps({'error': 'Checkout session does not exist'})
             }
 
-        access, line_items = process_line_items(stripe_response['line_items'])
+        if stripe_response['metadata'].get('ticket_upgrade', False):
+            ticket_number = stripe_response.get('client_reference_id', None)
+            full_name = next((item for item in stripe_response['custom_fields'] if item["key"] == "fullname"), {}).get('text', {}).get('value', "unknown")
+            access, line_items = process_line_items(stripe_response['line_items'], stripe_response)
+
+            payload = {
+                    'ticket_number': ticket_number,
+                    'source': "stripe_checkout",
+                    'upgrade_type': stripe_response['metadata'].get('upgrade_type', 'unknown'),
+                    'full_name': full_name,
+                    'line_items': line_items
+                    }
+
+            # upgrade the ticket
+            logger.info("Invoking ticket_upgrade lambda")
+            response = lambda_client.invoke(
+                FunctionName=os.environ.get("TICKET_UPGRADE_LAMBDA"),
+                InvocationType='Event',
+                Payload=json.dumps(payload, cls=shared.DecimalEncoder),
+                )
+            logger.info(response)  
+            
+            return {'statusCode':200}
+                                
+
+        access, line_items = process_line_items(stripe_response['line_items'], stripe_response)
         student_ticket = True if stripe_response['line_items']['data'][0]['price']['nickname' ] == "student_active" else False
         meal = json.loads(stripe_response['metadata']['preferences']) if 'preferences' in stripe_response['metadata'] else None
 
@@ -94,12 +138,7 @@ def lambda_handler(event, context):
         email     = stripe_response['customer_email']
         phone     = ateendee_details['phone']
 
-        # Create the ticket
-        logger.info("Invoking create_ticket lambda")
-        response = lambda_client.invoke(
-            FunctionName=os.environ.get("CREATE_TICKET_LAMBDA"),
-            InvocationType='Event',
-            Payload=json.dumps({
+        payload = {
                 'email': email,      
                 'full_name': full_name,
                 'phone':phone,
@@ -114,7 +153,17 @@ def lambda_handler(event, context):
                 'schedule': None,
                 'heading_message':"THANK YOU FOR YOUR PURCHASE!",
                 'send_standard_ticket': True,
-                },cls=shared.DecimalEncoder),
+                }
+        
+        if 'group' in stripe_response['metadata']:
+            payload['group'] = stripe_response['metadata']['group']
+
+        # Create the ticket
+        logger.info("Invoking create_ticket lambda")
+        response = lambda_client.invoke(
+            FunctionName=os.environ.get("CREATE_TICKET_LAMBDA"),
+            InvocationType='Event',
+            Payload=json.dumps(payload, cls=shared.DecimalEncoder),
             )
         logger.info(response)
             

@@ -3,7 +3,7 @@ import json
 # from gdrivewrite import update_gs
 # from sendmail import sendemail
 from random import randint
-import datetime
+import time
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 from decimal import Decimal
@@ -52,6 +52,25 @@ def get_ticket_number(email, student_ticket):
 def update_ddb(Item):
     table.put_item(Item=Item)
     return True
+
+def add_group(ticket_number, email, name, group_id, timestamp, recs):
+    logger.info("Invoking group lambda")
+    response = lambda_client.invoke(
+        FunctionName=os.environ.get("ATTENDEE_GROUPS_LAMBDA"),
+        InvocationType='Event',
+        Payload=json.dumps({
+                'requestContext':{'http': {'method': "POST"}},
+                'body': json.dumps({
+                    'ticket_number':ticket_number, 
+                    'email':email,
+                    'full_name': name,
+                    'group_id':group_id, 
+                    'timestamp': timestamp,
+                    'recs': recs,
+                })
+            }, cls=shared.DecimalEncoder),
+        )
+    logger.info(response)    
 
 # Main function to handle the event
 def lambda_handler(event, context):
@@ -114,6 +133,12 @@ def lambda_handler(event, context):
     }
     update_ddb = table.put_item(Item=Item)
     logger.info(update_ddb)
+
+    if ('group' in event):
+        group = json.loads(event['group']) if type(event['group']) != dict else event['group']
+        recs = group['recommendations'] if 'recommendations' in group else None
+        if group['id'] != "":
+            add_group(ticket_number, email, event['full_name'], group['id'], time.time(), recs)
     
     if ('send_standard_ticket' in event):
         if event['send_standard_ticket']:

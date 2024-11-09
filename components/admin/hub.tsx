@@ -1,5 +1,6 @@
 'use client'
 import { useUser } from "@clerk/clerk-react";
+import { authUsage } from "@lib/authorise";
 import { admin_ticketing_url } from "@lib/urls";
 
 import {
@@ -9,7 +10,8 @@ import {
   // CalendarDaysIcon,
   ShoppingCartIcon,
   CakeIcon,
-  LightBulbIcon
+  LightBulbIcon,
+  FolderPlusIcon,
 } from '@heroicons/react/24/solid'
 
 const actions = [
@@ -68,8 +70,8 @@ const actions = [
     state: 'live',
   },
   {
-    title: 'Dining Information',
-    href: '#',
+    title: 'Meal Information',
+    href: '/admin/meal',
     description: "Meal information and seating plans",
     icon: CakeIcon,
     iconForeground: 'text-green-800',
@@ -85,6 +87,15 @@ const actions = [
     iconBackground: 'bg-green-200',
     state: 'unreleased',
   },
+  {
+    title: 'Import',
+    href: '/admin/import',
+    description: "Import tickets from csv",
+    icon: FolderPlusIcon,
+    iconForeground: 'text-green-800',
+    iconBackground: 'bg-green-200',
+    state: 'unreleased',
+  },
 ]
 
 function classNames(...classes) {
@@ -94,11 +105,10 @@ function classNames(...classes) {
 export default function Hub() {
   const { user, isLoaded } = useUser();
   if (!isLoaded) { return <div>Loading</div> }
-  if (!user) { return <div>Not logged in</div> }
-  
+  if (!user) { return <div>Not logged in</div> }     
   return user.publicMetadata.admin ? (
     <div className="divide-x divide-richblack-700 border border-richblack-700 overflow-hidden rounded-lg shadow sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 sm:gap-px  text-white mt-6">
-      {actions.map((action, actionIdx) => (
+      {actions.filter((action) => authUsage(user,action.href)).map((action, actionIdx) => (
         <div
           key={action.title}
           className={classNames( //TODO this is an absolute shitshow and need better working, shame on tailwind components
