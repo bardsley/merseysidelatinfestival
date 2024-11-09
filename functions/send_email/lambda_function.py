@@ -224,7 +224,7 @@ def lambda_handler(event, context):
     # Generate the sendgrid message
     logger.info("Create the Mail object")
     message = Mail(
-        from_email='do-not-reply@em4840.merseysidelatinfestival.co.uk',
+        from_email='do-not-reply@email.merseysidelatinfestival.co.uk',
         to_emails=event['email'],
         subject=subject,
         html_content=html_content
