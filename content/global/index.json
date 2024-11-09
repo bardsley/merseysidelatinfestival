@@ -29,8 +29,8 @@
       },
       {
         "href": "artists",
-        "label": "Artist",
-        "visible": false
+        "label": "Artists",
+        "visible": true
       }
     ]
   },
