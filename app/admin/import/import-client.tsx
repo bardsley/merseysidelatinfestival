@@ -38,7 +38,8 @@ const emailOptions = [
 export const optionsDefault = {
   sendTicketEmails: 'none',
   sendMealUpgrade: null,
-
+  giveDiscount: false,  
+  discountCode: '',
 }
 
 export default function ImportPageClient() {
@@ -175,6 +176,20 @@ export default function ImportPageClient() {
     setIsEditingIndex(null)
     setAttendeesData(reindexedAttendees)
   }; 
+
+  const handleOptionChange = (key: string, value: any) => {
+    setOptions(prevOptions => ({ ...prevOptions, [key]: value }));
+  };
+
+  const handleGiveDiscountChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value === 'true';
+    handleOptionChange('giveDiscount', value);
+    if (value) {
+      handleOptionChange('discountCode', 'VOLUNTEER');
+    } else {
+      handleOptionChange('discountCode', '');
+    }
+  };  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -326,7 +341,7 @@ export default function ImportPageClient() {
                   <select
                     name="sendTicketEmails"
                     value={options.sendTicketEmails}
-                    onChange={(e) => setOptions({ ...options, sendTicketEmails: e.target.value })}
+                    onChange={(e) => handleOptionChange('sendTicketEmails', e.target.value)}
                     className="ml-2 block w-2/3 rounded-md border-gray-300 shadow-sm text-gray-800 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     {emailOptions.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -355,8 +370,34 @@ export default function ImportPageClient() {
                       <option value="false">No</option>
                       <option value="true">Yes</option>
                     </select>
-                  </div>
+                  </div>                  
                 </div>
+                
+                {options.sendMealUpgrade && (
+                  <div className="flex justify-between items-center mb-4">
+                    <label className="text-sm font-medium text-gray-300">Give Discount</label>
+                    <select
+                      name="giveDiscount"
+                      value={options.giveDiscount.toString()}
+                      onChange={handleGiveDiscountChange}
+                      className="ml-2 block w-2/3 rounded-md border-gray-300 shadow-sm text-gray-800 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                      <option value="false">No</option>
+                      <option value="true">Yes</option>
+                    </select>
+                  </div>
+                )}
+                  {options.giveDiscount && (
+                    <div className="flex justify-between items-center mb-4">
+                      <label className="text-sm font-medium text-gray-300">Discount Code</label>
+                      <input
+                        type="text"
+                        name="discountCode"
+                        value={options.discountCode}
+                        onChange={(e) => handleOptionChange('discountCode', e.target.value)}
+                        className="ml-2 block w-2/3 rounded-md border-gray-300 shadow-sm text-gray-800 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                      />
+                    </div>
+                  )}                
 
                 <button onClick={handleSubmit} className="py-3 px-6 mt-3 float-right bg-chillired-500 rounded-lg block">
                   Submit
