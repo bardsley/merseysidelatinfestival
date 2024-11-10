@@ -23,7 +23,8 @@ event_table = db.Table(event_table_name)
 lambda_client = boto3.client('lambda')
 
 UPGRADE_MAP = {
-    'volunteer_meal': [2]
+    'volunteer_meal': [2],
+    'Gala_Dinner': [2]
 }
 
 def record_failed_upgrade(event, reason):
