@@ -9,10 +9,31 @@ def parse_event(event):
     Parses the input event and ensures it is returned as a dictionary.
     '''
     try:
-        # Check if event is a dictionary with a 'body' (HTTP POST case)
+        # Check if event is a dictionary with a 'body' (HTTP request case)
         if isinstance(event, dict) and 'body' in event:
             logger.info("Parsing event from HTTP POST request body")
-            event = json.loads(event['body'])
+            
+            # Store the requestContext if it exists
+            request_context = event.get('requestContext')
+
+            try:
+                # Attempt to parse the body as JSON
+                event_body = json.loads(event['body'])
+            except json.JSONDecodeError:
+                logger.warning("Failed to parse event['body'] as JSON. Checking if it is already a dictionary.")
+                # Check if the body is already a dictionary
+                if isinstance(event['body'], dict):
+                    event_body = event['body']
+                else:
+                    logger.error("event['body'] is neither valid JSON nor a dictionary")
+                    raise ValueError("Invalid event body format. Must be JSON string or dictionary.")
+
+            # Use the parsed or existing dictionary body
+            event = event_body
+
+            # Add requestContext back into the event if it exists
+            if request_context:
+                event['requestContext'] = request_context
 
         # Check if event is a JSON string
         elif isinstance(event, str):
@@ -29,6 +50,7 @@ def parse_event(event):
         raise ValueError("Invalid event format or JSON structure")
 
     return event
+
 
 def validate_event(event, required_fields):
     '''

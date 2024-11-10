@@ -580,3 +580,27 @@ functions:
       - httpApi:
           path: /ticket_upgrade
           method: post
+
+#--------------------
+
+  TicketActive:
+    runtime: python3.11
+    handler: ticket_active/lambda_function.lambda_handler
+    name: "${sls:stage}-ticket_active"
+    package:
+      patterns:
+        - '!**/**'
+        - "ticket_active/**"
+        - "shared/**"
+    environment:
+      STAGE_NAME: ${sls:stage}
+      EVENT_TABLE_NAME: ${param:eventTableName}
+      ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+      SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
+    events:
+      - httpApi:
+          path: /ticket/activate
+          method: post
+      - httpApi:
+          path: /ticket/deactivate
+          method: post
