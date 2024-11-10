@@ -349,8 +349,10 @@ functions:
         - "shared/**"
     environment:
       STAGE_NAME: ${sls:stage}
+      FROM_EMAIL: ${param:fromEmail}
       SENDGRID_API_KEY: ${param:sendgridApiKey}
       SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
+      MAILDEV_IP: "3.254.106.153"
     layers:
       - !Ref SendmailLambdaLayer
 

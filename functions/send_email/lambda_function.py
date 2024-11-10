@@ -9,6 +9,11 @@ else:
     # Handle target environment that doesn't support HTTPS verification
     ssl._create_default_https_context = _create_unverified_https_context
 
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
 from string import Template
 import base64
 import sendgrid
@@ -23,7 +28,86 @@ logger = logging.getLogger()
 logger.setLevel("INFO")
 logging.basicConfig()
 
+#ENV
+stage_name = os.environ.get("STAGE_NAME")
 sendgrid_api_key = os.environ.get("SENDGRID_API_KEY")
+maildev_ip = os.environ.get("MAILDEV_IP", "localhost")
+from_email = os.environ.get("FROM_EMAIL", "do-not-reply@email.merseysidelatinfestival.co.uk")
+
+def send_email_sendgrid(from_email, to_email, subject, html_content, qr_ticket=None):
+    '''    
+    Send email using SendGrid
+    '''
+    logger.info("Create the Mail object")
+    message = Mail(
+        from_email=from_email,
+        to_emails=to_email,
+        subject=subject,
+        html_content=html_content
+    )
+    
+    logger.info("Adding qr_ticket if any exist")
+    if qr_ticket is not None:
+        attachment = Attachment(
+            FileContent(qr_ticket),
+            FileName('qrticket.jpg'),
+            FileType('image/jpeg'),
+            Disposition('inline'),
+            ContentId('qr-ticket')
+        )
+        message.add_attachment(attachment)
+
+    logger.info("Attempting to send email via SendGrid")
+    try:
+        sg = sendgrid.SendGridAPIClient(api_key=sendgrid_api_key)
+        response = sg.send(message)
+        return "Success"
+    except Exception as e:
+        print(e)
+        return e
+    
+def send_email_preview(from_email, to_email, subject, html_content, qr_ticket=None):
+    '''    
+    Send email in preview mode
+    '''    
+    logger.info("Creating the email for preview")
+
+    port = 1025
+    smtp_server = maildev_ip
+    login = "987p6absdkjl"
+    password = "875sadv&oa8s7td"
+
+    # Create a multipart message and set headers
+    message = MIMEMultipart("alternative")
+    message["From"] = from_email
+    message["To"] = to_email
+    message["Subject"] = subject
+
+    # Attach the HTML content
+    message.attach(MIMEText(html_content, "html"))
+
+    if qr_ticket is not None:
+        logger.info("Adding attachment to preview email")
+        mime_base = MIMEBase("application", "octet-stream")
+        mime_base.set_payload(qr_ticket)
+        encoders.encode_base64(mime_base)
+
+        mime_base.add_header(
+            "Content-Disposition",
+            f"attachment; filename=qrticket.jpg",
+        )
+        message.attach(mime_base)
+
+    # Send the email using smtplib
+    try:
+        with smtplib.SMTP(smtp_server, port) as server:
+            server.login(login, password)
+            server.sendmail(from_email, to_email, message.as_string())
+        logger.info("Email sent successfully in preview")
+        return "Preview Success"
+    except Exception as e:
+        logger.error("Failed to send email in preview: %s", e)
+        return e
 
 def group_rec(data):
     '''
@@ -34,7 +118,7 @@ def group_rec(data):
     body_text = "you can join by changing your preferences with the link below." if has_ticket \
         else "but when you purchase your ticket which includes dinner you will have the choice to enter a group code."
     
-    subdomain = "www" if os.environ.get("STAGE_NAME") == "prod" else os.environ.get("STAGE_NAME")
+    subdomain = "www" if stage_name == "prod" else stage_name
     ticket_link = "http://{}.merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(subdomain,data['email'], data['ticket_number']) if has_ticket \
         else "https://{}.merseysidelatinfestival.co.uk/tickets".format(subdomain)
     
@@ -75,7 +159,7 @@ def generate_standard_ticket_body(data):
     
     with open("./send_email/ticket_body.html", "r") as body_file:
         body_tmpl = Template(body_file.read())
-        subdomain = "www" if os.environ.get("STAGE_NAME") == "prod" else os.environ.get("STAGE_NAME")
+        subdomain = "www" if stage_name == "prod" else stage_name
         body = body_tmpl.substitute({
             'fullname':data['name'], 
             'email':data['email'], 
@@ -111,7 +195,7 @@ def generate_meal_upgrade_ticket_body(data):
     
     with open("./send_email/meal_upgrade_ticket_body.html", "r") as body_file:
         body_tmpl = Template(body_file.read())
-        subdomain = "www" if os.environ.get("STAGE_NAME") == "prod" else os.environ.get("STAGE_NAME")
+        subdomain = "www" if stage_name == "prod" else stage_name
         body = body_tmpl.substitute({
             'fullname':data['name'], 
             'email':data['email'], 
@@ -133,7 +217,7 @@ def gen_ticket_qr(ticket_number):
     qr_ticket.save(qr_byte_arr)
     qr_byte_arr = qr_byte_arr.getvalue()
     encoded = base64.b64encode(qr_byte_arr).decode()
-    return Attachment(FileContent(encoded),FileName('qrticket.jpg'), FileType('image/jpeg'), Disposition('inline'), ContentId('qr-ticket'))   
+    return encoded
 
 def lambda_handler(event, context):
     
@@ -141,7 +225,7 @@ def lambda_handler(event, context):
 
     if event['email_type'] == "standard_ticket":
         #! check has the expected information in event
-        attachment = gen_ticket_qr(event['ticket_number'])
+        qr_ticket = gen_ticket_qr(event['ticket_number'])
 
         logger.info("Generate the body of the email")
         body = generate_standard_ticket_body(event)
@@ -149,7 +233,7 @@ def lambda_handler(event, context):
     elif event['email_type'] == "transfer_ticket":
         #! check has the expected information in event
         # generate as usual the ticket body
-        attachment = gen_ticket_qr(event['ticket_number'])
+        qr_ticket = gen_ticket_qr(event['ticket_number'])
 
         logger.info("Generate the body of the email")
         body = generate_standard_ticket_body(event)
@@ -169,7 +253,7 @@ def lambda_handler(event, context):
         body = group_rec(event)
 
         subject = "Merseyside Latin Festival Group Recommendation"
-        attachment = None
+        qr_ticket = None
     elif event['email_type'] == "meal_reminder":
         if 'subject' in event:
             subject = event['subject']
@@ -179,35 +263,35 @@ def lambda_handler(event, context):
         deadline_date = "2nd November"
         with open("./send_email/meal_body.html", "r") as body_file:
             body_tmpl = Template(body_file.read())
-            subdomain = "www" if os.environ.get("STAGE_NAME") == "prod" else os.environ.get("STAGE_NAME")
+            subdomain = "www" if stage_name == "prod" else stage_name
             body = body_tmpl.substitute({
                 'deadline_date':deadline_date, 
                 'ticket_link':"http://{}.merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(subdomain, event['email'], event['ticket_number']), 
             })
-            attachment = None
+            qr_ticket = None
     elif event['email_type'] == "basic_message":
         body        = event['message_body']
         subject     = event['subject']
-        attachment  = None
+        qr_ticket  = None
 
     elif event['email_type'] == "ticket_upgrade_notification":
 
         subject = "Merseyside Latin Festival - Ticket Upgrade Confirmation"
-        subdomain = "www" if os.environ.get("STAGE_NAME") == "prod" else os.environ.get("STAGE_NAME")
+        subdomain = "www" if stage_name == "prod" else stage_name
         manage_ticket_link = "http://{}.merseysidelatinfestival.co.uk/preferences?email={}&ticket_number={}".format(subdomain, event['email'], event['ticket_number'])
         
         upgrade_details = "Your ticket has been upgraded to include: {}".format(event['upgrade_details'].replace("_", " "))
 
         with open("./send_email/upgrade_notification.html", "r") as body_file:
             body_tmpl = Template(body_file.read())
-            subdomain = "www" if os.environ.get("STAGE_NAME") == "prod" else os.environ.get("STAGE_NAME")
+            subdomain = "www" if stage_name == "prod" else stage_name
             body = body_tmpl.substitute({
                 'upgrade_details': upgrade_details, 
                 'ticket_link':manage_ticket_link, 
             })
-            attachment = None
+            qr_ticket = None
     elif event['email_type'] == "meal_upgrade_ticket":
-        attachment = gen_ticket_qr(event['ticket_number'])
+        qr_ticket = gen_ticket_qr(event['ticket_number'])
 
         logger.info("Generate the body of the email")
         body = generate_meal_upgrade_ticket_body(event)
@@ -221,24 +305,9 @@ def lambda_handler(event, context):
         header_footer_tmpl = Template(header_footer_file.read())
         html_content = header_footer_tmpl.substitute({'body':body})
 
-    # Generate the sendgrid message
-    logger.info("Create the Mail object")
-    message = Mail(
-        from_email='do-not-reply@email.merseysidelatinfestival.co.uk',
-        to_emails=event['email'],
-        subject=subject,
-        html_content=html_content
-        )
+    to_email = event['email']
     
-    logger.info("Adding attachements if any exist")
-    if attachment is not None:
-        message.attachment = attachment
-
-    logger.info("Attempting to send email")
-    try:
-        sg = sendgrid.SendGridAPIClient(api_key=sendgrid_api_key)
-        response = sg.send(message)
-        return "Success"
-    except Exception as e:
-        print(e)
-        return e
+    if stage_name == "preview":
+        return send_email_preview(from_email, to_email, subject, html_content, qr_ticket)
+    else:
+        return send_email_sendgrid(from_email, to_email, subject, html_content, qr_ticket)
