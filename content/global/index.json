@@ -8,6 +8,11 @@
     "color": "primary",
     "nav": [
       {
+        "href": "schedule",
+        "label": "Schedule",
+        "visible": true
+      },
+      {
         "href": "home",
         "label": "Home",
         "visible": true
