@@ -2,7 +2,7 @@
 import { format,parseISO, getUnixTime } from "date-fns";
 import Link from "next/link";
 import Image from "next/image";
-import React from "react";
+import React, {Fragment} from "react";
 import { useLayout } from "@components/layout/layout-context";
 import { BsArrowRight } from "react-icons/bs";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
@@ -28,7 +28,7 @@ interface ClientClassProps {
   query: string;
 }
 
-export default function PostsClientPage(props: ClientClassProps) {
+export default function TimetableClientPage(props: ClientClassProps) {
   const { data } = useTina({ ...props });
   const classesUnordered = data?.classConnection.edges.map((item)=> item.node)
   const classesOrganised = classesUnordered.reduce((organised,current) => { 
@@ -39,6 +39,7 @@ export default function PostsClientPage(props: ClientClassProps) {
       title: current.title,
       date: timeSlot,
       location: current.location,
+      level: current.level || "unknown",
       artist: current.artist ? { 
         name: current.artist.name,
         avatar: current.artist.avatar ? current.artist.avatar : null,
@@ -54,35 +55,37 @@ export default function PostsClientPage(props: ClientClassProps) {
   const locations = ["ballroom","derby","sefton","hypostyle","terrace"]
   const days = Object.keys(classesOrganised).sort()
   // const timeSlots = days.map((day) => Object.keys(classesOrganised[day]) )
-  return <>
+  return <Fragment key="single">
     
     <div className="grid grid-cols-5 text-white p-8 gap-1">
     {days.map((day) => {
-        return (<>
+        return (<Fragment key={day}>
           <h1 className="col-span-5 text-5xl font-bold uppercase" key={day}>{day}</h1>
           {locations.map((location)=>{
             return <span className="bg-richblack-700 p-4 text-center font-bold uppercase border-b-2 border-b-white" key={`${day}-${location}`}>{location}</span>
           })}
           {Object.keys(classesOrganised[day]).map((timeSlot) => {
-            return <>
+            return <Fragment key={timeSlot}>
               {locations.map((location) => {
                 const clasS = classesOrganised[day][timeSlot][location] || false
                 return clasS ? <Link href={clasS?.artist?.url || '#'} key={`${clasS.date}-${location}`} 
                   className=" bg-richblack-700 p-4">
                   <h2 className="text-xl font-bold">{clasS.title}</h2>
                   <p>{clasS.artist.name}</p>
+                  {clasS.level}
+                  {JSON.stringify(clasS,null,2)}
                   {/* {`${timeSlot} ${location}`} */}
-                </Link> : <div key={`${timeSlot} ${location}`}></div>
+                </Link> : <div key={`${timeSlot}-${location}`}></div>
               })}
-            </>
+            </Fragment>
           })}
-        </>
+        </Fragment>
         )
 
       })}
     </div>
-    {/* <pre className="text-white">{JSON.stringify(locations,null,2)} {JSON.stringify(days, null,2)}  {JSON.stringify(classesOrganised,null,2)}</pre> */}
-  </>
+    <pre className="text-white">{JSON.stringify(locations,null,2)} {JSON.stringify(days, null,2)}  {JSON.stringify(classesOrganised,null,2)}</pre>
+  </Fragment>
 
   // return (
   //   <div className="grid grid-cols-5 grid-flow-col">
