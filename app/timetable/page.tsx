@@ -22,10 +22,11 @@ export default async function TimetablePage() {
 
   return (
     <Layout rawPageData={classes}>
-      <pre className="text-white">
-        {JSON.stringify(classes.data?.classConnection.edges.map((cla)=>{ return `${cla.node.title} ${cla.node.location} ${cla.node.date}`}),null,2)}
-      </pre>
+     
       <TimetableClientPage {...classes} />
+      {/* <pre className="text-white">
+        {JSON.stringify(classes.data?.classConnection.edges.map((cla)=>{ return `${cla.node.title} ${cla.node.location} ${cla.node.date}`}),null,2)}
+      </pre> */}
 
     </Layout>
   );
