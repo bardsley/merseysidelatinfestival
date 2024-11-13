@@ -30,7 +30,7 @@ const ScanClient = () => {
       ? <QrReader active={scannerActive} updateFunction={(value) => {setScannedResult(value)}}></QrReader> 
       : <FakeScanner/> }
       { scannerActive 
-        ? <div>Scanning... {scannedResult}</div> 
+        ? <div>Scanner Active {scannedResult}</div> 
         : <ScanSuccessDialog scan={scannedResult} onClick={() => {setScannerActive(true), setScannedResult('')}} />
       }
     </div>

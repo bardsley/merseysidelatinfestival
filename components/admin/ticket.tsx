@@ -109,6 +109,8 @@ export default function TicketView({ticket_number, email}: {ticket_number: strin
             <Info label="Bought" info={purchasedThings} options={{size: 'lg'}} />
             { ticket.promo_code ? <Info label="Promo Code" info={ticket.promo_code} /> : null }
             <Info label="Payment Method" info={ticket.status.replace('paid_','')} options={{size: '2xl'}} />
+            <Info label="Preferences Link" info={`https://www.merseysidelatinfestival.co.uk/preferences?email=${ticket.email.replace("@","%40")}&ticket_number=${ticket.ticket_number}`} options={{size: 'md'}}/>
+            <Info label="Upgrade to Meal Link" info={`https://buy.stripe.com/bIY5oq0ZC6zPbFmeV6?client_reference_id=${ticket.ticket_number}`} options={{size: 'md'}}/>
           </div>
         </div>
 

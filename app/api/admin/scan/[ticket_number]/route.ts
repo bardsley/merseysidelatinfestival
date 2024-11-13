@@ -5,15 +5,15 @@ import { currentUser } from '@clerk/nextjs/server';
 import { getUnixTime } from 'date-fns';
 
 export async function GET(_req: NextRequest,{params}: {params: {ticket_number: string}}) {
-  const {userId} = auth();
+  const {userId} = await auth();
 
   if(!userId){
-    return Response.json({error: "User is not signed in."}, { status: 401 });
+    return Response.json({error: "User is not signed in to GET."}, { status: 401 });
   }
 
   const user = await currentUser();
   if(!user){
-    return Response.json({error: "User is not signed in!"}, { status: 401 });
+    return Response.json({error: "User is not signed in to GET user details!"}, { status: 401 });
   }
   if(!user.publicMetadata.admin){
     return Response.json({error: "User is does not have list tickets permissions."}, { status: 401 });
@@ -37,10 +37,10 @@ console.log(scanUrl)
 
 export async function POST(req: NextRequest,{params}: {params: {ticket_number: string}}) {
   const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
-  const {userId} = auth();
+  const {userId} = await auth();
 
   if(!userId){
-    return Response.json({error: "User is not signed in."}, { status: 401 });
+    return Response.json({error: "User is not signed in to POST change."}, { status: 401 });
   }
 
   const requestingUser = await clerkClient.users.getUser(userId);
