@@ -6,6 +6,7 @@ import React, {Fragment} from "react";
 // import { useLayout } from "@components/layout/layout-context";
 // import { BsArrowRight } from "react-icons/bs";
 // import { TinaMarkdown } from "tinacms/dist/rich-text";
+import { levels } from "@tina/collection/sessionLevels"
 import {
   ClassConnectionQuery,
   ClassConnectionQueryVariables,
@@ -32,6 +33,7 @@ export default function TimetableClientPage(props: ClientClassProps) {
   const { data } = useTina({ ...props });
   const classesUnordered = data?.classConnection.edges.map((item)=> item.node)
   const classesOrganised = classesUnordered.reduce((organised,current) => { 
+    console.log(current)
     const timeSlot = `${getUnixTime(parseISO(current.date))}-${format(current.date,"HHmm-EEE")}`
     const day = format(current.date,"eeee")
     const locationName  = current.location ? current.location : "unknown"
@@ -57,23 +59,26 @@ export default function TimetableClientPage(props: ClientClassProps) {
   // const timeSlots = days.map((day) => Object.keys(classesOrganised[day]) )
   return <Fragment key="single">
     
-    <div className="grid grid-cols-5 text-white p-8 gap-1">
+    <div className="grid grid-cols-5 text-black p-8 gap-1">
     {days.map((day) => {
         return (<Fragment key={day}>
-          <h1 className="col-span-5 text-5xl font-bold uppercase" key={day}>{day}</h1>
+          <h1 className="col-span-5 text-5xl font-bold uppercase text-white" key={day}>{day}</h1>
           {locations.map((location)=>{
-            return <span className="bg-richblack-700 p-4 text-center font-bold uppercase border-b-2 border-b-white" key={`${day}-${location}`}>{location}</span>
+            return <span className="bg-richblack-700 p-4 text-center text-white font-bold uppercase border-b-2 border-b-white" key={`${day}-${location}`}>{location}</span>
           })}
           {Object.keys(classesOrganised[day]).map((timeSlot) => {
             return <Fragment key={timeSlot}>
               {locations.map((location) => {
                 const clasS = classesOrganised[day][timeSlot][location] || false
+                const level = levels[clasS.level] || false
                 return clasS ? <Link href={clasS?.artist?.url || '#'} key={`${clasS.date}-${location}`} 
-                  className=" bg-richblack-700 p-4">
+                  className={`bg-richblack-700 p-4 ${level ? '' : 'text-white'}`}
+                  style={{backgroundColor: level.colour}}
+                  >
                   <h2 className="text-xl font-bold">{clasS.title}</h2>
                   <p>{clasS.artist.name}</p>
-                  {clasS.level}
-                  {JSON.stringify(clasS,null,2)}
+                  {/* {clasS.level} */}
+                  {/* {JSON.stringify(clasS,null,2)} */}
                   {/* {`${timeSlot} ${location}`} */}
                 </Link> : <div key={`${timeSlot}-${location}`}></div>
               })}
