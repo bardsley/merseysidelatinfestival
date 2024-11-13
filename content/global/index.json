@@ -13,6 +13,21 @@
         "visible": true
       },
       {
+        "href": "tickets",
+        "label": "Tickets",
+        "visible": true
+      },
+      {
+        "href": "schedule",
+        "label": "Schedule",
+        "visible": true
+      },
+      {
+        "href": "artists",
+        "label": "Artists",
+        "visible": true
+      },
+      {
         "href": "meal",
         "label": "Meal",
         "visible": true
@@ -21,16 +36,6 @@
         "href": "accomodation",
         "label": "Hotel",
         "visible": true
-      },
-      {
-        "href": "tickets",
-        "label": "Tickets",
-        "visible": true
-      },
-      {
-        "href": "artists",
-        "label": "Artist",
-        "visible": false
       }
     ]
   },
