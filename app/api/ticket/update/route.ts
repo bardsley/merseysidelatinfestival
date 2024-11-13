@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
 
 export async function POST(req: NextRequest) {
-  const {userId} = auth();
+  const {userId} = await auth();
   
   // Setup context
   const reqData = await req.json();
