@@ -6,7 +6,7 @@ import Stripe from 'stripe';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);  
 
 export async function GET(_req: NextRequest) {
-  const {userId} = auth();
+  const {userId} = await auth();
   const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
   if(!userId){
@@ -22,7 +22,7 @@ export async function GET(_req: NextRequest) {
 
 
 // export async function POST(_req: NextRequest) {
-//   const {userId} = auth();
+//   const {userId} = await auth();
 //   const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
 //   if(!userId){

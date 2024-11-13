@@ -6,7 +6,7 @@ import Stripe from 'stripe';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);  
 
 export async function POST(_req: NextRequest, {params}:{ params: { stripe_id: string, status: string } }) {
-  const {userId} = auth();
+  const {userId} = await auth();
   const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
   if(!userId){

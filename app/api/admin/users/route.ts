@@ -4,7 +4,7 @@ import { NextRequest } from 'next/server';
 
 export async function GET() {
   const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
-  const {userId} = auth();
+  const {userId} = await auth();
 
   if(!userId){
     return Response.json({error: "User is not signed in."}, { status: 401 });
@@ -38,7 +38,7 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
-  const {userId} = auth();
+  const {userId} = await auth();
 
   if(!userId){
     return Response.json({error: "User is not signed in."}, { status: 401 });
