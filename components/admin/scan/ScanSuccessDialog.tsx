@@ -17,10 +17,10 @@ const accessToWristbands = (accesCode: number[], line_items: line_item[]) => {
   const classPass = line_items.filter((li) => { return /Class\sPass/.test(li.description)}).length > 0
   const saturdayPass = line_items.filter((li) => { return /Saturday\sPass/.test(li.description) }).length > 0
   const sundayPass = line_items.filter((li) => { return /Sunday\sPass/.test(li.description) }).length > 0
-  const saturdayClass = line_items.filter((li) => { return /Saturday\s\-\sClass/.test(li.description) }).length > 0
-  const saturdayParty = line_items.filter((li) => { return /Saturday\s\-\sParty/.test(li.description) || /Dine\sand\sDance\sPass/.test(li.description) }).length > 0
-  const sundayClass = line_items.filter((li) => { return /Sunday\s\-\sClass/.test(li.description) }).length > 0
-  const sundayParty = line_items.filter((li) => { return /Sunday\s\-\sParty/.test(li.description) }).length > 0
+  const saturdayClass = line_items.filter((li) => { return /Saturday\s-\sClass/.test(li.description) }).length > 0
+  const saturdayParty = line_items.filter((li) => { return /Saturday\s-\sParty/.test(li.description) || /Dine\sand\sDance\sPass/.test(li.description) }).length > 0
+  const sundayClass = line_items.filter((li) => { return /Sunday\s-\sClass/.test(li.description) }).length > 0
+  const sundayParty = line_items.filter((li) => { return /Sunday\s-\sParty/.test(li.description) }).length > 0
 
 
   if(meal) { wristBands.push({ colour: "bg-white text-black", name: "Dinner - Ticket"}) }
@@ -52,7 +52,7 @@ const ScanSuccessDialog = ({scan,onClick}) => {
     const goodResult = attendee.active && !attendee.ticket_used
     const student = attendee.student_ticket
     const wristBands = accessToWristbands(attendee.access,attendee.line_items)
-    const access = itemsFromPassCombination(attendee.line_items.map(item => item.description))
+    // const access = itemsFromPassCombination(attendee.line_items.map(item => item.description))
     const checked_in = attendee.ticket_used ? format(fromUnixTime(attendee.ticket_used), 'HH:mm:ss do MMM') : attendee.ticket_used
     const cardColor = isLoading ? "bg-gray-500" : goodResult ? student ? "bg-green-600" : "bg-green-500" : "bg-chillired-600"
     const cancelButton = checked_in ? "border-red-900 text-red-900" : "border-green-900 text-green-900"
