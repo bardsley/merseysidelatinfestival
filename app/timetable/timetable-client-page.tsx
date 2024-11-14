@@ -37,8 +37,8 @@ export default function TimetableClientPage(props: ClientClassProps) {
   const classesUnordered = data?.classConnection.edges.map((item)=> item.node)
   const classesOrganised = classesUnordered.reduce((organised,current) => { 
     console.log(current)
-    const timeSlot = `${getUnixTime(parseISO(current.date))}-${format(current.date,"HHmm-EEE")}`
-    const day = format(current.date,"eeee")
+    const timeSlot = `${getUnixTime(parseISO(current.date))}-${format(subMinutes(current.date,181),"HHmm-EEE")}`
+    const day = format(subMinutes(current.date,181),"eeee")
     const locationName  = current.location ? current.location : "unknown"
     const classBlock = {
       title: current.title,
