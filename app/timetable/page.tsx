@@ -4,7 +4,7 @@ import TimetableClientPage from "./timetable-client-page";
 // import { parseISO, getUnixTime } from "date-fns";
 
 export default async function TimetablePage() {
-  const classes = await client.queries.classConnection({sort: 'date'});
+  const classes = await client.queries.classConnection({sort: 'date', first: 100});
   // const classes = classesRaw.data.classConnection.edges.sort((a,b) => { 
   //   const aTime = getUnixTime(parseISO(a.node.date))
   //   const bTime = getUnixTime(parseISO(b.node.date))
