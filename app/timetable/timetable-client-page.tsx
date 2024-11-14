@@ -1,7 +1,8 @@
 "use client";
-import { format,parseISO, getUnixTime } from "date-fns";
+import { format,parseISO, getUnixTime, fromUnixTime } from "date-fns";
 import Link from "next/link";
-// import Image from "next/image";
+import { TinaMarkdown } from "tinacms/dist/rich-text";
+import Image from "next/image";
 import React, {Fragment} from "react";
 // import { useLayout } from "@components/layout/layout-context";
 // import { BsArrowRight } from "react-icons/bs";
@@ -12,6 +13,7 @@ import {
   ClassConnectionQueryVariables,
 } from "@tina/__generated__/types";
 import { useTina } from "tinacms/dist/react";
+import { divide } from "lodash";
 
 // const titleColorClasses = {
 //   blue: "group-hover:text-blue-600 dark:group-hover:text-blue-300",
@@ -29,8 +31,11 @@ interface ClientClassProps {
   query: string;
 }
 
+
+
 export default function TimetableClientPage(props: ClientClassProps) {
   const { data } = useTina({ ...props });
+  const timeColor = "border-t-yellow-400"
   const classesUnordered = data?.classConnection.edges.map((item)=> item.node)
   const classesOrganised = classesUnordered.reduce((organised,current) => { 
     console.log(current)
@@ -40,6 +45,7 @@ export default function TimetableClientPage(props: ClientClassProps) {
     const classBlock = {
       title: current.title,
       date: timeSlot,
+      details: current.details,
       location: current.location,
       level: current.level || "unknown",
       artist: current.artist ? { 
@@ -59,28 +65,43 @@ export default function TimetableClientPage(props: ClientClassProps) {
   // const timeSlots = days.map((day) => Object.keys(classesOrganised[day]) )
   return <Fragment key="single">
     
-    <div className="grid grid-cols-5 text-black p-8 gap-1">
+    <div className="grid grid-cols-11 text-black p-8 gap-0">
     {days.map((day) => {
         return (<Fragment key={day}>
-          <h1 className="col-span-5 text-5xl font-bold uppercase text-white" key={day}>{day}</h1>
+          <h1 className="col-span-10 col-start-2 text-right sm:text-left text-2xl md:text-5xl font-bold uppercase text-white" key={day}>{day}</h1>
+          <span className="hidden md:block"></span>
           {locations.map((location)=>{
-            return <span className="bg-richblack-700 p-4 text-center text-white font-bold uppercase border-b-2 border-b-white" key={`${day}-${location}`}>{location}</span>
+            return <span className="bg-richblack-700 p-4 col-span-2 hidden md:block text-center text-white text-sm lg:text-xl font-bold uppercase " key={`${day}-${location}`}>{location}</span>
           })}
           {Object.keys(classesOrganised[day]).map((timeSlot) => {
-            return <Fragment key={timeSlot}>
+            const fullWidth = classesOrganised[day][timeSlot]["all"]
+            const fullWidthColor = fullWidth?.details?.children?.length > 0 ? 'bg-richblack-700 text-white px-4 py-2 ' : 'bg-gray-200 text-black px-4 py-6 flex justify-center'
+            const time = `${format(fromUnixTime(parseInt(timeSlot.split('-')[0])),"haaa")}`
+            const timeCell = (<div className={`border-t-3 ${timeColor} font-bold`}><span className={`bg-yellow-400 px-3 py-1 rounded-lg relative -top-3`}>{time}</span></div>)
+            return fullWidth ? <Fragment key={timeSlot}>{timeCell}<div className={`${fullWidthColor} text-xs sm:text-base col-span-10 flex gap-2 border-t-3 ${timeColor}`}>
+              <strong>{classesOrganised[day][timeSlot]["all"].title}</strong>
+                <TinaMarkdown content={fullWidth.details} />
+              </div></Fragment> : <Fragment key={timeSlot}>
+              {timeCell}
               {locations.map((location) => {
                 const clasS = classesOrganised[day][timeSlot][location] || false
                 const level = levels[clasS.level] || false
                 return clasS ? <Link href={clasS?.artist?.url || '#'} key={`${clasS.date}-${location}`} 
-                  className={`bg-richblack-700 p-4 ${level ? '' : 'text-white'}`}
+                  className={`bg-richblack-700 col-span-10 col-start-2 md:col-span-2 p-2 sm:p-4 flex flex-row md:flex-col justify-between items-center xl:flex-row gap-1 md:gap-3 border-t-3 ${timeColor} ${level ? '' : 'text-white'}`}
                   style={{backgroundColor: level.colour}}
                   >
-                  <h2 className="text-xl font-bold">{clasS.title}</h2>
-                  <p>{clasS.artist.name}</p>
+                    {clasS?.artist?.avatar ? <Image className="rounded-full border-3 border-richblack-500 w-16 h-16 lg:w-24 lg:h-24" src={clasS.artist.avatar} alt={clasS.artist.name} width={250} height={250} /> : null }
+                  <div className="flex-grow">
+                  <h2 className="text-md md:text-sm lg:text-lg 2xl:text-2xl font-bold leading-4 md:leading-6">{clasS.title}</h2>
+                  <p className="text-sm md:text-md lg:text-lg leading-4 md:leading-6">{clasS.artist.name} </p>
+                  </div>
+                  <span className="rounded bg-richblack-600 text-white px-2 py-0.5 md:hidden">{clasS.location}</span>
                   {/* {clasS.level} */}
                   {/* {JSON.stringify(clasS,null,2)} */}
                   {/* {`${timeSlot} ${location}`} */}
-                </Link> : <div key={`${timeSlot}-${location}`}></div>
+                </Link> : <div key={`${timeSlot}-${location}`} className={`col-span-2 border-t-3 hidden md:block ${timeColor}`}>
+                  {/* {timeSlot} {clasS.title} <TinaMarkdown content={fullWidth} /> {location} */}
+                </div>
               })}
             </Fragment>
           })}
@@ -89,7 +110,7 @@ export default function TimetableClientPage(props: ClientClassProps) {
 
       })}
     </div>
-    <pre className="text-white">{JSON.stringify(locations,null,2)} {JSON.stringify(days, null,2)}  {JSON.stringify(classesOrganised,null,2)}</pre>
+    {/* <pre className="text-white">{JSON.stringify(locations,null,2)} {JSON.stringify(days, null,2)}  {JSON.stringify(classesOrganised,null,2)}</pre> */}
   </Fragment>
 
   // return (

@@ -36,7 +36,7 @@ export const ArtistTimetable = ({classes}) => {
               <h3 className="font-bold text-lg">{class_.title}</h3>
               <div className="prose-base text-white">
                 <TinaMarkdown content={class_.details} />
-                <pre>{JSON.stringify(class_,null,2)}</pre>
+                {/* <pre>{JSON.stringify(class_,null,2)}</pre> */}
               </div>
             </td>
           </tr>
