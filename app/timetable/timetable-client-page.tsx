@@ -73,15 +73,17 @@ export default function TimetableClientPage(props: ClientClassProps) {
           })}
           {Object.keys(classesOrganised[day]).map((timeSlot) => {
             const fullWidth = classesOrganised[day][timeSlot]["all"]
-            const fullWidthColor = fullWidth?.details?.children?.length > 0 ? 'bg-richblack-700 text-white px-4 py-2 ' : 'bg-gray-200 text-black px-4 py-6 flex justify-center'
+            const fullWidthColor = classesOrganised[day][timeSlot]["all"]?.level == 'admin' ? 'text-white px-4 py-2 ' : 'text-black px-4 py-6 flex justify-center'
             const time = format(fromUnixTime(parseInt(timeSlot.split('-')[0])),"mm") == '00' 
               ? `${format(fromUnixTime(parseInt(timeSlot.split('-')[0])),"haaa")}`
               : `${format(fromUnixTime(parseInt(timeSlot.split('-')[0])),"h:mmaaa")}`
             const timeCell = (<div className={`border-t-3 ${timeColor} font-bold`}><span className={`bg-yellow-400 px-3 py-1 rounded-lg relative -top-3`}>{time}</span></div>)
-            return fullWidth ? <Fragment key={timeSlot}>{timeCell}<div className={`${fullWidthColor} text-xs sm:text-base col-span-10 flex gap-2 border-t-3 ${timeColor}`}>
-              <strong>{classesOrganised[day][timeSlot]["all"].title}</strong>
-                <TinaMarkdown content={fullWidth.details} />
-              </div></Fragment> : <Fragment key={timeSlot}>
+            return fullWidth ? <Fragment key={timeSlot}>{timeCell}
+                <div className={`${fullWidthColor} text-xs sm:text-base col-span-10 flex gap-2 border-t-3 ${timeColor}`} style={{backgroundColor: levels[classesOrganised[day][timeSlot]["all"].level].colour}}>
+                  <strong>{classesOrganised[day][timeSlot]["all"].title}</strong>
+                  <TinaMarkdown content={fullWidth.details} />
+                </div>
+              </Fragment> : <Fragment key={timeSlot}>
               {timeCell}
               {locations.map((location) => {
                 const clasS = classesOrganised[day][timeSlot][location] || false
@@ -113,80 +115,4 @@ export default function TimetableClientPage(props: ClientClassProps) {
     </div>
     {/* <pre className="text-white">{JSON.stringify(locations,null,2)} {JSON.stringify(days, null,2)}  {JSON.stringify(classesOrganised,null,2)}</pre> */}
   </Fragment>
-
-  // return (
-  //   <div className="grid grid-cols-5 grid-flow-col">
-  //     {data?.classConnection.edges.map((classData) => {
-  //       const clasS = classData.node;
-  //       const date = new Date(clasS.date);
-  //       let formattedDate = "";
-  //       if (!isNaN(date.getTime())) {
-  //         formattedDate = format(date, "HH:mm MMM dd, yyyy");
-  //       }
-  //       const unixTime = getUnixTime(parseISO(clasS.date))
-  //       if(lastTime != unixTime) {
-  //         additionalBlocks = true
-  //         row = row+1
-  //       } else {
-  //         additionalBlocks = false
-  //       }
-  //       lastTime = unixTime
-  //       const layoutRow = `row-start-${row}`
-  //       const layoutCol = clasS.location == 'ballroom' ? 'col-start-1 col-end-2 ' : 
-  //         clasS.location == 'derby' ? "col-start-2 col-end-3 " : 
-  //         clasS.location == 'sefton' ? "col-start-3 col-end-4 " : 
-  //         clasS.location == 'hypostyle' ? "col-start-4 col-end-5 " : 
-  //         clasS.location == 'terrace' ? "col-start-5 col-end-6 " : "weird"
-  //       const layout = `${layoutRow} ${layoutCol} `
-  //       return (
-  //         <>
-  //         { additionalBlocks ? row == 1 ? <><span className={`group block col-start-3 col-end-4 row-${row}`}>space</span><span className={`group block col-start-5 col-end-6 row-${row}`}>space</span></> : <><span className={`group block col-start-5 col-end-6 row-${row}`}>space</span></> : null }
-  //         <Link
-  //           key={clasS.id}
-  //           href={`/artists/` + (clasS.artist && clasS.artist?._sys ? clasS.artist._sys.filename : '')}
-  //           className={layout + " group block px-6 sm:px-8 md:px-10 py-10 mb-8 last:mb-0 bg-gray-50 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-1000 rounded-md shadow-sm transition-all duration-150 ease-out hover:shadow-md hover:to-gray-50 dark:hover:to-gray-800"}
-  //         >
-  //           <h3
-  //             className={`text-gray-700 dark:text-white text-3xl lg:text-4xl font-semibold title-font mb-5 transition-all duration-150 ease-out ${
-  //               titleColorClasses[theme.color]
-  //             }`}
-  //           >
-  //             {clasS.title}{" "} {clasS.artist?.name}
-  //             <span className="inline-block opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out">
-  //               <BsArrowRight className="inline-block h-8 -mt-1 ml-1 w-auto opacity-70" />
-  //             </span>
-  //           </h3>
-  //           <div className="prose dark:prose-dark w-full max-w-none mb-5 opacity-70">
-  //             {clasS.location} {unixTime} {row} {lastTime}
-  //             {/* <TinaMarkdown content={post.excerpt} /> */}
-  //           </div>
-  //           <div className="flex items-center">
-  //             <div className="flex-shrink-0 mr-2">
-  //               <Image
-  //                 width={500}
-  //                 height={500}
-  //                 className="h-10 w-10 object-cover rounded-full shadow-sm"
-  //                 src={clasS?.artist?.avatar}
-  //                 alt={clasS?.artist?.name}
-  //               />
-  //             </div>
-  //             <p className="text-base font-medium text-gray-600 group-hover:text-gray-800 dark:text-gray-200 dark:group-hover:text-white">
-  //               {/* {post?.author?.name} */}
-  //             </p>
-  //             {formattedDate !== "" && (
-  //               <>
-  //                 <span className="font-bold text-gray-200 dark:text-gray-500 mx-2">
-  //                   —
-  //                 </span>
-  //                 <p className="text-base text-gray-400 group-hover:text-gray-500 dark:text-gray-300 dark:group-hover:text-gray-150">
-  //                   {formattedDate}
-  //                 </p>
-  //               </>
-  //             )}
-  //           </div>
-  //         </Link></>
-  //       );
-  //     })}
-  //   </div>
-  // );
 }
