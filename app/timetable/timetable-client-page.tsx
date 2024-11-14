@@ -13,8 +13,6 @@ import {
   ClassConnectionQueryVariables,
 } from "@tina/__generated__/types";
 import { useTina } from "tinacms/dist/react";
-import { divide } from "lodash";
-
 // const titleColorClasses = {
 //   blue: "group-hover:text-blue-600 dark:group-hover:text-blue-300",
 //   teal: "group-hover:text-teal-600 dark:group-hover:text-teal-300",
