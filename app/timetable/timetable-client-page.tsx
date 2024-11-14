@@ -74,7 +74,9 @@ export default function TimetableClientPage(props: ClientClassProps) {
           {Object.keys(classesOrganised[day]).map((timeSlot) => {
             const fullWidth = classesOrganised[day][timeSlot]["all"]
             const fullWidthColor = fullWidth?.details?.children?.length > 0 ? 'bg-richblack-700 text-white px-4 py-2 ' : 'bg-gray-200 text-black px-4 py-6 flex justify-center'
-            const time = `${format(fromUnixTime(parseInt(timeSlot.split('-')[0])),"haaa")}`
+            const time = format(fromUnixTime(parseInt(timeSlot.split('-')[0])),"mm") == '00' 
+              ? `${format(fromUnixTime(parseInt(timeSlot.split('-')[0])),"haaa")}`
+              : `${format(fromUnixTime(parseInt(timeSlot.split('-')[0])),"h:mmaaa")}`
             const timeCell = (<div className={`border-t-3 ${timeColor} font-bold`}><span className={`bg-yellow-400 px-3 py-1 rounded-lg relative -top-3`}>{time}</span></div>)
             return fullWidth ? <Fragment key={timeSlot}>{timeCell}<div className={`${fullWidthColor} text-xs sm:text-base col-span-10 flex gap-2 border-t-3 ${timeColor}`}>
               <strong>{classesOrganised[day][timeSlot]["all"].title}</strong>
@@ -92,6 +94,7 @@ export default function TimetableClientPage(props: ClientClassProps) {
                   <div className="flex-grow">
                   <h2 className="text-md md:text-sm lg:text-lg 2xl:text-2xl font-bold leading-4 md:leading-6">{clasS.title}</h2>
                   <p className="text-sm md:text-md lg:text-lg leading-4 md:leading-6">{clasS.artist.name} </p>
+                  <TinaMarkdown content={clasS.details} />
                   </div>
                   <span className="rounded bg-richblack-600 text-white px-2 py-0.5 md:hidden">{clasS.location}</span>
                   {/* {clasS.level} */}
