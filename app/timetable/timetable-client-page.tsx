@@ -66,7 +66,7 @@ export default function TimetableClientPage(props: ClientClassProps) {
     <div className="grid grid-cols-11 text-black p-8 gap-0">
     {days.map((day) => {
         return (<Fragment key={day}>
-          <h1 className="col-span-10 col-start-2 text-right sm:text-left text-2xl md:text-5xl font-bold uppercase text-white" key={day}>{day}</h1>
+          <h1 className="col-span-10 col-start-2 leading-10 pb-5 pt-24 font-black text-right sm:text-left text-4xl md:text-5xl lg:text-8xl uppercase text-white" key={day}>{day}</h1>
           <span className="hidden md:block"></span>
           {locations.map((location)=>{
             return <span className="bg-richblack-700 p-4 col-span-2 hidden md:block text-center text-white text-sm lg:text-xl font-bold uppercase " key={`${day}-${location}`}>{location}</span>
