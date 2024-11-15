@@ -81,7 +81,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
                       defaultChecked={preferences && preferences.choices && preferences.choices[courseIdx] == optionIdx}
                       // checked={preferences[courseIdx] == optionIdx}
                       className="h-4 w-4 rounded-full border-gray-700 text-indigo-600 focus:ring-indigo-600"
-                      onChange={() => setPreferences({...preferences, choices:[...preferences.choices.slice(0,courseIdx),optionIdx,...preferences.choices.slice(courseIdx+1)]})
+                      onChange={preferencesDisabled ? (event)=>{console.log("Locked", event)} : () => setPreferences({...preferences, choices:[...preferences.choices.slice(0,courseIdx),optionIdx,...preferences.choices.slice(courseIdx+1)]})
                         
                       }
                     />
@@ -105,7 +105,8 @@ const MealPreferences = ({preferences,setPreferences}) =>{
           const checked = preferences.dietary_requirements.selected.includes(dietSlug)
           return (
             <li key={diet}>
-              <input className="rounded mr-2" type="checkbox" name={`selected[${dietSlug}]`} id={`selected[${dietSlug}]`} defaultChecked={checked} readOnly = {preferencesDisabled ? "readonly" : false} value={dietSlug} onChange={(event) => {
+              <input className="rounded mr-2" type="checkbox" name={`selected[${dietSlug}]`} id={`selected[${dietSlug}]`} defaultChecked={checked} readOnly = {preferencesDisabled ? "readonly" : false} value={dietSlug} 
+                onChange={preferencesDisabled ? (event)=>{console.log("Locked", event)} : (event) => {
                 setDietTo(event.target.value,event.target.checked)}}
                 />{' '}
               <label htmlFor={`selected[${diet}]`} className='capitalize'>{diet}</label> 
@@ -124,7 +125,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
             defaultValue = {preferences.dietary_requirements.other}
             rows={2}
             readOnly = {preferencesDisabled ? "readonly" : false}
-            onChange={(event) => {
+            onChange={preferencesDisabled ? (event)=>{console.log("Locked", event)} : (event) => {
               setPreferences({...preferences, dietary_requirements: {...preferences.dietary_requirements, other: event.target.value}})
             }}
             className="block w-full max-w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
