@@ -24,7 +24,7 @@ export async function GET(_req: NextRequest) {
     },
   })
   const seatingData = await seatingResponse.json()
-  console.log(seatingData.seating_data)
+  // console.log(seatingData.seating_data)
 
   return seatingResponse.ok ? Response.json(seatingData) : Response.json({message: "Error"}, {status: 500})
 

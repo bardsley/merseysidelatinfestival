@@ -1,8 +1,9 @@
 'use client'
 import React, { useState } from "react";
 import useSWR from 'swr';
+import Link from 'next/link'
 import { fetcher } from "@lib/fetchers"; // Adjust the import path if necessary
-import { Bars3Icon, ArrowUturnLeftIcon, LockOpenIcon, LockClosedIcon } from '@heroicons/react/24/solid'; // Importing icons
+import { Bars3Icon, ArrowUturnLeftIcon, LockOpenIcon, LockClosedIcon, ArrowRightIcon} from '@heroicons/react/24/solid'; // Importing icons
 
 const mealTableApiUrl = "/api/admin/meal/seating"; // Update with the actual API URL
 const submitApiUrl = "/api/admin/meal/seating"; // Update with the actual submission API URL
@@ -17,7 +18,7 @@ export default function MealTableSorter() {
   const [lockedTables, setLockedTables] = useState<{ [key: number]: boolean }>({});
   const [submitted, setSubmitted] = useState(false);
 
-  const { data: tableData, error: tableError, isLoading: tableLoading } = useSWR(mealTableApiUrl, fetcher, {
+  const { data: tableData, error: tableError, isLoading: tableLoading, mutate, isValidating: tableValidating} = useSWR(mealTableApiUrl, fetcher, {
     keepPreviousData: false,
     onSuccess: (data) => {
       if (!originalTableData) {
@@ -177,6 +178,7 @@ export default function MealTableSorter() {
       });
 
       setSubmitted(true);
+      setTimeout(() => { mutate(); setSubmitted(false) },15000)
     } catch (error) {
       console.error('Error submitting seating plan:', error);
     }
@@ -189,17 +191,19 @@ export default function MealTableSorter() {
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
         <h1 className="text-xl font-bold">Assign attendees to tables</h1>
-        <span className={`transform transition-transform ${isCollapsed ? '' : 'rotate-90'}`}>›</span>
+        {tableValidating ? <div>Valdiating</div> :  null}
+        <span className={`transform transition-transform ${isCollapsed ? '' : 'rotate-90'}`}><ArrowRightIcon className="w-4 h-4"/></span> 
+        
       </div>
 
       {!isCollapsed && (
         <div className="bg-richblack-700 rounded-b-md p-4">
           {submitted ? (
             <>
-              <p>Submitted. It will take at least 60 seconds before it is available to view again.</p>
+              <p>Submitted. It will take at least 60 seconds before it is available to view again. It will auto reload </p>
               <button
                 className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                onClick={() => window.location.reload()}
+                onClick={() => {mutate(); setSubmitted(true); }}
               >
                 Load Seating Plan
               </button>
@@ -210,7 +214,7 @@ export default function MealTableSorter() {
             <p>Error loading table data.</p>
           ) : tableData && tableData.seating_data ? (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                 {tableData.seating_data.map((table, tableIndex) => {
                   const currentCapacity = tableCapacities[tableIndex] || maxTableCapacity;
                   const isTableLocked = lockedTables[tableIndex];
@@ -225,13 +229,7 @@ export default function MealTableSorter() {
                       <div className="flex justify-between items-center mb-2">
                         <h2 className="text-lg font-semibold text-white">Table {tableIndex + 1}</h2>
                         <div className="flex items-center space-x-2">
-                          <button onClick={() => handleToggleLockTable(tableIndex)} className="text-white">
-                            {isTableLocked ? (
-                              <LockClosedIcon className="h-5 w-5" />
-                            ) : (
-                              <LockOpenIcon className="h-5 w-5" />
-                            )}
-                          </button>
+                         
                           <label htmlFor={`capacity-${tableIndex}`} className="text-sm text-gray-400">Capacity:</label>
                           <input
                             id={`capacity-${tableIndex}`}
@@ -250,7 +248,15 @@ export default function MealTableSorter() {
                           <tr>
                             <th className="border-b border-gray-700 py-2 text-left">Name</th>
                             <th className="border-b border-gray-700 py-2 text-left">Group</th>
-                            <th className="border-b border-gray-700 py-2 text-left"></th>
+                              <th className="border-b border-gray-700 py-2 text-left">
+                              <button onClick={() => handleToggleLockTable(tableIndex)} className="text-white">
+                              {isTableLocked ? (
+                                <LockClosedIcon className="h-5 w-5" />
+                              ) : (
+                                <LockOpenIcon className="h-5 w-5" />
+                              )}
+                            </button>
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
@@ -264,16 +270,18 @@ export default function MealTableSorter() {
                                 key={attendee.ticket_number}
                                 draggable={!isFixed} // Disable dragging if the row is locked
                                 onDragStart={(e) => handleDragStart(e, tableIndex, attendee)}
-                                className={`border-b border-gray-700 py-1 px-2 ${isOverCapacity ? 'bg-red-700' : isFixed ? 'bg-gray-100/10' : isMoved ? 'bg-yellow-100/10' : ''}`}
+                                className={`border-b border-gray-700 py-1 px-2 ${isOverCapacity ? 'bg-red-700' : isFixed ? 'bg-black/5 opacity-80 text-white/50' : isMoved ? 'bg-yellow-100/10' : 'bg-black/20'}`}
                               >
-                                <td className={`py-1 px-2 flex items-center ${isFixed ? 'font-bold' : ''}`}>
-                                  <Bars3Icon className="w-4 h-4 text-gray-400 mr-2" />
+                                <td className={`py-1 px-2 flex items-center ${isFixed ? '' : 'font-bold'}`}>
+                                  <Bars3Icon className={`w-4 h-4 ${isFixed ? "cursor-not-allowed" : "cursor-move"} text-gray-400 mr-2`} />
                                   {attendee.full_name}
                                 </td>
-                                <td className={`py-1 px-2 ${isFixed ? 'font-bold' : ''}`}>{attendee.group || "No group"}</td>
+                                <td className={`py-1 px-2 ${isFixed ? '' : 'font-bold'}`}>
+                                  <Link href={`https://www.merseysidelatinfestival.co.uk/preferences?email=${attendee.email.replace("@","%40")}&ticket_number=${attendee.ticket_number}`}>{attendee.group || "No group"}</Link>
+                                </td>
                                 <td className="py-1 px-2">
                                   <button onClick={() => toggleFixedRow(attendee, tableIndex)} className="text-gray-400 hover:text-gray-600">
-                                    {isFixed ? <LockClosedIcon className="w-4 h-4" /> : <LockOpenIcon className="w-4 h-4" />}
+                                    {isFixed ? <LockClosedIcon className="w-4 h-4 text-blue-500" /> : <LockOpenIcon className="w-4 h-4" />}
                                   </button>
                                   {isMoved && (
                                     <button onClick={() => resetRow(attendee)} className="text-red-500 hover:text-red-700 ml-2">

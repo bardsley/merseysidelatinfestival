@@ -1,5 +1,6 @@
 'use client'
 import React, { useState } from "react";
+import { ArrowRightIcon } from '@heroicons/react/24/solid'; // Importing icons
 
 const courseMappings = [
   { 0: "Vegetable Terrine", 1: "Chicken Liver Pate" },
@@ -26,7 +27,7 @@ export default function AttendeeMealTable({ attendees, summaryLoading, summaryIs
         className={`flex justify-between items-center bg-richblack-700 text-white px-4 py-3 ${isCollapsed ? "rounded-md": "rounded-t-md"} cursor-pointer`}
         onClick={() => setIsCollapsed(!isCollapsed)}>
         <h1 className="text-xl font-bold">Attendees with Dinner</h1>
-        <span className={`transform transition-transform ${isCollapsed ? '' : 'rotate-90'}`}>›</span>
+        <span className={`transform transition-transform ${isCollapsed ? '' : 'rotate-90'}`}><ArrowRightIcon className="w-4 h-4"/></span>
       </div>
 
       {!isCollapsed && (

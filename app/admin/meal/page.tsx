@@ -21,7 +21,7 @@ export default async function AdminUserPage() {
       <Container width="large" padding="tight" className={`flex-1 pb-2`} size="top">
         <Navigation pages={pages} />
       </Container>        
-      <Container width="large" padding="tight" className={`flex-1 pb-2`} size="none">
+      <Container width="custom" padding="tight" className={`flex-1 pb-2 w-full`} size="none">
         <MealStats/>
         <DiningPageClient />
       </Container>

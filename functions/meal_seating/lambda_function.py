@@ -190,6 +190,7 @@ def post(event):
 
     for item in filtered_items:
         full_name = item.get('full_name', 'unknown')
+        email = item.get('email', 'unknown')
         ticket_number = item.get('ticket_number', 'unknown')
         meal_prefs = item.get('meal_preferences', {}) or {}
         group = meal_prefs.get('seating_preference', [None])
@@ -198,7 +199,8 @@ def post(event):
             'full_name': full_name,
             'ticket_number': ticket_number,
             'group': group[0].lower().strip() if group and group[0] else None,
-            'fixed': False
+            'fixed': False,
+            'email': email
         }
 
         attendees.append(attendee)
