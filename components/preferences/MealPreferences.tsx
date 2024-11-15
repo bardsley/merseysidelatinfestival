@@ -51,8 +51,12 @@ const MealPreferences = ({preferences,setPreferences}) =>{
     setGroupExists(group_response.ok)
   }
 
+  const preferencesDisabled = true
+
   return checkInputOk(preferences) ? (
     <>
+      { preferencesDisabled ? <div className='bg-yellow-500 p-5 mt-2 text-richblack-600 font-bold rounded'>Food preferences have now been sent to the venue.</div> : null }
+      
       <fieldset className="my-6 max-w-full">
         <legend className="text-base font-semibold leading-6 text-white">Course</legend>
         <div className="mt-4 divide-y divide-gray-700 border-b border-t border-gray-700">
@@ -73,6 +77,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
                       name={`course-${courseIdx}`}
                       type="radio"
                       value={optionIdx}
+                      readOnly = {preferencesDisabled ? true : false}
                       defaultChecked={preferences && preferences.choices && preferences.choices[courseIdx] == optionIdx}
                       // checked={preferences[courseIdx] == optionIdx}
                       className="h-4 w-4 rounded-full border-gray-700 text-indigo-600 focus:ring-indigo-600"
@@ -100,7 +105,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
           const checked = preferences.dietary_requirements.selected.includes(dietSlug)
           return (
             <li key={diet}>
-              <input className="rounded mr-2" type="checkbox" name={`selected[${dietSlug}]`} id={`selected[${dietSlug}]`} defaultChecked={checked} value={dietSlug} onChange={(event) => {
+              <input className="rounded mr-2" type="checkbox" name={`selected[${dietSlug}]`} id={`selected[${dietSlug}]`} defaultChecked={checked} readOnly = {preferencesDisabled ? true : false} value={dietSlug} onChange={(event) => {
                 setDietTo(event.target.value,event.target.checked)}}
                 />{' '}
               <label htmlFor={`selected[${diet}]`} className='capitalize'>{diet}</label> 
@@ -118,6 +123,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
             name="other"
             defaultValue = {preferences.dietary_requirements.other}
             rows={2}
+            readOnly = {preferencesDisabled ? true : false}
             onChange={(event) => {
               setPreferences({...preferences, dietary_requirements: {...preferences.dietary_requirements, other: event.target.value}})
             }}
@@ -129,7 +135,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
           : (<p className='font-sm font-light text-gray-300'>Select other if you need to provide more information</p>) }
 
       </fieldset>
-      
+
       <div className='my-6'>
         <label htmlFor="seating_preference" className="text-base font-semibold leading-6 text-white block">
         Group Seating Code
