@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import useSWR from 'swr';
 import { fetcher } from  "@lib/fetchers";
 import AttendeesMealTable from "@components/admin/attendeeMealTable";
+import MealTableSorter from "@components/mealTableSorter";
 const mealSummaryApiUrl = "/api/admin/meal/summary"
 
 export default function DiningPageClient() {
@@ -33,5 +34,7 @@ export default function DiningPageClient() {
       </div>
 
       <AttendeesMealTable attendees={attendees} summaryLoading={summaryLoading} summaryError={summaryError} />
+      <br />
+      <MealTableSorter />
   </div>
 }
