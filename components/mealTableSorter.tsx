@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import useSWR from 'swr';
 import { fetcher } from "@lib/fetchers"; // Adjust the import path if necessary
-import { Bars3Icon, ArrowUturnLeftIcon, LockOpenIcon, LockClosedIcon } from '@heroicons/react/24/solid'; // Importing icons
+import { Bars3Icon, ArrowUturnLeftIcon, LockOpenIcon, LockClosedIcon, ArrowRightIcon} from '@heroicons/react/24/solid'; // Importing icons
 
 const mealTableApiUrl = "/api/admin/meal/seating"; // Update with the actual API URL
 const submitApiUrl = "/api/admin/meal/seating"; // Update with the actual submission API URL
@@ -17,7 +17,7 @@ export default function MealTableSorter() {
   const [lockedTables, setLockedTables] = useState<{ [key: number]: boolean }>({});
   const [submitted, setSubmitted] = useState(false);
 
-  const { data: tableData, error: tableError, isLoading: tableLoading } = useSWR(mealTableApiUrl, fetcher, {
+  const { data: tableData, error: tableError, isLoading: tableLoading, mutate, isValidating: tableValidating} = useSWR(mealTableApiUrl, fetcher, {
     keepPreviousData: false,
     onSuccess: (data) => {
       if (!originalTableData) {
@@ -189,7 +189,10 @@ export default function MealTableSorter() {
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
         <h1 className="text-xl font-bold">Assign attendees to tables</h1>
-        <span className={`transform transition-transform ${isCollapsed ? '' : 'rotate-90'}`}>›</span>
+        <span className={`transform transition-transform ${isCollapsed ? '' : 'rotate-90'}`}>›</span> 
+        {tableValidating ? <div>Valdiating</div> :  null}
+        <span className={`transform transition-transform ${isCollapsed ? '' : 'rotate-90'}`}><ArrowRightIcon className="w-4 h-4"/></span> 
+        
       </div>
 
       {!isCollapsed && (
