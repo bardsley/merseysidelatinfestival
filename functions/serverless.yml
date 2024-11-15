@@ -604,3 +604,28 @@ functions:
       - httpApi:
           path: /ticket/deactivate
           method: post
+
+#--------------------
+
+  MealSeating:
+    runtime: python3.11
+    handler: meal_seating/lambda_function.lambda_handler
+    name: "${sls:stage}-meal_seating"
+    timeout: 120
+    package:
+      patterns:
+        - '!**/**'
+        - "meal_seating/**"
+        - "shared/**"
+    environment:
+      STAGE_NAME: ${sls:stage}
+      EVENT_TABLE_NAME: ${param:eventTableName}
+      ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+      SEND_EMAIL_LAMBDA: "${sls:stage}-meal_seating"
+    events:
+      - httpApi:
+          path: /meal/seating
+          method: get
+      - httpApi:
+          path: /meal/seating
+          method: post                 
