@@ -43,7 +43,7 @@ export async function POST(request: Request) {
 
   const seatingUrl = process.env.LAMBDA_MEAL_SEATING
 
-  fetch(process.env.LAMBDA_MEAL_SEATING, {
+  fetch(seatingUrl, {
     method: 'POST',
     body: JSON.stringify(apiRequestBody)
   })

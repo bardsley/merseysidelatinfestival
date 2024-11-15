@@ -33,7 +33,7 @@ export default function DiningPageClient() {
         <button onClick={handleSubmit} className="py-3 px-6 mt-3 float-right bg-chillired-500 rounded-lg block">Trigger Meal Reminder</button>
       </div>
 
-      <AttendeesMealTable attendees={attendees} summaryLoading={summaryLoading} summaryError={summaryError} />
+      <AttendeesMealTable attendees={attendees} summaryLoading={summaryLoading} summaryIsValidating={summaryValidating} summaryError={summaryError} />
       <br />
       <MealTableSorter />
   </div>
