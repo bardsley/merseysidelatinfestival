@@ -77,7 +77,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
                       name={`course-${courseIdx}`}
                       type="radio"
                       value={optionIdx}
-                      disabled = {preferencesDisabled ? true : false}
+                      readOnly = {preferencesDisabled ? true : false}
                       defaultChecked={preferences && preferences.choices && preferences.choices[courseIdx] == optionIdx}
                       // checked={preferences[courseIdx] == optionIdx}
                       className="h-4 w-4 rounded-full border-gray-700 text-indigo-600 focus:ring-indigo-600"
@@ -105,7 +105,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
           const checked = preferences.dietary_requirements.selected.includes(dietSlug)
           return (
             <li key={diet}>
-              <input className="rounded mr-2" type="checkbox" name={`selected[${dietSlug}]`} id={`selected[${dietSlug}]`} defaultChecked={checked} disabled = {preferencesDisabled ? true : false} value={dietSlug} onChange={(event) => {
+              <input className="rounded mr-2" type="checkbox" name={`selected[${dietSlug}]`} id={`selected[${dietSlug}]`} defaultChecked={checked} readOnly = {preferencesDisabled ? true : false} value={dietSlug} onChange={(event) => {
                 setDietTo(event.target.value,event.target.checked)}}
                 />{' '}
               <label htmlFor={`selected[${diet}]`} className='capitalize'>{diet}</label> 
@@ -123,7 +123,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
             name="other"
             defaultValue = {preferences.dietary_requirements.other}
             rows={2}
-            disabled = {preferencesDisabled ? true : false}
+            readOnly = {preferencesDisabled ? true : false}
             onChange={(event) => {
               setPreferences({...preferences, dietary_requirements: {...preferences.dietary_requirements, other: event.target.value}})
             }}
