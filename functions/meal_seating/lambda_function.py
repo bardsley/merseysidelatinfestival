@@ -22,6 +22,19 @@ db = boto3.resource('dynamodb')
 attendees_table = db.Table(attendees_table_name)
 event_table = db.Table(event_table_name)
 
+def get_dinner_pass_names():
+    return ["Full Pass", "Artist Pass", "Volunteer Pass", "Saturday - Dinner"]
+
+def extract_pass_type(line_items):
+    pass_names = get_dinner_pass_names()
+    if len(line_items) == 1:
+        return line_items[0]['description']
+    else:
+        for item in line_items:
+            if item['description'] in pass_names:
+                return item['description']
+    return "unknown"
+
 def generate_initial_state(attendees, fixed_tickets, table_capacities):
     '''
     Generate initial state with groups sat together
