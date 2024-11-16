@@ -72,6 +72,7 @@ def lambda_handler(event, context):
     incomplete_count = 0     # Some choices are -1 (incomplete selection)
     not_wanted_count = 0     # Any choice is -99 (not wanted)
     selected_count = 0       # All choices are >= 0 (options selected)
+    group_count = 0
     
     filtered_items = [item for item in response['Items'] if (item['access'][2] == 1)]
 
@@ -102,6 +103,9 @@ def lambda_handler(event, context):
             'not_wanted': not_wanted,
             'group': group
         })
+
+        if group is not None and group != "" and group != []:
+            group_count += 1        
         
         if not meal_prefs or all(choice == -1 for choice in choices):
             not_selected_count += 1
@@ -141,6 +145,7 @@ def lambda_handler(event, context):
                 'incomplete_count': incomplete_count,
                 'not_wanted_count': not_wanted_count,
                 'selected_count': selected_count,
+                'group_count': group_count,
                 'course_frequencies': course_frequencies,
                 'dietary_frequencies': dietary_frequencies,
             },
