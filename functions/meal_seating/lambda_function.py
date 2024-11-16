@@ -29,6 +29,7 @@ def generate_initial_state(attendees, fixed_tickets, table_capacities):
     tables = [[] for _ in table_capacities]
     unassigned_attendees = []
     table_remaining_space = {i: table_capacities[i] for i in range(len(table_capacities))}
+    default_table_capacity = 10  # Default capacity for new tables
 
     fixed_ticket_numbers = set(fixed_tickets.keys())
 
@@ -38,7 +39,7 @@ def generate_initial_state(attendees, fixed_tickets, table_capacities):
     # assign fixed tickets to tables
     for attendee in fixed_attendees:
         fixed_table_number = fixed_tickets[attendee['ticket_number']]
-        if table_remaining_space[fixed_table_number] > 0:
+        if table_remaining_space.get(fixed_table_number, 0) > 0:
             tables[fixed_table_number].append(attendee)
             attendee['table_number'] = fixed_table_number
             attendee['fixed'] = True
@@ -69,7 +70,7 @@ def generate_initial_state(attendees, fixed_tickets, table_capacities):
 
         placed = False
         for table_index, table in enumerate(tables):
-            if table_remaining_space[table_index] >= len(members):
+            if table_remaining_space.get(table_index, 0) >= len(members):
                 for member in members:
                     member['table_number'] = table_index
                 table.extend(members)
@@ -77,29 +78,47 @@ def generate_initial_state(attendees, fixed_tickets, table_capacities):
                 placed = True
                 break
 
-        # split large groups
+        # Split large groups or add new tables if needed
         if not placed:
-            for table_index, table in enumerate(tables):
-                if table_remaining_space[table_index] > 0:
-                    remaining_space = table_remaining_space[table_index]
-                    for member in members[:remaining_space]:
-                        member['table_number'] = table_index
-                    table.extend(members[:remaining_space])
-                    table_remaining_space[table_index] -= remaining_space
-                    members = members[remaining_space:]
-                    if not members:
-                        break
+            while members:
+                # Find a table with space or create a new one if all existing tables are full
+                for table_index, table in enumerate(tables):
+                    if table_remaining_space.get(table_index, 0) > 0:
+                        remaining_space = table_remaining_space[table_index]
+                        for member in members[:remaining_space]:
+                            member['table_number'] = table_index
+                        table.extend(members[:remaining_space])
+                        table_remaining_space[table_index] -= remaining_space
+                        members = members[remaining_space:]
+                        if not members:
+                            break
+                else:
+                    # Create a new table if no existing table can accommodate the remaining group members
+                    new_table_index = len(tables)
+                    tables.append([])
+                    table_remaining_space[new_table_index] = default_table_capacity
+                    for member in members[:default_table_capacity]:
+                        member['table_number'] = new_table_index
+                    tables[-1].extend(members[:default_table_capacity])
+                    table_remaining_space[new_table_index] -= default_table_capacity
+                    members = members[default_table_capacity:]
 
-    # place remainng tickets
+    # Place remaining ungrouped attendees
     if None in groups:
         ungrouped_attendees = groups[None]
         for attendee in ungrouped_attendees:
             for table_index, table in enumerate(tables):
-                if table_remaining_space[table_index] > 0:
+                if table_remaining_space.get(table_index, 0) > 0:
                     attendee['table_number'] = table_index
                     table.append(attendee)
                     table_remaining_space[table_index] -= 1
                     break
+            else:
+                # Create a new table if needed for ungrouped attendees
+                new_table_index = len(tables)
+                tables.append([attendee])
+                table_remaining_space[new_table_index] = default_table_capacity - 1
+                attendee['table_number'] = new_table_index
 
     return tables
 
@@ -193,6 +212,8 @@ def post(event):
         email = item.get('email', 'unknown')
         ticket_number = item.get('ticket_number', 'unknown')
         meal_prefs = item.get('meal_preferences', {}) or {}
+        pass_type = extract_pass_type(item.get('line_items', []))
+        status = item.get('status', 'unknown')
         group = meal_prefs.get('seating_preference', [None])
 
         attendee = {
@@ -200,14 +221,16 @@ def post(event):
             'ticket_number': ticket_number,
             'group': group[0].lower().strip() if group and group[0] else None,
             'fixed': False,
-            'email': email
+            'email': email,
+            'is_artist': True if 'Artist' in pass_type else False,
+            'is_gratis': True if 'gratis' in status else False
         }
 
         attendees.append(attendee)
 
     logger.info(f"Total attendees: {len(attendees)}")
     logger.info(f"Fixed tickets provided: {len(fixed_tickets)}")
-    table_capacities = event.get("table_capacities", [12, 12] + [10 for i in range(18)])
+    table_capacities = list(event.get('table_capacities').values()) if event.get('table_capacities') else [10 for i in range(20)]
 
     optimised_seating = simulated_annealing(attendees, fixed_tickets, table_capacities)
 
@@ -254,7 +277,6 @@ def get(event):
 
         if response['Items']:
             most_recent_entry = response['Items'][0]
-            logger.info(json.loads(most_recent_entry['seating_data']))
             return {
                 'statusCode': 200,
                 'body': json.dumps({
