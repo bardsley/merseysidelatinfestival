@@ -20,3 +20,46 @@
 .cl-userButtonOuterIdentifier {
   font-size: 1.5em;
 }
+
+@media print {
+  .header, .breadcrumbs, .paginator, footer{
+    display: none;
+  }
+  body,
+  main#app {
+    background-color: white;
+    background-image: none;
+    color: black;
+  }
+  main#app section {
+    color: black;
+  }
+  main#app section h1 { padding:0; }
+  main#app section td.text-gray-100 {
+    color: black;
+  }
+  thead.bg-richblack-700, thead .text-gray-100 {
+    background: #000;
+    color: #fff;
+    font-size: 1em;
+  }
+  main#app section .tableheader {
+    background-color: #ccc;
+    page-break-after:avoid;
+    page-break-inside: avoid;
+    page-break-before: always;
+  }
+
+  .no-choice {
+    background-color: #f4f4f4;
+  }
+  .whitespace-nowrap {
+    white-space: wrap;
+  }
+
+  table { page-break-inside:auto }
+    tr    { page-break-inside:avoid; page-break-after:auto }
+    thead { display:table-header-group }
+
+  .tabletable { page-break-before: always;}
+}
