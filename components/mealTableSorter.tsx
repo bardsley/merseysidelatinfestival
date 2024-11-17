@@ -286,7 +286,7 @@ export default function MealTableSorter() {
                                   </div> : null }
                                 </td>
                                 <td className={`py-1 px-2 ${isFixed ? '' : 'font-bold'}`}>
-                                  <Link href={`https://www.merseysidelatinfestival.co.uk/preferences?email=${attendee.email.replace("@","%40")}&ticket_number=${attendee.ticket_number}`}>{attendee.group || "No group"}</Link>
+                                  <Link href={`https://www.merseysidelatinfestival.co.uk/preferences?email=${attendee.email.replace("@","%40")}&ticket_number=${attendee.ticket_number}`}>{attendee.group || "-"}</Link>
                                 </td>
                                 <td className="py-1 px-2">
                                   <button onClick={() => toggleFixedRow(attendee, tableIndex)} className="text-gray-400 hover:text-gray-600">
