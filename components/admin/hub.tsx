@@ -76,7 +76,7 @@ const actions = [
     icon: CakeIcon,
     iconForeground: 'text-green-800',
     iconBackground: 'bg-green-200',
-    state: 'unreleased',
+    state: 'live',
   },
   {
     title: 'Stripe',
