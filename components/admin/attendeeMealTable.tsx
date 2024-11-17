@@ -1,6 +1,5 @@
 'use client'
 import React, { useState } from "react";
-import { ArrowRightIcon } from '@heroicons/react/24/solid'; // Importing icons
 
 const courseMappings = [
   { 0: "Vegetable Terrine", 1: "Chicken Liver Pate" },
@@ -8,7 +7,7 @@ const courseMappings = [
   { 0: "Fruit Platter", 1: "Bread and Butter Pudding" }
 ];
 
-export default function AttendeeMealTable({ attendees, summaryLoading, summaryIsValidating, summaryError, itemsPerPage = 25 }) {
+export default function AttendeeMealTable({ attendees, summaryLoading, summaryIsValidating, summaryError, itemsPerPage = 25, attendeesGroupedByTable = false }) {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = attendees ? Math.ceil(attendees.length / itemsPerPage) : 1;
 
@@ -59,9 +58,9 @@ export default function AttendeeMealTable({ attendees, summaryLoading, summaryIs
             <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                 <table className="min-w-full divide-y divide-gray-300">
-                  <thead>
+                  <thead className="bg-richblack-700">
                     <tr>
-                      <th scope="col" className="py-4 pl-4 pr-3 text-left text-lg font-bold text-gray-100 sm:pl-0">
+                      <th scope="col" className="py-4 pl-4 pr-3 text-left text-lg font-bold text-gray-100">
                         Name
                       </th>
                       <th scope="col" className="px-3 py-4 text-left text-lg font-bold text-gray-100">
@@ -83,21 +82,52 @@ export default function AttendeeMealTable({ attendees, summaryLoading, summaryIs
                   </thead>
 
                   <tbody className="divide-y divide-gray-700">
-                    {summaryLoading || summaryError ? <p>Loading..</p> : attendeesToDisplay.map((attendee, index) => {
-                      const baseClasses = "whitespace-nowrap px-1 py-3 text-xs text-gray-100 ";
-                      const choices = attendee.choices || [];
+                    {summaryLoading || summaryError ? (
+                      <p>Loading..</p>
+                    ) : attendeesGroupedByTable ? (
+                      attendeesToDisplay.map((tableGroup, tableIndex) => (
+                        [
+                          <tr key={`table-index-${tableIndex}`}>
+                            <td colSpan={6} className="whitespace-nowrap px-1 py-3 pt-8 text-s text-gray-100 bg-richblack-600">
+                              Table {tableIndex + 1}
+                            </td>
+                          </tr>,
+                          ...tableGroup.map((attendee, index) => {
+                            const baseClasses = "whitespace-nowrap px-1 py-3 text-xs text-gray-100 ";
+                            const choices = attendee.choices || [];
+    
+                            return (
+                              <tr
+                                key={index}
+                                className={`${attendee.not_wanted ? 'decoration-1 line-through text-gray-600' : ''} ${attendee.is_selected ? '' : 'bg-yellow-900/20'}`}>
+                                <td className={baseClasses}>{attendee.full_name}</td>
+                                <td className={baseClasses}>{courseMappings[0][choices[0]] || courseMappings[0][0]}</td>
+                                <td className={baseClasses}>{courseMappings[1][choices[1]] || courseMappings[1][0]}</td>
+                                <td className={baseClasses}>{courseMappings[2][choices[2]] || courseMappings[2][0]}</td>
+                                <td className={baseClasses}>{attendee.dietary_requirements?.selected?.join(", ") || " - "}</td>
+                                <td className={baseClasses}>{attendee.dietary_requirements?.other || " - "}</td>
+                              </tr>
+                            )
+                          })                    
+                        ]
+                      ))
+                    ) : (
+                      attendeesToDisplay.map((attendee, index) => {
+                        const baseClasses = "whitespace-nowrap px-1 py-3 text-xs text-gray-100 ";
+                        const choices = attendee.choices || [];
 
-                      return (
-                        <tr key={index} className={`${attendee.not_wanted ? 'decoration-1 line-through text-gray-600' : ''} ${attendee.is_selected ? '' : 'bg-yellow-900/20'}`}>
-                          <td className={baseClasses}>{attendee.full_name}</td>
-                          <td className={baseClasses}>{courseMappings[0][choices[0]] || courseMappings[0][0]}</td>
-                          <td className={baseClasses}>{courseMappings[1][choices[1]] || courseMappings[1][0]}</td>
-                          <td className={baseClasses}>{courseMappings[2][choices[2]] || courseMappings[2][0]}</td>
-                          <td className={baseClasses}>{attendee.dietary_requirements?.selected?.join(", ") || "None"}</td>
-                          <td className={baseClasses}>{attendee.dietary_requirements?.other || "None"}</td>
-                        </tr>
-                      )
-                    })}
+                        return (
+                          <tr key={index} className={`${attendee.not_wanted ? 'decoration-1 line-through text-gray-600' : ''} ${attendee.is_selected ? '' : 'bg-yellow-900/20'}`}>
+                            <td className={baseClasses}>{attendee.full_name}</td>
+                            <td className={baseClasses}>{courseMappings[0][choices[0]] || courseMappings[0][0]}</td>
+                            <td className={baseClasses}>{courseMappings[1][choices[1]] || courseMappings[1][0]}</td>
+                            <td className={baseClasses}>{courseMappings[2][choices[2]] || courseMappings[2][0]}</td>
+                            <td className={baseClasses}>{attendee.dietary_requirements?.selected?.join(", ") || "None"}</td>
+                            <td className={baseClasses}>{attendee.dietary_requirements?.other || "None"}</td>
+                          </tr>
+                        )
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>
