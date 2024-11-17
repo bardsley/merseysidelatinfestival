@@ -88,7 +88,7 @@ export default function AttendeeMealTable({ attendees, summaryLoading, summaryIs
                       attendeesToDisplay.map((tableGroup, tableIndex) => (
                         [
                           <tr key={`table-index-${tableIndex}`}>
-                            <td colSpan={6} className="whitespace-nowrap px-1 py-3 pt-8 text-s text-gray-100 bg-richblack-600">
+                            <td colSpan={6} className="whitespace-nowrap px-1 py-3 pt-8 text-s text-gray-100 bg-richblack-600/70">
                               Table {tableIndex + 1}
                             </td>
                           </tr>,
