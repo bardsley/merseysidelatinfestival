@@ -139,8 +139,8 @@ def lambda_handler(event, context):
     logger.info(f"Course Frequencies (without blanks added): {course_frequencies}")
     logger.info(f"Dietary Frequencies: {dietary_frequencies}")
 
-    for course in course_frequencies:
-        course_frequencies[course][0] += not_selected_count
+    for i in range(len(course_frequencies)):
+        course_frequencies[i][course_mappings[i][0]] += not_selected_count
 
     return {
         'statusCode': 200,
