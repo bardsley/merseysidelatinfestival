@@ -2,15 +2,17 @@
 import React, { useState } from "react";
 import useSWR from 'swr';
 import Link from 'next/link'
-import { fetcher } from "@lib/fetchers"; // Adjust the import path if necessary
-import { Bars3Icon, ArrowUturnLeftIcon, LockOpenIcon, LockClosedIcon, ArrowRightIcon} from '@heroicons/react/24/solid'; // Importing icons
+import { fetcher } from "@lib/fetchers"; 
+import { Bars3Icon, ArrowUturnLeftIcon, LockOpenIcon, LockClosedIcon} from '@heroicons/react/24/solid';
+import { BiLogoSketch } from 'react-icons/bi';
+import { RiVipFill } from "react-icons/ri";
+import { MdRestaurantMenu } from "react-icons/md";
 
 const mealTableApiUrl = "/api/admin/meal/seating"; // Update with the actual API URL
 const submitApiUrl = "/api/admin/meal/seating"; // Update with the actual submission API URL
 const maxTableCapacity = 12; // Set maximum allowed capacity to 12
 
 export default function MealTableSorter() {
-  const [isCollapsed, setIsCollapsed] = useState(true);
   const [fixedSeating, setFixedSeating] = useState<{ [key: string]: number }>({});
   const [movedRows, setMovedRows] = useState<{ [key: string]: number }>({});
   const [originalTableData, setOriginalTableData] = useState<any>(null);
@@ -185,18 +187,6 @@ export default function MealTableSorter() {
   };
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8">
-      <div
-        className={`flex justify-between items-center bg-richblack-700 text-white px-4 py-3 ${isCollapsed ? "rounded-md" : "rounded-t-md"} cursor-pointer`}
-        onClick={() => setIsCollapsed(!isCollapsed)}
-      >
-        <h1 className="text-xl font-bold">Assign attendees to tables</h1>
-        {tableValidating ? <div>Valdiating</div> :  null}
-        <span className={`transform transition-transform ${isCollapsed ? '' : 'rotate-90'}`}><ArrowRightIcon className="w-4 h-4"/></span> 
-        
-      </div>
-
-      {!isCollapsed && (
         <div className="bg-richblack-700 rounded-b-md p-4">
           {submitted ? (
             <>
@@ -214,6 +204,12 @@ export default function MealTableSorter() {
             <p>Error loading table data.</p>
           ) : tableData && tableData.seating_data ? (
             <>
+            {tableValidating ? 
+                <div role="status" className='flex'>
+                  <svg aria-hidden="true" className="w-4 h-4 me-2 text-gray-200 animate-spin dark:text-gray-600 fill-chillired-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/><path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/></svg>
+                  <span className="">Refreshing...</span>
+                </div> : null
+              }
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                 {tableData.seating_data.map((table, tableIndex) => {
                   const currentCapacity = tableCapacities[tableIndex] || maxTableCapacity;
@@ -275,6 +271,19 @@ export default function MealTableSorter() {
                                 <td className={`py-1 px-2 flex items-center ${isFixed ? '' : 'font-bold'}`}>
                                   <Bars3Icon className={`w-4 h-4 ${isFixed ? "cursor-not-allowed" : "cursor-move"} text-gray-400 mr-2`} />
                                   {attendee.full_name}
+                                  {attendee.is_gratis && !attendee.is_artist ? <BiLogoSketch title="Free Ticket" className='pl-1 w-6 h-6' /> : null }
+                                  {attendee.is_artist ? <RiVipFill title="Artist Ticket" className='pl-1 w-6 h-6' /> : null }
+                                  {attendee.dietary_requirements.selected && attendee.dietary_requirements.selected?.length > 0 ? 
+                                    <div className="ml-1 flex items-center justify-center cursor-pointer relative group">
+                                      <MdRestaurantMenu title="Dietary requirements" className='pl-1 w-6 h-6' />
+                                      <div className="absolute hidden group-hover:block bg-white text-gray-900 text-xs rounded shadow-lg p-2 mt-2 w-48">
+                                      {[...attendee.dietary_requirements.selected.join(", "), attendee.dietary_requirements.other].map((req, index) => (
+                                        <div key={`dietary-${attendee.ticket_number}-${index}`}>
+                                          {req}
+                                        </div>                                        
+                                      ))}
+                                    </div>
+                                  </div> : null }
                                 </td>
                                 <td className={`py-1 px-2 ${isFixed ? '' : 'font-bold'}`}>
                                   <Link href={`https://www.merseysidelatinfestival.co.uk/preferences?email=${attendee.email.replace("@","%40")}&ticket_number=${attendee.ticket_number}`}>{attendee.group || "No group"}</Link>
@@ -309,7 +318,5 @@ export default function MealTableSorter() {
             <p>No table data available.</p>
           )}
         </div>
-      )}
-    </div>
   );
 }

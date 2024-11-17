@@ -22,6 +22,19 @@ db = boto3.resource('dynamodb')
 attendees_table = db.Table(attendees_table_name)
 event_table = db.Table(event_table_name)
 
+def get_dinner_pass_names():
+    return ["Full Pass", "Artist Pass", "Volunteer Pass", "Saturday - Dinner"]
+
+def extract_pass_type(line_items):
+    pass_names = get_dinner_pass_names()
+    if len(line_items) == 1:
+        return line_items[0]['description']
+    else:
+        for item in line_items:
+            if item['description'] in pass_names:
+                return item['description']
+    return "unknown"
+
 def generate_initial_state(attendees, fixed_tickets, table_capacities):
     '''
     Generate initial state with groups sat together
@@ -29,6 +42,7 @@ def generate_initial_state(attendees, fixed_tickets, table_capacities):
     tables = [[] for _ in table_capacities]
     unassigned_attendees = []
     table_remaining_space = {i: table_capacities[i] for i in range(len(table_capacities))}
+    default_table_capacity = 10  # Default capacity for new tables
 
     fixed_ticket_numbers = set(fixed_tickets.keys())
 
@@ -38,7 +52,7 @@ def generate_initial_state(attendees, fixed_tickets, table_capacities):
     # assign fixed tickets to tables
     for attendee in fixed_attendees:
         fixed_table_number = fixed_tickets[attendee['ticket_number']]
-        if table_remaining_space[fixed_table_number] > 0:
+        if table_remaining_space.get(fixed_table_number, 0) > 0:
             tables[fixed_table_number].append(attendee)
             attendee['table_number'] = fixed_table_number
             attendee['fixed'] = True
@@ -69,7 +83,7 @@ def generate_initial_state(attendees, fixed_tickets, table_capacities):
 
         placed = False
         for table_index, table in enumerate(tables):
-            if table_remaining_space[table_index] >= len(members):
+            if table_remaining_space.get(table_index, 0) >= len(members):
                 for member in members:
                     member['table_number'] = table_index
                 table.extend(members)
@@ -77,29 +91,47 @@ def generate_initial_state(attendees, fixed_tickets, table_capacities):
                 placed = True
                 break
 
-        # split large groups
+        # Split large groups or add new tables if needed
         if not placed:
-            for table_index, table in enumerate(tables):
-                if table_remaining_space[table_index] > 0:
-                    remaining_space = table_remaining_space[table_index]
-                    for member in members[:remaining_space]:
-                        member['table_number'] = table_index
-                    table.extend(members[:remaining_space])
-                    table_remaining_space[table_index] -= remaining_space
-                    members = members[remaining_space:]
-                    if not members:
-                        break
+            while members:
+                # Find a table with space or create a new one if all existing tables are full
+                for table_index, table in enumerate(tables):
+                    if table_remaining_space.get(table_index, 0) > 0:
+                        remaining_space = table_remaining_space[table_index]
+                        for member in members[:remaining_space]:
+                            member['table_number'] = table_index
+                        table.extend(members[:remaining_space])
+                        table_remaining_space[table_index] -= remaining_space
+                        members = members[remaining_space:]
+                        if not members:
+                            break
+                else:
+                    # Create a new table if no existing table can accommodate the remaining group members
+                    new_table_index = len(tables)
+                    tables.append([])
+                    table_remaining_space[new_table_index] = default_table_capacity
+                    for member in members[:default_table_capacity]:
+                        member['table_number'] = new_table_index
+                    tables[-1].extend(members[:default_table_capacity])
+                    table_remaining_space[new_table_index] -= default_table_capacity
+                    members = members[default_table_capacity:]
 
-    # place remainng tickets
+    # Place remaining ungrouped attendees
     if None in groups:
         ungrouped_attendees = groups[None]
         for attendee in ungrouped_attendees:
             for table_index, table in enumerate(tables):
-                if table_remaining_space[table_index] > 0:
+                if table_remaining_space.get(table_index, 0) > 0:
                     attendee['table_number'] = table_index
                     table.append(attendee)
                     table_remaining_space[table_index] -= 1
                     break
+            else:
+                # Create a new table if needed for ungrouped attendees
+                new_table_index = len(tables)
+                tables.append([attendee])
+                table_remaining_space[new_table_index] = default_table_capacity - 1
+                attendee['table_number'] = new_table_index
 
     return tables
 
@@ -111,13 +143,19 @@ def evaluate_seating(tables):
     for table in tables:
         names = [attendee['full_name'] for attendee in table]
         surnames = [name.split()[-1] for name in names]
+        emails = [attendee['email'] for attendee in table]
         
         name_counts = {name: names.count(name) for name in set(names)}
         surname_counts = {surname: surnames.count(surname) for surname in set(surnames)}
+        email_counts = {email: emails.count(email) for email in set(emails)}
 
         for count in name_counts.values():
             if count > 1:
                 score += count * 50  
+
+        for count in email_counts.values():
+            if count > 1:
+                score += count * 50
 
         for count in surname_counts.values():
             if count > 1:
@@ -189,25 +227,45 @@ def post(event):
     fixed_tickets = event.get('fixed_tickets', {})
 
     for item in filtered_items:
-        full_name = item.get('full_name', 'unknown')
-        email = item.get('email', 'unknown')
-        ticket_number = item.get('ticket_number', 'unknown')
-        meal_prefs = item.get('meal_preferences', {}) or {}
-        group = meal_prefs.get('seating_preference', [None])
+        full_name       = item.get('full_name', 'unknown')
+        email           = item.get('email', 'unknown')
+        ticket_number   = item.get('ticket_number', 'unknown')
+        status          = item.get('status', 'unknown')
 
+        meal_prefs  = item.get('meal_preferences', {}) or {}
+        group       = meal_prefs.get('seating_preference', [None])
+        choices     = meal_prefs.get('choices', [-1,-1,-1])
+        diet        = meal_prefs.get('dietary_requirements', {})
+
+        pass_type   = extract_pass_type(item.get('line_items', []))
+        is_selected = all(choice >= 0 for choice in choices)
+        not_wanted  = all(choice == -99 for choice in choices)
+     
         attendee = {
             'full_name': full_name,
             'ticket_number': ticket_number,
             'group': group[0].lower().strip() if group and group[0] else None,
             'fixed': False,
-            'email': email
+            'email': email,
+            'is_artist': True if 'Artist' in pass_type else False,
+            'is_gratis': True if 'gratis' in status else False,
+            'choices': choices,
+            'is_selected': is_selected,
+            'not_wanted': not_wanted,
+            'dietary_requirements': diet,
         }
 
         attendees.append(attendee)
 
     logger.info(f"Total attendees: {len(attendees)}")
     logger.info(f"Fixed tickets provided: {len(fixed_tickets)}")
-    table_capacities = event.get("table_capacities", [12, 12] + [10 for i in range(18)])
+
+    if isinstance(event.get('table_capacities'), dict):
+        table_capacities = list(event.get('table_capacities').values()) 
+    elif isinstance(event.get('table_capacities'), list):
+        table_capacities = event.get('table_capacities')
+    else:
+        table_capacities = [10 for i in range(20)]
 
     optimised_seating = simulated_annealing(attendees, fixed_tickets, table_capacities)
 
@@ -224,7 +282,7 @@ def post(event):
         event_entry = {
             'PK': 'SEATING#OPTIMISED',
             'SK': f"DETAIL#{int(time.time())}",
-            'seating_data': json.dumps(optimised_seating, indent=2),
+            'seating_data': json.dumps(optimised_seating, indent=2, cls=DecimalEncoder),
             'timestamp': int(time.time())
         }
         event_table.put_item(Item=event_entry)
@@ -254,7 +312,6 @@ def get(event):
 
         if response['Items']:
             most_recent_entry = response['Items'][0]
-            logger.info(json.loads(most_recent_entry['seating_data']))
             return {
                 'statusCode': 200,
                 'body': json.dumps({
