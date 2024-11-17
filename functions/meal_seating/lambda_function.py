@@ -22,6 +22,15 @@ db = boto3.resource('dynamodb')
 attendees_table = db.Table(attendees_table_name)
 event_table = db.Table(event_table_name)
 
+def get_output_string(seating):
+    output_str = ""
+    for i, table in enumerate(seating):
+        output_str += f"Table {i + 1}:\n"
+        for attendee in table:
+            output_str += f"  - {attendee['full_name']:<30} {str(attendee['group']):<25} (Ticket: {attendee['ticket_number']}, Fixed: {attendee['fixed']})\n"
+        output_str += "\n"
+    return output_str
+
 def get_dinner_pass_names():
     return ["Full Pass", "Artist Pass", "Volunteer Pass", "Saturday - Dinner", "Staff Pass"]
 
@@ -45,14 +54,17 @@ def remove_empty_tables_and_reindex(tables):
             attendee['table_number'] = new_index
     return non_empty_tables
 
-def generate_initial_state(attendees, fixed_tickets, table_capacities):
+def generate_initial_state(attendees, fixed_tickets, table_capacities, min_table_capacity=10, max_table_capacity=12):
     '''
     Generate initial state with groups sat together
     '''
+    provided_table_capacities = table_capacities is not None and len(table_capacities) > 0
+    allow_capacity_adjustment = not provided_table_capacities
+
     tables = [[] for _ in table_capacities]
     unassigned_attendees = []
     table_remaining_space = {i: table_capacities[i] for i in range(len(table_capacities))}
-    default_table_capacity = 10  # Default capacity for new tables
+    default_table_capacity = min_table_capacity  # Default capacity for new tables
 
     fixed_ticket_numbers = set(fixed_tickets.keys())
 
@@ -117,12 +129,15 @@ def generate_initial_state(attendees, fixed_tickets, table_capacities):
                 else:
                     new_table_index = len(tables)
                     tables.append([])
-                    table_remaining_space[new_table_index] = default_table_capacity
-                    for member in members[:default_table_capacity]:
+                    if allow_capacity_adjustment:
+                        table_remaining_space[new_table_index] = max_table_capacity
+                    else:
+                        table_remaining_space[new_table_index] = default_table_capacity
+
+                    for member in members[:table_remaining_space[new_table_index]]:
                         member['table_number'] = new_table_index
-                    tables[-1].extend(members[:default_table_capacity])
-                    table_remaining_space[new_table_index] -= default_table_capacity
-                    members = members[default_table_capacity:]
+                    tables[-1].extend(members[:table_remaining_space[new_table_index]])
+                    members = members[table_remaining_space[new_table_index]:]
 
     # Place remaining ungrouped attendees
     if None in groups:
@@ -137,21 +152,27 @@ def generate_initial_state(attendees, fixed_tickets, table_capacities):
             else:
                 new_table_index = len(tables)
                 tables.append([attendee])
-                table_remaining_space[new_table_index] = default_table_capacity - 1
+                if allow_capacity_adjustment:
+                    table_remaining_space[new_table_index] = max_table_capacity - 1
+                else:
+                    table_remaining_space[new_table_index] = default_table_capacity - 1
                 attendee['table_number'] = new_table_index
 
     tables = remove_empty_tables_and_reindex(tables)
 
     return tables
 
-def evaluate_seating(tables):
+def evaluate_seating(tables, preferred_capacity=10):
     '''
     Calculate the score of current arrangement
     '''
     score = 0
     for table in tables:
-        if len(table) == 1:  
-            score -= 50 
+        if len(table) == 1:
+            score -= 100  
+
+        if len(table) > preferred_capacity:
+            score -= 10 * (len(table) - preferred_capacity)
 
         names = [attendee['full_name'] for attendee in table]
         surnames = [name.split()[-1] for name in names]
@@ -181,11 +202,15 @@ def evaluate_seating(tables):
 
     return score
 
-def simulated_annealing(attendees, fixed_tickets, table_capacities, initial_temp=1000, cooling_rate=0.8, min_temp=1):
+
+def simulated_annealing(attendees, fixed_tickets, table_capacities, initial_temp=1000, cooling_rate=0.8, min_temp=1, min_table_capacity=10, max_table_capacity=12, allow_capacity_adjustment=True):
     '''
     Optimise the seating with simulated annealing.
     '''
-    current_state = generate_initial_state(attendees, fixed_tickets, table_capacities)
+    provided_table_capacities = table_capacities is not None and len(table_capacities) > 0
+    allow_capacity_adjustment = not provided_table_capacities
+
+    current_state = generate_initial_state(attendees, fixed_tickets, table_capacities, min_table_capacity, max_table_capacity)
     current_score = evaluate_seating(current_state)
     best_state = deepcopy(current_state)
     best_score = current_score
@@ -210,16 +235,22 @@ def simulated_annealing(attendees, fixed_tickets, table_capacities, initial_temp
         # move together if group
         if group_or_attendee['group']:
             group_members = [p for p in table1 if p['group'] == group_or_attendee['group']]
-            if len(table2) + len(group_members) <= table_capacities[new_state.index(table2)]:
+            if len(table2) + len(group_members) <= max_table_capacity:
                 for member in group_members:
                     table1.remove(member)
                     table2.append(member)
-                    member['table_number'] = new_state.index(table2) + 1
+                    member['table_number'] = new_state.index(table2)
+
+                if allow_capacity_adjustment and len(table2) > min_table_capacity:
+                    table_capacities[new_state.index(table2)] = min(max_table_capacity, len(table2))
         else:
-            if len(table2) < table_capacities[new_state.index(table2)]:
+            if len(table2) < max_table_capacity:
                 table1.remove(group_or_attendee)
                 table2.append(group_or_attendee)
-                group_or_attendee['table_number'] = new_state.index(table2) + 1
+                group_or_attendee['table_number'] = new_state.index(table2)
+
+                if allow_capacity_adjustment and len(table2) > min_table_capacity:
+                    table_capacities[new_state.index(table2)] = min(max_table_capacity, len(table2))
 
         new_score = evaluate_seating(new_state)
         delta_score = new_score - current_score
@@ -289,12 +320,7 @@ def post(event):
 
     optimised_seating = simulated_annealing(attendees, fixed_tickets, table_capacities)
 
-    output_str = ""
-    for i, table in enumerate(optimised_seating):
-        output_str += f"Table {i + 1}:\n"
-        for attendee in table:
-            output_str += f"  - {attendee['full_name']:<30} {str(attendee['group']):<25} (Ticket: {attendee['ticket_number']}, Fixed: {attendee['fixed']})\n"
-        output_str += "\n"
+    output_str = get_output_string(optimised_seating)
 
     logger.info("Seating optimisation completed.")
 
