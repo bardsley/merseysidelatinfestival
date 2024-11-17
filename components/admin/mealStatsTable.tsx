@@ -21,9 +21,9 @@ export default function MealStatsTable() {
                   <span className="">Refreshing...</span>
                 </div> : null
               }
-    <div className="mt-8 grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="summaries mt-8 grid grid-cols-1 print:flex gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {/* Summary Statistics Table */}
-        <div className="flow-root">
+        <div className="flow-root summary-table">
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
               <table className="min-w-full divide-y divide-gray-300">
@@ -38,19 +38,19 @@ export default function MealStatsTable() {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   <tr>
-                    <td className={`${baseClasses}`}>Not Selected Count</td>
+                    <td className={`${baseClasses}`}>Not Selected</td>
                     <td className={baseClasses}>{stats.not_selected_count}</td>
                   </tr>
                   <tr>
-                    <td className={`${baseClasses}`}>Selected Count</td>
+                    <td className={`${baseClasses}`}>Selected</td>
                     <td className={baseClasses}>{stats.selected_count}</td>
                   </tr>
                   <tr>
-                    <td className={`${baseClasses}`}>Incomplete Count</td>
+                    <td className={`${baseClasses}`}>Incomplete </td>
                     <td className={baseClasses}>{stats.incomplete_count}</td>
                   </tr>
                   <tr>
-                    <td className={`${baseClasses}`}>Not Wanted Count</td>
+                    <td className={`${baseClasses}`}>Not Wanted</td>
                     <td className={baseClasses}>{stats.not_wanted_count}</td>
                   </tr>
                   <tr>
@@ -64,7 +64,7 @@ export default function MealStatsTable() {
         </div>
 
         {/* Course Frequencies Table */}
-        <div className="flow-root">
+        <div className="flow-root summary-table">
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
               <table className="min-w-full divide-y divide-gray-300">
@@ -96,7 +96,7 @@ export default function MealStatsTable() {
         </div>
 
         {/* Dietary Frequencies Table */}
-        <div className="flow-root">
+        <div className="flow-root summary-table">
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
               <table className="min-w-full divide-y divide-gray-300">

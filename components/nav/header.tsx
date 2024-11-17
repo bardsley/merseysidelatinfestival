@@ -32,7 +32,7 @@ export default function Header({header, theme}:any) {
   
   return (
     <div
-      className={`relative overflow-hidden bg-gradient-to-b ${headerColorCss}`}
+      className={`header relative overflow-hidden bg-gradient-to-b ${headerColorCss}`}
     >
       <Container size="custom" className="py-0 relative z-10 max-w-8xl">
         <div className="flex justify-between items-stretch gap-6">

@@ -17,10 +17,10 @@ export default async function AdminUserPage() {
   return (<Layout>
     <section className={`flex-1 relative transition duration-150 ease-out body-font overflow-hidden bg-none text-white`}>
       {" "}
-      <Container width="large" padding="tight" className={`flex-1 pb-2`} size="top">
+      <Container width="large" padding="tight" className={`flex-1 pb-2 breadcrumbs`} size="top">
         <Navigation pages={pages} />
       </Container>        
-      <Container width="custom" padding="tight" className={`flex-1 pb-2 w-5/6`} size="none">
+      <Container width="custom" padding="tight" className={`flex-1 pb-2 w-full page`} size="none">
         <DetailsPageClient />
       </Container>
     </section>
