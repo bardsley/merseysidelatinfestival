@@ -1,5 +1,4 @@
 'use client'
-import { table } from "console";
 import React, { useState } from "react";
 
 const courseMappings = [
