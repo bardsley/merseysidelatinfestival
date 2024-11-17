@@ -20,7 +20,7 @@ export default function AttendeeMealTable({ attendees, summaryLoading, summaryIs
   }
 
   return (
-        <div className={`${!attendeesGroupedByTable ? 'bg-richblack-700' : ''} rounded-b-md p-4`}>
+        <div className={`${!attendeesGroupedByTable ? 'bg-richblack-700' : ''} rounded-b-md`}>
           <div className="grid grid-cols-2">
           {!attendeesGroupedByTable ? 
             <div className=" flex justify-start mb-2">
