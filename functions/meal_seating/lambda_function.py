@@ -23,7 +23,7 @@ attendees_table = db.Table(attendees_table_name)
 event_table = db.Table(event_table_name)
 
 def get_dinner_pass_names():
-    return ["Full Pass", "Artist Pass", "Volunteer Pass", "Saturday - Dinner"]
+    return ["Full Pass", "Artist Pass", "Volunteer Pass", "Saturday - Dinner", "Staff Pass"]
 
 def extract_pass_type(line_items):
     pass_names = get_dinner_pass_names()
@@ -34,6 +34,16 @@ def extract_pass_type(line_items):
             if item['description'] in pass_names:
                 return item['description']
     return "unknown"
+
+def remove_empty_tables_and_reindex(tables):
+    '''
+    remove empty tables and reindex
+    '''
+    non_empty_tables = [table for table in tables if len(table) > 0]
+    for new_index, table in enumerate(non_empty_tables):
+        for attendee in table:
+            attendee['table_number'] = new_index
+    return non_empty_tables
 
 def generate_initial_state(attendees, fixed_tickets, table_capacities):
     '''
@@ -91,10 +101,9 @@ def generate_initial_state(attendees, fixed_tickets, table_capacities):
                 placed = True
                 break
 
-        # Split large groups or add new tables if needed
+        # split large groups or add new tables if needed
         if not placed:
             while members:
-                # Find a table with space or create a new one if all existing tables are full
                 for table_index, table in enumerate(tables):
                     if table_remaining_space.get(table_index, 0) > 0:
                         remaining_space = table_remaining_space[table_index]
@@ -106,7 +115,6 @@ def generate_initial_state(attendees, fixed_tickets, table_capacities):
                         if not members:
                             break
                 else:
-                    # Create a new table if no existing table can accommodate the remaining group members
                     new_table_index = len(tables)
                     tables.append([])
                     table_remaining_space[new_table_index] = default_table_capacity
@@ -127,11 +135,12 @@ def generate_initial_state(attendees, fixed_tickets, table_capacities):
                     table_remaining_space[table_index] -= 1
                     break
             else:
-                # Create a new table if needed for ungrouped attendees
                 new_table_index = len(tables)
                 tables.append([attendee])
                 table_remaining_space[new_table_index] = default_table_capacity - 1
                 attendee['table_number'] = new_table_index
+
+    tables = remove_empty_tables_and_reindex(tables)
 
     return tables
 
@@ -141,13 +150,18 @@ def evaluate_seating(tables):
     '''
     score = 0
     for table in tables:
+        if len(table) == 1:  
+            score -= 50 
+
         names = [attendee['full_name'] for attendee in table]
         surnames = [name.split()[-1] for name in names]
         emails = [attendee['email'] for attendee in table]
+        pass_types = [attendee.get('pass_type', 'unknown') for attendee in table]
         
         name_counts = {name: names.count(name) for name in set(names)}
         surname_counts = {surname: surnames.count(surname) for surname in set(surnames)}
         email_counts = {email: emails.count(email) for email in set(emails)}
+        pass_type_counts = {ptype: pass_types.count(ptype) for ptype in set(pass_types)}
 
         for count in name_counts.values():
             if count > 1:
@@ -160,6 +174,10 @@ def evaluate_seating(tables):
         for count in surname_counts.values():
             if count > 1:
                 score += count * 25
+
+        for ptype, count in pass_type_counts.items():
+            if ptype in get_dinner_pass_names() and count > 1:
+                score += count * 50
 
     return score
 
@@ -216,6 +234,8 @@ def simulated_annealing(attendees, fixed_tickets, table_capacities, initial_temp
 
         # apply cooling
         temp *= cooling_rate
+
+    best_state = remove_empty_tables_and_reindex(best_state)
 
     return best_state
 
