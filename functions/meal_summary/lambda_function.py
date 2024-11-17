@@ -136,8 +136,11 @@ def lambda_handler(event, context):
                         course_frequencies[i][dish_name] = 1
 
     logger.info(f"Statistics: Not selected: {not_selected_count}, Incomplete: {incomplete_count}, Not wanted: {not_wanted_count}, Selected: {selected_count}, Total number of attendees with dinner: {len(meal_attendees_list)}")
-    logger.info(f"Course Frequencies: {course_frequencies}")
+    logger.info(f"Course Frequencies (without blanks added): {course_frequencies}")
     logger.info(f"Dietary Frequencies: {dietary_frequencies}")
+
+    for course in course_frequencies:
+        course_frequencies[course][0] += not_selected_count
 
     return {
         'statusCode': 200,
