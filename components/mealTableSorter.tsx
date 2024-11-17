@@ -185,18 +185,6 @@ export default function MealTableSorter() {
   };
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8">
-      <div
-        className={`flex justify-between items-center bg-richblack-700 text-white px-4 py-3 ${isCollapsed ? "rounded-md" : "rounded-t-md"} cursor-pointer`}
-        onClick={() => setIsCollapsed(!isCollapsed)}
-      >
-        <h1 className="text-xl font-bold">Assign attendees to tables</h1>
-        {tableValidating ? <div>Valdiating</div> :  null}
-        <span className={`transform transition-transform ${isCollapsed ? '' : 'rotate-90'}`}><ArrowRightIcon className="w-4 h-4"/></span> 
-        
-      </div>
-
-      {!isCollapsed && (
         <div className="bg-richblack-700 rounded-b-md p-4">
           {submitted ? (
             <>
@@ -309,7 +297,5 @@ export default function MealTableSorter() {
             <p>No table data available.</p>
           )}
         </div>
-      )}
-    </div>
   );
 }
