@@ -275,9 +275,13 @@ export default function MealTableSorter() {
                                   {attendee.is_artist ? <RiVipFill title="Artist Ticket" className='pl-1 w-6 h-6' /> : null }
                                   {attendee.dietary_requirements.selected && attendee.dietary_requirements.selected?.length > 0 ? 
                                     <div className="ml-1 flex items-center justify-center cursor-pointer relative group">
-                                    <MdRestaurantMenu title="Dietary requirements" className='pl-1 w-6 h-6' />
-                                    <div className="absolute hidden group-hover:block bg-white text-gray-900 text-xs rounded shadow-lg p-2 mt-2 w-48">
-                                      {attendee.dietary_requirements.selected.join(",")}
+                                      <MdRestaurantMenu title="Dietary requirements" className='pl-1 w-6 h-6' />
+                                      <div className="absolute hidden group-hover:block bg-white text-gray-900 text-xs rounded shadow-lg p-2 mt-2 w-48">
+                                      {[
+                                        ...attendee.dietary_requirements.selected.join(", "),
+                                        <br />,
+                                        attendee.dietary_requirements.other
+                                      ]}
                                     </div>
                                   </div> : null }
                                 </td>
