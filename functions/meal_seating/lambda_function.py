@@ -284,18 +284,23 @@ def post(event):
         status          = item.get('status', 'unknown')
 
         meal_prefs  = item.get('meal_preferences', {}) or {}
-        group       = meal_prefs.get('seating_preference', [None])
+        group       = meal_prefs.get('seating_preference')
         choices     = meal_prefs.get('choices', [-1,-1,-1])
         diet        = meal_prefs.get('dietary_requirements', {})
 
         pass_type   = extract_pass_type(item.get('line_items', []))
         is_selected = all(choice >= 0 for choice in choices)
         not_wanted  = all(choice == -99 for choice in choices)
-     
+
+        if group and isinstance(group, str):
+            group = group
+        elif group and isinstance(group, list):
+            group = group[0]
+                 
         attendee = {
             'full_name': full_name,
             'ticket_number': ticket_number,
-            'group': group[0].lower().strip() if group and group[0] else None,
+            'group': group.lower().strip() if group and group else None,
             'fixed': False,
             'email': email,
             'is_artist': True if 'Artist' in pass_type else False,
