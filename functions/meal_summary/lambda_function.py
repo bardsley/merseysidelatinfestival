@@ -87,12 +87,17 @@ def lambda_handler(event, context):
         full_name            = item.get('full_name', 'unknown')
         choices              = meal_prefs.get('choices', [-1,-1,-1])
         assigned_table       = meal_prefs.get('table', None)
-        group                = meal_prefs.get('seating_preference', [None])
+        group                = meal_prefs.get('seating_preference')
         dietary_requirements = meal_prefs.get('dietary_requirements', {})
         is_selected          = all(choice >= 0 for choice in choices)
         not_wanted           = all(choice == -99 for choice in choices)
 
         pass_type = extract_pass_type(item.get('line_items', []))
+
+        if group and isinstance(group, str):
+            group = group
+        elif group and isinstance(group, list):
+            group = group[0]
 
         meal_attendees_list.append({
             'ticket_number': ticket_number,
