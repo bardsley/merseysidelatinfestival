@@ -154,10 +154,12 @@ const MealPreferences = ({preferences,setPreferences}) =>{
             placeholder="Group Name"
             aria-describedby="seating-preference"
             defaultValue = {preferences.seating_preference}
+            readOnly = {preferencesDisabled ? true : false}
+            onClick={(event) =>  maintainState(event)}
             onChange={(event) => {
-              const group_id = event.target.value
-              checkGroupExistance(group_id)
-              setPreferences({...preferences, seating_preference: group_id})
+              preferencesDisabled ? maintainState(event) : (event) => {const group_id = event.target.value
+                checkGroupExistance(group_id)
+                setPreferences({...preferences, seating_preference: group_id})}
             }}
             className="block w-80 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           />
