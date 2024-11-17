@@ -162,16 +162,19 @@ def generate_initial_state(attendees, fixed_tickets, table_capacities, min_table
 
     return tables
 
-def evaluate_seating(tables, preferred_capacity=10):
+def evaluate_seating(tables, table_capacities, preferred_capacity=10):
     '''
     Calculate the score of current arrangement
     '''
+    provided_table_capacities = table_capacities is not None and len(table_capacities) > 0
+    allow_capacity_adjustment = not provided_table_capacities
+
     score = 0
     for table in tables:
         if len(table) == 1:
             score -= 100  
 
-        if len(table) > preferred_capacity:
+        if len(table) > preferred_capacity and allow_capacity_adjustment:
             score -= 10 * (len(table) - preferred_capacity)
 
         names = [attendee['full_name'] for attendee in table]
@@ -203,7 +206,7 @@ def evaluate_seating(tables, preferred_capacity=10):
     return score
 
 
-def simulated_annealing(attendees, fixed_tickets, table_capacities, initial_temp=1000, cooling_rate=0.8, min_temp=1, min_table_capacity=10, max_table_capacity=12, allow_capacity_adjustment=True):
+def simulated_annealing(attendees, fixed_tickets, table_capacities, initial_temp=100000, cooling_rate=0.9, min_temp=1, min_table_capacity=10, max_table_capacity=12, allow_capacity_adjustment=True):
     '''
     Optimise the seating with simulated annealing.
     '''
@@ -211,11 +214,12 @@ def simulated_annealing(attendees, fixed_tickets, table_capacities, initial_temp
     allow_capacity_adjustment = not provided_table_capacities
 
     current_state = generate_initial_state(attendees, fixed_tickets, table_capacities, min_table_capacity, max_table_capacity)
-    current_score = evaluate_seating(current_state)
+    current_score = evaluate_seating(current_state, table_capacities)
     best_state = deepcopy(current_state)
     best_score = current_score
     temp = initial_temp
     iteration = 0
+    out_str = ""
 
     while temp > min_temp:
         new_state = deepcopy(current_state)
@@ -252,8 +256,10 @@ def simulated_annealing(attendees, fixed_tickets, table_capacities, initial_temp
                 if allow_capacity_adjustment and len(table2) > min_table_capacity:
                     table_capacities[new_state.index(table2)] = min(max_table_capacity, len(table2))
 
-        new_score = evaluate_seating(new_state)
+        new_score = evaluate_seating(new_state, table_capacities)
         delta_score = new_score - current_score
+        out_str += f"{iteration}  |    {new_score}      |    {delta_score}     | \n"
+        iteration += 1
 
         if delta_score > 0 or math.exp(delta_score / temp) > random.random():
             current_state = new_state
