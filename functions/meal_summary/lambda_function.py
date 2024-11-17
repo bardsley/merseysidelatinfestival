@@ -76,6 +76,8 @@ def lambda_handler(event, context):
     
     filtered_items = [item for item in response['Items'] if (item['access'][2] == 1)]
 
+    not_wanted_count = len([item for item in response['Items'] if (item['access'][2] == -1)]) # if it has been removed by an admin because they didn't want
+
     meal_attendees_list = []
     
     #! If no matches should problably return a 404
