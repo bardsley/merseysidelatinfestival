@@ -2,6 +2,7 @@ import { PartialSelectedOptions, Pass } from './pricingTypes'
 import { individualTickets, passes, fullPassName} from './pricingDefaults'
 import power from 'power-set'
 import isubsetof from 'set.prototype.issubsetof'
+import { secondsToHours } from 'date-fns';
 isubsetof.shim();
 
 // Returns a list of all pass combinations you could buy
@@ -166,11 +167,11 @@ const priceIds = (student = false) => {
 }
 
 const thingsToAccess = (selectedOptions:any) => {
-  return Object.keys(selectedOptions).flatMap((day) => {
-    return Object.keys(selectedOptions[day]).flatMap((pass) => {
-      return selectedOptions[day][pass] ? 1 : 0
-    })
-  })
+  console.log("Selected Options",selectedOptions)
+  const access_order = [["Friday","Party"],["Saturday","Classes"],["Saturday","Dinner"],["Saturday","Party"],["Sunday","Classes"],["Sunday","Party"]]
+  const access = access_order.map((access) => { return selectedOptions[access[0]][access[1]] ? 1 : 0 })
+  console.log(access)
+  return access
 }
 
 const passInCombination = (pass:Pass, combinations: string[]) => {

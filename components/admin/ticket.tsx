@@ -96,6 +96,7 @@ export default function TicketView({ticket_number, email}: {ticket_number: strin
             <div>
               <Info label="Ticket" info={ticket_number} options={{size: '3xl'}}/>
               <Info label="Passes" info={accessToThings(ticket.access).join(", ")} options={{size: 'lg'}} />
+              <div>{JSON.stringify(ticket.access)}</div>
               <Info label="Usage & Elligibility" info={ticketUsage} />  
             </div>
             <img src={`https://quickchart.io/qr?margin=1&text=${ticket.ticket_number}`} alt={ticket.ticket_number} className="w-40 h-40 aspect-square" />

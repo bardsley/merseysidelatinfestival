@@ -7,12 +7,14 @@ import { initialSelectedOptions, fullPassName, passes, individualTickets } from 
 import { calculateTotalCost, passOrTicket, getBestCombination, itemsFromPassCombination, itemListToOptions, addToOptions, thingsToAccess} from '../ticketing/pricingUtilities'
 import PassCards from '../ticketing/passes'
 import { OptionsTable } from '../ticketing/OptionsTable';
+import ScanSuccessDialog from '@components/admin/scan/ScanSuccessDialog'
 // import { useRouter } from 'next/navigation'
 import { deepCopy } from '@lib/useful'
 import { format, getUnixTime } from 'date-fns';
 import Pusher from 'pusher-js';
 import symmetricDifference from 'set.prototype.symmetricdifference'
 import difference from 'set.prototype.difference'
+import { AnyAaaaRecord } from 'dns';
 symmetricDifference.shim();
 difference.shim();
 
@@ -30,6 +32,7 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
   const [channel, setChannel] = useState(null)
   const [cardPayment, setCardPayment] = useState(null)
   const [payments,setPayments] = useState([] as any[])
+  const [ticket,setTicket] = useState(false as any)
   
 
   // const router = useRouter()
@@ -112,11 +115,11 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
     ${ positiveState ? "bg-green-700 hover:bg-green-800" : "bg-chillired-600 hover: bg-chillired-400" } text-xl text-nowrap w-full max-w-72 md:w-auto`
     return(
       <div className='flex gap-6'>
-        <button type="submit" disabled={pending || cardPayment || totalCost <= 0} 
+        <button type="submit" name="checkout-button" id="checkout-button" value="cash" disabled={pending || cardPayment || totalCost <= 0} 
           className={activeButtonClass}>
           {pending ? "Storing..." : "Cash"}
         </button>
-        <button type="submit" disabled={pending || !cardPayment || totalCost <= 0} 
+        <button type="submit" name="checkout-button" id="checkout-button" value="card" disabled={pending || !cardPayment || totalCost <= 0} 
         className={activeButtonClass}>
         {pending ? "Storing..." : "Card"}
       </button>  
@@ -126,6 +129,7 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
   }
 
   async function checkout(formObject) {
+    
     setSelectedOptions(deepCopy(initialSelectedOptions))
     setStudentDiscount(false)
 
@@ -143,32 +147,40 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
       }
     })
     // Record the sale
+    console.log("selectedOptions",selectedOptions)
     const purchaseObj = {
-      'email': formObject.get("inperson-name"),      
-      'full_name': formObject.get("inperson-email"),
+      'email': formObject.get("inperson-email"),       
+      'full_name': formObject.get("inperson-name"),
       'purchase_date': getUnixTime(new Date()) ,
       'line_items': line_items,
       'access': thingsToAccess(selectedOptions),
-      'status': "paid_cash",
+      'status': `paid_${formObject.get('checkout-button')}`,
       'student_ticket': studentDiscount,
     //   // 'promo_code': None|{
     //   //     'code': "MLF",
     //   //     'value': 500
     //   // },
     //  // 'meal_preferences': None|{},
-    //  // 'checkout_session': None|"cs_xxxxxx", 
-    //  // 'schedule': {},
+      'checkout_session': formObject.get("inperson-payment-ref") || formObject.get('checkout-button'), 
+      'checkout_amount': formObject.get("inperson-payment-amount") || packageCost*100, 
       'heading_message':"THANK YOU FOR YOUR PURCHASE",
       'send_standard_ticket': true,
-      }
-    // const apiResponse = fetch(process.env.LAMBDA_CREATE_TICKET, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(purchaseObj),
-    // })
+    }
     console.log("Purchase object",purchaseObj)
+    const apiResponse = await fetch('/api/admin/epos', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(purchaseObj),
+    })
+    const apiData = await apiResponse.json() 
+    const apiAmmendedData = apiResponse.ok ? apiData : {...apiData, ticket_number: false }
+    console.log("apiData",apiData)
+    setTicket(apiData.ticket_number)
+    if(!apiResponse.ok) {
+      alert(`PROBLEM, ${JSON.stringify(apiData)} ${apiResponse.status}`)
+    }
     // router.push("/admin/epos") //TODO This 100% needs a check for errors
     // Should reset the thing and unlock the form
     setLocked(false)
@@ -181,13 +193,14 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
     focus:border-chillired-400 focus:ring-chillired-400"
 
   const displayAmount = cardPayment ? (cardPayment.amount/100).toFixed(2) : 0
-  const correctAmount = cardPayment ? displayAmount == totalCost.toFixed(2) ? true : false : true
+  const correctAmount = cardPayment ? displayAmount == packageCost.toFixed(2) ? true : false : true
    
   return till ?(
     <div className="table-container w-full grid max-w-full lg:mx-auto col-span-5
     grid-cols-1 gap-3 justify-center text-xs 
     md:grid-cols-4  md:pt-12 md:mx-3 md:text-base
       ">
+        { ticket ? <div className='fixed z-50 w-full'><ScanSuccessDialog scan={ticket} onClick={()=>{setTicket(false); console.log("Checkin")}}/></div> : null }
       <h1 className='col-span-3 md:col-span-full block font-bold text-xl'>{till}</h1>
       <div className='col-span-1'>
         <PassCards 
@@ -238,7 +251,7 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
               </div>
               <form autoComplete="off" action={checkout} className='flex w-full md:w-2/3 flex-col items-center justify-center'>
                 { cardPayment ? <input type="text" autoComplete="off" name="inperson-payment-ref" readOnly value={cardPayment.payment_ref} className={inputClasses} /> : null }
-                { cardPayment ? <input type="hidden" autoComplete="off" name="inperson-payment-ref" readOnly value={cardPayment.amount} className={inputClasses} /> : null }
+                { cardPayment ? <input type="hidden" autoComplete="off" name="inperson-amount" readOnly value={cardPayment.amount} className={inputClasses} /> : null }
                 <input type="text" autoComplete="off" name="inperson-name" placeholder="Name" className={inputClasses} />
                 <input type="text" autoComplete="off" name="inperson-email" placeholder="Email" className={inputClasses}   />
                 <CheckoutButtons allgood={correctAmount}></CheckoutButtons>
@@ -255,7 +268,9 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
           {payments.slice(0,10).map((payment,index) => { return (
           <div key={`${payment.payment_ref}=${index}`} 
             className='rounded bg-gray-500 border border-gray-400 p-2 my-2 flex'
-            onClick={()=> { cardPayment.payment_ref != payment.payment_ref ? setCardPayment(payment) : setCardPayment(false)}}>
+            onClick={()=> { 
+              cardPayment?.payment_ref && cardPayment.payment_ref == payment.payment_ref ? setCardPayment(false) : setCardPayment(payment)
+            }}>
             <BiAlarmAdd className='w-6 h-6'/>
             £{(payment.amount/100).toFixed(2)} : {payment.tills.join(',')} : {format(payment.created,'HH:mm:ss')} {payment.payment_ref}
 
