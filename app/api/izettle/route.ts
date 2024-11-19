@@ -13,8 +13,8 @@ const pusher = new Pusher({
 export async function POST(request: Request) {
   const body = await request.json()
   const payload = JSON.parse(body.payload)
-  // console.log("request:", request)
-  // console.log("body:",body)
+  console.log("request:", request)
+  console.log("body:",body)
   // console.log("payload:",payload, payload.products.map((product) => product.category))
   const channel = "card-payments"
 
