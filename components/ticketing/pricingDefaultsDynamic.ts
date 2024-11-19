@@ -108,7 +108,7 @@ export const passes: Passes = {
 		 saving: 15,
 		 studentSaving: 20,
 		 combination: ['Saturday Classes', 'Saturday Party'],
-		 description: "The entire Saturday dancing experience",
+		 description: "The entire Saturday dancing experience (does not include Gala Dinner)",
 		 priceId: 'price_1QJHjxEWkmdeWsQPMmAVGy2C',
 		 studentPriceId: 'price_1QJHkIEWkmdeWsQPRt1S9pQq'},
 	'Full Pass': {
@@ -118,7 +118,7 @@ export const passes: Passes = {
 		 saving: 92.5,
 		 studentSaving: 95.5,
 		 combination: ['Friday Party', 'Saturday Classes', 'Saturday Party', 'Sunday Classes', 'Sunday Party'],
-		 description: "All the dancing the festival has at the best rate! If you're looking for the best deal this is it",
+		 description: "All the dancing the festival has at the best rate! If you're looking for the best deal this is it (does not include Gala Dinner)",
 		 priceId: 'price_1QJHdOEWkmdeWsQPygahmu3V',
 		 studentPriceId: 'price_1QJHeSEWkmdeWsQPJzNYTDs1'},
 	'Class Pass': {
