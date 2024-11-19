@@ -6,6 +6,7 @@ import logging
 from json.decoder import JSONDecodeError
 from decimal import Decimal
 from shared import DecimalEncoder as shared
+import time
 
 logger = logging.getLogger()
 logger.setLevel("INFO")
@@ -14,6 +15,8 @@ logger.setLevel("INFO")
 # logging.basicConfig()
 # profile_name='AdministratorAccess-645491919786'
 # boto3.setup_default_session(profile_name=profile_name)
+
+lambda_client = boto3.client('lambda')
 
 db = boto3.resource('dynamodb')
 table = db.Table(os.environ.get("ATTENDEES_TABLE_NAME"))
@@ -30,6 +33,22 @@ def get_ticket(ticket_number, email):
         raise ValueError("An internal error has occured.")
     else:
         return response['Items'][0]
+
+def update_group(new_ticket_number, new_email, new_group_id, new_name, old_ticket_number, old_email, old_group_id, old_name, recs):
+    logger.info("Invoking group lambda")
+    response = lambda_client.invoke(
+        FunctionName=os.environ.get("ATTENDEE_GROUPS_LAMBDA"),
+        InvocationType='Event',
+        Payload=json.dumps({
+                'requestContext':{'http': {'method': "PATCH"}},
+                'body':json.dumps({
+                    'new':{'ticket_number': new_ticket_number, 'group_id': new_group_id, 'email':new_email, 'full_name':new_name}, 
+                    'old':{'ticket_number': old_ticket_number, 'group_id': old_group_id, 'email':old_email, 'full_name':old_name}, 
+                    'recs': recs,
+                })
+            }, cls=shared.DecimalEncoder),
+        )
+    logger.info(response)    
 
 def err(msg:str, code=400, logmsg=None, **kwargs):
     logmsg = logmsg if logmsg else msg
@@ -91,7 +110,33 @@ def post(event):
     if 'schedule' in data:
         logger.info(f"-SET SCHEDULE OPTIONS:, {data['schedule']}")
         UpdateExp += ", schedule = :val2"
-        ExpAttrVals[':val2'] = json.dumps(data['schedule'])    
+        ExpAttrVals[':val2'] = json.dumps(data['schedule']) 
+    if ('group' in data) & (data['group']['id'] != ''):
+        logger.info(f"-SET GROUP OPTIONS:, {data['group']}")
+        recs = data['group']['recommendations'] if 'recommendations' in data['group'] else None
+        new_group = data['group']['id']
+        if ('meal_preferences' not in ticket_entry) or (ticket_entry['meal_preferences'] is None or not ticket_entry['meal_preferences']['seating_preference'] ):
+            logger.info("Invoking group lambda")
+            response = lambda_client.invoke(
+                    FunctionName=os.environ.get("ATTENDEE_GROUPS_LAMBDA"),
+                    InvocationType='Event',
+                    Payload=json.dumps({
+                            'requestContext':{'http': {'method': "POST"}},
+                            'body':json.dumps({
+                                'ticket_number': ticket_number, 
+                                'group_id': data['group']['id'], 
+                                'email':email, 
+                                'full_name':ticket_entry['full_name'], 
+                                'recs': recs,
+                                'timestamp':time.time()
+                            })
+                        }, cls=shared.DecimalEncoder),
+                    )
+            logger.info(response)   
+        elif ('meal_preferences' in ticket_entry):
+            if ticket_entry['meal_preferences']['seating_preference'][0] != data['group']['id']:
+                update_group(ticket_number, email, data['group']['id'], ticket_entry['full_name'], ticket_number, email, ticket_entry['meal_preferences']['seating_preference'][0], ticket_entry['full_name'], recs)
+
     # define the params for the ddb update
     params = {
         'Key': {
@@ -142,7 +187,7 @@ def get(event):
         # check that the meal is included in this ticket, if not return error
         if ticket_entry['access'][2] < 1: 
             return err("Attempting to get meal options for a ticket which does not include dinner.")
-        response_items.append({'preferences':ticket_entry['meal_preferences']})
+        response_items.append({'preferences':ticket_entry.get('meal_preferences', None)})
     if 'schedule' in event['queryStringParameters']['requested']:
         response_items.append({'schedule_options':ticket_entry['schedule']})
     if 'validity' in event['queryStringParameters']['requested']:

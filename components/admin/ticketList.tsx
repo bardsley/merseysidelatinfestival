@@ -1,4 +1,5 @@
 'use client'
+
 import { useSearchParams, useRouter, usePathname} from 'next/navigation'
 import { useState} from 'react';
 import { ChevronDownIcon, ChevronUpIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid'
@@ -10,7 +11,6 @@ import { TicketRow } from './lists/ticketRow';
 import { fetcher } from  "@lib/fetchers";
 
 export default function TicketList() {
-  
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const router = useRouter()
@@ -74,6 +74,8 @@ export default function TicketList() {
   const headerContainerClassNames = "flex justify-between"
   const labelClassNames = "py-3.5 pl-4 block"
 
+  
+
   if(isLoading) { return <p>Loading...</p> }
   // else if (isValidating) { return <p>Validating...plz</p>} 
   else if (error) { return <p>Error on fetch {JSON.stringify(error)}</p> }
@@ -83,6 +85,7 @@ export default function TicketList() {
   else {
     
     const sortedAttendees = attendees.sort((a, b) => {
+      // console.log("Sorting",sortByField,a,b)
       if (sortByDirection === 'desc') {
         return (0 - (a[sortByField] > b[sortByField] ? 1 : -1))
       } else {
@@ -118,7 +121,7 @@ export default function TicketList() {
                     <FilterLabel fieldname={"name"} addFilterFunction={addFilter}>
                       <span className={`${labelClassNames} sm:pl-2 `}>Name 
                         <span className='sm:hidden'> & Details</span>
-                        <span className='hidden sm:inline lg:hidden'>& Email</span>
+                        <span className='sm:inline lg:hidden'>& Email</span>
                       </span>
                     </FilterLabel>
                     
@@ -149,9 +152,10 @@ export default function TicketList() {
                     { sortFieldToggler('signed_in') }
                   </span>
                 </th>
-                <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0 min-w-20 hidden sm:table-cell">
-                  <span className="sr-only">Status</span>
-                  {}
+                <th scope="col" className={`${headerClassNames} relative py-3.5 pl-3 pr-4 sm:pr-0 min-w-20 hidden sm:table-cell`}>
+                  <FilterLabel fieldname={"status"} addFilterFunction={addFilter}>
+                    <span className={`${labelClassNames} text-nowrap`}>Status</span>
+                  </FilterLabel>
                 </th>
                 <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0 min-w-20">
                   <span className="sr-only">Edit</span>

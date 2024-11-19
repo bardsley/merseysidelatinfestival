@@ -28,7 +28,7 @@ export const PassCard = ({passName, clickFunction, pass, priceModel, hasASaving,
           </h3>
           
           {basic ? null : <p className="mt-2 text-sm md:text-base leading-7 col-span-3 text-white">
-            {pass.description} {included ? "included" : "not included"}
+            {pass.description}
           </p> }
 
         </div>
@@ -36,12 +36,12 @@ export const PassCard = ({passName, clickFunction, pass, priceModel, hasASaving,
 
         <div className={`flex ${ basic ? "flex-row justify-end": "flex-col" } items-baseline gap-x-2 place-content-center md:place-content-start col-start-3 col-span-1`}>
           <span className={`${priceTextSize} font-bold tracking-tight text-white`}>
-            £{pass[priceModel]}
+            £{pass[priceModel] % 1 != 0 ? pass[priceModel].toFixed(2) : pass[priceModel]}
           </span>
           {hasASaving && !basic? (
           <div className="mt-0 flex items-baseline gap-x-2 place-content-center	md:place-content-start">
             <span className="text-base font-semibold leading-7 text-gold-500">
-            Save  £{priceModel == "studentCost" ? pass.studentSaving : pass.saving} {included ? "included" : ""}  
+            Save  £{priceModel == "studentCost" ? (pass.studentSaving % 1 != 0 ? pass.studentSaving.toFixed(2) : pass.studentSaving) : (pass.saving % 1 != 0 ? pass.saving.toFixed(2) : pass.saving)} {included ? "included" : ""}  
             </span>
           </div>
         ) : null}

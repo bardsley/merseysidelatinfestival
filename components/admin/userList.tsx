@@ -33,6 +33,7 @@ export default function UserList({loggedInUser}) {
     console.log("person:",person)
     const admin = person.metadata?.public?.admin;
     const title = person.metadata?.public?.title;
+    const roles = person.metadata?.public?.roles || [];
     const isMe = person.id === loggedInUser
     return (<li
           key={person.email}
@@ -46,13 +47,17 @@ export default function UserList({loggedInUser}) {
             <dl className="mt-1 flex flex-grow flex-col justify-between">
               <dt className="sr-only">Title</dt>
               <dd className="text-sm text-gray-500">{title}</dd>
-              <dt className="sr-only">Role</dt>
+              <dt className="sr-only">User Type</dt>
               <dd className="mt-3">
                 <span className={`inline-flex items-center rounded-full 
                   ${ admin ? "bg-green-50 text-green-700 ring-green-600/20" : "bg-blue-50 text-blue-700 ring-blue-600/20"}
-                  px-3 pb-0 pt-1 text-xs font-medium  ring-1 ring-inset `}>
+                  px-3 pb-1 pt-1 text-xs font-medium ml-3 ring-1 ring-inset `}>
                   {admin ? "Admin" : "User"}
                 </span>
+              </dd>
+              <dt className="sr-only">Roles</dt>
+              <dd className="mt-3 text-sm text-gray-500">
+              {roles.join(", ")}
               </dd>
             </dl>
           </div>

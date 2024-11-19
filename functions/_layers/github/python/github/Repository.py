@@ -123,8 +123,12 @@
 # Copyright 2023 alson <git@alm.nufan.net>                                     #
 # Copyright 2023 chantra <chantra@users.noreply.github.com>                    #
 # Copyright 2024 Benjamin K <53038537+treee111@users.noreply.github.com>       #
+# Copyright 2024 Caleb McCombs <caleb@mccombalot.net>                          #
+# Copyright 2024 Chris Wells <ping@cwlls.com>                                  #
 # Copyright 2024 Enrico Minack <github@enrico.minack.dev>                      #
 # Copyright 2024 Heitor Polidoro <heitor.polidoro@gmail.com>                   #
+# Copyright 2024 Heitor de Bittencourt <heitorpbittencourt@gmail.com>          #
+# Copyright 2024 Jacky Lam <jacky.lam@r2studiohk.com>                          #
 # Copyright 2024 Jirka Borovec <6035284+Borda@users.noreply.github.com>        #
 # Copyright 2024 Thomas Cooper <coopernetes@proton.me>                         #
 # Copyright 2024 Thomas Crowley <15927917+thomascrowley@users.noreply.github.com>#
@@ -213,6 +217,7 @@ import github.RepositoryAdvisory
 import github.RepositoryKey
 import github.RepositoryPreferences
 import github.Secret
+import github.SecurityAndAnalysis
 import github.SelfHostedActionsRunner
 import github.SourceImport
 import github.Stargazer
@@ -290,6 +295,7 @@ if TYPE_CHECKING:
     from github.Referrer import Referrer
     from github.RepositoryKey import RepositoryKey
     from github.RepositoryPreferences import RepositoryPreferences
+    from github.SecurityAndAnalysis import SecurityAndAnalysis
     from github.SelfHostedActionsRunner import SelfHostedActionsRunner
     from github.SourceImport import SourceImport
     from github.Stargazer import Stargazer
@@ -470,6 +476,14 @@ class Repository(CompletableGithubObject):
         return self._created_at.value
 
     @property
+    def custom_properties(self) -> dict[str, None | str | list]:
+        """
+        :type: dict[str, None | str | list]
+        """
+        self._completeIfNotSet(self._custom_properties)
+        return self._custom_properties.value
+
+    @property
     def default_branch(self) -> str:
         """
         :type: string
@@ -628,6 +642,14 @@ class Repository(CompletableGithubObject):
         """
         self._completeIfNotSet(self._has_wiki)
         return self._has_wiki.value
+
+    @property
+    def has_discussions(self) -> bool:
+        """
+        :type: bool
+        """
+        self._completeIfNotSet(self._has_discussions)
+        return self._has_discussions.value
 
     @property
     def homepage(self) -> str:
@@ -878,6 +900,14 @@ class Repository(CompletableGithubObject):
         """
         self._completeIfNotSet(self._releases_url)
         return self._releases_url.value
+
+    @property
+    def security_and_analysis(self) -> SecurityAndAnalysis:
+        """
+        :type: :class:`github.SecurityAndAnalysis.SecurityAndAnalysis`
+        """
+        self._completeIfNotSet(self._security_and_analysis)
+        return self._security_and_analysis.value
 
     @property
     def size(self) -> int:
@@ -1899,6 +1929,7 @@ class Repository(CompletableGithubObject):
         has_issues: Opt[bool] = NotSet,
         has_projects: Opt[bool] = NotSet,
         has_wiki: Opt[bool] = NotSet,
+        has_discussions: Opt[bool] = NotSet,
         is_template: Opt[bool] = NotSet,
         default_branch: Opt[str] = NotSet,
         allow_squash_merge: Opt[bool] = NotSet,
@@ -1929,6 +1960,7 @@ class Repository(CompletableGithubObject):
         assert is_optional(has_issues, bool), has_issues
         assert is_optional(has_projects, bool), has_projects
         assert is_optional(has_wiki, bool), has_wiki
+        assert is_optional(has_discussions, bool), has_discussions
         assert is_optional(is_template, bool), is_template
         assert is_optional(default_branch, str), default_branch
         assert is_optional(allow_squash_merge, bool), allow_squash_merge
@@ -1961,6 +1993,7 @@ class Repository(CompletableGithubObject):
                 "has_issues": has_issues,
                 "has_projects": has_projects,
                 "has_wiki": has_wiki,
+                "has_discussions": has_discussions,
                 "is_template": is_template,
                 "default_branch": default_branch,
                 "allow_squash_merge": allow_squash_merge,
@@ -4085,6 +4118,29 @@ class Repository(CompletableGithubObject):
         )
         return github.DependabotAlert.DependabotAlert(self._requester, headers, data, completed=True)
 
+    def get_custom_properties(self) -> dict[str, None | str | list]:
+        """
+        :calls: `GET /repos/{owner}/{repo}/properties/values <https://docs.github.com/en/rest/repos/custom-properties#get-all-custom-property-values-for-a-repository>`_
+        :rtype: dict[str, None | str | list]
+        """
+        url = f"{self.url}/properties/values"
+        _, data = self._requester.requestJsonAndCheck("GET", url)
+        custom_properties = {p["property_name"]: p["value"] for p in data}
+        self._custom_properties = self._makeDictAttribute(custom_properties)
+        return custom_properties
+
+    def update_custom_properties(self, properties: dict[str, None | str | list]) -> None:
+        """
+        :calls: `PATCH /repos/{owner}/{repo}/properties/values <https://docs.github.com/en/rest/repos/custom-properties#create-or-update-custom-property-values-for-a-repository>`_
+        :rtype: None
+        """
+        assert all(isinstance(v, (type(None), str, list)) for v in properties.values()), properties
+        url = f"{self.url}/properties/values"
+        patch_parameters: dict[str, list] = {
+            "properties": [{"property_name": k, "value": v} for k, v in properties.items()]
+        }
+        self._requester.requestJsonAndCheck("PATCH", url, input=patch_parameters)
+
     def _initAttributes(self) -> None:
         self._allow_auto_merge: Attribute[bool] = NotSet
         self._allow_forking: Attribute[bool] = NotSet
@@ -4105,6 +4161,7 @@ class Repository(CompletableGithubObject):
         self._contents_url: Attribute[str] = NotSet
         self._contributors_url: Attribute[str] = NotSet
         self._created_at: Attribute[datetime] = NotSet
+        self._custom_properties: Attribute[dict[str, None | str | list]] = NotSet  # type: ignore
         self._default_branch: Attribute[str] = NotSet
         self._delete_branch_on_merge: Attribute[bool] = NotSet
         self._deployments_url: Attribute[str] = NotSet
@@ -4125,6 +4182,7 @@ class Repository(CompletableGithubObject):
         self._has_pages: Attribute[bool] = NotSet
         self._has_projects: Attribute[bool] = NotSet
         self._has_wiki: Attribute[bool] = NotSet
+        self._has_discussions: Attribute[bool] = NotSet
         self._homepage: Attribute[str] = NotSet
         self._hooks_url: Attribute[str] = NotSet
         self._html_url: Attribute[str] = NotSet
@@ -4157,6 +4215,7 @@ class Repository(CompletableGithubObject):
         self._pulls_url: Attribute[str] = NotSet
         self._pushed_at: Attribute[datetime] = NotSet
         self._releases_url: Attribute[str] = NotSet
+        self._security_and_analysis: Attribute[SecurityAndAnalysis] = NotSet
         self._size: Attribute[int] = NotSet
         self._source: Attribute[Repository] = NotSet
         self._squash_merge_commit_message: Attribute[str] = NotSet
@@ -4220,6 +4279,8 @@ class Repository(CompletableGithubObject):
             self._contributors_url = self._makeStringAttribute(attributes["contributors_url"])
         if "created_at" in attributes:  # pragma no branch
             self._created_at = self._makeDatetimeAttribute(attributes["created_at"])
+        if "custom_properties" in attributes:  # pragma no branch
+            self._custom_properties = self._makeDictAttribute(attributes["custom_properties"])
         if "default_branch" in attributes:  # pragma no branch
             self._default_branch = self._makeStringAttribute(attributes["default_branch"])
         if "delete_branch_on_merge" in attributes:  # pragma no branch
@@ -4260,6 +4321,8 @@ class Repository(CompletableGithubObject):
             self._has_projects = self._makeBoolAttribute(attributes["has_projects"])
         if "has_wiki" in attributes:  # pragma no branch
             self._has_wiki = self._makeBoolAttribute(attributes["has_wiki"])
+        if "has_discussions" in attributes:  # pragma no branch
+            self._has_discussions = self._makeBoolAttribute(attributes["has_discussions"])
         if "homepage" in attributes:  # pragma no branch
             self._homepage = self._makeStringAttribute(attributes["homepage"])
         if "hooks_url" in attributes:  # pragma no branch
@@ -4324,6 +4387,10 @@ class Repository(CompletableGithubObject):
             self._pushed_at = self._makeDatetimeAttribute(attributes["pushed_at"])
         if "releases_url" in attributes:  # pragma no branch
             self._releases_url = self._makeStringAttribute(attributes["releases_url"])
+        if "security_and_analysis" in attributes:  # pragma no branch
+            self._security_and_analysis = self._makeClassAttribute(
+                github.SecurityAndAnalysis.SecurityAndAnalysis, attributes["security_and_analysis"]
+            )
         if "size" in attributes:  # pragma no branch
             self._size = self._makeIntAttribute(attributes["size"])
         if "source" in attributes:  # pragma no branch

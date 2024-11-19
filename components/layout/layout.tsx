@@ -16,8 +16,8 @@ export default async function Layout({ children, rawPageData }: LayoutProps) {
 
   return (
     <LayoutProvider globalSettings={globalData.global} pageData={rawPageData}>
-      <Header />
-      <main
+      <Header header={globalData.global.header} theme={globalData.global.theme} />
+      <main id="app"
         className={cn(
           "font-sans flex-1 text-gray-800 bg-gradient-to-br from-white to-gray-50 dark:from-richblack-500 dark:to-richblack-600 flex flex-col"
         )}

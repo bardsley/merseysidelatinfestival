@@ -47,7 +47,7 @@ const Cell: React.FC<ICellProps> = (props: ICellProps) => {
             
           <Label as="span" className="text-white sm:ml-3 mt-0 mb-2 sm:mt-3 order-1 sm:order-2">
             {/* <span className="font-medium text-white">{name}</span>{' '} */}
-            { cost || studentCost ? (<span className="text-white">£{studentDiscount ? studentCost : cost }</span>) : null }
+            { cost || studentCost ? (<span className="text-white">£{studentDiscount ? (studentCost %1 !=0 ? studentCost.toFixed(2): studentCost) : (cost % 1 !=0 ? cost.toFixed(2) : cost) }</span>) : null }
             { JSON.stringify(setValue) == "{}" ? (
               <span className="text-white">{option.name}</span>
             ) : null }

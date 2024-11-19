@@ -23,6 +23,9 @@ git_user_login = git.get_user().login
 db = boto3.resource('dynamodb')
 table = db.Table(os.environ.get("PRODUCTS_TABLE_NAME"))
 
+branch = os.environ.get("GITHUB_BRANCH_NAME")
+destination_branch = os.environ.get("GITHUB_BRANCH_DESTINATION")
+
 def get_blank(prod):
     prod['price_active'] = False
     return prod
@@ -77,6 +80,23 @@ def format_ind_tickets_line(prod):
 def lambda_handler(event, context):
     # Get all products which are active
     # response = table.scan(FilterExpression=Attr('active').eq(True))
+
+    logger.debug("get repo")
+    logger.info(event)
+    if 'headers' in event:
+        if 'curl' in event['headers']['user-agent']:
+            repo = git.get_repo("bardsley/merseysidelatinfestival")
+            pulls = repo.get_pulls()
+            for pr in pulls:
+                if (pr.base.ref == destination_branch) & (pr.head.ref == branch):
+                    logger.info("A PR already exists, attempting to Merge")
+                    try:
+                        response = pr.merge(commit_title="Update prices - "+datetime.now().strftime("%d-%m-%Y %H:%M:%S")+" #{}".format(pr.number))
+                        logger.info(response)
+                        return {'statusCode': 200}
+                    except GithubException as ge:
+                        logger.error(ge)
+            return {'statusCode': 200}
 
     # get all the products
     response = table.scan()
@@ -149,13 +169,10 @@ def lambda_handler(event, context):
     # with open("./gen_price_update/pricingDefaults.test.ts", 'w') as file:     
     #     file.write(new_file)    
 
-    logger.debug("get repo")
-    repo = git.get_repo("bardsley/merseysidelatinfestival")
-
     dt_string = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-    message = "Update prices "+dt_string
+    message = "Update prices - "+dt_string
     path = "components/ticketing/pricingDefaultsDynamic.ts"
-    branch = os.environment.get("GITHUB_BRANCH_NAME")
+
     author = InputGitAuthor(
         "DanceBot", 
         "bot@engine.dance"
@@ -169,11 +186,25 @@ def lambda_handler(event, context):
         logger.info("File not found, creating it")
         repo.create_file(path, message, new_file, branch=branch, author=author)
 
-    logger.info("merge")
+    logger.info("Creating a pull request")
     try:
-        response = repo.merge(os.environment.get("GITHUB_BRANCH_DESTINATION"), 
-            branch, 
-            commit_message=f"merge '{os.environment.get("GITHUB_BRANCH_NAME")}' into '{os.environment.get("GITHUB_BRANCH_DESTINATION")}'")
-        logger.info(response)
+        pull_request = repo.create_pull(
+            title=message,
+            body="Dynamically generated prices",
+            head=branch,
+            base=destination_branch
+        )
+        pr_number = pull_request.number
+        logger.info("Created pull request #{}".format(pr_number))
     except GithubException as ge:
         logger.error(ge) 
+
+    # logger.info("Attempting to merge PR")
+    # try:
+    #     response = pull_request.merge(
+    #         commit_title=message+" #{}".format(pr_number),
+    #     )
+    #     logger.info(response)
+    # except GithubException as ge:
+    #     logger.info("Could not complete merge")
+        

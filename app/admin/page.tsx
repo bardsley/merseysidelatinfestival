@@ -27,8 +27,6 @@ export default async function AdminDashboardPage() {
               <h1 className="text-2xl md:text-5xl px-4 ">Admin dashboard</h1>
               <UserButton showName={true}/>
               </div>
-              
-
               <Hub></Hub>
           </SignedIn>
           <SignedOut>

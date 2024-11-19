@@ -150,7 +150,7 @@ export default function Footer() {
             </p>
           </div>
           <div className="w-1/3 flex justify-center flex-1">
-            <p className="text-center">Congress System provided by <br/>
+            <p className="text-center">This Event runs on Dance Engine owned by<br/>
               <a href="https://adambardsley.co.uk">Adam Bardsley</a> & Connor Monaghan
             </p>
           </div>

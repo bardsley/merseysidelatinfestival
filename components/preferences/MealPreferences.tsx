@@ -1,19 +1,22 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { deepCopy } from '@lib/useful'
+import { Icon } from "@components/icon";
 export const courses = [
   { name: "Starter", options: ["Vegetable Terrine", "Chicken Liver Pate"]},
   { name: "Main", options: ["Roasted Onion", "Fish & Prawn Risotto", "Chicken Supreme"]},
   { name: "Desert", options: ["Fruit Platter", "Bread & Butter Pudding"]},
 ]
 
-export const blankPreferences = {choices: [-1,-1,-1], dietary_requirements : { selected: [], other: ""}, seating_preference: []}
+export const blankPreferences = {choices: [-1,-1,-1], dietary_requirements : { selected: [], other: ""}, seating_preference: '', recommendations: []}
 const dietaryRequirements = ["vegan","gluten free","lactose free","nut alergy","kosher","halal","other"]
 const veganChoices = Object.keys(courses).map((key) => courses[key].options[0])
 
-const MealPreferences = ({preferences,setPreferences}) =>{
 
+
+const MealPreferences = ({preferences,setPreferences}) =>{
+  const [groupExists,setGroupExists] = useState(false)
   const choicesValid = (preferences) => preferences.choices && preferences.choices.length > 0 // Choices is and array of stuff 
-  const seatingValid = (preferences) => preferences.seating_preference && preferences.seating_preference.length >= 0 // Preferences is an array of stuff
+  const seatingValid = (preferences) => preferences.seating_preference == '' || preferences.seating_preference.length >= 0 // Preferences is an array of stuff
   const dietValid = (preferences) => preferences.dietary_requirements && Object.keys(preferences.dietary_requirements).length > 0 // Dietary requirements is a dict of stuff
     && preferences.dietary_requirements.selected && preferences.dietary_requirements.selected.length >= 0 // Dietary requirements selected is an array or empty array
   const checkInputOk = (preferences) => {
@@ -40,8 +43,27 @@ const MealPreferences = ({preferences,setPreferences}) =>{
     setPreferences({...preferences, dietary_requirements: {...preferences.dietary_requirements, selected: newDietChoices}})
   }
 
+  const checkGroupExistance = async (group_id) => {
+    const group_response = await fetch(`/api//attendee_groups?group_id=${group_id}`,{
+      method: 'GET'
+    })
+    console.log("Group response is",group_response,group_response.ok)
+    setGroupExists(group_response.ok)
+  }
+
+  const preferencesDisabled = true
+
+  const maintainState = (event) => {
+    if(preferencesDisabled) {
+      event.preventDefault()
+      console.log("Locked",event)  
+    }
+  }
+
   return checkInputOk(preferences) ? (
     <>
+      { preferencesDisabled ? <div className='bg-yellow-500 p-5 mt-2 text-richblack-600 font-bold rounded'>Food preferences have now been sent to the venue.</div> : null }
+      
       <fieldset className="my-6 max-w-full">
         <legend className="text-base font-semibold leading-6 text-white">Course</legend>
         <div className="mt-4 divide-y divide-gray-700 border-b border-t border-gray-700">
@@ -62,12 +84,12 @@ const MealPreferences = ({preferences,setPreferences}) =>{
                       name={`course-${courseIdx}`}
                       type="radio"
                       value={optionIdx}
+                      readOnly = {preferencesDisabled ? true : false}
                       defaultChecked={preferences && preferences.choices && preferences.choices[courseIdx] == optionIdx}
                       // checked={preferences[courseIdx] == optionIdx}
                       className="h-4 w-4 rounded-full border-gray-700 text-indigo-600 focus:ring-indigo-600"
-                      onChange={() => setPreferences({...preferences, choices:[...preferences.choices.slice(0,courseIdx),optionIdx,...preferences.choices.slice(courseIdx+1)]})
-                        
-                      }
+                      onClick={(event) =>  maintainState(event)}
+                      onChange={(event) => { preferencesDisabled ? maintainState(event): setPreferences({...preferences, choices:[...preferences.choices.slice(0,courseIdx),optionIdx,...preferences.choices.slice(courseIdx+1)]})}}
                     />
                     <label htmlFor={`course-${courseIdx}-${optionIdx}`}>{option}</label>
                     </div>
@@ -89,8 +111,9 @@ const MealPreferences = ({preferences,setPreferences}) =>{
           const checked = preferences.dietary_requirements.selected.includes(dietSlug)
           return (
             <li key={diet}>
-              <input className="rounded mr-2" type="checkbox" name={`selected[${dietSlug}]`} id={`selected[${dietSlug}]`} defaultChecked={checked} value={dietSlug} onChange={(event) => {
-                setDietTo(event.target.value,event.target.checked)}}
+              <input className="rounded mr-2" type="checkbox" name={`selected[${dietSlug}]`} id={`selected[${dietSlug}]`} defaultChecked={checked} readOnly = {preferencesDisabled ? true : false} value={dietSlug} 
+                onClick={(event) =>  maintainState(event)}
+                onChange={(event) => { preferencesDisabled ? maintainState(event) : setDietTo(event.target.value,event.target.checked)}}
                 />{' '}
               <label htmlFor={`selected[${diet}]`} className='capitalize'>{diet}</label> 
             </li>
@@ -107,8 +130,10 @@ const MealPreferences = ({preferences,setPreferences}) =>{
             name="other"
             defaultValue = {preferences.dietary_requirements.other}
             rows={2}
+            readOnly = {preferencesDisabled ? true : false}
+            onClick={(event) =>  maintainState(event)}
             onChange={(event) => {
-              setPreferences({...preferences, dietary_requirements: {...preferences.dietary_requirements, other: event.target.value}})
+              preferencesDisabled ? maintainState(event) : setPreferences({...preferences, dietary_requirements: {...preferences.dietary_requirements, other: event.target.value}})
             }}
             className="block w-full max-w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             placeholder='Please add details here'
@@ -118,30 +143,52 @@ const MealPreferences = ({preferences,setPreferences}) =>{
           : (<p className='font-sm font-light text-gray-300'>Select other if you need to provide more information</p>) }
 
       </fieldset>
-      
+
       <div className='my-6'>
-        <label htmlFor="email" className="text-base font-semibold leading-6 text-white block">
-        Seating
+        <label htmlFor="seating_preference" className="text-base font-semibold leading-6 text-white block">
+        Group Seating Code
         </label>
-        <div className="mt-2">
+        <div className="mt-2 flex gap-4 items-center">
           <input
             id="seating_preference"
             name="seating_preference"
             type="text"
-            placeholder="171653467, 12987619"
+            placeholder="Group Name"
             aria-describedby="seating-preference"
-            defaultValue = {preferences.seating_preference.join(', ')}
+            defaultValue = {preferences.seating_preference}
+            readOnly = {preferencesDisabled ? true : false}
+            onClick={(event) =>  maintainState(event)}
             onChange={(event) => {
-              setPreferences({...preferences, seating_preference: event.target.value.split(',')})
+              preferencesDisabled ? maintainState(event) : (event) => {const group_id = event.target.value
+                checkGroupExistance(group_id)
+                setPreferences({...preferences, seating_preference: group_id})}
             }}
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            className="block w-80 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           />
+          {preferences.seating_preference == '' ? null : groupExists
+            ? <><Icon data={{name: "BiCheckCircle", color: "green", style: "regular", size: "small"}} className=""></Icon> Join &apos;{preferences.seating_preference}&apos; on checkout</>
+            : <><Icon data={{name: "BiGroup", color: "blue", style: "regular", size: "small"}} className=""></Icon> Create group &apos;{preferences.seating_preference}&apos; at checkout</>
+          }
         </div>
         <p id="seating-preference" className="mt-2 text-sm text-gray-300">
-        Whilst we will endeavour to match everyone who sets a preference this cannot be guaranteed
+        Enter a code someone has given you or create a new one to share with people you want to sit with. Whilst we will endeavour to match everyone who sets a preference this cannot be guaranteed
         </p>
       </div>
-      { process.env.NODE_ENV == 'development' && process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' ? <>
+      { preferences.seating_preference == '' ? null :
+      <div className='mb-3'>
+        <h2 className='text-xl'>Email people to join this group</h2>
+        <p className='text-gray-300'>Optional: Send an email to other to get them to join your group, just type emails below with each seperated by a comma.</p>
+        <input type="text" name="recommendations" key="rec-idx" id="recommendations"
+          className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6' 
+          defaultValue={preferences.recommendations} onChange={(event)=>{
+            setPreferences({...preferences, recommendations: event.target.value.split(',').map((email) => {
+              return email.trim()
+            })})
+          }}/>
+      </div>
+      }
+      
+    { process.env.NODE_ENV == 'development' && process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' ? <>
       <hr />
       <h2>Debug Ignore below the line</h2>
       <div className='flex'>

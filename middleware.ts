@@ -28,8 +28,8 @@ const isProtectedRoute = createRouteMatcher([
   '/admin(.*)',
 ]);
 
-export default clerkMiddleware((auth, req) => {
-  if (isProtectedRoute(req)) auth().protect();
+export default clerkMiddleware(async (auth, req) => {
+  if (isProtectedRoute(req)) await auth().protect();
 });
  
 // See "Matching Paths" below to learn more
