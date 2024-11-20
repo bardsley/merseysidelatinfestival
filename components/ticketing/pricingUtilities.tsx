@@ -2,7 +2,6 @@ import { PartialSelectedOptions, Pass } from './pricingTypes'
 import { individualTickets, passes, fullPassName} from './pricingDefaults'
 import power from 'power-set'
 import isubsetof from 'set.prototype.issubsetof'
-import { secondsToHours } from 'date-fns';
 isubsetof.shim();
 
 // Returns a list of all pass combinations you could buy
@@ -174,7 +173,7 @@ const thingsToAccess = (selectedOptions:any) => {
   return access
 }
 
-export const mapItemsToAccessArray = (itemsList: string[]) => {
+const mapItemsToAccessArray = (itemsList: string[]) => {
   const accessOrder = ["Friday Party", "Saturday Classes", "Saturday Dinner", "Saturday Party", "Sunday Classes", "Sunday Party"];
   // create set which will remove duplicates
   const uniqueItems = new Set(itemsList);
@@ -188,4 +187,4 @@ const passInCombination = (pass:Pass, combinations: string[]) => {
   return subSet.isSubsetOf(superSet)
 
 }
-export { calculateTotalCost, passOrTicket, optionsToPassArray, availableOptionsForDay, isAllDayOptions, isAllPassOptions, priceForPassCombination, itemsFromPassCombination, priceForIndividualItems, itemsNotCovered, getBestCombination, priceIds, thingsToAccess, passInCombination}
+export { calculateTotalCost, passOrTicket, optionsToPassArray, availableOptionsForDay, isAllDayOptions, isAllPassOptions, priceForPassCombination, itemsFromPassCombination, priceForIndividualItems, itemsNotCovered, getBestCombination, priceIds, thingsToAccess, mapItemsToAccessArray, passInCombination}

@@ -4,7 +4,7 @@ import { useFormStatus } from "react-dom"
 import { BiAlarmAdd  } from 'react-icons/bi';
 import Cell from '../ticketing/Cell';
 import { initialSelectedOptions, fullPassName, passes, individualTickets } from '../ticketing/pricingDefaults'
-import { calculateTotalCost, passOrTicket, getBestCombination, itemsFromPassCombination, itemListToOptions, addToOptions, thingsToAccess, mapItemsToAccessArray} from '../ticketing/pricingUtilities'
+import { calculateTotalCost, passOrTicket, getBestCombination, itemsFromPassCombination, itemListToOptions, addToOptions, mapItemsToAccessArray} from '../ticketing/pricingUtilities'
 import PassCards from '../ticketing/passes'
 import { OptionsTable } from '../ticketing/OptionsTable';
 import ScanSuccessDialog from '@components/admin/scan/ScanSuccessDialog'
@@ -14,7 +14,6 @@ import { format, getUnixTime } from 'date-fns';
 import Pusher from 'pusher-js';
 import symmetricDifference from 'set.prototype.symmetricdifference'
 import difference from 'set.prototype.difference'
-import { AnyAaaaRecord } from 'dns';
 symmetricDifference.shim();
 difference.shim();
 
@@ -55,28 +54,20 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
     setPackageCost(suggestedCost)
     setPackages(suggestedPackages)
 
-    //! Connor's suggestion
-    let combinedPackages = [];
-    suggestedPackages.forEach((pass) => {
-      // get the access array for each pass in the suggested packages and append it to a list
-      if (passes[pass]?.combination) {
-        combinedPackages = [...combinedPackages, ...passes[pass]?.combination];
-      }
+    //! Connor's suggestion + Adam's ammends
+    const combinedPackages = suggestedPackages.flatMap((pass)=>{
+      return passes[pass]?.combination ? passes[pass].combination : []
     })
-    let selectedStrings = []
-    // generate a list of strings corresponding to access array from selectedOptions
-    Object.keys(selectedOptions).forEach(day => {
-      Object.keys(selectedOptions[day]).forEach(option => {
-        if (selectedOptions[day][option]) {
-          selectedStrings.push(`${day} ${option}`);
-        }
+    const selectedStrings = Object.keys(selectedOptions).flatMap((day) => {
+      return Object.keys(selectedOptions[day]).flatMap((option) => {
+        return selectedOptions[day][option] ? `${day} ${option}` : []
       })
     })
     // append the access array from combinedPackages and selectedStrings, ignoring duplicates for now it is handled in function
     const accessArray = mapItemsToAccessArray([...combinedPackages, ...selectedStrings])
     setSelectedAccessArray(accessArray)
     console.log([...combinedPackages, ...selectedStrings])
-    console.log(JSON.stringify(selectedAccessArray))
+    console.log(selectedAccessArray)
   }
 
   const setIndividualOption = (day,passType) => {
@@ -177,7 +168,7 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
       'full_name': formObject.get("inperson-name"),
       'purchase_date': getUnixTime(new Date()) ,
       'line_items': line_items,
-      'access': thingsToAccess(selectedOptions), //! use selectedAccessArray instead
+      'access': selectedAccessArray, //! use selectedAccessArray instead
       'status': `paid_${formObject.get('checkout-button')}`,
       'student_ticket': studentDiscount,
     //   // 'promo_code': None|{
@@ -200,7 +191,7 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
     })
     const apiData = await apiResponse.json() 
     const apiAmmendedData = apiResponse.ok ? apiData : {...apiData, ticket_number: false }
-    console.log("apiData",apiData)
+    console.log("apiData",apiAmmendedData)
     setTicket(apiData.ticket_number)
     if(!apiResponse.ok) {
       alert(`PROBLEM, ${JSON.stringify(apiData)} ${apiResponse.status}`)
