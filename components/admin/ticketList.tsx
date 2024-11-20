@@ -100,7 +100,7 @@ export default function TicketList() {
         { nameChangeModalActive ? <NameChangeModal open={nameChangeModalActive} onClose={(value) => { setNameChangeModalActive(value)}} refreshFunction={()=> mutate("/api/admin/attendees")} ticket={activeTicket}/> : null }
         { ticketTransferModalActive ? <TicketTransferModal open={ticketTransferModalActive} onClose={(value) => { setTicketTransferModalActive(value);}} refreshFunction={()=> mutate("/api/admin/attendees")} ticket={activeTicket}/> : null }
         { activeTicket ? <div className='fixed z-50 w-full'>
-          <ScanSuccessDialog scan={activeTicket.ticket_number} onClick={()=>{setActiveTicket(false); setTimeout(() => mutate('/api/admin/attendees'),200)}}/></div> : null }
+          <ScanSuccessDialog scan={activeTicket.ticket_number} onClick={()=>{setActiveTicket(false); setTimeout(() => mutate('/api/admin/attendees'),350)}}/></div> : null }
 
         <div className='flex gap-3'>
           <FilterSelector filters={filterBy} removeFilterFunction={removeFilter}/>
