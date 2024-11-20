@@ -7,7 +7,7 @@ export type StatLine = {
   unit?: string;
 };
 export default function StatBlock({stats}: {stats: StatLine[]}) {
-  const [hidden,setHidden] = useState(false);
+  const [hidden,setHidden] = useState(true);
 
   const toggelButton =  <div className="w-full flex absolute -top-12 right-2 justify-end"><button className="border border-gray-600 text-gray-400 hover:text-gray-50 hover:border-gray-100 rounded-md px-3 pt-1 mt-3 text-xs" onClick={()=>{setHidden(!hidden)}}>{ hidden ? "Show" : "Hide"} Stats</button></div>
   const statBlock = (<div className="mx-auto max-w-7xl bg-richblack-500 rounded-lg">

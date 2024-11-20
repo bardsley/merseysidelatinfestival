@@ -96,6 +96,7 @@ export default function TicketView({ticket_number, email}: {ticket_number: strin
             <div>
               <Info label="Ticket" info={ticket_number} options={{size: '3xl'}}/>
               <Info label="Passes" info={accessToThings(ticket.access).join(", ")} options={{size: 'lg'}} />
+              <div>{JSON.stringify(ticket.access)}</div>
               <Info label="Usage & Elligibility" info={ticketUsage} />  
             </div>
             <img src={`https://quickchart.io/qr?margin=1&text=${ticket.ticket_number}`} alt={ticket.ticket_number} className="w-40 h-40 aspect-square" />
@@ -109,8 +110,8 @@ export default function TicketView({ticket_number, email}: {ticket_number: strin
             <Info label="Bought" info={purchasedThings} options={{size: 'lg'}} />
             { ticket.promo_code ? <Info label="Promo Code" info={ticket.promo_code} /> : null }
             <Info label="Payment Method" info={ticket.status.replace('paid_','')} options={{size: '2xl'}} />
-            <Info label="Preferences Link" info={`https://www.merseysidelatinfestival.co.uk/preferences?email=${ticket.email.replace("@","%40")}&ticket_number=${ticket.ticket_number}`} options={{size: 'md'}}/>
-            <Info label="Upgrade to Meal Link" info={`https://buy.stripe.com/bIY5oq0ZC6zPbFmeV6?client_reference_id=${ticket.ticket_number}`} options={{size: 'md'}}/>
+            {/* <Info label="Preferences Link" info={`https://www.merseysidelatinfestival.co.uk/preferences?email=${ticket.email.replace("@","%40")}&ticket_number=${ticket.ticket_number}`} options={{size: 'md'}}/> */}
+            {/* <Info label="Upgrade to Meal Link" info={`https://buy.stripe.com/bIY5oq0ZC6zPbFmeV6?client_reference_id=${ticket.ticket_number}`} options={{size: 'md'}}/> */}
           </div>
         </div>
 

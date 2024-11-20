@@ -51,12 +51,14 @@ const MealPreferences = ({preferences,setPreferences}) =>{
     setGroupExists(group_response.ok)
   }
 
-  const maintainState = (event) => {
-    event.preventDefault()
-    console.log("Locked",event)
-  }
-
   const preferencesDisabled = true
+
+  const maintainState = (event) => {
+    if(preferencesDisabled) {
+      event.preventDefault()
+      console.log("Locked",event)  
+    }
+  }
 
   return checkInputOk(preferences) ? (
     <>

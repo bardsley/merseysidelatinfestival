@@ -50,6 +50,8 @@
     "next-themes": "^0.3.0",
     "npm": "^10.8.2",
     "power-set": "^1.1.8",
+    "pusher": "^5.2.0",
+    "pusher-js": "^8.4.0-rc2",
     "qr-scanner": "^1.4.2",
     "react": "^18.3.1",
     "react-countdown": "^2.3.5",
