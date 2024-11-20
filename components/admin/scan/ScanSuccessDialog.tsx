@@ -10,21 +10,26 @@ import { fetcher, scanIn } from "@lib/fetchers";
 export type line_item = {
   description: string,
 }
+// fri party, sat class, sat din, sat party, sun class, sun party
+//    0           1         2         3         4           5
 const accessToWristbands = (accesCode: number[], line_items: line_item[]) => {
   let wristBands = []
   const meal = accesCode[2] > 0
   const friday = accesCode[0] > 0
+  
   const artist = line_items.filter((li) => { return /Artist/.test(li.description)}).length > 0
   const staffPass = line_items.filter((li) => { return /Staff/.test(li.description) || /Volunteer/.test(li.description)}).length > 0
   const fullPass = line_items.filter((li) => { return /Full/.test(li.description)}).length > 0
-  const partyPass = line_items.filter((li) => { return /Party\sPass/.test(li.description)}).length > 0
-  const classPass = line_items.filter((li) => { return /Class\sPass/.test(li.description)}).length > 0
-  const saturdayPass = line_items.filter((li) => { return /Saturday\sPass/.test(li.description) }).length > 0
-  const sundayPass = line_items.filter((li) => { return /Sunday\sPass/.test(li.description) }).length > 0
-  const saturdayClass = line_items.filter((li) => { return /Saturday\s-\sClass/.test(li.description) }).length > 0
-  const saturdayParty = line_items.filter((li) => { return /Saturday\s-\sParty/.test(li.description) || /Dine\sand\sDance\sPass/.test(li.description) }).length > 0
-  const sundayClass = line_items.filter((li) => { return /Sunday\s-\sClass/.test(li.description) }).length > 0
-  const sundayParty = line_items.filter((li) => { return /Sunday\s-\sParty/.test(li.description) }).length > 0
+  const fullPassLike = artist || staffPass || fullPass
+
+  const partyPass = line_items.filter((li) => { return /Party\sPass/.test(li.description)}).length > 0 || (accesCode[0] > 0 && accesCode[3] > 0 && accesCode[5] > 0)  && !fullPassLike
+  const classPass = line_items.filter((li) => { return /Class\sPass/.test(li.description)}).length > 0 || (accesCode[1] > 0 && accesCode[4] > 0) && !fullPassLike
+  const saturdayPass = line_items.filter((li) => { return /Saturday\sPass/.test(li.description) }).length > 0 || (accesCode[1] > 0 && accesCode[3] > 0) && !fullPassLike
+  const sundayPass = line_items.filter((li) => { return /Sunday\sPass/.test(li.description) }).length > 0 || (accesCode[4] > 0 && accesCode[5] > 0) && !fullPassLike
+  const saturdayClass = line_items.filter((li) => { return /Saturday\s-\sClass/.test(li.description) }).length > 0 || (accesCode[1] > 0 && !saturdayPass) && !fullPassLike
+  const saturdayParty = line_items.filter((li) => { return /Saturday\s-\sParty/.test(li.description) || /Dine\sand\sDance\sPass/.test(li.description) }).length > 0 || (accesCode[3] > 0 && !saturdayPass) && !fullPassLike
+  const sundayClass = line_items.filter((li) => { return /Sunday\s-\sClass/.test(li.description) }).length > 0 || (accesCode[4] > 0 && !sundayPass) && !fullPassLike
+  const sundayParty = line_items.filter((li) => { return /Sunday\s-\sParty/.test(li.description) }).length > 0 || (accesCode[5] > 0 && !sundayPass) && !fullPassLike
 
   if(meal) { wristBands.push({ 
     colour: "bg-white text-black", 
