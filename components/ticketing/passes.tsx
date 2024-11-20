@@ -5,14 +5,16 @@ import { itemsFromPassCombination, itemListToOptions, addToOptions, passInCombin
 import type { PartialSelectedOptions } from './pricingTypes'
 
 // export default function PassCards({setDayPass,setTypePass,setDinnerPass,priceModel,scrollToElement,selectFullPass,selected,shouldScroll}) {
-export default function PassCards({currentSelectedOptions, setSelectedOptions, priceModel,scrollToElement,selected,shouldScroll, basic} :
+export default function PassCards({currentSelectedOptions, setSelectedOptions, priceModel,scrollToElement,selected,shouldScroll, basic, locked} :
   { currentSelectedOptions:PartialSelectedOptions, 
     setSelectedOptions:any, 
     priceModel: string,
     scrollToElement:any,
     selected:any,
     shouldScroll:boolean, 
-    basic?:boolean}
+    basic?:boolean
+    locked?:boolean
+  }
 ) {
 
   const clickFunctionFromPassName = (passName:string,setTo:boolean) => {
@@ -38,7 +40,7 @@ export default function PassCards({currentSelectedOptions, setSelectedOptions, p
       <div className={`mx-auto grid max-w-full  ${basic ? "gap-2": "gap-8"} lg:max-w-full mb-12 ${dynamicColClasses}`}>
 
       
-      <PassCard passName={fullPassName} basic={basic} clickFunction={() => { 
+      <PassCard passName={fullPassName} basic={basic} locked={locked} clickFunction={() => { 
         clickFunctionFromPassName(fullPassName,!selected.includes(fullPassName))
         }} pass={passes[fullPassName]} priceModel={priceModel} hasASaving={true} selected={selected.includes(fullPassName)}></PassCard>
 
@@ -57,6 +59,7 @@ export default function PassCards({currentSelectedOptions, setSelectedOptions, p
             clickFunction={clickFunction}  priceModel={priceModel} hasASaving={hasSaving} 
             selected={selected.includes(passName)}
             included={included}
+            locked={locked}
             />)
         })}
         

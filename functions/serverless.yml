@@ -621,11 +621,33 @@ functions:
       STAGE_NAME: ${sls:stage}
       EVENT_TABLE_NAME: ${param:eventTableName}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
-      SEND_EMAIL_LAMBDA: "${sls:stage}-meal_seating"
+      SEND_EMAIL_LAMBDA: "${sls:stage}-meal_seating" # delete this, not used and wrong lambda name silly
     events:
       - httpApi:
           path: /meal/seating
           method: get
       - httpApi:
           path: /meal/seating
-          method: post                 
+          method: post       
+
+#--------------------
+
+  CheckoutCompleteInperson:
+    runtime: python3.11
+    handler: checkout_complete_inperson/lambda_function.lambda_handler
+    name: "${sls:stage}-checkout_complete_inperson"
+    package:
+      patterns:
+        - '!**/**'
+        - "checkout_complete_inperson/**"
+        - "shared/**"
+    environment:
+      STAGE_NAME: ${sls:stage}
+      EVENT_TABLE_NAME: ${param:eventTableName}
+      ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+      SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
+    events:
+
+      - httpApi:
+          path: /checkout_complete_inperson
+          method: post                                 
