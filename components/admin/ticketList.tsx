@@ -150,10 +150,10 @@ export default function TicketList() {
                 </th>
                 <th scope="col" className={`${headerClassNames} sm:rounded-r-lg max-w-24 flex-grow-0`}>
                   <span className={headerContainerClassNames}>
-                    <FilterLabel fieldname={"signed_in"} addFilterFunction={addFilter}>
+                    <FilterLabel fieldname={"checkin_at"} addFilterFunction={addFilter}>
                       <span className={`${labelClassNames} text-nowrap`}>Check-in?</span>
                     </FilterLabel>
-                    { sortFieldToggler('signed_in') }
+                    { sortFieldToggler('checkin_at') }
                   </span>
                 </th>
                 <th scope="col" className={`${headerClassNames} relative py-3.5 pl-3 pr-4 sm:pr-0 min-w-20 hidden sm:table-cell`}>
