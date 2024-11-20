@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import {  BiSolidBadgeCheck, BiSolidNote} from "react-icons/bi";
+import {  BiSolidBadgeCheck, BiIdCard} from "react-icons/bi";
 // import { itemsFromPassCombination} from '@components/ticketing/pricingUtilities'
 import WristBandIcon from '@public/wristband.svg';
 import TicketIcon from '@public/ticket.svg';
@@ -75,7 +75,7 @@ const ScanSuccessDialog = ({scan,onClick}) => {
     return (<div className="fixed top-0 left-0 w-full h-full bg-black/80 flex items-center justify-center px-3 mb-12">
       <div className={`rounded-xl w-full flex flex-col max-w-128 justify-between ${cardColor}`}> 
         <div className="p-4">  
-          <h1 className="text-2xl md:text-5xl font-bold leading-tight">{attendee.full_name}</h1>
+          <h1 className="text-2xl md:text-5xl font-bold leading-none break-words">{attendee.full_name}</h1>
           <h2 className="text-lg md:text-2xl">{attendee.ticket_number}</h2>
         </div>
         <div className="-mx-1">
@@ -94,7 +94,8 @@ const ScanSuccessDialog = ({scan,onClick}) => {
           }
         </div>
         <div>
-        {student ? <div className="bg-yellow-400 flex justify-center py-1 text-black"> Check Student ID</div> : null}
+        {student && goodResult ? <div className="bg-yellow-400 flex gap-2 items-center justify-center py-1 mx-4 mt-3 text-xl text-black"> 
+          <BiIdCard className="w-8 h-8"/>Check Student ID</div> : null}
         </div>
         <div className="actions flex justify-stretch gap-6 mt-6 mb-4 mx-4">
           
