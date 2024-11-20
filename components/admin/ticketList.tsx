@@ -9,6 +9,7 @@ import TicketTransferModal from './modals/ticketTransferModal';
 import { filterItems, filter, FilterSelector, FilterLabel } from './lists/filterable';
 import { TicketRow } from './lists/ticketRow';
 import { fetcher } from  "@lib/fetchers";
+import ScanSuccessDialog from '@components/admin/scan/ScanSuccessDialog'
 
 export default function TicketList() {
   const searchParams = useSearchParams()
@@ -98,6 +99,9 @@ export default function TicketList() {
       <div className="px-0 my-8 ">
         { nameChangeModalActive ? <NameChangeModal open={nameChangeModalActive} onClose={(value) => { setNameChangeModalActive(value)}} refreshFunction={()=> mutate("/api/admin/attendees")} ticket={activeTicket}/> : null }
         { ticketTransferModalActive ? <TicketTransferModal open={ticketTransferModalActive} onClose={(value) => { setTicketTransferModalActive(value);}} refreshFunction={()=> mutate("/api/admin/attendees")} ticket={activeTicket}/> : null }
+        { activeTicket ? <div className='fixed z-50 w-full'>
+          <ScanSuccessDialog scan={activeTicket.ticket_number} onClick={()=>{setActiveTicket(false); setTimeout(() => mutate('/api/admin/attendees'),200)}}/></div> : null }
+
         <div className='flex gap-3'>
           <FilterSelector filters={filterBy} removeFilterFunction={removeFilter}/>
           <div className='flex gap-1 align-start'>
