@@ -174,6 +174,14 @@ const thingsToAccess = (selectedOptions:any) => {
   return access
 }
 
+export const mapItemsToAccessArray = (itemsList: string[]) => {
+  const accessOrder = ["Friday Party", "Saturday Classes", "Saturday Dinner", "Saturday Party", "Sunday Classes", "Sunday Party"];
+  // create set which will remove duplicates
+  const uniqueItems = new Set(itemsList);
+  //for each item in the access if uniqueItems has it then put 1, if not but 0
+  return accessOrder.map(item => uniqueItems.has(item) ? 1 : 0);
+}
+
 const passInCombination = (pass:Pass, combinations: string[]) => {
   const superSet = new Set(combinations) 
   const subSet = new Set(pass.combination)
