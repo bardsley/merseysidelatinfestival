@@ -46,7 +46,7 @@ const ScanSuccessDialog = ({scan,onClick}) => {
     if(isLoading) return <LoadingDialog onClick={onClick} />
     if(error || data.error) return <div>Error: {error} {data?.error}</div>
     if(!data.attendee ) return <div>No Attendee Data?</div>
-    if(isValidating) return <div>Validating...</div>
+    if(isValidating) return <LoadingDialog onClick={onClick} />
 
     const attendee = data.attendee
     const goodResult = attendee.active && !attendee.ticket_used
@@ -58,8 +58,8 @@ const ScanSuccessDialog = ({scan,onClick}) => {
     const cancelButton = checked_in ? "border-red-900 text-red-900" : "border-green-900 text-green-900"
     const checkinButton = checked_in ? "bg-red-950" : "bg-green-950"
 
-    return (<div className="absolute top-0 left-0 bg-gradient-to-b from-richblack-500 to-richblack-500 w-full px-3  mb-12">
-      <div className={`rounded-xl p-4  w-full flex flex-col justify-between ${cardColor}`}> 
+    return (<div className="fixed top-0 left-0 w-full h-full bg-black/80 flex items-center justify-center px-3 mb-12">
+      <div className={`rounded-xl p-4  w-full flex flex-col max-w-128 justify-between ${cardColor}`}> 
         <div className="p-4">  
           <h1 className="text-2xl md:text-5xl font-bold leading-tight">{attendee.full_name}</h1>
           <h2 className="text-lg md:text-2xl">{attendee.ticket_number}</h2>
