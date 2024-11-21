@@ -51,8 +51,15 @@ export const filterItems = (items, filters) => {
       } else if (filter.field == 'passes') {
         const matches = person[filter.field].map((pass) => pass.toLowerCase()).join(', ').includes(filterValue.toLowerCase())
         excludePerson = excludePerson || (invertFilter ? matches : !matches)
-      } else if (filter.field == 'signed_in') {
-        excludePerson = excludePerson || (filterValue == true && !person[filter.field]) || (person[filter.field] && format(new Date(person[filter.field]), 'eee') != filterValue)
+      } else if (filter.field == 'checkin_at') {
+        excludePerson = excludePerson 
+          || (true == filterValue && false == person[filter.field])  // Exclude anyone who hasn't checked in
+          || (false == filterValue && false != person[filter.field])  // Exclude anyone who has checked in
+          || (!invertFilter && ![true,false].includes(filterValue) && (person[filter.field] == false || format(new Date(person[filter.field]), 'eee').toLowerCase() != filterValue.toLowerCase())) // Exlude anyone if we're not search for true or false and the day matches
+          || (invertFilter && ![true,false].includes(filterValue) && (person[filter.field] == false || format(new Date(person[filter.field]), 'eee').toLowerCase() == filterValue.toLowerCase())) // Exlude anyonee if we're not search for true or false and the day DOESNT matche and we've inverted the filter
+        if(['2212652493','5060423521'].includes(person.ticket_number)) { 
+          console.log("FILTER",person.name,filter.field,filterValue,person[filter.field],excludePerson,format(new Date(person[filter.field]), 'eee')) 
+        }
       } else if (filter.field == 'active') {
         excludePerson = excludePerson || person[filter.field] != filterValue
       } else {
