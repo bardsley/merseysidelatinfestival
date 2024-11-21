@@ -33,7 +33,12 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
   const [payments,setPayments] = useState([] as any[])
   const [ticket,setTicket] = useState(false as any)
   const [selectedAccessArray, setSelectedAccessArray] = useState([])
-  
+
+  const tillColours = {
+    TILL1: "bg-chillired-500 text-white",
+    TILL2: "bg-blue-400 text-white",
+    TILL3: "bg-gold-400 text-black",
+  }
 
   // const router = useRouter()
 
@@ -216,7 +221,7 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
     md:grid-cols-4  md:pt-12 md:mx-3 md:text-base
       ">
         { ticket ? <div className='fixed z-50 w-full'><ScanSuccessDialog scan={ticket} onClick={()=>{setTicket(false); console.log("Checkin")}}/></div> : null }
-      <h1 className='col-span-3 md:col-span-full block font-bold text-xl'>{till}</h1>
+      <h1 className={`${tillColours[till]} col-span-3 md:col-span-full block font-bold text-xl p-3 mt-2 rounded-lg`}>{till}</h1>
       <div className='col-span-1'>
         <PassCards 
           currentSelectedOptions={selectedOptions}
@@ -311,11 +316,11 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
       
     </div>
   ) : <div>
-      <h2 className='text-xl'>Select Till</h2>
-      <div className='flex gap-3'>
-      <button onClick={()=>{ changeTill('TILL1')}} className='rounded-md bg-chillired-500 px-6 py-3'>Till 1</button>
-      <button onClick={()=>{ changeTill('TILL2')}} className='rounded-md bg-chillired-500 px-6 py-3'>Till 2</button>
-      <button onClick={()=>{ changeTill('TILL3')}} className='rounded-md bg-chillired-500 px-6 py-3'>Till 3</button>
+      <h2 className='text-xl flex justify-center'>Select Till</h2>
+      <div className='flex justify-center flex-wrap gap-3 mx-auto'>
+      <button onClick={()=>{ changeTill('TILL1')}} className={`${tillColours['TILL1']} text-5xl rounded-md px-6 py-3`}>Till 1</button>
+      <button onClick={()=>{ changeTill('TILL2')}} className={`${tillColours['TILL2']} text-5xl rounded-md px-6 py-3`}>Till 2</button>
+      <button onClick={()=>{ changeTill('TILL3')}} className={`${tillColours['TILL3']} text-5xl rounded-md px-6 py-3`}>Till 3</button>
       {/* <button onClick={()=>{ changeTill('purchase')}} className='rounded-md bg-chillired-500 px-6 py-3'>All Purchases</button> */}
       </div>
       

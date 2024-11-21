@@ -26,10 +26,10 @@ const accessToWristbands = (accesCode: number[], line_items: line_item[]) => {
   const classPass = line_items.filter((li) => { return /Class\sPass/.test(li.description)}).length > 0 || (accesCode[1] > 0 && accesCode[4] > 0) && !fullPassLike
   const saturdayPass = line_items.filter((li) => { return /Saturday\sPass/.test(li.description) }).length > 0 || (accesCode[1] > 0 && accesCode[3] > 0) && !fullPassLike
   const sundayPass = line_items.filter((li) => { return /Sunday\sPass/.test(li.description) }).length > 0 || (accesCode[4] > 0 && accesCode[5] > 0) && !fullPassLike
-  const saturdayClass = line_items.filter((li) => { return /Saturday\s-\sClass/.test(li.description) }).length > 0 || (accesCode[1] > 0 && !saturdayPass) && !fullPassLike
-  const saturdayParty = line_items.filter((li) => { return /Saturday\s-\sParty/.test(li.description) || /Dine\sand\sDance\sPass/.test(li.description) }).length > 0 || (accesCode[3] > 0 && !saturdayPass) && !fullPassLike
-  const sundayClass = line_items.filter((li) => { return /Sunday\s-\sClass/.test(li.description) }).length > 0 || (accesCode[4] > 0 && !sundayPass) && !fullPassLike
-  const sundayParty = line_items.filter((li) => { return /Sunday\s-\sParty/.test(li.description) }).length > 0 || (accesCode[5] > 0 && !sundayPass) && !fullPassLike
+  const saturdayClass = line_items.filter((li) => { return /Saturday\s-\sClass/.test(li.description) }).length > 0 || (accesCode[1] > 0 && !saturdayPass && !classPass) && !fullPassLike
+  const saturdayParty = line_items.filter((li) => { return /Saturday\s-\sParty/.test(li.description) || /Dine\sand\sDance\sPass/.test(li.description) }).length > 0 || (accesCode[3] > 0 && !saturdayPass && !partyPass) && !fullPassLike
+  const sundayClass = line_items.filter((li) => { return /Sunday\s-\sClass/.test(li.description) }).length > 0 || (accesCode[4] > 0 && !sundayPass && !classPass) && !fullPassLike
+  const sundayParty = line_items.filter((li) => { return /Sunday\s-\sParty/.test(li.description) }).length > 0 || (accesCode[5] > 0 && !sundayPass && !partyPass) && !fullPassLike
 
   if(meal) { wristBands.push({ 
     colour: "bg-white text-black", 
