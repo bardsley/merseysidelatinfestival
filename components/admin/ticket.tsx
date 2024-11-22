@@ -123,7 +123,7 @@ export default function TicketView({ticket_number, email}: {ticket_number: strin
         {ticket.history ? <div className="rounded-lg shadow-lg bg-richblack-600 border-gray-500 border my-4">
           <h3 className="font-bold uppercase border-b border-gray-500 py-2 px-4">History</h3>
           <div className="p-4">
-          {ticket.history.map((record, index) => (
+          {ticket.history.map((record) => (
             (!record?.action && record?.ticket_number) ? (
               // transfered in record
               <div key={`transfer-${record.ticket_number}${record.date}`} className="flex gap-3 w-full max-w-full justify-between">
