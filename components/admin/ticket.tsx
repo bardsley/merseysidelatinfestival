@@ -107,30 +107,44 @@ export default function TicketView({ticket_number, email}: {ticket_number: strin
           </div>
         </div>
 
-        {ticket.history || ticket.transferred ? <div className="rounded-lg shadow-lg bg-richblack-600 border-gray-500 border my-4">
-          <h3 className="font-bold uppercase border-b border-gray-500 py-2 px-4">History</h3>
+        {ticket.transferred ? <div className="rounded-lg shadow-lg bg-richblack-600 border-gray-500 border my-4">
+          <h3 className="font-bold uppercase border-b border-gray-500 py-2 px-4">Transferred</h3>
           <div className="p-4">
-          { ticket.transferred ? <div key={`${ticket.transferred.ticket_number}${ticket.transferred.date}`} className="flex gap-3">
+            <div key={`${ticket.transferred.ticket_number}${ticket.transferred.date}`} className="flex gap-3">
               <Link href={`/admin/ticketing/ticket/${ticket.transferred.ticket_number}/${ticket.transferred.email}`}> <Info label="Direction" info="OUT" options={{size: 'md'}}/></Link>
-              <Info label="Transferred" info={format(fromUnixTime(ticket.transferred.date),'HH:mm do MMMM yyyy ')} options={{size: 'md'}}/>
+              <Info label="Date" info={format(fromUnixTime(ticket.transferred.date),'HH:mm do MMM yyyy ')} options={{size: 'md'}}/>
               <Info label="New Name" info={ticket.transferred.full_name} options={{size: 'md'}}/>
               <Info label="New Email" info={ticket.transferred.email} options={{size: 'sm'}}/>
               <Info label="Transfer By" info={ticket.transferred.source} options={{size: 'md'}}/>
-            </div> : null}
+            </div>  
+          </div>
+        </div> : null}
 
-            { ticket.history && ticket.history.map((record) => {
-              const transferred_at = record.date ? typeof record.date == 'string' ? Date.parse(record.date) : fromUnixTime(record.date) : false
-              console.log("TD:",record.date)
-              return (
-                <div key={`${record.ticket_number}${record.date}`} className="flex gap-3 w-full max-w-full justify-between">
-                  <Link href={`/admin/ticketing/ticket/${record.ticket_number}/${record.email}`}> <Info label="Direction" info={ticket.ticket_number == record.ticket_number ? "NAME" : "IN"} options={{size: 'md'}}/></Link>
-                  <Info label="Transferred " info={transferred_at ? format(transferred_at,'HH:mm do MMM yyyy ') : "None"} options={{size: 'md'}}/>
-                  <Info label="Previous Name" info={record.full_name} options={{size: 'md', grow: true}}/>
-                  <Info label="Previous Email" info={record.email} options={{size: 'sm', grow: true}}/>
-                  <Info label="Transfer By" info={record.source} options={{size: 'md'}}/>
-                </div>
-              )
-            })}
+        {ticket.history ? <div className="rounded-lg shadow-lg bg-richblack-600 border-gray-500 border my-4">
+          <h3 className="font-bold uppercase border-b border-gray-500 py-2 px-4">History</h3>
+          <div className="p-4">
+          {ticket.history.map((record, index) => (
+            (!record?.action && record?.ticket_number) ? (
+              // transfered in record
+              <div key={`transfer-${record.ticket_number}${record.date}`} className="flex gap-3 w-full max-w-full justify-between">
+                <Link href={`/admin/ticketing/ticket/${record.ticket_number}/${record.email}`}>
+                  <Info label="Direction" info="IN" options={{size: 'md'}}/>
+                </Link>
+                <Info label="Date" info={format(fromUnixTime(record.date), 'HH:mm do MMM yyyy ')} options={{size: 'md'}}/>
+                <Info label="New Name" info={record.full_name} options={{size: 'md'}}/>
+                <Info label="New Email" info={record.email} options={{size: 'sm'}}/>
+                <Info label="Transfer By" info={record.source} options={{size: 'md'}}/>
+              </div>
+            ) : (
+              // normal history record
+              <div key={`history-${record.ticket_number}${record.date}`} className="flex gap-3 w-full max-w-full justify-between">
+              <Info label="Action" info={record.action.replace("_", " ")} options={{size: 'md'}}/>
+                <Info label="Description" info={(record.description || record.type || " - ").replace("_", " ")} options={{size: 'md', grow: true}}/>
+                <Info label="Source" info={record.source || "Unknown"} options={{size: 'md'}}/>
+                <Info label="Timestamp" info={record.timestamp ? format(fromUnixTime(parseInt(record.timestamp)), 'HH:mm do MMM yyyy') : "Unknown"} options={{size: 'sm'}}/>
+              </div>
+            )
+          ))}
           </div>
         </div> : null }
         
