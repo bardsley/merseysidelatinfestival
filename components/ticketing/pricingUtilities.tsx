@@ -166,11 +166,19 @@ const priceIds = (student = false) => {
 }
 
 const thingsToAccess = (selectedOptions:any) => {
-  return Object.keys(selectedOptions).flatMap((day) => {
-    return Object.keys(selectedOptions[day]).flatMap((pass) => {
-      return selectedOptions[day][pass] ? 1 : 0
-    })
-  })
+  console.log("Selected Options",selectedOptions)
+  const access_order = [["Friday","Party"],["Saturday","Classes"],["Saturday","Dinner"],["Saturday","Party"],["Sunday","Classes"],["Sunday","Party"]]
+  const access = access_order.map((access) => { return selectedOptions[access[0]][access[1]] ? 1 : 0 })
+  console.log(access)
+  return access
+}
+
+const mapItemsToAccessArray = (itemsList: string[]) => {
+  const accessOrder = ["Friday Party", "Saturday Classes", "Saturday Dinner", "Saturday Party", "Sunday Classes", "Sunday Party"];
+  // create set which will remove duplicates
+  const uniqueItems = new Set(itemsList);
+  //for each item in the access if uniqueItems has it then put 1, if not but 0
+  return accessOrder.map(item => uniqueItems.has(item) ? 1 : 0);
 }
 
 const passInCombination = (pass:Pass, combinations: string[]) => {
@@ -179,4 +187,4 @@ const passInCombination = (pass:Pass, combinations: string[]) => {
   return subSet.isSubsetOf(superSet)
 
 }
-export { calculateTotalCost, passOrTicket, optionsToPassArray, availableOptionsForDay, isAllDayOptions, isAllPassOptions, priceForPassCombination, itemsFromPassCombination, priceForIndividualItems, itemsNotCovered, getBestCombination, priceIds, thingsToAccess, passInCombination}
+export { calculateTotalCost, passOrTicket, optionsToPassArray, availableOptionsForDay, isAllDayOptions, isAllPassOptions, priceForPassCombination, itemsFromPassCombination, priceForIndividualItems, itemsNotCovered, getBestCombination, priceIds, thingsToAccess, mapItemsToAccessArray, passInCombination}
