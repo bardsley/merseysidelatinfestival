@@ -26,12 +26,12 @@ export async function POST(request: Request) {
     // console.log("payload:",payload, payload.products.map((product) => product.category))
     const channel = "card-payments"
 
-    const tills = payload?.products?.length > 0 ? payload.products.map((product) => product?.sku) as string[] : ["NOTILL"]
+    const tills = payload.products.map((product) => product?.sku || "notill" ) as string[]
     const notification = {
       amount: payload.amount,
       created: payload.created,
       timestamp: payload.timestamp,
-      payment_ref: payload.payments.map((payment) => payment.attributes.referenceNumber).join(' , '),
+      payment_ref: payload.payments.map((payment) => payment?.attributes?.reference).join(' , '),
       purchaseUuid: payload.purchaseUuid,
       tills: tills
     //   products: payload.products.map((product) => { return { name: product.sku , till: product?.category?.name?.toLowerCase()?.replaceAll(" ", ""),  Uuid: product['productUuid'] }} ) as string[],
