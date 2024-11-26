@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     // console.log("payload:",payload, payload.products.map((product) => product.category))
     const channel = "card-payments"
 
-    const tills = payload.products.map((product) => product?.sku) as string[]
+    const tills = payload?.products?.length > 0 ? payload.products.map((product) => product?.sku) as string[] : ["NOTILL"]
     const notification = {
       amount: payload.amount,
       created: payload.created,
