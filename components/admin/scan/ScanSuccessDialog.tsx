@@ -66,6 +66,8 @@ const ScanSuccessDialog = ({scan,onClick}) => {
     if(error || data.error) return <div>Error: {error} {data?.error}</div>
     if(!data.attendee ) return <div>No Attendee Data?</div>
     if(isValidating) return <LoadingDialog onClick={onClick} />
+    
+    if(data.attendee.gala_dinner) return <GalaDinnerDialog onClick={onClick} data={data} error={error} isLoading={isLoading} isValidating={isValidating} />
 
     const attendee = data.attendee
     const goodResult = attendee.active && !attendee.ticket_used
@@ -114,6 +116,40 @@ const ScanSuccessDialog = ({scan,onClick}) => {
     return <LoadingDialog onClick={onClick} />
   }
   
+}
+
+const GalaDinnerDialog = ({onClick, data, error, isLoading, isValidating}) => {
+  const ticket = data.attendee
+  const goodResult = ticket.active && !ticket.used_at
+  const cardColor = isLoading ? "bg-gray-900" : goodResult ? "bg-green-900" : "bg-chillired-800"
+  const checked_in: string = ticket.used_at ? format(fromUnixTime(ticket.used_at), 'HH:mm:ss do MMM') : ticket.used_at
+  const cancelButton = checked_in ? "border-red-900 text-red-900" : "border-green-200 text-green-100 hover:text-white"
+  const checkinButton = checked_in ? "bg-red-600" : "bg-green-600 hover:bg-green-500"
+
+  return (<div className="fixed top-0 left-0 w-full h-full bg-black/80 flex items-center justify-center px-3 mb-12">
+  <div className={`rounded-xl w-full flex flex-col max-w-128 justify-between ${cardColor}`}> 
+    <div className="p-4">  
+          <h1 className="text-2xl md:text-5xl font-bold leading-none break-words">VALID</h1>
+          <h2 className="text-lg md:text-2xl">{ticket.PK.split('#').at(-1)}</h2>
+        </div>
+    <div className="-mx-1">
+    { checked_in ? <div className="bg-chillired-300 text-xl flex flex-col justify-center items-center rounded w-full p-4 mb-2">
+          <p className="leading-0">ALREADY USED:</p>
+          <p>{checked_in.toUpperCase()}</p>
+        </div>
+        : <div>
+
+        </div>
+      }
+    </div>
+    <div className="actions flex justify-stretch gap-6 mt-6 mb-4 mx-4">
+      
+    <button className={`${cancelButton} border  rounded px-4 py-4 w-full text-lg md:text-xl`} onClick={onClick}>Cancel</button>
+    {/* <button className={`${checkinButton} rounded px-4 py-4 w-full text-lg md:text-xl`} onClick={() => {scanIn(ticket.ticket_number, checked_in ? true : false); onClick();}}>{checked_in ? "Reset" : "Check in"}</button> */}
+    </div>
+  {/* {data ? <pre className="text-xs">Ticket: {JSON.stringify(data,null,2)}</pre> : <div className="text-white text-xl">Loading</div>} */}
+  </div>
+</div>)
 }
 
 const LoadingDialog = ({onClick}) => {

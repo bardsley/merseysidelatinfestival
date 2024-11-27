@@ -27,6 +27,7 @@ console.log(scanUrl)
     },
   })
   const attendeeData = await scanResponse.json()
+  console.log(attendeeData)
 
   try {
     return attendeeData.error ? Response.json({error: attendeeData.error},{status:scanResponse.status}) : Response.json({attendee: attendeeData},{status:200})
