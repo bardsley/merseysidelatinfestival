@@ -37,11 +37,11 @@ export async function POST(request: Request) {
     //   products: payload.products.map((product) => { return { name: product.sku , till: product?.category?.name?.toLowerCase()?.replaceAll(" ", ""),  Uuid: product['productUuid'] }} ) as string[],
     }
     console.log("notification:",notification)
-    
-    tills.forEach(till => {
-      pusher.trigger(channel, till, notification);
+  
+    const notify = [...tills,"all"]
+    await notify.forEach(async till => {
+      await pusher.trigger(channel, till, notification);
     })
-    pusher.trigger(channel, "all", notification);
     return NextResponse.json({ generated_at: new Date().toISOString() })
   }
 }
