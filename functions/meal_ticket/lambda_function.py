@@ -37,6 +37,7 @@ def save_tickets_to_dynamodb(ticket_numbers):
                         'active': True,
                         'used_at': None,
                         'timestamp':current_time
+                        'history': []
                     }
                 )
         print(f"Batch of {len(ticket_numbers)} ticket numbers saved to DynamoDB.")

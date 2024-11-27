@@ -8,6 +8,7 @@ from json.decoder import JSONDecodeError
 logger = logging.getLogger()
 logger.setLevel("INFO")
 from shared import DecimalEncoder as shared
+import time
 
 # #* This is not required for deployment only needed for local testing 
 # logging.basicConfig()
@@ -76,6 +77,7 @@ def post(event):
             ticket_number = data['ticket_number'] # Ticket numerbs are strings now
             check_in_at = data['check_in_at']    
             created_at = data['created_at']
+            source = data.get('source', 'unknown')
 
         params = {
             'Key': {
@@ -83,11 +85,17 @@ def post(event):
                 'SK':f"DETAL#{created_at}"
             },
             'ConditionExpression':'attribute_exists(PK)',
-            'UpdateExpression':'SET used_at = :val1',
+            'UpdateExpression':'SET used_at = :val1, history =  list_append(history, :val2)',
             'ExpressionAttributeValues' : {
-                ':val1': check_in_at
+                ':val1': check_in_at,
+                ':val2': [  {
+                    "action": "check_in" if check_in_at else "check_in_reset",
+                    "description": "Ticket was scanned and checked in" if check_in_at else "Previous check in was reset" ,
+                    "source": source,
+                    "timestamp": check_in_at if check_in_at else int(time.time())
+                    }]
             }
-        }            
+        }           
 
     #     # try to update db
     #     # if email or ticket number do not exist or do not match then return an error 

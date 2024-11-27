@@ -49,6 +49,14 @@ export async function POST(req: NextRequest,{params}: {params: {ticket_number: s
     return Response.json({error: "User is does not have permission to make admin."}, { status: 401 });
   }
 
+  let requester: boolean | string = false
+  if(userId) {
+    const user = await currentUser() // && user && user.publicMetadata.role === 'admin' ? 'admin' : 'attendee'
+    if(!user){ return Response.json({error: "User is not signed in."}, { status: 401 }); }
+    if(!user.publicMetadata.admin){ return Response.json({error: "User is does not have change details permissions."}, { status: 401 });}
+    requester = `admin#${user.id}#${user.firstName}-${user.lastName}`
+  }  
+
   const reqJson = await req.json();
   const ticket_number = params.ticket_number;
 
@@ -58,7 +66,8 @@ export async function POST(req: NextRequest,{params}: {params: {ticket_number: s
       meal_ticket: reqJson.meal_ticket,
       ticket_number: ticket_number,
       check_in_at: check_in_at,
-      created_at: reqJson.created_at
+      created_at: reqJson.created_at,
+      source: requester
     }
     console.log(bodyData)
     try {
@@ -80,7 +89,8 @@ export async function POST(req: NextRequest,{params}: {params: {ticket_number: s
     const bodyData = {
       ticket_number: ticket_number,
       email: email,
-      check_in_at: check_in_at
+      check_in_at: check_in_at,
+      source: requester
     }
     console.log(bodyData)
     try {
