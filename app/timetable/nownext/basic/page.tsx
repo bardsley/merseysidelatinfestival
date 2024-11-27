@@ -1,8 +1,8 @@
 import Layout from "@components/layout/layout";
 import client from "@tina/__generated__/client";
-import LevelIndicator from "./level-indicator";
-import TimetableFooter from "./timetable-footer";
-import NowAndNext from "./now-and-next";
+import LevelIndicator from "../level-indicator";
+import TimetableFooter from "../timetable-footer";
+import NowAndNext from "../now-and-next";
 
 export default async function NowNextPage() {
   const classes = await client.queries.classConnection({sort: 'date', first: 500});
@@ -21,7 +21,7 @@ export default async function NowNextPage() {
           <LevelIndicator/>
         </div>
       
-        <NowAndNext classesUnordered={classesUnordered} />
+        <NowAndNext classesUnordered={classesUnordered} basic={true}/>
     
         <TimetableFooter/>
       </div>      
