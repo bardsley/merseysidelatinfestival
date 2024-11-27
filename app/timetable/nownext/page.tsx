@@ -21,7 +21,7 @@ export default async function NowNextPage() {
           <LevelIndicator/>
         </div>
       
-        <NowAndNext classesUnordered={classesUnordered} />
+        <NowAndNext classesUnordered={classesUnordered} basic={false}/>
     
         <TimetableFooter/>
       </div>      
