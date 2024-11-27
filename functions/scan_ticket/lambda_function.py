@@ -115,6 +115,7 @@ def post(event):
             ticket_number = data['ticket_number'] # Ticket numerbs are strings now
             email = data['email']
             check_in_at = data['check_in_at']
+            source = data.get('source', 'unknown')
 
         params = {
             'Key': {
@@ -122,10 +123,16 @@ def post(event):
                 'ticket_number':ticket_number
             },
             'ConditionExpression':'attribute_exists(ticket_number)',
-            'UpdateExpression':'SET ticket_used = :val1',
+            'UpdateExpression':'SET ticket_used = :val1, history =  list_append(history, :val2)',
             'ExpressionAttributeValues' : {
-                ':val1': check_in_at
-            }
+                ':val1': check_in_at,
+                ':val2': [  {
+                    "action": "check_in" if check_in_at else "check_in_reset",
+                    "description": "Ticket was scanned and checked in" if check_in_at else "Previous check in was reset" ,
+                    "source": source,
+                    "timestamp": check_in_at if check_in_at else int(time.time())
+                    }]                
+                }   
         }
 
     #     # try to update db
