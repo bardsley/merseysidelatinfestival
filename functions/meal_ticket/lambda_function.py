@@ -36,7 +36,7 @@ def save_tickets_to_dynamodb(ticket_numbers):
                         'SK': f"DETAL#{current_time}",
                         'active': True,
                         'used_at': None,
-                        'timestamp':current_time
+                        'timestamp':current_time,
                         'history': []
                     }
                 )
