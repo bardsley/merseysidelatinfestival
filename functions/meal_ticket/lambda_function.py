@@ -10,6 +10,10 @@ import boto3
 from PIL import Image, ImageDraw, ImageFont
 from fontTools.ttLib import TTFont
 
+logging.basicConfig()
+profile_name='DE_ADMIN'
+boto3.setup_default_session(profile_name=profile_name)
+
 event_table_name     = os.environ.get("EVENT_TABLE_NAME")
 
 logger = logging.getLogger()
@@ -23,7 +27,7 @@ def save_tickets_to_dynamodb(ticket_numbers):
     Save a batch of ticket numbers to DynamoDB.
     """
     try:
-        with event_table_name.batch_writer() as batch:
+        with event_table.batch_writer() as batch:
             for ticket_number in ticket_numbers:
                 current_time = int(time.time())
                 batch.put_item(
@@ -31,7 +35,8 @@ def save_tickets_to_dynamodb(ticket_numbers):
                         'PK': f"DINNERTICKET#{ticket_number}",
                         'SK': f"DETAL#{current_time}",
                         'active': True,
-                        'used_at': None
+                        'used_at': None,
+                        'timestamp':current_time
                     }
                 )
         print(f"Batch of {len(ticket_numbers)} ticket numbers saved to DynamoDB.")
@@ -81,7 +86,7 @@ def generate_random_text(length=12):
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
 
 # Function to generate a QR code
-def generate_qr_code(data, qr_size=(340, 340)):
+def generate_qr_code(data, qr_size=(466, 466)):
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -95,18 +100,18 @@ def generate_qr_code(data, qr_size=(340, 340)):
     qr_img = qr_img.resize(qr_size)
     return qr_img
 
-def create_ticket(base_image_path, output_image_path, i, font_path, target_font_name, text_position=[(536, 1190), (3156, 320)], qr_position=[(537, 867), (3061, 46)]):
+def create_ticket(base_image_path, output_image_path, i, font_path, target_font_name, text_position=[(546, 1243), (3156, 320)], qr_position=[(537, 800), (3061, 46)]):
     # Load the base image
     base_image = Image.open(base_image_path)
 
     # Generate random text for QR code data and text beneath it
-    qr_text = f"GD15{str(i).zfill(3)}{str(randint(0, 999)).zfill(3)}"
+    qr_text = f"GD15{str(i).zfill(3)}{str(randint(111, 999)).zfill(3)}"
     qr_image = generate_qr_code(qr_text)
 
     # Extract the specified font style
     try:
         font_details = extract_named_font_style(font_path, target_font_name)
-        font = ImageFont.truetype(font_path, 62)  # Load the font using the main font file
+        font = ImageFont.truetype(font_path, 75)  # Load the font using the main font file
     except ValueError as e:
         print(e)
         return
@@ -136,6 +141,7 @@ def create_ticket(base_image_path, output_image_path, i, font_path, target_font_
 
     # Save the modified image
     base_image.save(output_image_path)
+    return qr_text
 
 def create_vertical_a4_page_with_tickets(ticket_images, output_path, a4_dimensions=(2480, 3508), margin=50):
     """
@@ -214,15 +220,20 @@ if __name__ == "__main__":
     except ValueError as e:
         print(e)    
 
-    for i in range(215):
-        create_ticket(
-            base_image_path="./template-alt.png",
+    ticket_numbers = []
+
+    for i in range(50):
+        ticket_number = create_ticket(
+            base_image_path="./template-final.png",
             output_image_path=f"./output-alt/Generated_Ticket_{i}.png",
             i=i,
             font_path=font_path,
             target_font_name=target_name
         )
+        ticket_numbers.append(ticket_number)
         print(f"Ticket generated and saved as 'Generated_Ticket_{i}.png'")
+
+    save_tickets_to_dynamodb(ticket_numbers)
 
     ticket_images = [f"./output/Generated_Ticket_{i}.png" for i in range(6)]
 
