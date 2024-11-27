@@ -1,0 +1,18 @@
+{
+	"admin": true,
+	"roles": [
+		"door-staff"
+	],
+	"title": "Volunteer"
+}
+
+
+{
+	"admin": true,
+	"roles": [
+		"event-manager",
+		"superadmin",
+		"developer"
+	],
+	"title": "System Admin"
+}
