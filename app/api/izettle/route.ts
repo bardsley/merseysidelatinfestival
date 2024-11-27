@@ -16,7 +16,7 @@ export async function POST(request: Request) {
   const payload = JSON.parse(body.payload)
   console.log(eventName)
   console.log(payload)
-  // console.log(JSON.stringify(JSON.stringify(payload)))
+  console.log(JSON.stringify(JSON.stringify(payload)))
 
   if(eventName == 'TestMessage') {
     return NextResponse.json({ generated_at: new Date().toISOString() })
