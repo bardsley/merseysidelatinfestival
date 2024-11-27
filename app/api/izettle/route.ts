@@ -15,7 +15,8 @@ export async function POST(request: Request) {
   const eventName = body.eventName
   const payload = JSON.parse(body.payload)
   console.log(eventName)
-  console.log(payload)
+  console.log(body)
+  console.log(payload.payments)
   console.log(JSON.stringify(JSON.stringify(payload)))
 
   if(eventName == 'TestMessage') {
@@ -31,7 +32,7 @@ export async function POST(request: Request) {
       amount: payload.amount,
       created: payload.created,
       timestamp: payload.timestamp,
-      payment_ref: payload.payments.map((payment) => payment?.attributes?.reference).join(' , '),
+      payment_ref: payload.payments.map((payment) => payment?.attributes?.referenceNumber).join(' , '),
       purchaseUuid: payload.purchaseUuid,
       tills: tills
     //   products: payload.products.map((product) => { return { name: product.sku , till: product?.category?.name?.toLowerCase()?.replaceAll(" ", ""),  Uuid: product['productUuid'] }} ) as string[],
