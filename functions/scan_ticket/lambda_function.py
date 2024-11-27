@@ -14,14 +14,31 @@ from shared import DecimalEncoder as shared
 # profile_name='AdministratorAccess-645491919786'
 # boto3.setup_default_session(profile_name=profile_name)
 
+ATTENDEES_TABLE_NAME = os.environ.get("ATTENDEES_TABLE_NAME")
+EVENT_TABLE_NAME = os.environ.get("EVENT_TABLE_NAME")
+
 db = boto3.resource('dynamodb')
-table = db.Table(os.environ.get("ATTENDEES_TABLE_NAME"))
+attendees_table = db.Table(ATTENDEES_TABLE_NAME)
+event_table = db.Table(EVENT_TABLE_NAME)
+
+def get_dinner_ticket(ticket_number):
+    '''
+    
+    '''
+    response = event_table.query(KeyConditionExpression=Key('PK').eq(f"DINNERTICKET#{ticket_number}"))
+    if response['Count'] == 0: 
+        raise ValueError("Ticket not found")
+    elif response['Count'] > 1:
+        logger.warning("More than one db entry has been found when only one is expected.")
+        raise ValueError("An internal error has occured.")
+    else:
+        return response['Items'][0]
 
 def get_ticket(ticket_number):
     '''
 
     '''
-    response = table.query(IndexName='ticket_number-index',KeyConditionExpression=Key('ticket_number').eq(ticket_number))
+    response = attendees_table.query(IndexName='ticket_number-index',KeyConditionExpression=Key('ticket_number').eq(ticket_number))
     if response['Count'] == 0: 
         raise ValueError("Ticket not found")
     elif response['Count'] > 1:
@@ -94,18 +111,27 @@ def get(event):
         logger.error("ticket_number not set")
         return err("Must provide ticket_number.")
     else:
-        if data['ticket_number'].isnumeric() is False: 
-            logger.error("ticket_number is not numeric")
-            logger.error(data['ticket_number'])
-            return err("ticket number not int-like")
+        # if data['ticket_number'].isnumeric() is False: 
+        #     logger.error("ticket_number is not numeric")
+        #     logger.error(data['ticket_number'])
+        #     return err("ticket number not int-like")
         ticket_number = data['ticket_number']
 
     # query db for ticket number and email, if don't match or exist return error
     # return internal server error if there is more than one response item as something must have gone wrong
     try:
         logger.info(ticket_number)
-        ticket_entry = get_ticket(ticket_number)
-        logger.info(ticket_entry)
+        if ticket_number.startswith("GD15"):
+            ticket_entry = get_dinner_ticket(ticket_number)
+            ticket_entry['gala_dinner'] = True
+        else:
+            if ticket_number.isnumeric() is False: 
+                logger.error("ticket_number is not numeric")
+                logger.error(data['ticket_number'])
+                return err("ticket number not int-like")
+            else:
+                ticket_entry = get_ticket(ticket_number)
+                logger.info(ticket_entry)
     except ValueError as e:
         return err(str(e))
 
