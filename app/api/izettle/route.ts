@@ -39,9 +39,10 @@ export async function POST(request: Request) {
     console.log("notification:",notification)
   
     const notify = [...tills,"all"]
-    await notify.forEach(async till => {
-      await pusher.trigger(channel, till, notification);
+    const promises = notify.map(async till => {
+      return pusher.trigger(channel, till, notification);
     })
+    await Promise.all(promises)
     return NextResponse.json({ generated_at: new Date().toISOString() })
   }
 }
