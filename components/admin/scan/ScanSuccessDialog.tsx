@@ -67,7 +67,7 @@ const ScanSuccessDialog = ({scan,onClick}) => {
     if(!data.attendee ) return <div>No Attendee Data?</div>
     if(isValidating) return <LoadingDialog onClick={onClick} />
     
-    if(data.attendee.meal_ticket) return <GalaDinnerDialog onClick={onClick} data={data} error={error} isLoading={isLoading} isValidating={isValidating} />
+    if(data.attendee.meal_ticket) return <GalaDinnerDialog onClick={onClick} data={data} isLoading={isLoading} />
 
     const attendee = data.attendee
     const goodResult = attendee.active && !attendee.ticket_used
@@ -118,7 +118,7 @@ const ScanSuccessDialog = ({scan,onClick}) => {
   
 }
 
-const GalaDinnerDialog = ({onClick, data, error, isLoading, isValidating}) => {
+const GalaDinnerDialog = ({onClick, data, isLoading}) => {
   const ticket = data.attendee
   const ticket_number = ticket.PK.split('#').at(-1)
   const goodResult = ticket.active && !ticket.used_at
