@@ -325,6 +325,7 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+      EVENT_TABLE_NAME: ${param:eventTableName}
     # layers:
     #   - !Ref DynamodbLambdaLayer
     #   - !Ref GithubLambdaLayer
