@@ -68,36 +68,67 @@ def post(event):
     except (TypeError, JSONDecodeError) as e:
         logger.error(e)
         return err("An error has occured with the input you have provided.", event_body=event['body'])
+    
+    if 'meal_ticket' in data:
+        if ('ticket_number' not in data) and ('check_in_at' not in data):
+            return err("Must provide ticket_number and a scan in timestamp.")
+        else:
+            ticket_number = data['ticket_number'] # Ticket numerbs are strings now
+            check_in_at = data['check_in_at']    
+            created_at = data['created_at']
 
-    # check that ticket number and email and check_in are all set return error if not
-    if ('ticket_number' not in data) and ('email' not in data) and ('check_in_at' not in data):
-        return err("Must provide ticket_number and email and a scan in timestamp.")
+        params = {
+            'Key': {
+                'PK':f"DINNERTICKET#{ticket_number}",
+                'SK':f"DETAL#{created_at}"
+            },
+            'ConditionExpression':'attribute_exists(PK)',
+            'UpdateExpression':'SET used_at = :val1',
+            'ExpressionAttributeValues' : {
+                ':val1': check_in_at
+            }
+        }            
+
+    #     # try to update db
+    #     # if email or ticket number do not exist or do not match then return an error 
+        try:
+            logger.info(params)
+            response = event_table.update_item(**params)
+            return {'statusCode': 200, 'body': json.dumps({'message':"Ticket Scanned"})}
+        except db.meta.client.exceptions.ConditionalCheckFailedException as e:
+            logger.error(e)
+            return err("Ticket number does not exist")
+
     else:
-        ticket_number = data['ticket_number'] # Ticket numerbs are strings now
-        email = data['email']
-        check_in_at = data['check_in_at']
+        # check that ticket number and email and check_in are all set return error if not
+        if ('ticket_number' not in data) and ('email' not in data) and ('check_in_at' not in data):
+            return err("Must provide ticket_number and email and a scan in timestamp.")
+        else:
+            ticket_number = data['ticket_number'] # Ticket numerbs are strings now
+            email = data['email']
+            check_in_at = data['check_in_at']
 
-    params = {
-        'Key': {
-            'email':email,
-            'ticket_number':ticket_number
-        },
-        'ConditionExpression':'attribute_exists(ticket_number)',
-        'UpdateExpression':'SET ticket_used = :val1',
-        'ExpressionAttributeValues' : {
-            ':val1': check_in_at
+        params = {
+            'Key': {
+                'email':email,
+                'ticket_number':ticket_number
+            },
+            'ConditionExpression':'attribute_exists(ticket_number)',
+            'UpdateExpression':'SET ticket_used = :val1',
+            'ExpressionAttributeValues' : {
+                ':val1': check_in_at
+            }
         }
-    }
 
-#     # try to update db
-#     # if email or ticket number do not exist or do not match then return an error 
-    try:
-        logger.info(params)
-        response = table.update_item(**params)
-        return {'statusCode': 200, 'body': json.dumps({'message':"Ticket Scanned"})}
-    except db.meta.client.exceptions.ConditionalCheckFailedException as e:
-        logger.error(e)
-        return err("Ticket number does not exist or match email.")
+    #     # try to update db
+    #     # if email or ticket number do not exist or do not match then return an error 
+        try:
+            logger.info(params)
+            response = attendees_table.update_item(**params)
+            return {'statusCode': 200, 'body': json.dumps({'message':"Ticket Scanned"})}
+        except db.meta.client.exceptions.ConditionalCheckFailedException as e:
+            logger.error(e)
+            return err("Ticket number does not exist or match email.")
 
 
 def get(event):
@@ -123,7 +154,7 @@ def get(event):
         logger.info(ticket_number)
         if ticket_number.startswith("GD15"):
             ticket_entry = get_dinner_ticket(ticket_number)
-            ticket_entry['gala_dinner'] = True
+            ticket_entry['meal_ticket'] = True
         else:
             if ticket_number.isnumeric() is False: 
                 logger.error("ticket_number is not numeric")

@@ -51,25 +51,51 @@ export async function POST(req: NextRequest,{params}: {params: {ticket_number: s
 
   const reqJson = await req.json();
   const ticket_number = params.ticket_number;
-  const email = reqJson.email;
-  const check_in_at = reqJson.reset ? false : getUnixTime(new Date());
-  const bodyData = {
-    ticket_number: ticket_number,
-    email: email,
-    check_in_at: check_in_at
+
+  if(reqJson.meal_ticket){
+    const check_in_at = reqJson.reset ? false : getUnixTime(new Date());
+    const bodyData = {
+      meal_ticket: reqJson.meal_ticket,
+      ticket_number: ticket_number,
+      check_in_at: check_in_at,
+      created_at: reqJson.created_at
+    }
+    console.log(bodyData)
+    try {
+      const response = await fetch(`${process.env.LAMBDA_SCAN_TICKET}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bodyData)
+      })
+      const data = await response.json()
+      return Response.json({message: data.message},{status: 200})
+    } catch (error) {
+      return Response.json({error: error},{status: 500})
+    } 
+  }else{
+    const email = reqJson.email;
+    const check_in_at = reqJson.reset ? false : getUnixTime(new Date());
+    const bodyData = {
+      ticket_number: ticket_number,
+      email: email,
+      check_in_at: check_in_at
+    }
+    console.log(bodyData)
+    try {
+      const response = await fetch(`${process.env.LAMBDA_SCAN_TICKET}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bodyData)
+      })
+      const data = await response.json()
+      return Response.json({message: data.message},{status: 200})
+    } catch (error) {
+      return Response.json({error: error},{status: 500})
+    } 
   }
-  console.log(bodyData)
-  try {
-    const response = await fetch(`${process.env.LAMBDA_SCAN_TICKET}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(bodyData)
-    })
-    const data = await response.json()
-    return Response.json({message: data.message},{status: 200})
-  } catch (error) {
-    return Response.json({error: error},{status: 500})
-  } 
+
 }

@@ -5,7 +5,7 @@ import WristBandIcon from '@public/wristband.svg';
 import TicketIcon from '@public/ticket.svg';
 
 import { format, fromUnixTime } from "date-fns";
-import { fetcher, scanIn } from "@lib/fetchers";
+import { fetcher, scanIn, scanInMeal } from "@lib/fetchers";
 
 export type line_item = {
   description: string,
@@ -67,7 +67,7 @@ const ScanSuccessDialog = ({scan,onClick}) => {
     if(!data.attendee ) return <div>No Attendee Data?</div>
     if(isValidating) return <LoadingDialog onClick={onClick} />
     
-    if(data.attendee.gala_dinner) return <GalaDinnerDialog onClick={onClick} data={data} error={error} isLoading={isLoading} isValidating={isValidating} />
+    if(data.attendee.meal_ticket) return <GalaDinnerDialog onClick={onClick} data={data} error={error} isLoading={isLoading} isValidating={isValidating} />
 
     const attendee = data.attendee
     const goodResult = attendee.active && !attendee.ticket_used
@@ -120,6 +120,7 @@ const ScanSuccessDialog = ({scan,onClick}) => {
 
 const GalaDinnerDialog = ({onClick, data, error, isLoading, isValidating}) => {
   const ticket = data.attendee
+  const ticket_number = ticket.PK.split('#').at(-1)
   const goodResult = ticket.active && !ticket.used_at
   const cardColor = isLoading ? "bg-gray-900" : goodResult ? "bg-green-900" : "bg-chillired-800"
   const checked_in: string = ticket.used_at ? format(fromUnixTime(ticket.used_at), 'HH:mm:ss do MMM') : ticket.used_at
@@ -130,7 +131,7 @@ const GalaDinnerDialog = ({onClick, data, error, isLoading, isValidating}) => {
   <div className={`rounded-xl w-full flex flex-col max-w-128 justify-between ${cardColor}`}> 
     <div className="p-4">  
           <h1 className="text-2xl md:text-5xl font-bold leading-none break-words">VALID</h1>
-          <h2 className="text-lg md:text-2xl">{ticket.PK.split('#').at(-1)}</h2>
+          <h2 className="text-lg md:text-2xl">{ticket_number}</h2>
         </div>
     <div className="-mx-1">
     { checked_in ? <div className="bg-chillired-300 text-xl flex flex-col justify-center items-center rounded w-full p-4 mb-2">
@@ -145,7 +146,7 @@ const GalaDinnerDialog = ({onClick, data, error, isLoading, isValidating}) => {
     <div className="actions flex justify-stretch gap-6 mt-6 mb-4 mx-4">
       
     <button className={`${cancelButton} border  rounded px-4 py-4 w-full text-lg md:text-xl`} onClick={onClick}>Cancel</button>
-    {/* <button className={`${checkinButton} rounded px-4 py-4 w-full text-lg md:text-xl`} onClick={() => {scanIn(ticket.ticket_number, checked_in ? true : false); onClick();}}>{checked_in ? "Reset" : "Check in"}</button> */}
+    <button className={`${checkinButton} rounded px-4 py-4 w-full text-lg md:text-xl`} onClick={() => {scanInMeal(ticket_number, ticket.timestamp, checked_in ? true : false); onClick();}}>{checked_in ? "Reset" : "Check in"}</button>
     </div>
   {/* {data ? <pre className="text-xs">Ticket: {JSON.stringify(data,null,2)}</pre> : <div className="text-white text-xl">Loading</div>} */}
   </div>
