@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^5.2.8",
+    "@fillout/react": "^1.1.2",
     "@headlessui/react": "^2.1.2",
     "@heroicons/react": "^2.1.5",
     "@stripe/react-stripe-js": "^2.7.3",
