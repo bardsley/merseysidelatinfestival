@@ -158,7 +158,7 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
       const line_item = passes[passName] ? passes[passName] : individualTickets[passName.split(" ")[0]][passName.split(" ")[1]]
       if (line_item) {
         return {
-          'amount_total': studentDiscount ? line_item.cost * 100 : line_item.studentCost * 100,
+          'amount_total': formObject.get("inperson-amount"),  //studentDiscount ? line_item.cost * 100 : line_item.studentCost * 100,
           'description': passName,
           'price_id': studentDiscount ? line_item.studentPriceId : line_item.priceId,
         }
@@ -256,13 +256,15 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
       { priceModel === 'studentCost' && totalCost && totalCost > 0 ? (
           <div className='rounded-t-md border-t-gray-600 border border-b-0 border-l-0 border-r-0 bg-gold-500 p-2 font-bold text-center'>This is a student only ticket deal!</div>) 
         : null }
-        <div className='flex flex-col md:flex-row justify-between pb-10 px-10 pt-6 gap-3'>
-        {cardPayment ? <div className={`col-span-3 md:col-span-full ${correctAmount ? "bg-green-900" : "bg-chillired-400"} text-white rounded px-6 py-3`}>
-          <p>
+
+        {cardPayment ? <div className={`w-full col-span-3 md:col-span-full ${correctAmount ? "bg-green-900" : "bg-chillired-400"} text-white rounded px-6 py-3`}>
+          <p className='w-full'>
             {correctAmount ? "PAYMENT SUCCESSFUL add details" : `ERROR cost is £${totalCost}`} -
             Card Payment £{displayAmount}
           </p>
         </div> : null}
+
+        <div className='flex flex-col md:flex-row justify-between pb-10 px-10 pt-6 gap-3'>
           { cardPayment || (totalCost && totalCost > 0) ? (
             <>
               <div className='max-w-2/3 md:w-1/3'>
@@ -271,7 +273,7 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
               </div>
               <form autoComplete="off" action={checkout} className='flex w-full md:w-2/3 flex-col items-center justify-center'>
                 { cardPayment ? <input type="text" autoComplete="off" name="inperson-payment-ref" readOnly value={cardPayment.payment_ref} className={inputClasses} /> : null }
-                { cardPayment ? <input type="hidden" autoComplete="off" name="inperson-amount" readOnly value={cardPayment.amount} className={inputClasses} /> : null }
+                <input type="text" autoComplete="off" name="inperson-amount" placeholder="Money" readOnly={cardPayment ? true : false } defaultValue={cardPayment ? cardPayment.amount : packageCost*100} className={inputClasses} />
                 <input type="text" autoComplete="off" name="inperson-name" placeholder="Name" className={inputClasses} />
                 <input type="text" autoComplete="off" name="inperson-email" placeholder="Email" className={inputClasses}   />
                 <CheckoutButtons allgood={correctAmount}></CheckoutButtons>
