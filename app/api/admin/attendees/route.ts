@@ -31,7 +31,8 @@ export async function GET() {
   const attendees = attendeeData.Items.map((attendee) => {
     const transferred_out = attendee.transferred && attendee.transferred.ticket_number != attendee.ticket_number
     const name_changed = attendee.transferred && attendee.transferred.ticket_number == attendee.ticket_number
-    const transferred_in = !name_changed && attendee.history
+    const transferred_in = !name_changed && attendee.history && attendee.history.length > 0 && attendee?.history[0]?.ticket_number
+    if(transferred_in) { console.log("Transfer:", attendee.full_name, attendee.ticket_number) }
     // console.log(attendee.full_name,attendee.ticket_number,attendee.transferred?.ticket_number, attendee.transferred?.ticket_number != attendee.ticket_number)
     return {
       name: attendee.full_name,
@@ -43,7 +44,7 @@ export async function GET() {
       active: attendee.active,
       status: attendee.status,
       student_ticket: attendee.student_ticket,
-      transferred_in: transferred_in ? attendee.history[0].ticket_number : false,
+      transferred_in: transferred_in ? attendee?.history[0]?.ticket_number : false,
       transferred_out: transferred_out ? attendee.transferred.ticket_number  : false,
       name_changed: name_changed,
       transferred: attendee.transferred,
