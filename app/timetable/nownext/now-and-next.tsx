@@ -125,18 +125,34 @@ const TimeSlot = ({session,numberOfSessions,basic}) => {
 
 const SingleTimeSlot = ({session,numberOfSessions}) => {
   const fullWidthColor = session?.level == 'admin' ? 'text-white px-4 py-4 bg-richblack-600 ' : 'text-black px-4 py-6 flex justify-center'
-  return <div className={`col-span-${numberOfSessions} text-lg border-t-3 ${timeColor} ${fullWidthColor}`}>
+  return <div className={`${roomsToSpan(numberOfSessions)} text-lg border-t-3 ${timeColor} ${fullWidthColor}`}>
     <h1 className="text-3xl font-bold">{session?.title}</h1>
     <TinaMarkdown content={session?.details}/>
   </div> 
 }
 
 const RoomHeaders = ({rooms,day,numberOfSessions}) => {
-  const gridSize = numberOfSessions < 2 ? 5 : numberOfSessions
-  const gridCss = `grid-cols-${gridSize}`
+  const gridCss = roomsToCol(numberOfSessions)
   return <div className={`grid ${gridCss}`}>
     {rooms.map((location)=>{ return <div className="bg-richblack-700 p-4 block text-center text-white text-xl font-bold uppercase col-span-1" key={`${day}-${location}`}>{location}{numberOfSessions}</div>})}
   </div>
 
 }
+
+const roomsToCol = (rooms) => {
+  let css = 'grid-cols-5'
+  if(rooms == 4) { css = "grid-cols-4"}
+  if(rooms == 3) { css = "grid-cols-3" }
+  if(rooms == 2) { css = "grid-cols-1" }  
+  return css
+}
+
+const roomsToSpan = (rooms) => {
+  let css = 'col-span-5'
+  if(rooms == 4) { css = "col-span-4"}
+  if(rooms == 3) { css = "col-span-3" }
+  if(rooms == 2) { css = "col-span-1" }  
+  return css
+}
+
 export default NowAndNext
