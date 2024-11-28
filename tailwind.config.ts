@@ -7,7 +7,9 @@ import { fontFamily } from "tailwindcss/defaultTheme";
 module.exports = {
   content: ["./components/**/*.{js,ts,jsx,tsx}", "./app/**/*.{js,ts,jsx,tsx}"],
   darkMode: "class",
-  safelist: ["dark", "light"],
+  safelist: ["dark", "light",{
+    pattern: /grid/
+  }],
   theme: {
     colors: {
       transparent: "transparent",

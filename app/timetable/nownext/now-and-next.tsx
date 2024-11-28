@@ -114,7 +114,7 @@ const TimeSlot = ({session,numberOfSessions,basic}) => {
       <h1 className={`${titleSize} font-bold leading-none`}>{session?.title}</h1>
       <p className={`${artistSize} leading-none`}>{session?.artist?.name}</p>
       <div className={`${infoSize} leading-none mt-2`}>
-      <TinaMarkdown content={session?.details}/> {session?.location } ---
+      <TinaMarkdown content={session?.details}/> {session?.location }
       </div>
 
       {/* {JSON.stringify(session,null,2)} */}
@@ -133,9 +133,9 @@ const SingleTimeSlot = ({session,numberOfSessions}) => {
 
 const RoomHeaders = ({rooms,day,numberOfSessions}) => {
   const gridSize = numberOfSessions < 2 ? 5 : numberOfSessions
-
-  return <div className={`grid grid-cols-${gridSize} `}>
-    {rooms.map((location)=>{ return <div className="bg-richblack-700 p-4 block text-center text-white text-xl font-bold uppercase " key={`${day}-${location}`}>{location}</div>})}
+  const gridCss = `grid-cols-${gridSize}`
+  return <div className={`grid ${gridCss}`}>
+    {rooms.map((location)=>{ return <div className="bg-richblack-700 p-4 block text-center text-white text-xl font-bold uppercase col-span-1" key={`${day}-${location}`}>{location}{numberOfSessions}</div>})}
   </div>
 
 }
