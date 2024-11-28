@@ -91,7 +91,7 @@ export default function TimetableClientPage(props: ClientClassProps) {
             const time = format(fromUnixTime(parseInt(timeSlot.split('-')[0])),"mm") == '00' 
               ? `${format(fromUnixTime(parseInt(timeSlot.split('-')[0])),"haaa")}`
               : `${format(fromUnixTime(parseInt(timeSlot.split('-')[0])),"h:mmaaa")}`
-            const shouldMarkRef = !timeSlotMarked && parseInt(timeSlot.split('-')[0]) > currentTime ? true : false
+            const shouldMarkRef = scroll && !timeSlotMarked && parseInt(timeSlot.split('-')[0]) > currentTime ? true : false
             const timeColor = shouldMarkRef ? "border-t-chillired-500":"border-t-yellow-400"
 
             if(shouldMarkRef) { timeSlotMarked = true}
