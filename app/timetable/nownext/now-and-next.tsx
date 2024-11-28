@@ -114,7 +114,7 @@ const TimeSlot = ({session,numberOfSessions,basic}) => {
       <h1 className={`${titleSize} font-bold leading-none`}>{session?.title}</h1>
       <p className={`${artistSize} leading-none`}>{session?.artist?.name}</p>
       <div className={`${infoSize} leading-none mt-2`}>
-      <TinaMarkdown content={session?.details}/> {session?.location } ---
+      <TinaMarkdown content={session?.details}/> {session?.location }
       </div>
 
       {/* {JSON.stringify(session,null,2)} */}
