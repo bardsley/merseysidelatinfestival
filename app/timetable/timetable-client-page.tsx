@@ -3,7 +3,8 @@ import { format,parseISO, getUnixTime, fromUnixTime, subMinutes} from "date-fns"
 import Link from "next/link";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 import Image from "next/image";
-import React, {Fragment} from "react";
+import React, {Fragment,useRef,useEffect} from "react";
+import { useSearchParams } from "next/navigation";
 // import { useLayout } from "@components/layout/layout-context";
 // import { BsArrowRight } from "react-icons/bs";
 // import { TinaMarkdown } from "tinacms/dist/rich-text";
@@ -32,11 +33,16 @@ interface ClientClassProps {
 
 
 export default function TimetableClientPage(props: ClientClassProps) {
+  const currentTimeSlot = useRef<HTMLElement | null>(null);
+  const params = useSearchParams()
+  const timeTravel = params.get('at')
+  const scroll = params.get('scroll')
+  const currentTime = getUnixTime(timeTravel ? new Date(timeTravel): new Date()) - (60*60)
+  let timeSlotMarked = false
   const { data } = useTina({ ...props });
-  const timeColor = "border-t-yellow-400"
   const classesUnordered = data?.classConnection.edges.map((item)=> item.node)
   const classesOrganised = classesUnordered.reduce((organised,current) => { 
-    console.log(current)
+    // console.log(current)
     const timeSlot = `${getUnixTime(parseISO(current.date))}-${format(subMinutes(current.date,181),"HHmm-EEE")}`
     const day = format(subMinutes(current.date,181),"eeee")
     const locationName  = current.location ? current.location : "unknown"
@@ -61,15 +67,23 @@ export default function TimetableClientPage(props: ClientClassProps) {
   const locations = ["ballroom","derby","sefton","hypostyle","terrace"]
   const days = Object.keys(classesOrganised).sort()
   // const timeSlots = days.map((day) => Object.keys(classesOrganised[day]) )
+
+  useEffect(()=>{
+    console.log("Scrolling",currentTimeSlot.current.offsetTop)
+    if(scroll) { window.scrollBy({top:currentTimeSlot.current.offsetTop  - 200, behavior: "smooth"}) }
+  },[currentTimeSlot])
+
   return <Fragment key="single">
     
     <div className="grid grid-cols-11 text-black p-8 gap-0">
     {days.map((day) => {
         return (<Fragment key={day}>
-          <h1 className="col-span-10 col-start-2 leading-10 pb-5 pt-24 font-black text-right sm:text-left text-4xl md:text-5xl lg:text-8xl uppercase text-white" key={day}>{day}</h1>
+          <h1 className="col-span-10 col-start-2 leading-10 pb-5 pt-24 font-black text-right sm:text-left text-4xl md:text-5xl lg:text-8xl uppercase text-white" key={day}>
+            {day}
+          </h1>
           <span className="hidden md:block"></span>
           {locations.map((location)=>{
-            return <span className="bg-richblack-700 p-4 col-span-2 hidden md:block text-center text-white text-sm lg:text-xl font-bold uppercase " key={`${day}-${location}`}>{location}</span>
+            return <span className={`bg-richblack-700 p-4 col-span-2 hidden md:block text-center text-white text-sm lg:text-xl font-bold uppercase sticky top-0 border-b-4 border-b-richblack-500`} key={`${day}-${location}`}>{location}</span>
           })}
           {Object.keys(classesOrganised[day]).map((timeSlot) => {
             const fullWidth = classesOrganised[day][timeSlot]["all"]
@@ -77,7 +91,13 @@ export default function TimetableClientPage(props: ClientClassProps) {
             const time = format(fromUnixTime(parseInt(timeSlot.split('-')[0])),"mm") == '00' 
               ? `${format(fromUnixTime(parseInt(timeSlot.split('-')[0])),"haaa")}`
               : `${format(fromUnixTime(parseInt(timeSlot.split('-')[0])),"h:mmaaa")}`
-            const timeCell = (<div className={`border-t-3 ${timeColor} font-bold`}><span className={`bg-yellow-400 px-3 py-1 rounded-lg relative -top-3`}>{time}</span></div>)
+            const shouldMarkRef = scroll && !timeSlotMarked && parseInt(timeSlot.split('-')[0]) > currentTime ? true : false
+            const timeColor = shouldMarkRef ? "border-t-chillired-500":"border-t-yellow-400"
+
+            if(shouldMarkRef) { timeSlotMarked = true}
+            const timeCell = (<div className={`border-t-3 ${timeColor} font-bold flex items-start`}>
+              <span ref={shouldMarkRef ? currentTimeSlot:null} className={`${shouldMarkRef ? "bg-chillired-500 text-white": "bg-yellow-400"} px-3 pl-2 pr-3 rounded-lg relative -top-3 mr-2 block`}>{shouldMarkRef ? "You Are Here": time}</span>
+            </div>)
             return fullWidth ? <Fragment key={timeSlot}>{timeCell}
                 <div className={`${fullWidthColor} text-xs sm:text-base col-span-10 flex gap-2 border-t-3 ${timeColor}`} style={{backgroundColor: levels[classesOrganised[day][timeSlot]["all"].level].colour}}>
                   <strong>{classesOrganised[day][timeSlot]["all"].title}</strong>

@@ -3,6 +3,7 @@ import { format,getUnixTime,fromUnixTime, parseISO } from "date-fns";
 import { levels } from "@tina/collection/sessionLevels"
 import { Fragment } from "react";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
+import { useSearchParams } from "next/navigation";
 
 export const timeToTimeSlot = (dateToConvert) => {
   return `${getUnixTime(parseISO(dateToConvert))}-${format(dateToConvert,"HHmm-EEE")}`
@@ -12,22 +13,23 @@ const timeColor = "border-t-yellow-400"
 
 
 const NowAndNext = ({classesUnordered,basic}) => {
-
-  const rightNow = new Date('2024-11-30T13:00:01.000Z')
+  const params = useSearchParams()
+  const timeTravel = params.get('at')
+  const rightNow = timeTravel ? new Date(timeTravel): new Date()
   const rightNowUnix = getUnixTime(rightNow)
   const secondsIntoSession = rightNowUnix % (30 * 60)
   const sessionBegining = rightNowUnix - secondsIntoSession
   const day = format(fromUnixTime(sessionBegining-(181*60)),"eeee")
   
   const todaysSessions = classesUnordered.filter((current)=> day == format(current.date,"eeee"))
-  const sessionNotFinishedYet = todaysSessions.filter((current)=> getUnixTime(current.date) >= sessionBegining )
+  const sessionNotFinishedYet = (todaysSessions?.length > 0 ? todaysSessions : classesUnordered).filter((current)=> getUnixTime(current.date) >= sessionBegining )
   const sessionLeft = sessionNotFinishedYet.length > 0 
-  const sessionsToConsider = sessionLeft ? sessionNotFinishedYet : todaysSessions
+  const sessionsToConsider = sessionLeft ? sessionNotFinishedYet : todaysSessions.length > 0 ? todaysSessions : classesUnordered
   const nextThreeIshSessionKeys = sessionLeft
     ? Array.from(new Set(sessionsToConsider.map((session)=>timeToTimeSlot(session.date)))).slice(0,3)
     : [timeToTimeSlot(sessionsToConsider.slice(-1)[0].date)]
 
-  const sessionsToDisplay = sessionsToConsider.filter((current)=> day == format(current.date,"eeee")).reduce((organised,current) => { 
+  const sessionsToDisplay = sessionsToConsider.reduce((organised,current) => { 
   //   console.log(current)
     const timeSlot = timeToTimeSlot(current.date)
     if(nextThreeIshSessionKeys.includes(timeSlot)) {
@@ -65,7 +67,14 @@ const NowAndNext = ({classesUnordered,basic}) => {
 
 
   return <div className="grid grid-cols-[100px_minmax(400px,_1fr)]">
-  <div className=""></div>
+  <div className="">
+    {/* <p>Today {todaysSessions.length}</p>
+    <p>Not Finished {sessionNotFinishedYet.length}</p>
+    <p>Any left {sessionLeft ? "true" : "false"}</p>
+    <p>Consider {sessionsToConsider.length}</p>
+    <p>Next three {nextThreeIshSessionKeys.length}</p> */}
+
+  </div>
   <RoomHeaders numberOfSessions={maxNumRooms} day={day} rooms={rooms} />
   {
     Object.keys(sessionsToDisplay).sort().map((timeSlot) => {
@@ -105,7 +114,7 @@ const TimeSlot = ({session,numberOfSessions,basic}) => {
       <h1 className={`${titleSize} font-bold leading-none`}>{session?.title}</h1>
       <p className={`${artistSize} leading-none`}>{session?.artist?.name}</p>
       <div className={`${infoSize} leading-none mt-2`}>
-      <TinaMarkdown content={session?.details}/>
+      <TinaMarkdown content={session?.details}/> {session?.location } ---
       </div>
 
       {/* {JSON.stringify(session,null,2)} */}
