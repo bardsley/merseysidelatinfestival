@@ -107,7 +107,7 @@ export default function TicketList() {
           <div className='flex gap-1 align-start'>
             <span className='text-sm font-semibold mr-1'>Sorted:</span>
             <span className='capitalize'>{sortByField}</span>
-            <span className='capitalize'>{sortByDirection == "asc" ? "ascending" : "descending"}</span>
+            <span className='capitalize'>{ sortFieldToggler(sortByField) }</span>
           </div>
           {isValidating ? 
           <div role="status" className='flex'>
