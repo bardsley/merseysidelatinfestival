@@ -101,11 +101,11 @@ def lambda_handler(event, context):
     
     # Check this is the correct event
     # if ('eventName' not in ev_data and ev_data['eventName'] != 'PurchaseCreated!'):
-    if ('eventName' not in ev_data and ev_data.get('eventName') != 'PurchaseCreated!'):
-        message =  "Event is not a PurchaseCreated event"
-        logger.error(message)
-        logger.error(ev_data)
-        return {'statusCode':400, 'body': json.dumps({ 'error': message})}
+    # if ('eventName' not in ev_data and ev_data.get('eventName') != 'PurchaseCreated!'):
+    #     message =  "Event is not a PurchaseCreated event"
+    #     logger.error(message)
+    #     logger.error(ev_data)
+    #     return {'statusCode':400, 'body': json.dumps({ 'error': message})}
     
     payload = json.loads(ev_data['payload'])
     # logger.info(payload)
