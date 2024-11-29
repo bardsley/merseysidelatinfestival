@@ -14,8 +14,8 @@ export default async function NowNextPage() {
   return (
     <Layout rawPageData={classes} cleanLayout={true}>
       <div className="text-white p-12 flex flex-col justify-between h-screen border">
-        <div className="flex pl-[100px] gap-12">
-          <h1 className="text-5xl font-bold uppercase ">Now & Next 
+        <div className="flex pl-[100px] gap-[3vw]">
+          <h1 className="text-[3vw] font-bold uppercase ">Coming Up
             {/* {maxNumRooms} {rooms} */}
           </h1> 
           <LevelIndicator/>
