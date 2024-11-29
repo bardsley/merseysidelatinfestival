@@ -72,8 +72,11 @@ def lambda_handler(event, context):
     incomplete_count = 0     # Some choices are -1 (incomplete selection)
     not_wanted_count = 0     # Any choice is -99 (not wanted)
     selected_count = 0       # All choices are >= 0 (options selected)
+    group_count = 0
     
     filtered_items = [item for item in response['Items'] if (item['access'][2] == 1)]
+
+    not_wanted_count = len([item for item in response['Items'] if (item['access'][2] == -1)]) # if it has been removed by an admin because they didn't want
 
     meal_attendees_list = []
     
@@ -84,12 +87,17 @@ def lambda_handler(event, context):
         full_name            = item.get('full_name', 'unknown')
         choices              = meal_prefs.get('choices', [-1,-1,-1])
         assigned_table       = meal_prefs.get('table', None)
-        group                = meal_prefs.get('seating_preference', [None])
+        group                = meal_prefs.get('seating_preference')
         dietary_requirements = meal_prefs.get('dietary_requirements', {})
         is_selected          = all(choice >= 0 for choice in choices)
         not_wanted           = all(choice == -99 for choice in choices)
 
         pass_type = extract_pass_type(item.get('line_items', []))
+
+        if group and isinstance(group, str):
+            group = group
+        elif group and isinstance(group, list):
+            group = group[0]
 
         meal_attendees_list.append({
             'ticket_number': ticket_number,
@@ -102,6 +110,9 @@ def lambda_handler(event, context):
             'not_wanted': not_wanted,
             'group': group
         })
+
+        if group is not None and group != "" and group != []:
+            group_count += 1        
         
         if not meal_prefs or all(choice == -1 for choice in choices):
             not_selected_count += 1
@@ -130,8 +141,11 @@ def lambda_handler(event, context):
                         course_frequencies[i][dish_name] = 1
 
     logger.info(f"Statistics: Not selected: {not_selected_count}, Incomplete: {incomplete_count}, Not wanted: {not_wanted_count}, Selected: {selected_count}, Total number of attendees with dinner: {len(meal_attendees_list)}")
-    logger.info(f"Course Frequencies: {course_frequencies}")
+    logger.info(f"Course Frequencies (without blanks added): {course_frequencies}")
     logger.info(f"Dietary Frequencies: {dietary_frequencies}")
+
+    for i in range(len(course_frequencies)):
+        course_frequencies[i][course_mappings[i][0]] += not_selected_count
 
     return {
         'statusCode': 200,
@@ -141,6 +155,7 @@ def lambda_handler(event, context):
                 'incomplete_count': incomplete_count,
                 'not_wanted_count': not_wanted_count,
                 'selected_count': selected_count,
+                'group_count': group_count,
                 'course_frequencies': course_frequencies,
                 'dietary_frequencies': dietary_frequencies,
             },

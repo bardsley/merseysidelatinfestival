@@ -2,16 +2,16 @@
 import {Fragment } from "react";
 import { format } from "date-fns";
 import { locations } from '@tina/collection/options'
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 
 export const ArtistTimetable = ({classes}) => {
-  const searchParams = useSearchParams()
-  const draft = searchParams.get('draft')
+  // const searchParams = useSearchParams()
+  // const draft = searchParams.get('draft')
 
   const cellClassNames = "p-3 align-top border border-gray-600";
   const headClassNames = "p-3 text-left"
-  return draft && classes && classes.length > 0 ? ( //TODO This needs removing once we hvae classes beign set as live or draft
+  return classes && classes.length > 0 ? ( //TODO This needs removing once we hvae classes beign set as live or draft
     <>
       <h2 className="text-2xl mt-4">Classes</h2>
       <table className="text-lg mb-2">
@@ -36,6 +36,7 @@ export const ArtistTimetable = ({classes}) => {
               <h3 className="font-bold text-lg">{class_.title}</h3>
               <div className="prose-base text-white">
                 <TinaMarkdown content={class_.details} />
+                {/* <pre>{JSON.stringify(class_,null,2)}</pre> */}
               </div>
             </td>
           </tr>

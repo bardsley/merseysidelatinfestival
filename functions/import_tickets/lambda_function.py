@@ -34,10 +34,11 @@ def err(msg:str, code=400, logmsg=None, **kwargs):
         'body': json.dumps({'error': msg})
         }
 
-def send_email(name, email, ticket_number, line_items, meal_upgrade, meal_upgrade_base_link, pass_type):
+def send_email(name, email, ticket_number, line_items, meal_upgrade, meal_upgrade_base_link, pass_type, give_discount, discount_code=""):
     logger.info(os.environ.get("SEND_EMAIL_LAMBDA"))
     # send the email with these details
     logger.info("Invoking send_email lambda")
+    prefill_code = "&prefilled_promo_code={}".format(discount_code) if give_discount else ""
     response = lambda_client.invoke(
         FunctionName=os.environ.get("SEND_EMAIL_LAMBDA"),
         InvocationType='Event',
@@ -47,8 +48,8 @@ def send_email(name, email, ticket_number, line_items, meal_upgrade, meal_upgrad
                 'email':email, 
                 'ticket_number': ticket_number,
                 'line_items':line_items,
-                'heading_message': "YOUR TICKET FOR MLF24" if "Artist Pass" not in pass_type else "YOUR ARTIST PASS FOR MLF24", 
-                'meal_link':meal_upgrade_base_link+"?prefilled_promo_code=VOLUNTEER&client_reference_id={}".format(ticket_number)
+                'heading_message': "YOUR PASS FOR MLF24" if "Artist Pass" not in pass_type else "YOUR ARTIST PASS FOR MLF24", 
+                'meal_link':meal_upgrade_base_link+"?client_reference_id={}{}".format(ticket_number, prefill_code)
             }, cls=DecimalEncoder),
         )
     logger.info(response)
@@ -71,6 +72,7 @@ def match_passes(imported_pass):
     available_pass_types = {
         "Full Pass":   [1,1,1,1,1,1],
         "Artist Pass": [1,1,1,1,1,1],
+        "Staff Pass":  [1,1,1,1,1,1],
         "Full Pass (without dinner)":       [1,1,0,1,1,1],
         "Volunteer Pass (without dinner)":  [1,1,0,1,1,1],
         "Artist Pass (without dinner)":     [1,1,0,1,1,1],
@@ -172,7 +174,9 @@ def lambda_handler(event, context):
             send_meal_upgrade = True if options.get('sendMealUpgrade', False) and access_array[2] == 0 else False
 
             if (options['sendTicketEmails'] == "everyone") or (options['sendTicketEmails'] == "new" and not str(attendee['ticket_number'])) or (options.get('sendMealUpgrade', False)):
-                send_email(attendee['name'], attendee['email'], ticket_number, line_items, send_meal_upgrade, meal_upgrade_base_link, pass_type)
+                discount = options.get('giveDiscount', False)
+                code = options.get('discountCode', "")
+                send_email(attendee['name'], attendee['email'], ticket_number, line_items, send_meal_upgrade, meal_upgrade_base_link, pass_type, discount, code)
     
         except (ValueError, KeyError, boto3.exceptions.Boto3Error) as e:
             logger.error(f"Failed to process attendee: {attendee}")

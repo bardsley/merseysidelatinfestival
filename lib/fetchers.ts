@@ -8,4 +8,12 @@ const scanIn = async (ticket_number,email,reset=false) => {
   return apiResponse.json()
 }
 
-export {fetcher,scanIn}
+const scanInMeal = async (ticket_number,created_at,reset=false) => {
+  const apiResponse = await fetch(`/api/admin/scan/${ticket_number}`,{
+    method: "POST",
+    body: JSON.stringify({meal_ticket: true, created_at: created_at, reset: reset}),
+  })
+  return apiResponse.json()
+}
+
+export {fetcher,scanIn, scanInMeal}

@@ -15,12 +15,13 @@ export interface ICellProps {
   studentDiscount: boolean,
   day?: string
   passType?: string
+  locked?: boolean
 }
 
 const Cell: React.FC<ICellProps> = (props: ICellProps) => {
   const { option,isSelected,onSelect,studentDiscount, day,passType} = props;
   const { cost, studentCost, isAvailable} = option || { cost: 0, studentCost: 0, isAvailable: true };
-  const checkBoxCss = isSelected? 'bg-chillired-600' : 'bg-gray-200';
+  const checkBoxCss = props.locked ? "bg-gray-700" : isSelected? 'bg-chillired-600' : 'bg-gray-200';
   const setValue = option && option.cost == 0 && option.studentCost == 0 
     ? {}
     : day && passType 
@@ -30,16 +31,17 @@ const Cell: React.FC<ICellProps> = (props: ICellProps) => {
         : {one:passType, two: !isSelected} ;
   return (
       <>{isAvailable ? (
-        <Field className="flex items-center justify-center flex-col sm:flex-row">
+          <Field className={`flex items-center justify-center flex-col sm:flex-row ${props.locked ? 'cursor-not-allowed': ''}`}>
           <Switch
+            disabled={props.locked}
             checked={isSelected}
             onClick={() => onSelect(setValue.one,setValue.two)}
             // onChange={onSelect(day,passType)}
-            className={`${checkBoxCss} group relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent  transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-chillired-600 focus:ring-offset-2 order-2 sm:order-1`}
+            className={`${checkBoxCss} ${props.locked ? 'cursor-not-allowed': 'cursor-pointer'} group relative inline-flex h-6 w-11 flex-shrink-0  rounded-full border-2 border-transparent  transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-chillired-600 focus:ring-offset-2 order-2 sm:order-1`}
           >
             <span
             aria-hidden="true"
-            className="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out group-data-[checked]:translate-x-5"
+            className="${props.locked ? 'cursor-not-allowed': ''} pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out group-data-[checked]:translate-x-5"
           />
           </Switch>
             

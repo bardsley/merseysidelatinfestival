@@ -5,15 +5,15 @@ import { currentUser } from '@clerk/nextjs/server';
 import { getUnixTime } from 'date-fns';
 
 export async function GET(_req: NextRequest,{params}: {params: {ticket_number: string}}) {
-  const {userId} = auth();
+  const {userId} = await auth();
 
   if(!userId){
-    return Response.json({error: "User is not signed in."}, { status: 401 });
+    return Response.json({error: "User is not signed in to GET."}, { status: 401 });
   }
 
   const user = await currentUser();
   if(!user){
-    return Response.json({error: "User is not signed in!"}, { status: 401 });
+    return Response.json({error: "User is not signed in to GET user details!"}, { status: 401 });
   }
   if(!user.publicMetadata.admin){
     return Response.json({error: "User is does not have list tickets permissions."}, { status: 401 });
@@ -27,6 +27,7 @@ console.log(scanUrl)
     },
   })
   const attendeeData = await scanResponse.json()
+  console.log(attendeeData)
 
   try {
     return attendeeData.error ? Response.json({error: attendeeData.error},{status:scanResponse.status}) : Response.json({attendee: attendeeData},{status:200})
@@ -37,10 +38,10 @@ console.log(scanUrl)
 
 export async function POST(req: NextRequest,{params}: {params: {ticket_number: string}}) {
   const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
-  const {userId} = auth();
+  const {userId} = await auth();
 
   if(!userId){
-    return Response.json({error: "User is not signed in."}, { status: 401 });
+    return Response.json({error: "User is not signed in to POST change."}, { status: 401 });
   }
 
   const requestingUser = await clerkClient.users.getUser(userId);
@@ -48,27 +49,63 @@ export async function POST(req: NextRequest,{params}: {params: {ticket_number: s
     return Response.json({error: "User is does not have permission to make admin."}, { status: 401 });
   }
 
+  let requester: boolean | string = false
+  if(userId) {
+    const user = await currentUser() // && user && user.publicMetadata.role === 'admin' ? 'admin' : 'attendee'
+    if(!user){ return Response.json({error: "User is not signed in."}, { status: 401 }); }
+    if(!user.publicMetadata.admin){ return Response.json({error: "User is does not have change details permissions."}, { status: 401 });}
+    requester = `admin#${user.id}#${user.firstName}-${user.lastName}`
+  }  
+
   const reqJson = await req.json();
   const ticket_number = params.ticket_number;
-  const email = reqJson.email;
-  const check_in_at = reqJson.reset ? false : getUnixTime(new Date());
-  const bodyData = {
-    ticket_number: ticket_number,
-    email: email,
-    check_in_at: check_in_at
+
+  if(reqJson.meal_ticket){
+    const check_in_at = reqJson.reset ? false : getUnixTime(new Date());
+    const bodyData = {
+      meal_ticket: reqJson.meal_ticket,
+      ticket_number: ticket_number,
+      check_in_at: check_in_at,
+      created_at: reqJson.created_at,
+      source: requester
+    }
+    console.log(bodyData)
+    try {
+      const response = await fetch(`${process.env.LAMBDA_SCAN_TICKET}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bodyData)
+      })
+      const data = await response.json()
+      return Response.json({message: data.message},{status: 200})
+    } catch (error) {
+      return Response.json({error: error},{status: 500})
+    } 
+  }else{
+    const email = reqJson.email;
+    const check_in_at = reqJson.reset ? false : getUnixTime(new Date());
+    const bodyData = {
+      ticket_number: ticket_number,
+      email: email,
+      check_in_at: check_in_at,
+      source: requester
+    }
+    console.log(bodyData)
+    try {
+      const response = await fetch(`${process.env.LAMBDA_SCAN_TICKET}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bodyData)
+      })
+      const data = await response.json()
+      return Response.json({message: data.message},{status: 200})
+    } catch (error) {
+      return Response.json({error: error},{status: 500})
+    } 
   }
-  console.log(bodyData)
-  try {
-    const response = await fetch(`${process.env.LAMBDA_SCAN_TICKET}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(bodyData)
-    })
-    const data = await response.json()
-    return Response.json({message: data.message},{status: 200})
-  } catch (error) {
-    return Response.json({error: error},{status: 500})
-  } 
+
 }

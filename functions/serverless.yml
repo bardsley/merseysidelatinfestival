@@ -325,6 +325,7 @@ functions:
     environment:
       STAGE_NAME: ${sls:stage}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+      EVENT_TABLE_NAME: ${param:eventTableName}
     # layers:
     #   - !Ref DynamodbLambdaLayer
     #   - !Ref GithubLambdaLayer
@@ -349,8 +350,10 @@ functions:
         - "shared/**"
     environment:
       STAGE_NAME: ${sls:stage}
+      FROM_EMAIL: ${param:fromEmail}
       SENDGRID_API_KEY: ${param:sendgridApiKey}
       SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
+      MAILDEV_IP: "3.254.106.153"
     layers:
       - !Ref SendmailLambdaLayer
 
@@ -578,3 +581,74 @@ functions:
       - httpApi:
           path: /ticket_upgrade
           method: post
+
+#--------------------
+
+  TicketActive:
+    runtime: python3.11
+    handler: ticket_active/lambda_function.lambda_handler
+    name: "${sls:stage}-ticket_active"
+    package:
+      patterns:
+        - '!**/**'
+        - "ticket_active/**"
+        - "shared/**"
+    environment:
+      STAGE_NAME: ${sls:stage}
+      EVENT_TABLE_NAME: ${param:eventTableName}
+      ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+      SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
+    events:
+      - httpApi:
+          path: /ticket/activate
+          method: post
+      - httpApi:
+          path: /ticket/deactivate
+          method: post
+
+#--------------------
+
+  MealSeating:
+    runtime: python3.11
+    handler: meal_seating/lambda_function.lambda_handler
+    name: "${sls:stage}-meal_seating"
+    timeout: 120
+    package:
+      patterns:
+        - '!**/**'
+        - "meal_seating/**"
+        - "shared/**"
+    environment:
+      STAGE_NAME: ${sls:stage}
+      EVENT_TABLE_NAME: ${param:eventTableName}
+      ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+      SEND_EMAIL_LAMBDA: "${sls:stage}-meal_seating" # delete this, not used and wrong lambda name silly
+    events:
+      - httpApi:
+          path: /meal/seating
+          method: get
+      - httpApi:
+          path: /meal/seating
+          method: post       
+
+#--------------------
+
+  CheckoutCompleteInperson:
+    runtime: python3.11
+    handler: checkout_complete_inperson/lambda_function.lambda_handler
+    name: "${sls:stage}-checkout_complete_inperson"
+    package:
+      patterns:
+        - '!**/**'
+        - "checkout_complete_inperson/**"
+        - "shared/**"
+    environment:
+      STAGE_NAME: ${sls:stage}
+      EVENT_TABLE_NAME: ${param:eventTableName}
+      ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
+      SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
+    events:
+
+      - httpApi:
+          path: /checkout_complete_inperson
+          method: post                                 

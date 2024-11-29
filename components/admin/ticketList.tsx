@@ -9,6 +9,7 @@ import TicketTransferModal from './modals/ticketTransferModal';
 import { filterItems, filter, FilterSelector, FilterLabel } from './lists/filterable';
 import { TicketRow } from './lists/ticketRow';
 import { fetcher } from  "@lib/fetchers";
+import ScanSuccessDialog from '@components/admin/scan/ScanSuccessDialog'
 
 export default function TicketList() {
   const searchParams = useSearchParams()
@@ -98,12 +99,15 @@ export default function TicketList() {
       <div className="px-0 my-8 ">
         { nameChangeModalActive ? <NameChangeModal open={nameChangeModalActive} onClose={(value) => { setNameChangeModalActive(value)}} refreshFunction={()=> mutate("/api/admin/attendees")} ticket={activeTicket}/> : null }
         { ticketTransferModalActive ? <TicketTransferModal open={ticketTransferModalActive} onClose={(value) => { setTicketTransferModalActive(value);}} refreshFunction={()=> mutate("/api/admin/attendees")} ticket={activeTicket}/> : null }
+        { activeTicket ? <div className='fixed z-50 w-full'>
+          <ScanSuccessDialog scan={activeTicket.ticket_number} onClick={()=>{setActiveTicket(false); setTimeout(() => mutate('/api/admin/attendees'),350)}}/></div> : null }
+
         <div className='flex gap-3'>
           <FilterSelector filters={filterBy} removeFilterFunction={removeFilter}/>
           <div className='flex gap-1 align-start'>
             <span className='text-sm font-semibold mr-1'>Sorted:</span>
             <span className='capitalize'>{sortByField}</span>
-            <span className='capitalize'>{sortByDirection == "asc" ? "ascending" : "descending"}</span>
+            <span className='capitalize'>{ sortFieldToggler(sortByField) }</span>
           </div>
           {isValidating ? 
           <div role="status" className='flex'>
@@ -146,10 +150,10 @@ export default function TicketList() {
                 </th>
                 <th scope="col" className={`${headerClassNames} sm:rounded-r-lg max-w-24 flex-grow-0`}>
                   <span className={headerContainerClassNames}>
-                    <FilterLabel fieldname={"signed_in"} addFilterFunction={addFilter}>
+                    <FilterLabel fieldname={"checkin_at"} addFilterFunction={addFilter}>
                       <span className={`${labelClassNames} text-nowrap`}>Check-in?</span>
                     </FilterLabel>
-                    { sortFieldToggler('signed_in') }
+                    { sortFieldToggler('checkin_at') }
                   </span>
                 </th>
                 <th scope="col" className={`${headerClassNames} relative py-3.5 pl-3 pr-4 sm:pr-0 min-w-20 hidden sm:table-cell`}>

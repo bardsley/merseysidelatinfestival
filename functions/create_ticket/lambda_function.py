@@ -129,7 +129,7 @@ def lambda_handler(event, context):
         'checkout_session':event['checkout_session'] if 'checkout_session' in event else None,
         'meal_preferences':event['meal_preferences'] if 'meal_preferences' in event else None,
         'promo_code':event['promo_code'] if 'promo_code' in event else None,
-        'history':event['history'] if 'history' in event else None,
+        'history':event['history'] if 'history' in event else [],
     }
     update_ddb = table.put_item(Item=Item)
     logger.info(update_ddb)

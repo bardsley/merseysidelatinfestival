@@ -1,6 +1,7 @@
 import type { Collection } from "tinacms";
 import { locationOptions } from "./options";
-
+import { levelOptions } from "./sessionLevels"
+ 
 const Class: Collection = {
   label: "Classes & Sessions",
   name: "class",
@@ -40,6 +41,14 @@ const Class: Collection = {
       name: "location",
       options: locationOptions
     },
+    {
+      type: "string",
+      label: "Suitable for",
+      name: "level",
+      options: levelOptions
+    },
+
+    
   ]
 }
 

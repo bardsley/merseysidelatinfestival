@@ -3,8 +3,8 @@ import { BiCreditCard, BiLogoSketch, BiLeftArrowCircle, BiSolidRightArrowSquare,
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { EllipsisVerticalIcon, CurrencyPoundIcon, ClipboardIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { format,fromUnixTime } from 'date-fns';
-import { scanIn } from '@lib/fetchers';
-import { mutate } from 'swr';
+// import { scanIn } from '@lib/fetchers';
+// import { mutate } from 'swr';
 
 const TicketStatusIcon = ({attendee})  => {
   const PaymentIcon = attendee.status === 'paid_stripe' ? <BiCreditCard title="Paid Online" className='w-6 h-6' /> 
@@ -43,8 +43,9 @@ export const TicketRow = ({attendee,setActiveTicket, setNameChangeModalActive, s
       <td className="hidden px-3 py-4 text-sm text-inherit sm:table-cell">{passString}</td>
       <td className="px-3 py-4 text-sm text-gray-200 text-nowrap align-center">
         {attendee.checkin_at 
-          ? <button onClick={() => {scanIn(attendee.ticket_number, attendee.email, true); setTimeout(() => mutate('/api/admin/attendees'),200)}}>{format(fromUnixTime(attendee.checkin_at),'EEE HH:mm')}</button>
-          : <button className='bg-green-700 rounded-full px-4 py-1' onClick={() => {scanIn(attendee.ticket_number, attendee.email); setTimeout(() => mutate('/api/admin/attendees'),200)}}>Check in</button>}
+          // ? <button onClick={() => {scanIn(attendee.ticket_number, attendee.email, true); setTimeout(() => mutate('/api/admin/attendees'),200)}}>{format(fromUnixTime(attendee.checkin_at),'EEE HH:mm')}</button>
+          ? <button onClick={() => { setActiveTicket(attendee);}}>{format(fromUnixTime(attendee.checkin_at),'EEE HH:mm')}</button>
+          : <button className='bg-green-700 rounded-full px-4 py-1' onClick={() => { console.log(attendee.ticket_number); setActiveTicket(attendee);}}>Check in</button>}
       </td>
       <td className='hidden sm:table-cell px-3 py-0 text-xl align-middle'>
         <TicketStatusIcon attendee={attendee}/>
