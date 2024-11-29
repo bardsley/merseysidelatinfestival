@@ -6,20 +6,20 @@ import {IndividualTickets, Passes } from './pricingTypes'
 export const individualTickets: IndividualTickets = { 
 	Friday: { 
 		 Party:{
-			 cost: 20,
-			 studentCost: 15,
+			 cost: 25,
+			 studentCost: 20,
 			 isAvailable: true,
-			 priceId: 'price_1PwoMhEWkmdeWsQPEenyN1wb',
-			 studentPriceId: 'price_1PwoN0EWkmdeWsQP0p4tP5QK'
+			 priceId: 'price_1QQZObEWkmdeWsQPPK90RMv5',
+			 studentPriceId: 'price_1QQZOtEWkmdeWsQPGgDY1I8x'
 			 },
 		},
 	Saturday: { 
 		 Party:{
-			 cost: 25,
-			 studentCost: 22,
+			 cost: 30,
+			 studentCost: 27,
 			 isAvailable: true,
-			 priceId: 'price_1PwoNnEWkmdeWsQPVKV6v05d',
-			 studentPriceId: 'price_1PwoO4EWkmdeWsQPKvKLoBI6'
+			 priceId: 'price_1QQZPSEWkmdeWsQPfNZV5nDS',
+			 studentPriceId: 'price_1QQZPkEWkmdeWsQPBssrSUUA'
 			 },
 		 Dinner:{
 			 cost: 42.5,
@@ -29,27 +29,27 @@ export const individualTickets: IndividualTickets = {
 			 studentPriceId: 'price_1PwoQrEWkmdeWsQPx6rcHJ8V'
 			 },
 		 Classes:{
-			 cost: 55,
-			 studentCost: 55,
+			 cost: 60,
+			 studentCost: 60,
 			 isAvailable: true,
-			 priceId: 'price_1PwoPREWkmdeWsQPIB87h5gN',
-			 studentPriceId: 'price_1PwoPREWkmdeWsQPIB87h5gN'
+			 priceId: 'price_1QQZRJEWkmdeWsQPhWxTb63B',
+			 studentPriceId: 'price_1QQZRJEWkmdeWsQPhWxTb63B'
 			 },
 		},
 	Sunday: { 
 		 Classes:{
-			 cost: 55,
-			 studentCost: 55,
+			 cost: 60,
+			 studentCost: 60,
 			 isAvailable: true,
-			 priceId: 'price_1PwoPvEWkmdeWsQPpJTEre5x',
-			 studentPriceId: 'price_1PwoPvEWkmdeWsQPpJTEre5x'
+			 priceId: 'price_1QQZRwEWkmdeWsQPWxGquzLc',
+			 studentPriceId: 'price_1QQZRwEWkmdeWsQPWxGquzLc'
 			 },
 		 Party:{
-			 cost: 20,
-			 studentCost: 15,
+			 cost: 25,
+			 studentCost: 20,
 			 isAvailable: true,
-			 priceId: 'price_1PwoOYEWkmdeWsQPxRBOlFgr',
-			 studentPriceId: 'price_1PwoOqEWkmdeWsQPYGIhbZJZ'
+			 priceId: 'price_1QQZQREWkmdeWsQPz19neUCd',
+			 studentPriceId: 'price_1QQZQeEWkmdeWsQPcysRqX8g'
 			 },
 		},
  }
@@ -72,25 +72,25 @@ export const initialSelectedOptions = {
 // Binary version = [Friday BiParty,Saturday Class Pass,Saturday Dinner,Saturday Party,Sunday Class Pass,Sunday Party]
 export const passes: Passes = {
 	'Party Pass': {
-		 cost: 45,
-		 studentCost: 35,
+		 cost: 55,
+		 studentCost: 45,
 		 isAvailable: true,
-		 saving: 20,
-		 studentSaving: 17,
+		 saving: 10,
+		 studentSaving: 7,
 		 combination: ['Friday Party', 'Saturday Party', 'Sunday Party'],
 		 description: "Party away every single night, the ultimate party weekend",
-		 priceId: 'price_1PwoJTEWkmdeWsQPsjvndOcy',
-		 studentPriceId: 'price_1PwoJoEWkmdeWsQPl331ijir'},
+		 priceId: 'price_1QQZNLEWkmdeWsQPWViCuLsa',
+		 studentPriceId: 'price_1QQZNdEWkmdeWsQPKKHwNeTE'},
 	'Sunday Pass': {
-		 cost: 59,
-		 studentCost: 59,
+		 cost: 69,
+		 studentCost: 69,
 		 isAvailable: true,
-		 saving: 16,
-		 studentSaving: 11,
+		 saving: 6,
+		 studentSaving: 1,
 		 combination: ['Sunday Classes', 'Sunday Party'],
 		 description: "The whole Sunday experience",
-		 priceId: 'price_1PwoI8EWkmdeWsQPpVotxewC',
-		 studentPriceId: 'price_1PwoI8EWkmdeWsQPpVotxewC'},
+		 priceId: 'price_1QQZLdEWkmdeWsQPSYoZ6VpR',
+		 studentPriceId: 'price_1QQZLdEWkmdeWsQPSYoZ6VpR'},
 	'Dine and Dance Pass': {
 		 cost: 60,
 		 studentCost: 55,
@@ -102,35 +102,35 @@ export const passes: Passes = {
 		 priceId: 'price_1PwoLAEWkmdeWsQPg2p9IcuJ',
 		 studentPriceId: 'price_1PwoLsEWkmdeWsQPreRyDhg2'},
 	'Saturday Pass': {
-		 cost: 65,
-		 studentCost: 60,
+		 cost: 75,
+		 studentCost: 70,
 		 isAvailable: true,
-		 saving: 15,
-		 studentSaving: 20,
+		 saving: 5,
+		 studentSaving: 10,
 		 combination: ['Saturday Classes', 'Saturday Party'],
 		 description: "The entire Saturday dancing experience",
-		 priceId: 'price_1QJHjxEWkmdeWsQPMmAVGy2C',
-		 studentPriceId: 'price_1QJHkIEWkmdeWsQPRt1S9pQq'},
+		 priceId: 'price_1QQZKnEWkmdeWsQPPEYkIif8',
+		 studentPriceId: 'price_1QQZL5EWkmdeWsQPCLyYdhdh'},
 	'Full Pass': {
-		 cost: 125,
-		 studentCost: 105,
+		 cost: 140,
+		 studentCost: 125,
 		 isAvailable: true,
-		 saving: 92.5,
+		 saving: 87.5,
 		 studentSaving: 95.5,
 		 combination: ['Friday Party', 'Saturday Classes', 'Saturday Party', 'Sunday Classes', 'Sunday Party'],
 		 description: "All the dancing the festival has at the best rate! If you're looking for the best deal this is it",
-		 priceId: 'price_1QJHdOEWkmdeWsQPygahmu3V',
-		 studentPriceId: 'price_1QJHeSEWkmdeWsQPJzNYTDs1'},
+		 priceId: 'price_1QQZIXEWkmdeWsQP14qtK7nR',
+		 studentPriceId: 'price_1QQZJlEWkmdeWsQPjZKrpTxx'},
 	'Class Pass': {
-		 cost: 95,
-		 studentCost: 95,
+		 cost: 105,
+		 studentCost: 105,
 		 isAvailable: true,
-		 saving: 15,
-		 studentSaving: 15,
+		 saving: 5,
+		 studentSaving: 5,
 		 combination: ['Saturday Classes', 'Sunday Classes'],
 		 description: "All the daytime classes for the weekend",
-		 priceId: 'price_1PwoKTEWkmdeWsQP3pYUjaMp',
-		 studentPriceId: 'price_1PwoKTEWkmdeWsQP3pYUjaMp'},
+		 priceId: 'price_1QQZO2EWkmdeWsQPBFkTqONx',
+		 studentPriceId: 'price_1QQZO2EWkmdeWsQPBFkTqONx'},
 
 }
 
