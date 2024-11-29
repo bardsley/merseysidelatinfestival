@@ -4,7 +4,7 @@ import { levels } from "@tina/collection/sessionLevels"
 import { Fragment } from "react";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 import { useSearchParams } from "next/navigation";
-
+import Image from "next/image";
 export const timeToTimeSlot = (dateToConvert) => {
   return `${getUnixTime(parseISO(dateToConvert))}-${format(dateToConvert,"HHmm-EEE")}`
 }
@@ -110,7 +110,7 @@ const TimeSlot = ({session,numberOfSessions,basic}) => {
   const padding = numberOfSessions == 3 ? "p-[1.3vw]" : "p-[1vw]"
   return <div className={`text-black border-t-[0.3vw] ${padding} ${timeColor} flex gap-[1.5vw] items-start`} 
   style={{backgroundColor: levels[session?.level]?.colour}}>
-    {session?.artist?.avatar && !basic ? <img src={session?.artist?.avatar} alt="" className={`${avatarSize} aspect-square rounded-full shadow-2xl`} /> : null }
+    {session?.artist?.avatar && !basic ? <Image src={session?.artist?.avatar} width={256} height={256}  alt="" className={`${avatarSize} aspect-square rounded-full shadow-2xl`} /> : null }
     <div>
       <h1 className={`${titleSize} font-bold leading-none`}>{session?.title}</h1>
       <p className={`${artistSize} leading-none`}>{session?.artist?.name}</p>
