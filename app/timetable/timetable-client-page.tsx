@@ -69,8 +69,10 @@ export default function TimetableClientPage(props: ClientClassProps) {
   // const timeSlots = days.map((day) => Object.keys(classesOrganised[day]) )
 
   useEffect(()=>{
-    console.log("Scrolling",currentTimeSlot.current.offsetTop)
-    if(scroll) { window.scrollBy({top:currentTimeSlot.current.offsetTop  - 200, behavior: "smooth"}) }
+    if(currentTimeSlot?.current?.offsetTop) {
+      console.log("Scrolling",currentTimeSlot.current.offsetTop)
+      if(scroll) { window.scrollBy({top:currentTimeSlot.current.offsetTop  - 200, behavior: "smooth"}) }
+    } 
   },[currentTimeSlot])
 
   return <Fragment key="single">
