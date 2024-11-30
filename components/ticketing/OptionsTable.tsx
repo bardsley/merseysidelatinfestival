@@ -11,7 +11,9 @@ export const OptionsTable = ({headerClasses, toggleCellClasses, cellClasses, sel
             
           </th>
           {days.map((day) => (
-            <th key={day} className={headerClasses}>{day}</th> 
+            <th key={day} className={`${headerClasses} ${day == "NextYear" ? 'hidden': ''}`}>
+              {day}
+            </th> 
           ))}
         </tr>
       </thead>
@@ -36,7 +38,7 @@ export const OptionsTable = ({headerClasses, toggleCellClasses, cellClasses, sel
               return (
               
                 individualTickets[day][passType] && individualTickets[day][passType].isAvailable ? (
-                  <td key={`${day}-${passType}`} className={cellClasses}>
+                  <td key={`${day}-${passType}`} className={`${cellClasses} ${day == "NextYear" ? 'hidden': ''}`}>
                   {selectedOptions[day][passType]}
                   <Cell {...cellProps} />  
                 </td>

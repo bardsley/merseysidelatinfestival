@@ -6,11 +6,13 @@ import { initialSelectedOptions, fullPassName } from './pricingDefaults'
 import { calculateTotalCost, passOrTicket, getBestCombination, itemsFromPassCombination, itemListToOptions, addToOptions } from './pricingUtilities'
 import type { PartialSelectedOptions } from './pricingTypes'
 import PassCards from './passes'
+import { PassCard } from './PassCard';
 import { OptionsTable } from './OptionsTable';
 import { useRouter } from 'next/navigation'
 import { deepCopy } from '../../lib/useful'
 import symmetricDifference from 'set.prototype.symmetricdifference'
 import difference from 'set.prototype.difference'
+import { getNamedRouteRegex } from 'next/dist/shared/lib/router/utils/route-regex';
 symmetricDifference.shim();
 difference.shim();
 

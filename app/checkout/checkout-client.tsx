@@ -154,7 +154,8 @@ export default function CheckoutClient() {
     { process.env.NODE_ENV == 'development' && process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' ? <>
       <hr />
       <h2>Debug Ignore below the line</h2>
-      <div className='flex'>
+      <div className='flex text-white'>
+        <pre>{JSON.stringify(stripeProducts,null,2)}</pre>
         <pre>userData -- {JSON.stringify(userData,null,2)}</pre>
         <pre>Info for Stripe -- {dinnerInfoProvided ? "true" : "false"} {userData.email} {stripeReady ? "true" : "false"} {JSON.stringify(steps)} </pre>
       </div>
