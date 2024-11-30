@@ -176,9 +176,9 @@ export const passes: Passes = {
 			saving: 117.5,
 			studentSaving: 137.5,
 			combination: ['NextYear Party', 'NextYear Classes', "NextYear Dinner"],
-			description: "The full experience in 2025 (this pass does not include gala dinner)",
-			priceId: 'price_1QQneIEWkmdeWsQPJhsLrRof',
-			studentPriceId: 'price_1QQnjjEWkmdeWsQPgurnBDwI'},
+			description: "The full experience in 2025 (this pass does include gala dinner)",
+			priceId: 'price_1QQnfhEWkmdeWsQPVwOq7u4Q',
+			studentPriceId: 'price_1QQnm6EWkmdeWsQPuyYqgEWo'},
 }
 
 export const fullPassName = Object.keys(passes).at(4)
