@@ -13,18 +13,18 @@
         "visible": true
       },
       {
-        "href": "tickets",
-        "label": "Tickets",
-        "visible": true
-      },
-      {
-        "href": "schedule",
-        "label": "Schedule",
+        "href": "timetable",
+        "label": "Timetable",
         "visible": true
       },
       {
         "href": "artists",
         "label": "Artists",
+        "visible": true
+      },
+      {
+        "href": "tickets",
+        "label": "Tickets",
         "visible": true
       },
       {
