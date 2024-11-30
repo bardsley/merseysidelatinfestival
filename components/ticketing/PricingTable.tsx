@@ -6,7 +6,6 @@ import { initialSelectedOptions, fullPassName } from './pricingDefaults'
 import { calculateTotalCost, passOrTicket, getBestCombination, itemsFromPassCombination, itemListToOptions, addToOptions } from './pricingUtilities'
 import type { PartialSelectedOptions } from './pricingTypes'
 import PassCards from './passes'
-import { PassCard } from './PassCard';
 import { OptionsTable } from './OptionsTable';
 import { useRouter } from 'next/navigation'
 import { deepCopy } from '../../lib/useful'
