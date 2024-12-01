@@ -8,6 +8,11 @@
     "color": "primary",
     "nav": [
       {
+        "href": "feedback",
+        "label": "Feedback",
+        "visible": true
+      },
+      {
         "href": "home",
         "label": "Home",
         "visible": true
