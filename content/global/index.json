@@ -15,7 +15,7 @@
       {
         "href": "home",
         "label": "Home",
-        "visible": true
+        "visible": false
       },
       {
         "href": "timetable",
