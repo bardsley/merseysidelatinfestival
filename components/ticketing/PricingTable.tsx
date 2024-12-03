@@ -64,14 +64,14 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
     if(fullPassFunction) { fullPassFunction(() => selectFullPass) }
   },[])
 
-  useEffect(() => {
-    const storedOptions = localStorage.getItem("selectedOptions")
-    if(storedOptions) { setSelectedOptions(JSON.parse(storedOptions)) }
-    const studentDiscount = localStorage.getItem("student") === 'true'
-    console.log("Student Discount",studentDiscount)
-    setPriceModel(studentDiscount ? "studentCost" : "cost")
-    setStudentDiscount(studentDiscount)
-  },[])
+  // useEffect(() => {
+  //   const storedOptions = localStorage.getItem("selectedOptions")
+  //   if(storedOptions) { setSelectedOptions(JSON.parse(storedOptions)) }
+  //   const studentDiscount = localStorage.getItem("student") === 'true'
+  //   console.log("Student Discount",studentDiscount)
+  //   setPriceModel(studentDiscount ? "studentCost" : "cost")
+  //   setStudentDiscount(studentDiscount)
+  // },[])
 
   function CheckoutButton() {
     const { pending } = useFormStatus();
