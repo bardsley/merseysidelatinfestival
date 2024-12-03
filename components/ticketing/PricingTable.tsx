@@ -103,6 +103,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
         priceModel={priceModel} 
         scrollToElement={scrollToElement} 
         shouldScroll={packages.length == 0}
+        withHero={false}
         ></PassCards>
       
       <div className='mb-12'>
@@ -119,6 +120,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
         setIndividualOption={setIndividualOption}
         priceModel={priceModel}
         locked={false}
+        hidden={true}
       />
       
       <div title="Checkout" className="mx-auto w-full  max-w-2xl  items-start mt-10 mb-10 rounded-lg border border-gray-900 bg-gray-50 text-richblack-700 shadow-lg">
@@ -134,6 +136,8 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
                 <h2 className='text-2xl'>{packages.map((packageName) => `${packageName} ${passOrTicket(packageName)}`).join(', ').replace('Saturday Dinner Ticket','Dinner Ticket')}</h2>
                 <h2 className='text-3xl font-bold'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost % 1 != 0 ? totalCost.toFixed(2) : totalCost}</span>) : null } £{packageCost % 1 !=0 ? packageCost.toFixed(2) : packageCost}</h2>
                 { totalCost - packageCost > 0 ? (<p>Saving you £{(totalCost - packageCost) % 1 !=0 ?  (totalCost - packageCost).toFixed(2) : (totalCost - packageCost)} on the full cost of those options!</p>) : null }
+
+                <div className='font-bold mt-3'>Add promo codes at checkout</div>
               </div>
               <form action={checkout} className='flex w-full md:w-auto flex-col md:flex-row items-center justify-center'>
               <CheckoutButton></CheckoutButton>
@@ -141,6 +145,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
               
             </>
           ) : "Select options in the table above to see the suggested packages" }
+         
         </div>
         
       </div>

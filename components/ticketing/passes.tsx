@@ -5,7 +5,7 @@ import { itemsFromPassCombination, itemListToOptions, addToOptions, passInCombin
 import type { PartialSelectedOptions } from './pricingTypes'
 
 // export default function PassCards({setDayPass,setTypePass,setDinnerPass,priceModel,scrollToElement,selectFullPass,selected,shouldScroll}) {
-export default function PassCards({currentSelectedOptions, setSelectedOptions, priceModel,scrollToElement,selected,shouldScroll, basic, locked} :
+export default function PassCards({currentSelectedOptions, setSelectedOptions, priceModel,scrollToElement,selected,shouldScroll, basic, locked, withHero = true} :
   { currentSelectedOptions:PartialSelectedOptions, 
     setSelectedOptions:any, 
     priceModel: string,
@@ -13,7 +13,8 @@ export default function PassCards({currentSelectedOptions, setSelectedOptions, p
     selected:any,
     shouldScroll:boolean, 
     basic?:boolean
-    locked?:boolean
+    locked?:boolean,
+    withHero?:boolean
   }
 ) {
 
@@ -23,10 +24,13 @@ export default function PassCards({currentSelectedOptions, setSelectedOptions, p
     setSelectedOptions(addToOptions(initialOptions,itemListToOptions(itemsInPassName,setTo)))
     shouldScroll && scrollToElement()
   }  
-
-  const passToDisplay = Object.keys(passes).filter((item) => passes[item].isAvailable).filter((item)=>item !== fullPassName)
-  const dynamicColClasses = basic ? 'grid-cols-1 xs:grid-cols-2' : `grid-cols-1 md:grid-cols-3 lg:grid-cols-${passToDisplay.length}`
-
+  const passesAvailable = Object.keys(passes).filter((item) => passes[item].isAvailable)
+  const passToDisplay = withHero ? passesAvailable.filter((item)=>item !== fullPassName) : passesAvailable
+  const numPasses = passToDisplay.length
+  const columns = numPasses > 4 ? 4 : numPasses
+  const lgColumnClasses = columns == 4 ? "lg:grid-cols-4" : columns == 3 ? "lg:grid-cols-3" : columns == 2 ? "lg:grid-cols-2" : "lg:grid-cols-1"
+  const mdColumnClasses = columns >= 3 ? "md:grid-cols-3" : columns == 2 ? "lg:grid-cols-2" : "lg:grid-cols-1"
+  const dynamicColClasses = basic ? 'grid-cols-1 xs:grid-cols-2' : `grid-cols-1 ${mdColumnClasses} ${lgColumnClasses}`
 
   return (
     <div className="isolate overflow-hidden ">
@@ -40,9 +44,9 @@ export default function PassCards({currentSelectedOptions, setSelectedOptions, p
       <div className={`mx-auto grid max-w-full  ${basic ? "gap-2": "gap-8"} lg:max-w-full mb-12 ${dynamicColClasses}`}>
 
       
-      <PassCard passName={fullPassName} basic={basic} locked={locked} clickFunction={() => { 
+      {withHero ? <PassCard passName={fullPassName} basic={basic} locked={locked} clickFunction={() => { 
         clickFunctionFromPassName(fullPassName,!selected.includes(fullPassName))
-        }} pass={passes[fullPassName]} priceModel={priceModel} hasASaving={true} selected={selected.includes(fullPassName)}></PassCard>
+        }} pass={passes[fullPassName]} priceModel={priceModel} hasASaving={true} selected={selected.includes(fullPassName)} hero={true}></PassCard> : null }
 
         {passToDisplay.map((passName) => {
           const pass = passes[passName]
