@@ -1,10 +1,10 @@
 import React from 'react';
 import { fullPassName } from './pricingDefaults';
 
-export const PassCard = ({passName, clickFunction, pass, priceModel, hasASaving, selected, included, basic, locked}:
-  {passName:string, clickFunction:any, pass:any, priceModel:string, hasASaving:boolean, selected:boolean, included?:boolean, basic?:boolean, locked?:boolean}
+export const PassCard = ({passName, clickFunction, pass, priceModel, hasASaving, selected, included, basic, locked, hero= false}:
+  {passName:string, clickFunction:any, pass:any, priceModel:string, hasASaving:boolean, selected:boolean, included?:boolean, basic?:boolean, locked?:boolean, hero?:boolean}
 ) => {
-  const cardWidthClasses = passName === fullPassName ? 'col-span-full' : basic ? 'flex-col': 'md:flex-col'
+  const cardWidthClasses = passName === fullPassName && hero ? 'col-span-full' : basic ? 'flex-col': 'md:flex-col'
   const passPadding = basic ? 'p-4 md:p-4' : 'p-6 md:p-10'
   const baseTextSize = basic ? 'text-sm md:text-sm' : 'text-xl md:text-base'
   const priceTextSize = basic ? 'text-sm md:text-sm leading-7' : 'text-4xl md:text-4xl'

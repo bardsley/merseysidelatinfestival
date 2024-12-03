@@ -2,9 +2,10 @@ import { individualTickets, days, passTypes } from './pricingDefaults'
 import Cell from './Cell';
 import { ICellProps } from './Cell';
 
-export const OptionsTable = ({headerClasses, toggleCellClasses, cellClasses, selectedOptions, clearOptions, setIndividualOption, priceModel, locked}) => {
+export const OptionsTable = ({headerClasses, toggleCellClasses, cellClasses, selectedOptions, clearOptions, setIndividualOption, priceModel, locked, hidden = false}) => {
+  console.log(selectedOptions)
   return (
-    <table className='option-table w-full mx-auto max-w-4xl table-auto border-collapse border-b border-ch}illired-300'>
+    <table className={`option-table w-full mx-auto max-w-4xl table-auto border-collapse border-b border-ch}illired-300 ${hidden ? 'hidden' : ''}`}>
       <thead>
         <tr className='bg-chillired-300 text-white border-chillired-400'>
           <th className={headerClasses}>
