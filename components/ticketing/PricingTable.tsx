@@ -103,7 +103,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
         priceModel={priceModel} 
         scrollToElement={scrollToElement} 
         shouldScroll={packages.length == 0}
-        withHero={false}
+        withHero={true}
         ></PassCards>
       
       <div className='mb-12'>
