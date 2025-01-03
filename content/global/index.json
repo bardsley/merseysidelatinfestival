@@ -8,7 +8,7 @@
     "color": "primary",
     "nav": [
       {
-        "href": "feedback",
+        "href": "https://danceengine.co.uk/newcastle",
         "label": "Feedback",
         "visible": true
       },
@@ -20,12 +20,12 @@
       {
         "href": "timetable",
         "label": "Timetable",
-        "visible": true
+        "visible": false
       },
       {
         "href": "artists",
         "label": "Artists",
-        "visible": true
+        "visible": false
       },
       {
         "href": "tickets",
@@ -35,7 +35,7 @@
       {
         "href": "meal",
         "label": "Meal",
-        "visible": true
+        "visible": false
       },
       {
         "href": "accomodation",

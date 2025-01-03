@@ -146,7 +146,7 @@ export default function Footer() {
           <div className="w-1/3 flex justify-center flex-1 ">
             <p className="text-center">
               Event organised by and related content copyright of{" "}
-              <a href="http://www.salsaliverpool.com/">Salsa Liverpool</a>
+              <a href="http://www.salsaliverpool.com/">Newcastle Salsa Congress</a>
             </p>
           </div>
           <div className="w-1/3 flex justify-center flex-1">

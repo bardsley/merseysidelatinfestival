@@ -120,7 +120,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
         setIndividualOption={setIndividualOption}
         priceModel={priceModel}
         locked={false}
-        hidden={true}
+        hidden={false}
       />
       
       <div title="Checkout" className="mx-auto w-full  max-w-2xl  items-start mt-10 mb-10 rounded-lg border border-gray-900 bg-gray-50 text-richblack-700 shadow-lg">

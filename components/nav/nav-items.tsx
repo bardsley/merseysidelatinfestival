@@ -62,7 +62,7 @@ export default function NavItems({ navs }: { navs: any }) {
               <Link
                 data-tina-field={tinaField(item, "label")} 
                 href={`/${item.href}${draft ? "?draft=yup" : ''}`}
-                className={`${!item.visible ? "text-gray-400" : null} relative select-none hover:text-gold-400	text-base inline-block tracking-wide transition duration-150 ease-out hover:opacity-100 py-8 px-1 lg:px-4 whitespace-nowrap`}
+                className={`${!item.visible ? "text-gray-400" : null} relative select-none hover:text-gold-400 text-base inline-flex items-center tracking-wide transition duration-150 h-full ease-out hover:opacity-100 py-8 px-1 lg:px-4 whitespace-nowrap`}
               >
                 {item.label}
                 {currentPath === `/${item.href}` && (

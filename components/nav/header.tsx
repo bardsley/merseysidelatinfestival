@@ -19,7 +19,7 @@ const headerColor = {
     purple: "text-white from-purple-400 to-purple-500",
     orange: "text-white from-orange-400 to-orange-500",
     yellow: "text-white from-yellow-400 to-yellow-500",
-    merseyside: "text-white from-richblack-500 to-richblack-500",
+    merseyside: "text-white from-richblack-500 to-richblack-600",
   },
 };
 
@@ -34,8 +34,9 @@ export default function Header({header, theme}:any) {
     <div
       className={`header relative overflow-hidden bg-gradient-to-b ${headerColorCss}`}
     >
+      <div className="bg-red-600 text-white flex justify-center p-4 text-xl font-bold">THIS IS A DEMO SITE. DO NOT PURCHASE TICKETS</div>
       <Container size="custom" className="py-0 relative z-10 max-w-8xl">
-        <div className="flex justify-between items-stretch gap-6">
+        <div className="flex justify-between items-stretch items-center gap-6">
           <h4 className="select-none text-lg font-bold tracking-tight my-0 transition duration-150 ease-out transform">
             <Link
               href="/"
@@ -46,8 +47,8 @@ export default function Header({header, theme}:any) {
               {" "}
               <span data-tina-field={tinaField(header, "name")} className="ml-2 hidden xs:inline">
                 
-                {header.name.replace("2024", "")}
-                <span className="hidden sm:inline md:hidden lg:inline">2024</span>
+                {header.name.replace("2026", "")}
+                <span className="hidden sm:inline md:hidden lg:inline">2026</span>
               </span>
             </Link>
           </h4>
