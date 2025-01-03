@@ -3,5 +3,5 @@
 
 export default function Logo({className}) {
   // return <MlfLogo className={className} />;
-  return <img src="/newcastle.png" className={`h-32 ${className}`}></img>
+  return <img src="/newcastle.png" className={`h-32 ${className ? "" : ""}`}></img>
 }
