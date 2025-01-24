@@ -652,3 +652,68 @@ functions:
       - httpApi:
           path: /checkout_complete_inperson
           method: post                                 
+
+#--------------------
+
+  WhatsappWebhook:
+    runtime: python3.11
+    handler: whatsapp_webhook/lambda_function.lambda_handler
+    name: "${sls:stage}-whatsapp_webhook"
+    timeout: 120
+    package:
+      patterns:
+        - '!**/**'
+        - "whatsapp_webhook/**"
+        - "shared/**"
+    environment:
+      STAGE_NAME: ${sls:stage}
+      EVENT_TABLE_NAME: ${param:eventTableName}
+      WHATSAPP_TOKEN: ${param:whatsappToken}
+      WHATSAPP_VERIFY_TOKEN: ${param:whatsappVerifyToken}
+    events:
+      - httpApi:
+          path: /whatsapp/webhook
+          method: get
+      - httpApi:
+          path: /whatsapp/webhook
+          method: post
+#--------------------
+
+  WhatsappSendMessage:
+    runtime: python3.11
+    handler: send_message/lambda_function.lambda_handler
+    name: "${sls:stage}-send_message"
+    timeout: 120
+    package:
+      patterns:
+        - '!**/**'
+        - "send_message/**"
+        - "shared/**"
+    environment:
+      STAGE_NAME: ${sls:stage}
+      EVENT_TABLE_NAME: ${param:eventTableName}
+      WHATSAPP_TOKEN: ${param:whatsappToken}
+      WHATSAPP_NUMBER: ${param:whatsappNumber}
+    events:
+      - httpApi:
+          path: /whatsapp/send_message
+          method: post
+#--------------------
+
+  WhatsappGetMessages:
+    runtime: python3.11
+    handler: get_messages/lambda_function.lambda_handler
+    name: "${sls:stage}-get_messages"
+    timeout: 120
+    package:
+      patterns:
+        - '!**/**'
+        - "get_messages/**"
+        - "shared/**"
+    environment:
+      STAGE_NAME: ${sls:stage}
+      EVENT_TABLE_NAME: ${param:eventTableName}
+    events:
+      - httpApi:
+          path: /whatsapp/get_messages
+          method: get

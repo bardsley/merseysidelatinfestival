@@ -12,6 +12,7 @@ import {
   CakeIcon,
   LightBulbIcon,
   FolderPlusIcon,
+  ChatBubbleBottomCenterTextIcon
 } from '@heroicons/react/24/solid'
 
 const actions = [
@@ -96,6 +97,15 @@ const actions = [
     iconBackground: 'bg-green-200',
     state: 'unreleased',
   },
+  {
+    title: 'WhatsApp',
+    href: '/admin/whatsapp',
+    description: "",
+    icon: ChatBubbleBottomCenterTextIcon,
+    iconForeground: 'text-green-800',
+    iconBackground: 'bg-green-200',
+    state: 'unreleased',
+  },  
 ]
 
 function classNames(...classes) {
