@@ -46,8 +46,8 @@ export default function Header({header, theme}:any) {
               {" "}
               <span data-tina-field={tinaField(header, "name")} className="ml-2 hidden xs:inline">
                 
-                {header.name.replace("2024", "")}
-                <span className="hidden sm:inline md:hidden lg:inline">2024</span>
+                {header.name.replace("2025", "")}
+                <span className="hidden sm:inline md:hidden lg:inline">2025</span>
               </span>
             </Link>
           </h4>
