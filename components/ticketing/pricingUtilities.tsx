@@ -129,7 +129,7 @@ const getBestCombination = (options,priceModel) => {
   }
   // const passCombinations = generateAllPassCombinations(passes)
   let bestOptions = []
-  let bestPrice = 999.00
+  let bestPrice = 9999.00
   passCombinations.forEach((passCombination: any[]) => {
     const packagePrice = priceForPassCombination(passCombination,priceModel)
     const tickePrice = priceForIndividualItems(itemsNotCovered(optionsToPassArray(options),itemsFromPassCombination(passCombination)),priceModel)

@@ -75,7 +75,30 @@ export const individualTickets: IndividualTickets = {
 				studentPriceId: 'price_1QQZQeEWkmdeWsQPcysRqX8g'
 				},
 		   },			
- }
+	NextYearPartner: { 
+		Classes:{
+			cost: 160,
+			studentCost: 140,
+			isAvailable: true,
+			priceId: 'price_1QQZRwEWkmdeWsQPWxGquzLc',
+			studentPriceId: 'price_1QQZRwEWkmdeWsQPWxGquzLc'
+			},
+		Dinner:{
+			cost: 42.5,
+			studentCost: 38.5,
+			isAvailable: true,
+			priceId: 'price_1PwoQbEWkmdeWsQPz0vieQFz',
+			studentPriceId: 'price_1PwoQrEWkmdeWsQPx6rcHJ8V'
+			},				
+		Party:{
+			cost: 95,
+			studentCost: 85,
+			isAvailable: true,
+			priceId: 'price_1QQZQREWkmdeWsQPz19neUCd',
+			studentPriceId: 'price_1QQZQeEWkmdeWsQPcysRqX8g'
+			},
+		},		
+}
 
 export const initialSelectedOptions = {
 	Friday: { 
@@ -94,7 +117,12 @@ export const initialSelectedOptions = {
 		Party: false,
 		Dinner: false,
 		Classes: false,
-		},		
+		},	
+	NextYearPartner:	{ 
+		Party: false,
+		Dinner: false,
+		Classes: false,
+		},	
  }
 
 // Binary version = [Friday BiParty,Saturday Class Pass,Saturday Dinner,Saturday Party,Sunday Class Pass,Sunday Party]
@@ -179,8 +207,30 @@ export const passes: Passes = {
 			description: "The full experience in 2025 (this pass does include gala dinner)",
 			priceId: 'price_1QQnfhEWkmdeWsQPVwOq7u4Q',
 			studentPriceId: 'price_1QQnm6EWkmdeWsQPuyYqgEWo'},
+	'2025 Couples Pass': {
+			cost: 300,
+			studentCost: 260,
+			isAvailable: true,
+			saving: 210,
+			studentSaving: 250,
+			combination: ['NextYear Party', 'NextYear Classes','NextYearPartner Party', 'NextYearPartner Classes'],
+			description: "The full experience in 2025 for a lead and a follow (this pass does not include gala dinner)",
+			priceId: 'price_1QtGA6EWkmdeWsQPz8NMk2H3',
+			studentPriceId: 'price_1QtGHvEWkmdeWsQPG2Yrw5rx'},
+	'2025 Couples Pass (with dinner)': {
+			cost: 340,
+			studentCost: 300,
+			isAvailable: true,
+			saving: 255,
+			studentSaving:  295,
+			combination: ['NextYear Party', 'NextYear Classes', "NextYear Dinner",'NextYearPartner Party', 'NextYearPartner Classes', "NextYearPartner Dinner"],
+			description: "The full experience in 2025 for a lead and a follow (this pass does include gala dinner)",
+			priceId: 'price_1QtGBZEWkmdeWsQPf0HltEwt',
+			studentPriceId: 'price_1QtGHOEWkmdeWsQPRUjTHK6S'},
 }
 
-export const fullPassName = Object.keys(passes).at(4)
+export const fullPassName = Object.keys(passes).at(1)
 export const days = ['Friday', 'Saturday', 'Sunday', 'NextYear']
 export const passTypes = Object.keys(individualTickets['NextYear']).filter((item) => individualTickets['NextYear'][item].isAvailable) //['Party', 'Classes', 'Dinner']
+
+

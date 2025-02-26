@@ -18,6 +18,7 @@ export type IndividualTickets = {
   Saturday: DayTickets;
   Sunday: DayTickets;
   NextYear: DayTickets;
+  NextYearPartner: DayTickets;
 };
 
 export type PartialDayOption = { Party: boolean; Classes?: boolean; Dinner?: boolean; }
@@ -26,6 +27,7 @@ export type PartialSelectedOptions = {
   Saturday?: PartialDayOption;
   Sunday?: PartialDayOption;
   NextYear?: PartialDayOption;
+  NextYearPartner?: PartialDayOption;
 };
 
 export type Pass = {
