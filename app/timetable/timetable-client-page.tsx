@@ -135,6 +135,6 @@ export default function TimetableClientPage(props: ClientClassProps) {
 
       })}
     </div>
-    {/* <pre className="text-white">{JSON.stringify(locations,null,2)} {JSON.stringify(days, null,2)}  {JSON.stringify(classesOrganised,null,2)}</pre> */}
+    <pre className="text-white">{JSON.stringify(locations,null,2)} {JSON.stringify(days, null,2)}  {JSON.stringify(classesOrganised,null,2)}</pre>
   </Fragment>
 }

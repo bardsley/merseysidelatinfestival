@@ -12,7 +12,7 @@ export default async function ArtistsPage() {
   }
 
   return (
-    <Layout rawPageData={artists.data}>
+    <Layout rawPageData={artists}>
       <ArtistClientPage {...artists} />
     </Layout>
   );
