@@ -38,13 +38,14 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
             className="relative flex-shrink-0 md:w-2/5 flex justify-center order-first md:hidden md:order-last"
           >
             <Image
-              className={`w-full h-auto max-w-full rounded-lg mb-3 ${/.*\.svg/.test(data.image.src) ? "p-12 sm:p-24 md:p-0" : "nothing"}`}
-              style={{ objectFit: "cover" }}
+              className={`w-full border h-auto max-w-full rounded-lg mb-3 ${/.*\.svg/.test(data.image.src) ? "p-12 sm:p-24 md:p-0" : "nothing"}`}
+              style={/.*\.svg/.test(data.image.src) ? { objectFit: "contain" } : { }}
               alt={data.image.alt}
               src={data.image.src}
               width={500}
               height={500}
             />
+            test
           </div>
         )}
         <div className="row-start-2 md:row-start-1 md:col-span-5 text-center md:text-left ">
