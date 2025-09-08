@@ -5,6 +5,8 @@ import MealPreferences, { blankPreferences } from "@components/preferences/MealP
 import {Container} from "@components/layout/container"
 import {Icon} from "@components/icon"
 import { ExclamationCircleIcon } from '@heroicons/react/20/solid'
+import { HiBellAlert } from 'react-icons/hi2';
+
 import StripeForm from "./stripe"
 
 type fieldEntry = {name: string, label?: string, placeholder?: string, type?: string, value?: string | number, error?: string, width?: string  }
@@ -72,6 +74,7 @@ export default function CheckoutClient() {
           {student ? "Student " : null}Passes selected
         </h2>
         {bestCombo.options.join(', ')} : £{bestCombo.price}
+        {JSON.stringify(stripeProducts) }
       </Container>
 
       <Container size="small" width="medium" className=" text-white w-full rounded-3xl border border-richblack-700 bg-richblack-500 py-6 transition-all	">
@@ -148,7 +151,13 @@ export default function CheckoutClient() {
       </h2>
       {dinnerInfoProvided && userData.email && stripeReady && steps.details && ( steps.meal || !dinnerInfoRequired)  ?
         <StripeForm userData={userData} preferences={preferences} products={stripeProducts}></StripeForm>
-        : <div className="text-center"><h2 className="text-2xl">Not Ready for payment</h2><p>Payment form will load once you have finished editing the above information</p></div>
+        : <div className="text-center">
+          <h2 className="text-2xl">Not Ready for payment</h2>
+          <p>Payment form will load once you have finished editing the above information</p>
+          <div className='flex items-center justify-center'>
+            <div className='font-bold mt-3 bg-green-500 text-white border-3 rounded w-auto inline-block p-2'><HiBellAlert className='h-6 w-6 inline-block mr-2'/>Add promotion codes at checkout!</div>
+          </div>
+        </div>
       }
     </Container>
     { process.env.NODE_ENV == 'development' && process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' ? <>

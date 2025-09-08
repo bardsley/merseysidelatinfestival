@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation'
 import { deepCopy } from '../../lib/useful'
 import symmetricDifference from 'set.prototype.symmetricdifference'
 import difference from 'set.prototype.difference'
+import { HiBellAlert } from 'react-icons/hi2';
 // import { getNamedRouteRegex } from 'next/dist/shared/lib/router/utils/route-regex';
 symmetricDifference.shim();
 difference.shim();
@@ -103,7 +104,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
         priceModel={priceModel} 
         scrollToElement={scrollToElement} 
         shouldScroll={packages.length == 0}
-        withHero={false}
+        withHero={true}
         ></PassCards>
       
       <div className='mb-12'>
@@ -120,7 +121,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
         setIndividualOption={setIndividualOption}
         priceModel={priceModel}
         locked={false}
-        hidden={true}
+        hidden={false}
       />
       
       <div title="Checkout" className="mx-auto w-full  max-w-2xl  items-start mt-10 mb-10 rounded-lg border border-gray-900 bg-gray-50 text-richblack-700 shadow-lg">
@@ -137,7 +138,9 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
                 <h2 className='text-3xl font-bold'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost % 1 != 0 ? totalCost.toFixed(2) : totalCost}</span>) : null } £{packageCost % 1 !=0 ? packageCost.toFixed(2) : packageCost}</h2>
                 { totalCost - packageCost > 0 ? (<p>Saving you £{(totalCost - packageCost) % 1 !=0 ?  (totalCost - packageCost).toFixed(2) : (totalCost - packageCost)} on the full cost of those options!</p>) : null }
 
-                <div className='font-bold mt-3'>Add promo codes at checkout</div>
+                <div className='flex items-center justify-center'>
+                  <div className='font-bold mt-3 border-green-500 text-green-500 border-3 w-auto inline-block p-2 rounded-md text-center'><HiBellAlert className='h-6 w-6 inline-block mr-2'/>Don&apos;t Forget! <br/> Add your promo codes at checkout!</div>
+                </div>
               </div>
               <form action={checkout} className='flex w-full md:w-auto flex-col md:flex-row items-center justify-center'>
               <CheckoutButton></CheckoutButton>
