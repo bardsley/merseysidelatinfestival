@@ -16,8 +16,12 @@ export default async function TimetablePage() {
 
   //   return aTime == bTime ? locationOrder : aTime-bTime
   // })
-  if (!classes) {
-    return null;
+  if (!classes || classes.data?.classConnection.edges.length === 0) {
+    return <Layout rawPageData={classes}>
+      <div className="grid grid-cols-11 text-black p-8 gap-0">
+        <h1 className="col-span-11 text-center leading-10 pb-5 pt-24 font-black text-4xl md:text-5xl lg:text-8xl uppercase text-white">Timetable Coming Soon!</h1>
+      </div>
+    </Layout>;
   }
 
   return (

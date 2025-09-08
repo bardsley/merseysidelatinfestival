@@ -8,7 +8,15 @@ export default async function ArtistsPage() {
   });
 
   if (!artists) {
-    return null;
+    return <div>Artist Announcements Coming Soon!</div>;
+  }
+
+  if (!artists || artists.data?.artistConnection.edges.length === 0) {
+    return <Layout rawPageData={artists}>
+      <div className="grid grid-cols-11 text-black p-8 gap-0">
+        <h1 className="col-span-7 col-start-3 text-center pb-5 pt-24 font-black text-4xl md:text-5xl lg:text-8xl uppercase text-white leading-tight">Artist Announcements Coming Soon!</h1>
+      </div>
+    </Layout>;
   }
 
   return (
