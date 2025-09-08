@@ -45,7 +45,6 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
               width={500}
               height={500}
             />
-            test
           </div>
         )}
         <div className="row-start-2 md:row-start-1 md:col-span-5 text-center md:text-left ">
