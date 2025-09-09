@@ -52,5 +52,5 @@ functions/node_modules
 functions/node_modules
 
 
-.tina/__generated__
+tina/__generated__
 sendgrid.env
