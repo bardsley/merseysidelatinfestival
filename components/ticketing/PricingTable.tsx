@@ -12,6 +12,7 @@ import { deepCopy } from '../../lib/useful'
 import symmetricDifference from 'set.prototype.symmetricdifference'
 import difference from 'set.prototype.difference'
 import { HiBellAlert } from 'react-icons/hi2';
+import { singleDiscountValid } from './pricingDefaultsDynamic'
 // import { getNamedRouteRegex } from 'next/dist/shared/lib/router/utils/route-regex';
 symmetricDifference.shim();
 difference.shim();
@@ -125,22 +126,35 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
       />
       
       <div title="Checkout" className="mx-auto w-full  max-w-2xl  items-start mt-10 mb-10 rounded-lg border border-gray-900 bg-gray-50 text-richblack-700 shadow-lg">
+
+        
       { priceModel === 'studentCost' && totalCost && totalCost > 0 ? (
           <div className='rounded-t-md border-t-gray-600 border border-b-0 border-l-0 border-r-0 bg-gold-500 p-2 font-bold text-center'>This is a student only ticket deal!</div>) 
         : null }
+
+        <div className='flex items-center justify-center'>
+                  { packages.length == 1 && singleDiscountValid.test(packages[0]) ? (
+                    <div className='font-bold mt-3 border-green-500 text-green-500 border-3 w-auto inline-block p-2 rounded-md text-center'>
+                      <HiBellAlert className='h-6 w-6 inline-block mr-2'/>Single item discount of 20% applied at checkout
+                    </div>
+                  ) : <div className='font-bold mt-3 border-green-500 text-green-500 border-3 w-auto inline-block p-2 rounded-md text-center'>
+                      <HiBellAlert className='h-6 w-6 inline-block mr-2'/>Don&apos;t Forget! Add your promo codes at checkout!
+                    </div> }
+                </div>
+
         <div className='flex flex-col md:flex-row justify-between  p-10 gap-12'>
           { totalCost && totalCost > 0 ? (
             <>
               <div className='max-w-2/3'>
                 
+                
+
                 <p>{packages.length == 1 && packages[0] == fullPassName ?  "Best deal" : "Best option for you"}</p>
                 <h2 className='text-2xl'>{packages.map((packageName) => `${packageName} ${passOrTicket(packageName)}`).join(', ').replace('Saturday Dinner Ticket','Dinner Ticket')}</h2>
                 <h2 className='text-3xl font-bold'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost % 1 != 0 ? totalCost.toFixed(2) : totalCost}</span>) : null } £{packageCost % 1 !=0 ? packageCost.toFixed(2) : packageCost}</h2>
                 { totalCost - packageCost > 0 ? (<p>Saving you £{(totalCost - packageCost) % 1 !=0 ?  (totalCost - packageCost).toFixed(2) : (totalCost - packageCost)} on the full cost of those options!</p>) : null }
 
-                <div className='flex items-center justify-center'>
-                  <div className='font-bold mt-3 border-green-500 text-green-500 border-3 w-auto inline-block p-2 rounded-md text-center'><HiBellAlert className='h-6 w-6 inline-block mr-2'/>Don&apos;t Forget! <br/> Add your promo codes at checkout!</div>
-                </div>
+                
               </div>
               <form action={checkout} className='flex w-full md:w-auto flex-col md:flex-row items-center justify-center'>
               <CheckoutButton></CheckoutButton>

@@ -6,6 +6,7 @@ import {Container} from "@components/layout/container"
 import {Icon} from "@components/icon"
 import { ExclamationCircleIcon } from '@heroicons/react/20/solid'
 import { HiBellAlert } from 'react-icons/hi2';
+import { singleDiscountValid } from '@components/ticketing/pricingDefaultsDynamic';
 
 import StripeForm from "./stripe"
 
@@ -74,7 +75,8 @@ export default function CheckoutClient() {
           {student ? "Student " : null}Passes selected
         </h2>
         {bestCombo.options.join(', ')} : £{bestCombo.price}
-        {JSON.stringify(stripeProducts) }
+        {bestCombo.options.length == 1 && singleDiscountValid.test(bestCombo.options[0]) ? " - 20% Single Discount" : null}
+        {/* {JSON.stringify(stripeProducts) } */}
       </Container>
 
       <Container size="small" width="medium" className=" text-white w-full rounded-3xl border border-richblack-700 bg-richblack-500 py-6 transition-all	">
@@ -150,7 +152,7 @@ export default function CheckoutClient() {
         Payment
       </h2>
       {dinnerInfoProvided && userData.email && stripeReady && steps.details && ( steps.meal || !dinnerInfoRequired)  ?
-        <StripeForm userData={userData} preferences={preferences} products={stripeProducts}></StripeForm>
+        <StripeForm userData={userData} preferences={preferences} products={stripeProducts} single_discount={bestCombo.options.length == 1 && singleDiscountValid.test(bestCombo.options[0])}></StripeForm>
         : <div className="text-center">
           <h2 className="text-2xl">Not Ready for payment</h2>
           <p>Payment form will load once you have finished editing the above information</p>

@@ -3,7 +3,9 @@ import { NextRequest, NextResponse } from 'next/server'
 
 
 export async function POST(request: NextRequest) {
+  
   const data = await request.json()
+  console.log(data)
   const userData = data.userData
   const attendee = {
     name: userData.name,
@@ -17,18 +19,21 @@ export async function POST(request: NextRequest) {
       quantity: 1 //TODO This should come from the client eventually
     }
   })
+  const promotion = data.single_discount ? {discounts: [{coupon: process.env.STRIPE_SINGLE_DISCOUNT_COUPON}]} : { allow_promotion_codes: true }
+
   const checkoutSessionObject = {
     ui_mode: 'embedded',
     line_items: lineItems,
     mode: 'payment',
     customer_email: userData.email,
+    // discounts: data.products.length == 1 && singleDiscountValid.test(data.products[0]) ? [{coupon: process.env.STRIPE_SINGLE_DISCOUNT_COUPON}] : undefined,
     // phone_number_collection: { enabled: true},
     metadata: {
       attendee: JSON.stringify(attendee),
       preferences: JSON.stringify(preferences),
       group: JSON.stringify(group)
     },
-    allow_promotion_codes: true,
+    ...promotion,
     return_url:
       `${request.headers.get("origin")}/return?session_id={CHECKOUT_SESSION_ID}`,
   }

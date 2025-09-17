@@ -3,19 +3,21 @@
  ****************************/
 import {IndividualTickets, Passes } from './pricingTypes'
 
+export const singleDiscountValid = /^(?!.*\b(Dinner|Pass)\b).*$/
+
 export const individualTickets: IndividualTickets = { 
 	Friday: { 
 		 Party:{
-			 cost: 22.5,
+			 cost: 25,
 			 studentCost: 18,
 			 isAvailable: true,
-			 priceId: 'price_1QQnfhEWkmdeWsQPVwOq7u4Q',
+			 priceId: 'price_1PwAoLEWkmdeWsQPhKuSbZsG',
 			 studentPriceId: '-'
 			 },
 		},
 	Saturday: { 
 		 Party:{
-			 cost: 27.5,
+			 cost: 30,
 			 studentCost: 22,
 			 isAvailable: true,
 			 priceId: '-',
@@ -29,7 +31,7 @@ export const individualTickets: IndividualTickets = {
 			 studentPriceId: '-'
 			 },
 		 Classes:{
-			 cost: 92.5,
+			 cost: 90,
 			 studentCost: 75,
 			 isAvailable: true,
 			 priceId: '-',
@@ -38,11 +40,11 @@ export const individualTickets: IndividualTickets = {
 		},
 	Sunday: { 
 		 Classes:{
-			 cost: 87.5,
+			 cost: 85,
 			 studentCost: 70,
 			 isAvailable: true,
-			 priceId: '-',
-			 studentPriceId: '-'
+			 priceId: 'price_1PiMwyEWkmdeWsQPo5Tl0V6k',
+			 studentPriceId: 'price_1PwAssEWkmdeWsQPf5izl6wp'
 			 },
 		 Party:{
 			 cost: 25,

@@ -7,13 +7,14 @@ import {
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
-export default function StripeForm({products,userData, preferences}) {
+export default function StripeForm({products,userData, preferences,single_discount = false}) {
   const fetchClientSecret = useCallback(async () => {
     // Create a Checkout Session
     const stripe_session_options = {
       products:products, 
       userData: userData, 
-      preferences: preferences
+      preferences: preferences,
+      single_discount: single_discount
     }
     console.log("Creating Checkout Session:",products, stripe_session_options)
     const res = await fetch("/api/checkout/stripe_session", {
