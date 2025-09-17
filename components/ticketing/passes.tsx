@@ -28,8 +28,10 @@ export default function PassCards({currentSelectedOptions, setSelectedOptions, p
   const passToDisplay = withHero ? passesAvailable.filter((item)=>item !== fullPassName) : passesAvailable
   const numPasses = passToDisplay.length
   const columns = numPasses > 4 ? 4 : numPasses
-  const lgColumnClasses = columns == 4 ? "lg:grid-cols-4" : columns == 3 ? "lg:grid-cols-3" : columns == 2 ? "lg:grid-cols-2" : "lg:grid-cols-1"
-  const mdColumnClasses = columns >= 3 ? "md:grid-cols-3" : columns == 2 ? "lg:grid-cols-2" : "lg:grid-cols-1"
+  // const lgColumnClasses = columns == 4 ? "lg:grid-cols-4" : columns == 3 ? "lg:grid-cols-3" : columns == 2 ? "lg:grid-cols-2" : "lg:grid-cols-1"
+  const lgColumnClasses = columns == 4 ? "lg:grid-cols-3" : columns == 3 ? "lg:grid-cols-3" : columns == 2 ? "lg:grid-cols-2" : "lg:grid-cols-1"
+  // const mdColumnClasses = columns >= 3 ? "md:grid-cols-3" : columns == 2 ? "lg:grid-cols-2" : "lg:grid-cols-1"
+  const mdColumnClasses = columns >= 3 ? "md:grid-cols-2" : columns == 2 ? "lg:grid-cols-2" : "lg:grid-cols-1"
   const dynamicColClasses = basic ? 'grid-cols-1 xs:grid-cols-2' : `grid-cols-1 ${mdColumnClasses} ${lgColumnClasses}`
 
   return (
