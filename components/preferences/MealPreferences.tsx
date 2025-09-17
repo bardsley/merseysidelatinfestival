@@ -52,6 +52,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
   }
 
   const preferencesDisabled = true
+  const preferenceSent =  false
 
   const maintainState = (event) => {
     if(preferencesDisabled) {
@@ -60,9 +61,9 @@ const MealPreferences = ({preferences,setPreferences}) =>{
     }
   }
 
-  return checkInputOk(preferences) ? (
+  return checkInputOk(preferences) && !preferencesDisabled ? (
     <>
-      { preferencesDisabled ? <div className='bg-yellow-500 p-5 mt-2 text-richblack-600 font-bold rounded'>Food preferences have now been sent to the venue.</div> : null }
+      { preferenceSent ? <div className='bg-yellow-500 p-5 mt-2 text-richblack-600 font-bold rounded'>Food preferences have now been sent to the venue.</div> : null }
       
       <fieldset className="my-6 max-w-full">
         <legend className="text-base font-semibold leading-6 text-white">Course</legend>
