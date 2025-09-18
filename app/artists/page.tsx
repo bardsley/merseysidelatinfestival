@@ -1,8 +1,11 @@
 import Layout from "@components/layout/layout";
 import client from "@tina/__generated__/client";
 import ArtistClientPage from "./client-page";
+export const dynamic = "force-dynamic";
+import { unstable_noStore as noStore } from "next/cache";
 
 export default async function ArtistsPage() {
+  noStore();
   const artists = await client.queries.artistConnection({
     sort: 'name'
   });
