@@ -2,8 +2,11 @@ import Layout from "@components/layout/layout";
 import client from "@tina/__generated__/client";
 import TimetableClientPage from "./timetable-client-page";
 // import { parseISO, getUnixTime } from "date-fns";
+export const dynamic = "force-dynamic";
+import { unstable_noStore as noStore } from "next/cache";
 
 export default async function TimetablePage() {
+  noStore();
   const classes = await client.queries.classConnection({filter: { date: {after: "2025-01-01T07:00:00.000Z" }}, sort: 'date', first: 100});
   // const classes = classesRaw.data.classConnection.edges.sort((a,b) => { 
   //   const aTime = getUnixTime(parseISO(a.node.date))

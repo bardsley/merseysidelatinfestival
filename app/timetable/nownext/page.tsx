@@ -3,8 +3,11 @@ import client from "@tina/__generated__/client";
 import LevelIndicator from "./level-indicator";
 import TimetableFooter from "./timetable-footer";
 import NowAndNext from "./now-and-next";
+export const dynamic = "force-dynamic";
+import { unstable_noStore as noStore } from "next/cache";
 
 export default async function NowNextPage() {
+  noStore();
   const classes = await client.queries.classConnection({sort: 'date', first: 500});
 
   if (!classes) { return <div>No Classes</div>; }

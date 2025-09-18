@@ -4,6 +4,7 @@ import ClientPage from "./client-page";
 import Layout from "@components/layout/layout";
 import { redirect } from 'next/navigation'
 export const dynamic = "force-dynamic";
+import { unstable_noStore as noStore } from "next/cache";
 
 export default async function Page({
   params,
@@ -16,6 +17,7 @@ export default async function Page({
   }
   console.log("PAGE(filename):",params,clerkregex.test(params.filename[0]));
   try {
+    noStore();
     const data = await client.queries.page({
       relativePath: `${params.filename}.mdx`,
     });
