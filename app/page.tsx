@@ -15,6 +15,7 @@ export default async function Page() {
   // console.log("PAGE:",params, data.variables);
   return (
     <Layout rawPageData={data}>
+      <p className="text-white">root page</p>
       <ClientPage {...data}></ClientPage>
     </Layout>
   );
