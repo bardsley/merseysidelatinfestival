@@ -59,7 +59,7 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
           )}
           
           {data.headline && (
-            <h3
+            <><h3
               data-tina-field={tinaField(data, "headline")}
               className={`w-full relative mb-10 text-4xl md:text-5xl font-extrabold tracking-normal leading-tight title-font md:block`}
             >
@@ -71,8 +71,11 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
                 }`}
               >
                 {data.headline}
+                
               </span>
             </h3>
+            <p>{JSON.stringify(data, null, 2)}</p>
+            </>
           )}
           <div className="flex flex-col md:flex-row gap-6">
             <div className="flex flex-col md:w-3/5">
