@@ -23,8 +23,8 @@ export default async function Page({
     return (
       <Layout rawPageData={data}>
         <ClientPage {...data}></ClientPage>
-        <pre>{JSON.stringify(process.env.NEXT_PUBLIC_TINA_BRANCH, null, 2)}</pre>
-        <pre>{JSON.stringify(data, null, 2)}</pre>
+        {/* <pre>{JSON.stringify(process.env.NEXT_PUBLIC_TINA_BRANCH, null, 2)}</pre>
+        <pre>{JSON.stringify(data, null, 2)}</pre> */}
       </Layout>
     );
 

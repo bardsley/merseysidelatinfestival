@@ -74,7 +74,7 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
                 
               </span>
             </h3>
-            <p>{JSON.stringify(data, null, 2)}</p>
+            {/* <p>{JSON.stringify(data, null, 2)}</p> */}
             </>
           )}
           <div className="flex flex-col md:flex-row gap-6">
