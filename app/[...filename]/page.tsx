@@ -13,7 +13,7 @@ export default async function Page({
   if(clerkregex.test(params.filename[0])) {
     redirect(`/admin`);
   }
-  console.log("PAGE:",params,clerkregex.test(params.filename[0]));
+  console.log("PAGE(filename):",params,clerkregex.test(params.filename[0]));
   try {
     const data = await client.queries.page({
       relativePath: `${params.filename}.mdx`,
