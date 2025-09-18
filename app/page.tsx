@@ -2,8 +2,12 @@ import React from "react";
 import client from "@tina/__generated__/client";
 import ClientPage from "./[...filename]/client-page";
 import Layout from "@components/layout/layout";
+export const dynamic = "force-dynamic";
+import { unstable_noStore as noStore } from "next/cache";
+
 
 export default async function Page() {
+  noStore();
   const data = await client.queries.page({
     relativePath: `home.mdx`,
   });
