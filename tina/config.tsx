@@ -9,7 +9,7 @@ import Class from "./collection/class";
 
 const config = defineConfig({
   cmsCallback: cms => {
-    cms.flags.set("branch-switcher", true);
+    cms.flags.set("branch-switcher", false);
     return cms;
   },
   clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID!,

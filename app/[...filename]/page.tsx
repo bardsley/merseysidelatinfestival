@@ -15,7 +15,7 @@ export default async function Page({
   if(clerkregex.test(params.filename[0])) {
     redirect(`/admin`);
   }
-  console.log("PAGE:",params,clerkregex.test(params.filename[0]));
+  console.log("PAGE(filename):",params,clerkregex.test(params.filename[0]));
   try {
     noStore();
     const data = await client.queries.page({
@@ -25,6 +25,8 @@ export default async function Page({
     return (
       <Layout rawPageData={data}>
         <ClientPage {...data}></ClientPage>
+        {/* <pre>{JSON.stringify(process.env.NEXT_PUBLIC_TINA_BRANCH, null, 2)}</pre>
+        <pre>{JSON.stringify(data, null, 2)}</pre> */}
       </Layout>
     );
 

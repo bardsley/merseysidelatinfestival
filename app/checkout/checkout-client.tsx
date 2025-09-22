@@ -5,6 +5,9 @@ import MealPreferences, { blankPreferences } from "@components/preferences/MealP
 import {Container} from "@components/layout/container"
 import {Icon} from "@components/icon"
 import { ExclamationCircleIcon } from '@heroicons/react/20/solid'
+import { HiBellAlert } from 'react-icons/hi2';
+import { singleDiscountValid } from '@components/ticketing/pricingDefaultsDynamic';
+
 import StripeForm from "./stripe"
 
 type fieldEntry = {name: string, label?: string, placeholder?: string, type?: string, value?: string | number, error?: string, width?: string  }
@@ -54,7 +57,7 @@ export default function CheckoutClient() {
     setStripeProducts(selectedPassPriceIds)
   },[bestCombo,student])
 
-  const dinnerInfoRequired = selectedOptions && selectedOptions['Saturday'] && selectedOptions['Saturday']['Dinner']
+  const dinnerInfoRequired = selectedOptions && selectedOptions['Saturday'] && selectedOptions['Saturday']['Dinner'] && false //TODO Dinner preferences faked until we have them
   const stripeReady = stripeProducts && typeof stripeProducts === "object" && stripeProducts.length > 0
   const dinnerInfoProvided = (!dinnerInfoRequired || (preferences && preferences.choices && preferences.choices.every((choice) => choice >= 0)))
   return (
@@ -72,6 +75,8 @@ export default function CheckoutClient() {
           {student ? "Student " : null}Passes selected
         </h2>
         {bestCombo.options.join(', ')} : £{bestCombo.price}
+        {bestCombo.options.length == 1 && singleDiscountValid.test(bestCombo.options[0]) ? " - 20% Single Discount" : null}
+        {/* {JSON.stringify(stripeProducts) } */}
       </Container>
 
       <Container size="small" width="medium" className=" text-white w-full rounded-3xl border border-richblack-700 bg-richblack-500 py-6 transition-all	">
@@ -134,7 +139,8 @@ export default function CheckoutClient() {
         Dinner Preferences
       </h2>
       { steps.details && !steps.meal ? <>
-      <p className="text-sm">If you don&apos;t know the answer to some of these things you can always update preferences later</p>
+      {/* <p className="text-sm">If you don&apos;t know the answer to some of these things you can always update preferences later</p> */}
+      <p className="text-sm">Food preferences will be available to select closer to the event. We will email you at the above email</p>
       <MealPreferences preferences={preferences} setPreferences={setPreferences}></MealPreferences>
       <button className="bg-chillired-400 px-6 py-2 rounded" onClick={() => nextStep("meal")}>Continue</button>
       </> : steps.meal ? (<><p>Meal details entered</p><button className="mt-3 border px-6 py-1 border-white rounded-md" onClick={() => setSteps({...steps,meal:false})}>Edit</button></>) : "Complete attendee details first " }
@@ -147,8 +153,17 @@ export default function CheckoutClient() {
         Payment
       </h2>
       {dinnerInfoProvided && userData.email && stripeReady && steps.details && ( steps.meal || !dinnerInfoRequired)  ?
-        <StripeForm userData={userData} preferences={preferences} products={stripeProducts}></StripeForm>
-        : <div className="text-center"><h2 className="text-2xl">Not Ready for payment</h2><p>Payment form will load once you have finished editing the above information</p></div>
+        <StripeForm userData={userData} preferences={preferences} products={stripeProducts} single_discount={bestCombo.options.length == 1 && singleDiscountValid.test(bestCombo.options[0])}></StripeForm>
+        : <div className="text-center">
+          <h2 className="text-2xl">Not Ready for payment</h2>
+          <p>Payment form will load once you have finished editing the above information</p>
+          <div className='flex items-center justify-center'>
+            {bestCombo.options.length == 1 && singleDiscountValid.test(bestCombo.options[0]) 
+              ? <div className='font-bold mt-3 bg-green-500 text-white border-3 rounded w-auto inline-block p-2'><HiBellAlert className='h-6 w-6 inline-block mr-2'/>20% promotion auto added at checkout!</div>
+              : <div className='font-bold mt-3 bg-green-500 text-white border-3 rounded w-auto inline-block p-2'><HiBellAlert className='h-6 w-6 inline-block mr-2'/>Add promotion codes at checkout!</div>
+            }
+          </div>
+        </div>
       }
     </Container>
     { process.env.NODE_ENV == 'development' && process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' ? <>
