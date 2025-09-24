@@ -22,8 +22,14 @@ const Class: Collection = {
     },
     {
       type: "reference",
-      label: "Artist",
-      name: "artist",
+      label: "Artist 1",
+      name: "artist1",
+      collections: ["artist"],
+    },
+    {
+      type: "reference",
+      label: "Artist 2",
+      name: "artist2",
       collections: ["artist"],
     },
     {
