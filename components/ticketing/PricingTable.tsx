@@ -156,8 +156,14 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
                   { totalCost - packageCost > 0 || singleDiscountValid ? (<span className='line-through mr-2'>£{totalCost % 1 != 0 ? totalCost.toFixed(2) : totalCost}</span>) : null }  
                   <span >£{ singleDiscountValid ? packageCost*0.8 : packageCost % 1 !=0 ? packageCost.toFixed(2) : packageCost}</span>
                   </h2>
-                { singleDiscountValid ? (<p className='italic'>Saving 20% for a single item</p>) : null }
-                { totalCost - packageCost > 0 ? (<p>Saving you £{(totalCost - packageCost) % 1 !=0 ?  (totalCost - packageCost).toFixed(2) : (totalCost - packageCost)} on the full cost of those options!</p>) : null }
+                {
+                  singleItemDiscount ? 
+                    (<p className='italic'>Saving 20% for a single item</p>) 
+                    : null
+                }
+                { totalCost - packageCost > 0 ? 
+                  (<p>Saving you £{(totalCost - packageCost) % 1 !=0 ?  (totalCost - packageCost).toFixed(2) : (totalCost - packageCost)} on the full cost of those options!</p>) 
+                  : null }
 
                 
               </div>
@@ -178,6 +184,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
       <div className='flex'>
         <pre>Selected -- {JSON.stringify(selectedOptions,null,2)}</pre>
         <pre>Packages--{JSON.stringify(packages,null,2)}</pre>
+        {packages.length} == 1 &amp;&amp; {singleDiscountValid.test(packages[0]) ? 'true' : 'false'} == {singleItemDiscount ? 'true' : 'false'}
       </div>
       </> : null }
       
