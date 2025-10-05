@@ -154,7 +154,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
                 <h2 className='text-2xl'>{packages.map((packageName) => `${packageName} ${passOrTicket(packageName)}`).join(', ').replace('Saturday Dinner Ticket','Dinner Ticket')}</h2>
                 <h2 className='text-3xl font-bold'>
                   { totalCost - packageCost > 0 || singleDiscountValid ? (<span className='line-through mr-2'>£{totalCost % 1 != 0 ? totalCost.toFixed(2) : totalCost}</span>) : null }  
-                  <span >£{ singleDiscountValid ? packageCost*0.8 : packageCost % 1 !=0 ? packageCost.toFixed(2) : packageCost}</span>
+                  <span >£{ singleDiscountValid.test(packages[0])  ? packageCost*0.8 : packageCost % 1 !=0 ? packageCost.toFixed(2) : packageCost}</span>
                   </h2>
                 {
                   singleItemDiscount ? 
