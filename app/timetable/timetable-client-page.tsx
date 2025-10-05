@@ -53,11 +53,16 @@ export default function TimetableClientPage(props: ClientClassProps) {
       details: current.details,
       location: current.location,
       level: current.level || "unknown",
-      artist: current.artist ? { 
-        name: current.artist.name,
-        avatar: current.artist.avatar ? current.artist.avatar : null,
-        url: `/artists/${current.artist._sys.filename}`
-      } : { name: null, avatar: null, url: '/artists'}
+      artist1: current.artist1 ? { 
+        name: current.artist1.name,
+        avatar: current.artist1.avatar ? current.artist1.avatar : null,
+        url: `/artists/${current.artist1._sys.filename}`
+      } : { name: null, avatar: null, url: '/artists'},
+      artist2: current.artist2 ? { 
+        name: current.artist2.name,
+        avatar: current.artist2.avatar ? current.artist2.avatar : null,
+        url: `/artists/${current.artist2._sys.filename}`
+      } : null
     }
     organised[day] = organised[day] ? organised[day] : {}
     organised[day][timeSlot] = organised[day][timeSlot] ? organised[day][timeSlot] : {}
@@ -111,15 +116,22 @@ export default function TimetableClientPage(props: ClientClassProps) {
               {locations.map((location) => {
                 const clasS = classesOrganised[day][timeSlot][location] || false
                 const level = levels[clasS.level] || false
-                return clasS ? <Link href={clasS?.artist?.url || '#'} key={`${clasS.date}-${location}`} 
-                  className={`bg-richblack-700 col-span-10 col-start-2 md:col-span-2 p-2 sm:p-4 flex flex-row md:flex-col justify-between items-center xl:flex-row gap-1 md:gap-3 border-t-3 ${timeColor} ${level ? '' : 'text-white'}`}
+                return clasS ? <Link href={clasS?.artist1?.url || '#'} key={`${clasS.date}-${location}`} 
+                  className={`bg-richblack-700 col-span-10 col-start-2 md:col-span-2 p-2 sm:p-4 flex flex-row md:flex-col justify-between items-center ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? '2xl:flex-row' : '2xl:flex-row'}  gap-1 md:gap-3 border-t-3 ${timeColor} ${level ? '' : 'text-white'}`}
                   style={{backgroundColor: level.colour}}
                   >
-                    {clasS?.artist?.avatar ? <Image className="rounded-full border-3 border-richblack-500 w-16 h-16 lg:w-24 lg:h-24" src={clasS.artist.avatar} alt={clasS.artist.name} width={250} height={250} /> : null }
-                  <div className="flex-grow">
-                  <h2 className="text-md md:text-sm lg:text-lg 2xl:text-2xl font-bold leading-4 md:leading-6">{clasS.title}</h2>
-                  <p className="text-sm md:text-md lg:text-lg leading-4 md:leading-6">{clasS.artist.name} </p>
-                  <TinaMarkdown content={clasS.details} />
+                    { clasS?.artist1?.avatar || clasS?.artist2?.avatar ? 
+                    <div className={`${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? ' h-28 sm:h-16 lg:h-24 lg:min-w-40 xl:min-w-42 ' : ' h-16 lg:h-24 lg:min-w-28 xl:min-w-42'} w-16 sm:w-28 relative flex flex-col border-red-300 xl:border-yellow-400 border`}>
+                      {clasS?.artist2?.avatar ? <Image className={`rounded-full border-3 border-richblack-500 ww-12 wh-12 sm:w-16 sm:h-16 lg:w-24 lg:h-24 ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? 'absolute sm:left-10 lg:left-16 sm:top-auto top-10' : ''}`} src={clasS.artist2.avatar} alt={clasS.artist2.name} width={250} height={250} /> : null }
+                      {clasS?.artist1?.avatar ? <Image className={`rounded-full border-3 border-richblack-500 ww-12 wh-12 sm:w-16 sm:h-16 lg:w-24 lg:h-24 ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? 'absolute sm:left--3 lg:left-0' : ''}`} src={clasS.artist1.avatar} alt={clasS.artist1.name} width={250} height={250} /> : null }
+                    </div>
+
+                    : null }
+                    
+                  <div className="flex-grow ">
+                    <h2 className="text-md md:text-sm lg:text-lg 2xl:text-2xl font-bold leading-4 md:leading-6">{clasS.title}</h2>
+                    <p className="text-sm md:text-md lg:text-lg leading-4 md:leading-6">{clasS.artist1.name} </p>
+                    <TinaMarkdown content={clasS.details} />
                   </div>
                   <span className="rounded bg-richblack-600 text-white px-2 py-0.5 md:hidden">{clasS.location}</span>
                   {/* {clasS.level} */}
