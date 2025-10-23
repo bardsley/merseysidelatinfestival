@@ -20,4 +20,17 @@ event = {
     'heading_message': 'A TICKET HAS BEEN TRANSFERRED TO YOU!'
 }
 
+send_ticket_event = {
+    'email_type':"standard_ticket",
+    'name': "Elton John", 
+    'email': "connor1monaghan@gmail.com", 
+    'ticket_number': "7227400839", 
+    'line_items':[
+        {'price_id': 'price_1PZcrKEWkmdeWsQPl1h22Dk4', 'amount_total': 9500, 'description': 'Saturday Pass', 'prod_id': 'prod_QQToHXWAJ7kCf4'}, 
+        {'price_id': 'price_1PZdHNEWkmdeWsQPMx12ez1O', 'amount_total': 1500, 'description': 'Sunday - Party', 'prod_id': 'prod_QQUFAgkOcEFm3I'}
+    ],
+    'heading_message': "THANK YOU FOR YOUR PURCHASE!"
+}
+
+# lambda_handler(send_ticket_event, None)
 lambda_handler(event, None)

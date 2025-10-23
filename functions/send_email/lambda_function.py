@@ -31,7 +31,6 @@ logging.basicConfig()
 
 #ENV
 stage_name = os.environ.get("STAGE_NAME")
-sendgrid_api_key = os.environ.get("SENDGRID_API_KEY")
 maildev_ip = os.environ.get("MAILDEV_IP", "localhost")
 # from_email = os.environ.get("FROM_EMAIL", "do-not-reply@email.merseysidelatinfestival.co.uk")
 from_email = "no-reply@danceengine.co.uk"
