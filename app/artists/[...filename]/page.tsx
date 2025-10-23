@@ -20,7 +20,7 @@ export default async function PostPage({
     filter: { artist1: { artist: { name: { eq: data.data.artist.name} }  } }, //
   })
   const classData = classes.data.classConnection.edges.map((edge) => {
-    return {id: edge.node.id,title: edge.node.title,details: edge.node.details, date: edge.node.date, location: edge.node.location, artist_id: edge.node.artist.id}
+    return {id: edge.node.id,title: edge.node.title,details: edge.node.details, date: edge.node.date, location: edge.node.location, artist_id: edge.node.artist1.id}
   })
 
   return (
