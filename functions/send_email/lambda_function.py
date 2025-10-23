@@ -67,7 +67,7 @@ def send_email_brevo(from_email, to_email, subject, html_content, qr_ticket=None
         attachments = [attachment]
 
     email = brevo_python.SendSmtpEmail(
-        sender=brevo_python.SendSmtpEmailSender(email=from_email),
+        sender=brevo_python.SendSmtpEmailSender(email=from_email, name="Merseyside Latin Festival"),
         to=[brevo_python.SendSmtpEmailTo(email=to_email)],
         subject=subject,
         html_content=html_content,
