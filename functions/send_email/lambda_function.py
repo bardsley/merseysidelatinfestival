@@ -9,6 +9,9 @@ else:
     # Handle target environment that doesn't support HTTPS verification
     ssl._create_default_https_context = _create_unverified_https_context
 
+import brevo_python
+from brevo_python.rest import ApiException
+
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -16,8 +19,6 @@ from email.mime.base import MIMEBase
 from email import encoders
 from string import Template
 import base64
-import sendgrid
-from sendgrid.helpers.mail import *
 import qrcode
 import io
 import babel.numbers
@@ -30,40 +31,58 @@ logging.basicConfig()
 
 #ENV
 stage_name = os.environ.get("STAGE_NAME")
-sendgrid_api_key = os.environ.get("SENDGRID_API_KEY")
 maildev_ip = os.environ.get("MAILDEV_IP", "localhost")
-from_email = os.environ.get("FROM_EMAIL", "do-not-reply@email.merseysidelatinfestival.co.uk")
+# from_email = os.environ.get("FROM_EMAIL", "do-not-reply@email.merseysidelatinfestival.co.uk")
+from_email = "no-reply@danceengine.co.uk"
 
-def send_email_sendgrid(from_email, to_email, subject, html_content, qr_ticket=None):
-    '''    
-    Send email using SendGrid
-    '''
-    logger.info("Create the Mail object")
-    message = Mail(
-        from_email=from_email,
-        to_emails=to_email,
-        subject=subject,
-        html_content=html_content
-    )
-    
+brevo_api_key = os.environ.get("BREVO_API_KEY")
+
+def send_email_brevo(from_email, to_email, subject, html_content, qr_ticket=None):
+    """
+    Send email using Brevo
+    """
+    logger.info("Preparing Brevo email")
+
+    # configure brevo api client
+    configuration = brevo_python.Configuration()
+    configuration.api_key['api-key'] = brevo_api_key
+    configuration.api_key['partner-key'] = brevo_api_key
+    api_client = brevo_python.ApiClient(configuration)
+    api = brevo_python.TransactionalEmailsApi(api_client)
+
+    # add qr ticket if any exist
+
     logger.info("Adding qr_ticket if any exist")
+    attachments = None
     if qr_ticket is not None:
-        attachment = Attachment(
-            FileContent(qr_ticket),
-            FileName('qrticket.jpg'),
-            FileType('image/jpeg'),
-            Disposition('inline'),
-            ContentId('qr-ticket')
+        # make qr ticket attachment not use cid
+        html_content = html_content.replace(
+            'cid:qr-ticket', 
+            f'data:image/jpeg;base64,{qr_ticket}'
+            )
+        attachment = brevo_python.SendSmtpEmailAttachment(
+            name='qrticket.jpg',
+            content=qr_ticket
         )
-        message.add_attachment(attachment)
+        attachments = [attachment]
 
-    logger.info("Attempting to send email via SendGrid")
+    email = brevo_python.SendSmtpEmail(
+        sender=brevo_python.SendSmtpEmailSender(email=from_email, name="Merseyside Latin Festival"),
+        to=[brevo_python.SendSmtpEmailTo(email=to_email)],
+        subject=subject,
+        html_content=html_content,
+        attachment=attachments
+    )
+
     try:
-        sg = sendgrid.SendGridAPIClient(api_key=sendgrid_api_key)
-        response = sg.send(message)
+        logger.info("Attempting to send email via Brevo")
+        response = api.send_transac_email(email)
         return "Success"
+    except ApiException as e:
+        logger.error("Exception when calling Brevo API: %s\n", e)
+        return e
     except Exception as e:
-        print(e)
+        logger.error("Unexpected error occured: %s\n", e)
         return e
     
 def send_email_preview(from_email, to_email, subject, html_content, qr_ticket=None):
@@ -310,4 +329,4 @@ def lambda_handler(event, context):
     if stage_name == "preview":
         return send_email_preview(from_email, to_email, subject, html_content, qr_ticket)
     else:
-        return send_email_sendgrid(from_email, to_email, subject, html_content, qr_ticket)
+        return send_email_brevo(from_email, to_email, subject, html_content, qr_ticket)
