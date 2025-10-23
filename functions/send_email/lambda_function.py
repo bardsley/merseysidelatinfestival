@@ -19,8 +19,6 @@ from email.mime.base import MIMEBase
 from email import encoders
 from string import Template
 import base64
-import sendgrid
-from sendgrid.helpers.mail import *
 import qrcode
 import io
 import babel.numbers
@@ -86,38 +84,6 @@ def send_email_brevo(from_email, to_email, subject, html_content, qr_ticket=None
         return e
     except Exception as e:
         logger.error("Unexpected error occured: %s\n", e)
-        return e
-
-def send_email_sendgrid(from_email, to_email, subject, html_content, qr_ticket=None):
-    '''    
-    Send email using SendGrid
-    '''
-    logger.info("Create the Mail object")
-    message = Mail(
-        from_email=from_email,
-        to_emails=to_email,
-        subject=subject,
-        html_content=html_content
-    )
-    
-    logger.info("Adding qr_ticket if any exist")
-    if qr_ticket is not None:
-        attachment = Attachment(
-            FileContent(qr_ticket),
-            FileName('qrticket.jpg'),
-            FileType('image/jpeg'),
-            Disposition('inline'),
-            ContentId('qr-ticket')
-        )
-        message.add_attachment(attachment)
-
-    logger.info("Attempting to send email via SendGrid")
-    try:
-        sg = sendgrid.SendGridAPIClient(api_key=sendgrid_api_key)
-        response = sg.send(message)
-        return "Success"
-    except Exception as e:
-        print(e)
         return e
     
 def send_email_preview(from_email, to_email, subject, html_content, qr_ticket=None):
@@ -364,5 +330,4 @@ def lambda_handler(event, context):
     if stage_name == "preview":
         return send_email_preview(from_email, to_email, subject, html_content, qr_ticket)
     else:
-        # return send_email_sendgrid(from_email, to_email, subject, html_content, qr_ticket)
         return send_email_brevo(from_email, to_email, subject, html_content, qr_ticket)
