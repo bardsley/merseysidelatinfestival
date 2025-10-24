@@ -2,7 +2,7 @@ org: danceenginesystems # Needs a name for the organization
 
 app: dance-engine
 service: api # Do we need multiple services? 
-frameworkVersion: '4.1'
+# frameworkVersion: '4.1'
 
 plugins:
   - serverless-prune-plugin
@@ -30,6 +30,9 @@ stages:
       deletionPolicy: Delete 
       skipTables: true
       githubBranchDestination: "develop"
+    resolvers:
+      awsAccount1:
+        type: aws
   prod:
     params:
       isProd: true
@@ -85,6 +88,8 @@ layers:
     path: _layers/sendmail
   github:
     path: _layers/github
+  brevo:
+    path: _layers/brevo
 
 ###########################
 # Resources e.g. DynamoDB
@@ -352,10 +357,11 @@ functions:
       STAGE_NAME: ${sls:stage}
       FROM_EMAIL: ${param:fromEmail}
       SENDGRID_API_KEY: ${param:sendgridApiKey}
+      BREVO_API_KEY: ${ssm:/danceengine/${sls:stage}/brevo/api_key}
       SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
       MAILDEV_IP: "3.254.106.153"
     layers:
-      - !Ref SendmailLambdaLayer
+      - !Ref BrevoLambdaLayer
 
 #--------------------
 
