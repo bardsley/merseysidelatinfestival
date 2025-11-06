@@ -104,7 +104,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
       </fieldset>
       <fieldset className='my-6 max-w-full w-full'>
         <legend className="text-base font-semibold leading-6 text-white">Other Specific Dietary Requirements</legend>
-        <p className='mb-3 text-sm'>Please note the food choices above, {veganChoices.join(', ').toLowerCase()} are vegan</p>
+        <p className='mb-3 text-sm'>Please note the food choices above, {veganChoices.join(', ').toLowerCase()} are vegan or will be replaced with Vegan options if vegan is set in Dietary requirments</p>
 
         <ul className='grid grid-cols-2 md:grid-cols-4 gap-2 mb-3'>
         {dietaryRequirements.map((diet) => {
