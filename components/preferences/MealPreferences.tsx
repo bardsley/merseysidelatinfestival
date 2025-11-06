@@ -51,7 +51,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
     setGroupExists(group_response.ok)
   }
 
-  const preferencesDisabled = true
+  const preferencesDisabled = false
   const preferenceSent =  false
 
   const maintainState = (event) => {
