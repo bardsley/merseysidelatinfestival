@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { deepCopy } from '@lib/useful'
 import { Icon } from "@components/icon";
 export const courses = [
-  { name: "Starter", options: ["Vegetable Terrine", "Chicken Liver Pate"]},
-  { name: "Main", options: ["Roasted Onion", "Fish & Prawn Risotto", "Chicken Supreme"]},
-  { name: "Desert", options: ["Fruit Platter", "Bread & Butter Pudding"]},
+  { name: "Starter", options: ["Mushroom & Truffle cake", "Chicken Liver Pate"]},
+  { name: "Main", options: ["Smoked Cheese Risotto", "Chicken Supreme"]},
+  { name: "Desert", options: ["Eton Mess", "Sticky Toffee Pudding"]},
 ]
 
 export const blankPreferences = {choices: [-1,-1,-1], dietary_requirements : { selected: [], other: ""}, seating_preference: '', recommendations: []}
