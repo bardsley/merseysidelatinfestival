@@ -121,7 +121,7 @@ export default function TimetableClientPage(props: ClientClassProps) {
                   style={{backgroundColor: level.colour}}
                   >
                     { clasS?.artist1?.avatar || clasS?.artist2?.avatar ? 
-                    <div className={`${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? ' h-28 sm:h-16 lg:h-24 lg:min-w-40 xl:min-w-42 ' : ' h-16 lg:h-24 lg:min-w-28 xl:min-w-42'} w-16 sm:w-28 relative flex flex-col border-red-300 xl:border-yellow-400 border`}>
+                    <div className={`${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? ' h-28 sm:h-16 lg:h-24 lg:min-w-40 xl:min-w-42 ' : ' h-16 lg:h-24 lg:min-w-28 xl:min-w-42'} w-16 sm:w-28 relative flex flex-col`}>
                       {clasS?.artist2?.avatar ? <Image className={`rounded-full border-3 border-richblack-500 ww-12 wh-12 sm:w-16 sm:h-16 lg:w-24 lg:h-24 ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? 'absolute sm:left-10 lg:left-16 sm:top-auto top-10' : ''}`} src={clasS.artist2.avatar} alt={clasS.artist2.name} width={250} height={250} /> : null }
                       {clasS?.artist1?.avatar ? <Image className={`rounded-full border-3 border-richblack-500 ww-12 wh-12 sm:w-16 sm:h-16 lg:w-24 lg:h-24 ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? 'absolute sm:left--3 lg:left-0' : ''}`} src={clasS.artist1.avatar} alt={clasS.artist1.name} width={250} height={250} /> : null }
                     </div>
