@@ -1,1 +1,1 @@
-export const admin_ticketing_url = '/admin/ticketing?sortByField=purchased_date&sortByDirection=desc&filter=active:true'
+export const admin_ticketing_url = '/admin/ticketing?sortByField=purchased_date&sortByDirection=desc&filter=active:true&filter=passes:2025'
