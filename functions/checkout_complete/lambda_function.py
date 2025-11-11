@@ -136,7 +136,7 @@ def lambda_handler(event, context):
         ateendee_details = json.loads(stripe_response['metadata']['attendee'])
         full_name = ateendee_details['name']
         email     = stripe_response['customer_email']
-        phone     = ateendee_details['phone']
+        phone     = ateendee_details.get('phone', '')
 
         payload = {
                 'email': email,      

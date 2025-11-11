@@ -28,17 +28,19 @@ export async function GET() {
   const attendeeData = await attendeesResponse.json()
   // console.log(attendeeData)
   
-  const attendees = attendeeData.Items.map((attendee) => {
+  const attendees = attendeeData.Items && attendeeData.Items.map((attendee) => {
     const transferred_out = attendee.transferred && attendee.transferred.ticket_number != attendee.ticket_number
     const name_changed = attendee.transferred && attendee.transferred.ticket_number == attendee.ticket_number
     const transferred_in = !name_changed && attendee.history && attendee.history.length > 0 && attendee?.history[0]?.ticket_number
-    if(transferred_in) { console.log("Transfer:", attendee.full_name, attendee.ticket_number) }
+    if(transferred_in) { 
+      // console.log("Transfer:", attendee.full_name, attendee.ticket_number) 
+    }
     // console.log(attendee.full_name,attendee.ticket_number,attendee.transferred?.ticket_number, attendee.transferred?.ticket_number != attendee.ticket_number)
     return {
       name: attendee.full_name,
       email: attendee.email,
       checkin_at: attendee.ticket_used,
-      passes: attendee.line_items.map((item) => item.description),
+      passes: attendee.line_items ? attendee.line_items.map((item) => item.description) : [],
       purchased_date: guaranteeISOstringFromDate(attendee.purchase_date), 
       ticket_number: attendee.ticket_number,
       active: attendee.active,

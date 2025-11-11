@@ -3,6 +3,7 @@ import { BiCreditCard, BiLogoSketch, BiLeftArrowCircle, BiSolidRightArrowSquare,
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { EllipsisVerticalIcon, CurrencyPoundIcon, ClipboardIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { format,fromUnixTime } from 'date-fns';
+
 // import { scanIn } from '@lib/fetchers';
 // import { mutate } from 'swr';
 
@@ -19,10 +20,19 @@ const TicketStatusIcon = ({attendee})  => {
   return <span className='flex'>{PaymentIcon}{trasnferOutIcon}{transferInIcon}{namechangeIcon}{wtfIcon}</span>
 }
 
-export const TicketRow = ({attendee,setActiveTicket, setNameChangeModalActive, setTicketTransferModalActive}) => {
+export const TicketRow = ({attendee,setActiveTicket, setNameChangeModalActive, setTicketTransferModalActive,withCheckbox = false, multiSelectFunc}) => {
   const passString = attendee.passes.join(', ')
+
   return (
     <tr key={`${attendee.ticket_number}`} className={`align-center ${attendee.active ? '' : 'decoration-1	 line-through text-gray-600'}`}>
+      {withCheckbox ? <td className='text-center px-3'><input type="checkbox" onChange={(e) => {
+        if(e.target.checked) {
+          multiSelectFunc(prev => [...prev, attendee.email])
+        } else {
+          multiSelectFunc(prev => prev.filter(t => t !== attendee.email))
+        }
+      }} /></td> : null}
+      
       <td className="w-full max-w-0 py-4 pl-4 pr-3 text-sm  font-medium sm:w-auto sm:max-w-none sm:pl-2 vertical-align-top">
         <Link href={`/admin/ticketing/ticket/${attendee.ticket_number}/${attendee.email}`} className={`${attendee.active ? 'text-chillired-600 hover:text-chillired-700' : "text-gray-600"}`}>
           <span className="text-lg leading-6 sm:text-base md:text-base">{attendee.name}</span><br/>
@@ -90,7 +100,7 @@ export const TicketRow = ({attendee,setActiveTicket, setNameChangeModalActive, s
             { attendee.active ? (
               <a href={`/api/admin/attendees/email/${attendee.email}`} className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50">
                 Resend Email<span className="sr-only">, {attendee.name}</span>
-              </a>) : <span className='line-through block px-3 py-1 text-sm leading-6 text-gray-300 data-[focus]:bg-gray-50'>Rsend Email</span> }
+              </a>) : <span className='line-through block px-3 py-1 text-sm leading-6 text-gray-300 data-[focus]:bg-gray-50'>Resend Email</span> }
             </MenuItem>
           </MenuItems>
         </Menu>
