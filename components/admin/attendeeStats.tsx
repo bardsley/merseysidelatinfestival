@@ -17,7 +17,7 @@ export default function AttendeeStats() {
   
   })
 
-  const stats =  isLoading ? 
+  const stats =  isLoading || !thisYearsAttendees? 
     [
       { name: 'Total', value: 'Loading...', unit: '' },
       { name: 'Today', value: 'Loading...', unit: '' },
