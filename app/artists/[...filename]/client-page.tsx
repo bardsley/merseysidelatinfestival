@@ -74,5 +74,9 @@ export default function ArtistClientPage(props: ArtistClientPageProps) {
         </div>       
       </Container>
       </Section>
+      {/* server timestamp */}
+      <p className="text-xs opacity-60">
+        renderedAt: {new Date().toISOString()}
+      </p>
   </>);
 }
