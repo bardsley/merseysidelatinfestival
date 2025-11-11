@@ -1,6 +1,6 @@
 export const revalidate = 60;
 export const dynamicParams = true;
-export const dynamic = 'force-dynamic';      // render fresh every request
+// export const dynamic = 'force-dynamic';      // render fresh every request
 import React from "react";
 import client from "@tina/__generated__/client";
 import Layout from "@components/layout/layout";
