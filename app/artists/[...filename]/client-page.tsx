@@ -74,9 +74,5 @@ export default function ArtistClientPage(props: ArtistClientPageProps) {
         </div>       
       </Container>
       </Section>
-      {/* server timestamp */}
-      <p suppressHydrationWarning className="text-xs opacity-60">
-        renderedAt: {new Date().toISOString()}
-      </p>
   </>);
 }
