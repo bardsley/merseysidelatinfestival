@@ -26,6 +26,9 @@ export default async function PostPage({
   return (
     <Layout rawPageData={data}>
       <ArtistClientPage {...data} classes={classData}></ArtistClientPage>
+      <p suppressHydrationWarning className="text-xs opacity-60">
+        renderedAt: {new Date().toISOString()}
+      </p>
     </Layout>
   );
 }
