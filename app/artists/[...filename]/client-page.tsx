@@ -1,4 +1,7 @@
 "use client";
+export const dynamic = 'force-dynamic';      // render fresh every request
+
+
 import { useTina, tinaField } from "tinacms/dist/react";
 import { Section } from "@components/layout/section";
 import { Container } from "@components/layout/container";
