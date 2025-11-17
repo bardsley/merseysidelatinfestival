@@ -32,7 +32,7 @@ def get_output_string(seating):
     return output_str
 
 def get_dinner_pass_names():
-    return ["Full Pass", "Artist Pass", "Volunteer Pass", "Saturday - Dinner", "Staff Pass"]
+    return ["2025 Full Pass (with dinner)", "2025 Artist Pass", "2025 Volunteer Pass", "2025 Gala Dinner"]
 
 def extract_pass_type(line_items):
     pass_names = get_dinner_pass_names()
@@ -278,7 +278,7 @@ def simulated_annealing(attendees, fixed_tickets, table_capacities, initial_temp
 
 def post(event):  
     response = attendees_table.scan(FilterExpression=Key('active').eq(True))
-    filtered_items = [item for item in response.get('Items', []) if item['access'][2] == 1]
+    filtered_items = [item for item in response.get('Items', []) if item['access'][2] == 1 and extract_pass_type(item.get('line_items', [])) in get_dinner_pass_names()]
 
     attendees = []
     fixed_tickets = event.get('fixed_tickets', {})

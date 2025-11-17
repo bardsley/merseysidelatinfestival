@@ -34,7 +34,7 @@ def err(msg:str, code=400, logmsg=None, **kwargs):
         }
 
 def get_dinner_pass_names():
-    return ["Full Pass", "Artist Pass", "Volunteer Pass", "Saturday - Dinner"]
+    return ["2025 Full Pass (with dinner)", "2025 Artist Pass", "2025 Volunteer Pass", "2025 Gala Dinner"]
 
 def extract_pass_type(line_items):
     pass_names = get_dinner_pass_names()
@@ -59,9 +59,9 @@ def lambda_handler(event, context):
     response = table.scan(FilterExpression=Key('active').eq(True))
 
     course_mappings = [
-            {0: "Vegetable Terrine", 1: "Chicken Liver Pate"},
-            {0: "Roasted Onion", 1: "Fish and Prawn Risotto", 2: "Chicken Supreme"},
-            {0: "Fruit Platter", 1: "Bread and Butter Pudding"}
+            {0: "Mushroom & Truffle", 1: "Chicken Liver Pate"},
+            {0: "Smoked Rissotto", 1: "Chicken Supreme", 2: "Problem"},
+            {0: "Eton Mess", 1: "Sticky Toffee Pudding"}
         ]
     num_courses = 3
     course_frequencies = [{} for _ in range(num_courses)]
@@ -74,7 +74,7 @@ def lambda_handler(event, context):
     selected_count = 0       # All choices are >= 0 (options selected)
     group_count = 0
     
-    filtered_items = [item for item in response['Items'] if (item['access'][2] == 1)]
+    filtered_items = [item for item in response['Items'] if (item['access'][2] == 1) and extract_pass_type(item.get('line_items', [])) in get_dinner_pass_names()] # if they have access to dinner
 
     not_wanted_count = len([item for item in response['Items'] if (item['access'][2] == -1)]) # if it has been removed by an admin because they didn't want
 

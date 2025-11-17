@@ -2,9 +2,9 @@
 import React, { useState } from "react";
 
 const courseMappings = [
-  { 0: "Vegetable", 1: "Chicken " },
-  { 0: "Onion", 1: "Fish", 2: "Chicken" },
-  { 0: "Fruit", 1: "Bread & Butter" }
+  { 0: "Mushroom", 1: "Chicken " },
+  { 0: "Risotto", 1: "Chicken" },
+  { 0: "Eton Mess", 1: "Sticky Toffee" }
 ];
 
 export default function AttendeeMealTable({ attendees, summaryLoading, summaryIsValidating, summaryError, itemsPerPage = 25, attendeesGroupedByTable = false }) {

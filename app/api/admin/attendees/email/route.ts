@@ -9,13 +9,13 @@ export async function POST(request: NextRequest) {
   // console.log("headers", request.headers)
   console.log("body", res.emails)
   const attempts = res.emails.map(async (email:string) => {
-    const apiRequestUrl = `${process.env.LAMBDA_SEND_TICKET_EMAIL}/?email=${encodeURIComponent(email)}`
+    const apiRequestUrl = `${process.env.LAMBDA_SEND_TICKET_EMAIL}?email=${encodeURIComponent(email)}`
     console.log("apiRequestUrl", apiRequestUrl) 
     return fetch(apiRequestUrl, { method: 'GET',  headers: { 'Content-Type': 'application/json' }})
   })
 
   const allSent = await Promise.all(attempts)
-  
+  // console.log(attempts)
   // const apiRequestUrl = `${process.env.LAMBDA_SEND_TICKET_EMAIL}?email=${encodeURIComponent(params.email)}`
   // console.log("apiRequestUrl", apiRequestUrl)
   // const apiResponse = await fetch(apiRequestUrl, { method: 'GET',  headers: { 'Content-Type': 'application/json' }})

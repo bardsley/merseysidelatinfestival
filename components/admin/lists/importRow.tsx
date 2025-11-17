@@ -79,22 +79,22 @@ export const ImportRow = ({attendee, handleSaveChanges, onDelete, isEditing, tog
                 <Select name="passes" value={editedAttendee.passes}
                   onChange={(e) => setEditedAttendee({ ...editedAttendee, passes: [e.target.value] })}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                    <option value="Full Pass">Full Pass</option>
-                    <option value="Artist Pass">Artist Pass</option>
-                    <option value="Staff Pass">Staff Pass</option>
-                    <option value="Full Pass (without dinner)">Full Pass (without dinner)</option>
-                    <option value="Volunteer Pass (without dinner)">Volunteer Pass (without dinner)</option>
-                    <option value="Artist Pass (without dinner)">Artist Pass (without dinner)</option>
-                    <option value="Party Pass">Party Pass</option>
-                    <option value="Saturday Pass">Saturday Pass</option>
-                    <option value="Sunday Pass">Sunday Pass</option>
-                    <option value="Class Pass<">Class Pass</option>
-                    <option value="Saturday - Party">Saturday - Party</option>
-                    <option value="Saturday - Class">Saturday - Class</option>
-                    <option value="Saturday - Dinner">Saturday - Dinner</option>
-                    <option value="Friday - Party">Friday - Party</option>
-                    <option value="Sunday - Party">Sunday - Party</option>
-                    <option value="Sunday - Class">Sunday - Class</option>
+                     <option value="2025 Full Pass">2025 Full Pass</option>
+                      <option value="2025 Artist Pass">2025 Artist Pass</option>
+                      <option value="2025 Staff Pass">2025 Staff Pass</option>
+                      <option value="2025 Full Pass (without dinner)">2025 Full Pass (without dinner)</option>
+                      <option value="2025 Volunteer Pass (without dinner)">2025 Volunteer Pass (without dinner)</option>
+                      <option value="2025 Artist Pass (without dinner)">2025 Artist Pass (without dinner)</option>
+                      <option value="2025 Party Pass">2025 Party Pass</option>
+                      <option value="2025 Saturday Pass">2025 Saturday Pass</option>
+                      <option value="2025 Sunday Pass">2025 Sunday Pass</option>
+                      <option value="2025 Class Pass<">2025 Class Pass</option>
+                      <option value="2025 Saturday - Party">2025 Saturday - Party</option>
+                      <option value="2025 Saturday - Class">2025 Saturday - Class</option>
+                      <option value="2025 Gala Dinner">2025 Gala Dinner</option>
+                      <option value="2025 Friday - Party">2025 Friday - Party</option>
+                      <option value="2025 Sunday - Party">2025 Sunday - Party</option>
+                      <option value="2025 Sunday - Class">2025 Sunday - Class</option>
                 </Select>
               </label>
 
@@ -103,7 +103,7 @@ export const ImportRow = ({attendee, handleSaveChanges, onDelete, isEditing, tog
                 <input
                   type="number"
                   name="unit_amount"
-                  value={editedAttendee.unit_amount}
+                  value={editedAttendee.unit_amount || 0}
                   onChange={handleChange}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 />

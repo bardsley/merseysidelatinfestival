@@ -24,6 +24,7 @@ export async function GET(_req: NextRequest) {
     },
   })
   const summaryData = await summaryResponse.json()
+  // const summaryData = summaryDataAll //summaryDataAll.filter ((item) => /dinner/i.test(item.pass_type))
 
   return summaryResponse.ok ? Response.json(summaryData) : Response.json({message: "Error"}, {status: 500})
 

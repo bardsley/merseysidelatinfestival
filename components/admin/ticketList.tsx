@@ -90,7 +90,7 @@ export default function TicketList() {
     })
     console.log("apiResponse", apiResponse)
     // After sending, you might want to clear the selection
-    // setSelectedTickets([])
+    setSelectedTickets([])
   }
 
   const headerClassNames = "p-0 text-left text-sm font-semibold text-white "
