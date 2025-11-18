@@ -34,7 +34,7 @@ def err(msg:str, code=400, logmsg=None, **kwargs):
         }
 
 def get_dinner_pass_names():
-    return ["2025 Full Pass (with dinner)", "2025 Artist Pass", "2025 Volunteer Pass", "2025 Gala Dinner"]
+    return ["2025 Full Pass (with dinner)", "2025 Artist Pass", "2025 Volunteer Pass", "2025 Gala Dinner","Dine and Dance Pass 2025"]
 
 def extract_pass_type(line_items):
     pass_names = get_dinner_pass_names()

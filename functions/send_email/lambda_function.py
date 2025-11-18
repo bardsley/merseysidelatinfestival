@@ -279,7 +279,7 @@ def lambda_handler(event, context):
         else:
             subject = "MLF - Choose Your Meal"
 
-        deadline_date = "2nd November"
+        deadline_date = "17th November (Today)"
         with open("./send_email/meal_body.html", "r") as body_file:
             body_tmpl = Template(body_file.read())
             subdomain = "www" if stage_name == "prod" else stage_name

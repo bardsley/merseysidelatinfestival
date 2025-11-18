@@ -23,6 +23,8 @@ const MealPreferences = ({preferences,setPreferences}) =>{
     process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' && console.log(choicesValid(preferences),seatingValid(preferences),dietValid(preferences))
     return choicesValid(preferences) && seatingValid(preferences) && dietValid(preferences)
   }
+  const preferencesDisabled = true
+  const preferenceSent =  true
   
   useEffect(() => {
     if(!checkInputOk(preferences)) {
@@ -51,8 +53,6 @@ const MealPreferences = ({preferences,setPreferences}) =>{
     setGroupExists(group_response.ok)
   }
 
-  const preferencesDisabled = false
-  const preferenceSent =  false
 
   const maintainState = (event) => {
     if(preferencesDisabled) {
