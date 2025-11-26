@@ -13,7 +13,7 @@ const veganChoices = Object.keys(courses).map((key) => courses[key].options[0])
 
 
 
-const MealPreferences = ({preferences,setPreferences}) =>{
+const MealPreferences = ({preferences,setPreferences, admin = false}) =>{
   const [groupExists,setGroupExists] = useState(false)
   const choicesValid = (preferences) => preferences.choices && preferences.choices.length > 0 // Choices is and array of stuff 
   const seatingValid = (preferences) => preferences.seating_preference == '' || preferences.seating_preference.length >= 0 // Preferences is an array of stuff
@@ -61,7 +61,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
     }
   }
 
-  return checkInputOk(preferences) && !preferencesDisabled ? (
+  return checkInputOk(preferences) && (!preferencesDisabled || admin ) ? (
     <>
       { preferenceSent ? <div className='bg-yellow-500 p-5 mt-2 text-richblack-600 font-bold rounded'>Food preferences have now been sent to the venue.</div> : null }
       
@@ -85,7 +85,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
                       name={`course-${courseIdx}`}
                       type="radio"
                       value={optionIdx}
-                      readOnly = {preferencesDisabled ? true : false}
+                      readOnly = {(preferencesDisabled && !admin) ? true : false}
                       defaultChecked={preferences && preferences.choices && preferences.choices[courseIdx] == optionIdx}
                       // checked={preferences[courseIdx] == optionIdx}
                       className="h-4 w-4 rounded-full border-gray-700 text-indigo-600 focus:ring-indigo-600"
@@ -157,7 +157,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
             placeholder="Group Name"
             aria-describedby="seating-preference"
             defaultValue = {preferences.seating_preference}
-            readOnly = {preferencesDisabled ? true : false}
+            readOnly = {preferencesDisabled && !admin ? true : false}
             onClick={(event) =>  maintainState(event)}
             onChange={(event) => {
               preferencesDisabled ? maintainState(event) : (event) => {const group_id = event.target.value
@@ -188,7 +188,8 @@ const MealPreferences = ({preferences,setPreferences}) =>{
           }}/>
       </div>
       }
-      
+      <button className="py-3 px-4 bg-chillired-500 rounded-lg">Save Preferences</button>
+
     { process.env.NODE_ENV == 'development' && process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' ? <>
       <hr />
       <h2>Debug Ignore below the line</h2>
@@ -200,7 +201,7 @@ const MealPreferences = ({preferences,setPreferences}) =>{
   ) : (
     <>
       <p className='text-sm text-gray-300'>
-      Please select a meal preference to continue
+        { preferenceSent ? <div className='bg-yellow-500 p-5 mt-2 text-richblack-600 font-bold rounded'>Food preferences have now been sent to the venue.</div> : null }
       </p>
     </>
   )

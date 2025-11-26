@@ -42,10 +42,10 @@ const NowAndNext = ({classesUnordered,basic}) => {
         details: current.details,
         location: current.location,
         level: current.level || "unknown",
-        artist: current.artist ? { 
-          name: current.artist.name,
-          avatar: current.artist.avatar ? current.artist.avatar : null,
-          url: `/artists/${current.artist._sys.filename}`
+        artist: current.artist1 ? { 
+          name: current.artist1.name,
+          avatar: current.artist1.avatar ? current.artist1.avatar : null,
+          url: `/artists/${current.artist1._sys.filename}`
         } : { name: null, avatar: null, url: '/artists'}
       }
       organised[timeSlot] = organised[timeSlot] ? organised[timeSlot] : {}

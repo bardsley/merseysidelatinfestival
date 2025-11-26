@@ -10,7 +10,7 @@ import { MdRestaurantMenu } from "react-icons/md";
 
 const mealTableApiUrl = "/api/admin/meal/seating"; // Update with the actual API URL
 const submitApiUrl = "/api/admin/meal/seating"; // Update with the actual submission API URL
-const maxTableCapacity = 12; // Set maximum allowed capacity to 12
+const maxTableCapacity = 13; // Set maximum allowed capacity to 12
 
 export default function MealTableSorter() {
   const [fixedSeating, setFixedSeating] = useState<{ [key: string]: number }>({});
