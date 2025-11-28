@@ -104,6 +104,7 @@ def match_passes(imported_pass):
         "2025 Friday - Party":    [1,0,0,0,0,0],
         "2025 Sunday - Party":    [0,0,0,0,0,1],
         "2025 Sunday - Class":    [0,0,0,0,1,0],
+        "2025 Artist Guest":    [1,1,0,1,1,1],
     }
     # imported_pass = re.sub(r'\(.*?\)|student', '', imported_pass, flags=re.IGNORECASE).strip().lower()
 
