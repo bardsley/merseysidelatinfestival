@@ -160,7 +160,7 @@ export const passes: Passes = {
 	'2025 Full Pass': {
 			cost: 160,
 			studentCost: 140,
-			isAvailable: true,
+			isAvailable: false,
 			saving: 95,
 			studentSaving: 115,
 			combination: ['Friday Party', 'Saturday Classes', 'Saturday Party', 'Sunday Classes', 'Sunday Party'],
