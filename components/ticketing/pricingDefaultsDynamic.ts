@@ -177,6 +177,16 @@ export const passes: Passes = {
 			description: "The full experience in 2025 (this pass does include gala dinner)",
 			priceId: livePricing ? 'price_1QQnfhEWkmdeWsQPVwOq7u4Q' : 'price_1S8Np9EWkmdeWsQPrJQMdpkz',
 			studentPriceId: livePricing ? 'price_1QQnm6EWkmdeWsQPuyYqgEWo' :  'price_1S8NpgEWkmdeWsQPYctgJJJb'},
+	'2026 Early Bird Full Pass': {
+			cost: 160,
+			studentCost: 140,
+			isAvailable: true,
+			saving: 95,
+			studentSaving: 115,
+			combination: ['Friday Party', 'Saturday Classes', 'Saturday Party', 'Sunday Classes', 'Sunday Party'],
+			description: "The full experience in 2026 (this pass does not include gala dinner an upgrade will be available)",
+			priceId: livePricing ? 'price_1SZBEKEWkmdeWsQP5pSnS41H' : 'price_1S8Np9EWkmdeWsQPrJQMdpkz',
+			studentPriceId: livePricing ? 'price_1SZBGyEWkmdeWsQPdAlpQhfI' :  'price_1S8NpgEWkmdeWsQPYctgJJJb'},
 }
 
 export const fullPassName = Object.keys(passes).at(6)

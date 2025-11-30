@@ -123,7 +123,7 @@ def post(event):
                 'ticket_number':ticket_number
             },
             'ConditionExpression':'attribute_exists(ticket_number)',
-            'UpdateExpression':'SET ticket_used = :val1, history =  list_append(history, :val2)',
+            'UpdateExpression':'SET ticket_used = :val1, history =  list_append(if_not_exists(history, :emptyList), :val2)',
             'ExpressionAttributeValues' : {
                 ':val1': check_in_at,
                 ':val2': [  {
@@ -131,8 +131,8 @@ def post(event):
                     "description": "Ticket was scanned and checked in" if check_in_at else "Previous check in was reset" ,
                     "source": source,
                     "timestamp": check_in_at if check_in_at else int(time.time())
-                    }]                
-                }   
+                    }], ":emptyList": []
+                }
         }
 
     #     # try to update db
