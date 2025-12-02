@@ -100,7 +100,7 @@ export const passes: Passes = {
 	'Party Pass': {
 		 cost: 60,
 		 studentCost: 55,
-		 isAvailable: true,
+		 isAvailable: false,
 		 saving: 20,
 		 studentSaving: 30,
 		 combination: ['Friday Party', 'Saturday Party', 'Sunday Party'],
@@ -110,7 +110,7 @@ export const passes: Passes = {
 	'Sunday Pass': {
 		 cost: 90,
 		 studentCost: 85,
-		 isAvailable: true,
+		 isAvailable: false,
 		 saving: 25,
 		 studentSaving: 30,
 		 combination: ['Sunday Classes', 'Sunday Party'],
@@ -130,7 +130,7 @@ export const passes: Passes = {
 	'Saturday Pass': {
 		 cost: 95,
 		 studentCost: 90,
-		 isAvailable: true,
+		 isAvailable: false,
 		 saving: 25,
 		 studentSaving: 34,
 		 combination: ['Saturday Classes', 'Saturday Party'],
@@ -150,7 +150,7 @@ export const passes: Passes = {
 	'Class Pass': {
 		 cost: 130,
 		 studentCost: 125,
-		 isAvailable: true,
+		 isAvailable: false,
 		 saving: 45,
 		 studentSaving: 57.5,
 		 combination: ['Saturday Classes', 'Sunday Classes'],
