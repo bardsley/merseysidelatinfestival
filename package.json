@@ -47,7 +47,7 @@
     "formik": "^2.4.6",
     "install": "^0.13.0",
     "method-override": "^3.0.0",
-    "next": "^14.2.4",
+    "next": "14.2.35",
     "next-themes": "^0.3.0",
     "npm": "^10.8.2",
     "power-set": "^1.1.8",
