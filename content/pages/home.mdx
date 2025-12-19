@@ -5,6 +5,7 @@ blocks:
     headline: This Big Text is Totally Awesome
     text: |
       Example of site editor for demo
+    text2: ''
     actions:
       - label: Action Label
         type: button
@@ -16,6 +17,14 @@ blocks:
         link: /
     color: primary
     _template: hero
+  - body: |
+      <BuyButton
+        buttonid="buy_btn_1PX2eZEWkmdeWsQPvSMRezVD"
+        description={<>
+          Bit buy button
+        </>}
+      />
+    _template: content
   - items:
       - icon:
           name: BiCarousel
