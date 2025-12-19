@@ -27,7 +27,7 @@ export const individualTickets: IndividualTickets = {
 		 Dinner:{
 			 cost: 42.5,
 			 studentCost: 38.5,
-			 isAvailable: false,
+			 isAvailable: true,
 			 priceId: livePricing ? 'price_1SA5CEEWkmdeWsQPLONDwmTP' : 'price_1S8NWKEWkmdeWsQPjgIk1X85',
 			 studentPriceId: livePricing ? 'price_1SA5CEEWkmdeWsQPoMaapniD' : 'price_1S8NWtEWkmdeWsQPxpWyfHfT'
 			 },
