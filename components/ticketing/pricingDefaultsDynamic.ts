@@ -100,7 +100,7 @@ export const passes: Passes = {
 	'Party Pass': {
 		 cost: 60,
 		 studentCost: 55,
-		 isAvailable: false,
+		 isAvailable: true,
 		 saving: 20,
 		 studentSaving: 30,
 		 combination: ['Friday Party', 'Saturday Party', 'Sunday Party'],
@@ -110,7 +110,7 @@ export const passes: Passes = {
 	'Sunday Pass': {
 		 cost: 90,
 		 studentCost: 85,
-		 isAvailable: false,
+		 isAvailable: true,
 		 saving: 25,
 		 studentSaving: 30,
 		 combination: ['Sunday Classes', 'Sunday Party'],
@@ -120,7 +120,7 @@ export const passes: Passes = {
 	'Dine and Dance Pass': {
 		 cost: 65,
 		 studentCost: 58,
-		 isAvailable: false,
+		 isAvailable: true,
 		 saving: 7.5,
 		 studentSaving: 14.50,
 		 combination: ['Saturday Dinner', 'Saturday Party'],
@@ -130,7 +130,7 @@ export const passes: Passes = {
 	'Saturday Pass': {
 		 cost: 95,
 		 studentCost: 90,
-		 isAvailable: false,
+		 isAvailable: true,
 		 saving: 25,
 		 studentSaving: 34,
 		 combination: ['Saturday Classes', 'Saturday Party'],
@@ -150,7 +150,7 @@ export const passes: Passes = {
 	'Class Pass': {
 		 cost: 130,
 		 studentCost: 125,
-		 isAvailable: false,
+		 isAvailable: true,
 		 saving: 45,
 		 studentSaving: 57.5,
 		 combination: ['Saturday Classes', 'Sunday Classes'],
@@ -160,7 +160,7 @@ export const passes: Passes = {
 	'2025 Full Pass': {
 			cost: 160,
 			studentCost: 140,
-			isAvailable: false,
+			isAvailable: true,
 			saving: 95,
 			studentSaving: 115,
 			combination: ['Friday Party', 'Saturday Classes', 'Saturday Party', 'Sunday Classes', 'Sunday Party'],
@@ -170,7 +170,7 @@ export const passes: Passes = {
 	'2025 Full Pass (with dinner)': {
 			cost: 180,
 			studentCost: 160,
-			isAvailable: false,
+			isAvailable: true,
 			saving: 117.5,
 			studentSaving: 137.5,
 			combination: ['Friday Party', 'Saturday Classes', 'Saturday Party',  'Saturday Dinner', 'Sunday Classes', 'Sunday Party'],
