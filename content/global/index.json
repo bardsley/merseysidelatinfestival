@@ -25,7 +25,7 @@
       {
         "href": "artists",
         "label": "Artists",
-        "visible": false
+        "visible": true
       },
       {
         "href": "tickets",
