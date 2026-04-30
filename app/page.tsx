@@ -2,9 +2,20 @@ import React from "react";
 import client from "@tina/__generated__/client";
 import ClientPage from "./[...filename]/client-page";
 import Layout from "@components/layout/layout";
+import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
 import { unstable_noStore as noStore } from "next/cache";
 
+export async function generateMetadata(): Promise<Metadata> {
+  noStore();
+  const data = await client.queries.page({
+    relativePath: `home.mdx`,
+  });
+
+  return {
+    title: data.data.page.title,
+  };
+}
 
 export default async function Page() {
   noStore();
