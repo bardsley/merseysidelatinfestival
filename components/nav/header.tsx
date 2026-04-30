@@ -42,7 +42,7 @@ export default function Header({header, theme}:any) {
               className="flex gap-1 items-center whitespace-nowrap tracking-[.002em]"
               
             >
-              <Logo className="w-24 h-24" />
+              <Logo className="w-16 h-16 mt-4" />
               {" "}
               <span data-tina-field={tinaField(header, "name")} className="ml-2 hidden xs:inline">
                 

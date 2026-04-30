@@ -4,7 +4,7 @@
       "color": "yellow",
       "style": "float"
     },
-    "name": "Merseyside Latin Festival ",
+    "name": "Dance Engine Demo ",
     "color": "primary",
     "nav": [
       {
@@ -47,10 +47,10 @@
   "footer": {
     "color": "primary",
     "social": {
-      "facebook": "/https://www.facebook.com/profile.php?id=100091289556414",
+      "facebook": "",
       "twitter": "",
-      "instagram": "https://www.instagram.com/merseysidelatinfestival/",
-      "youtube": "https://www.youtube.com/@SalsaLiverpool"
+      "instagram": "https://www.instagram.com/danceengine/",
+      "youtube": ""
     }
   },
   "theme": {
