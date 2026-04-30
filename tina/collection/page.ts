@@ -22,9 +22,7 @@ const Page: Collection = {
       // Example of using a custom slugify function
       slugify: (values) => {
         // Values is an object containing all the values of the form. In this case it is {title?: string, topic?: string}
-        return `${values?.title
-          ?.toLowerCase()
-          .replace(/ /g, '-')}`
+        return `${values?.title?.toLowerCase().replace(/ /g, '-') ?? ''}`
       },
     },
   },
