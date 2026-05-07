@@ -89,7 +89,7 @@ export default function CheckoutClient() {
             Name: {userData.name} <br/>
             Email: {userData.email}<br/>
             Phone: {userData.phone}<br/>
-            <button className="mt-3 border px-6 py-1 border-white rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chillired-500 focus-visible:shadow-[0_0_8px_2px_theme(colors.chillired.500)]" onClick={() => setSteps({...steps,details:false})}>Edit</button>
+            <button className="mt-3 border px-6 py-1 border-white rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chillired-400 focus-visible:shadow-[0_0_8px_2px_theme(colors.chillired.400)]" onClick={() => setSteps({...steps,details:false})}>Edit</button>
           </>) :
           (<form autoComplete="on" onSubmit={(e) => e.preventDefault()}>
             <p className="text-sm">These ones should be relatively easy to fill out</p>
@@ -129,7 +129,7 @@ export default function CheckoutClient() {
               )
             })}
 
-            <button type="button" className="bg-chillired-400 px-6 py-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chillired-500 focus-visible:shadow-[0_0_8px_2px_theme(colors.chillired.500)]" onClick={() => nextStep('details')}>Continue</button>
+            <button type="button" className="bg-chillired-400 px-6 py-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chillired-400 focus-visible:shadow-[0_0_8px_2px_theme(colors.chillired.400)]" onClick={() => nextStep('details')}>Continue</button>
           </form>)
       }
     </Container>
@@ -143,8 +143,8 @@ export default function CheckoutClient() {
       {/* <p className="text-sm">If you don&apos;t know the answer to some of these things you can always update preferences later</p> */}
       <p className="text-sm">Food preferences will be available to select closer to the event. We will email you at the above email</p>
       <MealPreferences preferences={preferences} setPreferences={setPreferences}></MealPreferences>
-      <button className="bg-chillired-400 px-6 py-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chillired-500 focus-visible:shadow-[0_0_8px_2px_theme(colors.chillired.500)]" onClick={() => nextStep("meal")}>Continue</button>
-      </> : steps.meal ? (<><p>Meal details entered</p><button className="mt-3 border px-6 py-1 border-white rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chillired-500 focus-visible:shadow-[0_0_8px_2px_theme(colors.chillired.500)]" onClick={() => setSteps({...steps,meal:false})}>Edit</button></>) : "Complete attendee details first " }
+      <button className="bg-chillired-400 px-6 py-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chillired-400 focus-visible:shadow-[0_0_8px_2px_theme(colors.chillired.400)]" onClick={() => nextStep("meal")}>Continue</button>
+      </> : steps.meal ? (<><p>Meal details entered</p><button className="mt-3 border px-6 py-1 border-white rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chillired-400 focus-visible:shadow-[0_0_8px_2px_theme(colors.chillired.400)]" onClick={() => setSteps({...steps,meal:false})}>Edit</button></>) : "Complete attendee details first " }
        </>
     </Container>) : null }
     
