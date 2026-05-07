@@ -54,30 +54,7 @@ export const individualTickets: IndividualTickets = {
 			 priceId: livePricing ? '' : 'price_1TUP2gEWkmdeWsQPYZDU4CMT',
 			 studentPriceId: livePricing ? '' : 'price_1TUP2gEWkmdeWsQPtSu0fxMs'
 			 },
-		},	
-	// NextYear: { 
-	// 		Classes:{
-	// 			cost: 160,
-	// 			studentCost: 140,
-	// 			isAvailable: true,
-	// 			priceId: 'price_1QQZRwEWkmdeWsQPWxGquzLc',
-	// 			studentPriceId: 'price_1QQZRwEWkmdeWsQPWxGquzLc'
-	// 			},
-	// 		Dinner:{
-	// 			cost: 42.5,
-	// 			studentCost: 38.5,
-	// 			isAvailable: true,
-	// 			priceId: 'price_1PwoQbEWkmdeWsQPz0vieQFz',
-	// 			studentPriceId: 'price_1PwoQrEWkmdeWsQPx6rcHJ8V'
-	// 			},				
-	// 		Party:{
-	// 			cost: 95,
-	// 			studentCost: 85,
-	// 			isAvailable: true,
-	// 			priceId: 'price_1QQZQREWkmdeWsQPz19neUCd',
-	// 			studentPriceId: 'price_1QQZQeEWkmdeWsQPcysRqX8g'
-	// 			},
-	// 	   },			
+		},
  }
 
 export const initialSelectedOptions = {

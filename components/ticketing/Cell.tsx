@@ -35,9 +35,8 @@ const Cell: React.FC<ICellProps> = (props: ICellProps) => {
           <Switch
             disabled={props.locked}
             checked={isSelected}
-            onClick={() => onSelect(setValue.one,setValue.two)}
-            // onChange={onSelect(day,passType)}
-            className={`${checkBoxCss} ${props.locked ? 'cursor-not-allowed': 'cursor-pointer'} group relative inline-flex h-6 w-11 flex-shrink-0  rounded-full border-2 border-transparent  transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-chillired-600 focus:ring-offset-2 order-2 sm:order-1`}
+            onChange={() => onSelect(setValue.one,setValue.two)}
+            className={`${checkBoxCss} ${props.locked ? 'cursor-not-allowed': 'cursor-pointer'} group relative inline-flex h-6 w-11 flex-shrink-0  rounded-full border-2 border-transparent  transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-chillired-500 focus:shadow-[0_0_8px_2px_theme(colors.chillired.500)] order-2 sm:order-1`}
           >
             <span
             aria-hidden="true"

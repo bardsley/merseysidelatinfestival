@@ -79,7 +79,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
     const { pending } = useFormStatus();
     return (
       <button type="submit" disabled={pending} 
-        className='bg-chillired-400 text-white rounded-lg py-6 px-12 hover:bg-chillired-700 text-nowrap w-full max-w-72 md:w-auto'>
+        className='bg-chillired-400 text-white rounded-lg py-6 px-12 hover:bg-chillired-700 text-nowrap w-full max-w-72 md:w-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chillired-500 focus-visible:shadow-[0_0_8px_2px_theme(colors.chillired.500)]'>
         {pending ? "Checking Out..." : "Buy Now"}
       </button>
 
