@@ -4,7 +4,7 @@
 import {IndividualTickets, Passes } from './pricingTypes'
 
 export const singleDiscountValid = /^(?!.*\b(Dinner|Pass)\b).*$/
-export const livePricing = !(process.env.NODE_ENV == 'development')
+export const livePricing = process.env.NODE_ENV === 'production' && process.env.VERCEL_ENV !== 'preview' && process.env.VERCEL_ENV !== 'development'
 
 export const individualTickets: IndividualTickets = { 
 	Friday: { 
