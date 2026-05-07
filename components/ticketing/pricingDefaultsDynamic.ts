@@ -12,8 +12,8 @@ export const individualTickets: IndividualTickets = {
 			 cost: 25,
 			 studentCost: 19,
 			 isAvailable: true,
-			 priceId: livePricing ? 'price_1SA5C0EWkmdeWsQPO0iweBmR' : 'price_1S8N52EWkmdeWsQPLHpxmiLC',
-			 studentPriceId: livePricing ? 'price_1SA5BzEWkmdeWsQPGF7ceEoN' : 'price_1S8N52EWkmdeWsQPMAvkhrCT'
+			 priceId: livePricing ? '' : 'price_1TUOuEEWkmdeWsQPzO3YshAj',
+			 studentPriceId: livePricing ? '' : 'price_1TUOuZEWkmdeWsQPRZBEeYng'
 			 },
 		},
 	Saturday: { 
@@ -21,22 +21,22 @@ export const individualTickets: IndividualTickets = {
 			 cost: 30,
 			 studentCost: 24,
 			 isAvailable: true,
-			 priceId: livePricing ? 'price_1SA5C5EWkmdeWsQPaYBcXl9F' : 'price_1S8N74EWkmdeWsQPyaIeRNnd',
-			 studentPriceId: livePricing ? 'price_1SA5C5EWkmdeWsQPr5hY2azI' : 'price_1S8N74EWkmdeWsQPkoN3pUMS'
+			 priceId: livePricing ? '' : 'price_1TUOw4EWkmdeWsQPCSybBkY0',
+			 studentPriceId: livePricing ? '' : 'price_1TUOw4EWkmdeWsQP4BgU0in7'
 			 },
 		 Dinner:{
 			 cost: 42.5,
 			 studentCost: 38.5,
 			 isAvailable: true,
-			 priceId: livePricing ? 'price_1SA5CEEWkmdeWsQPLONDwmTP' : 'price_1S8NWKEWkmdeWsQPjgIk1X85',
-			 studentPriceId: livePricing ? 'price_1SA5CEEWkmdeWsQPoMaapniD' : 'price_1S8NWtEWkmdeWsQPxpWyfHfT'
+			 priceId: livePricing ? '' : 'price_1TUOxdEWkmdeWsQPhQN2T8Ew',
+			 studentPriceId: livePricing ? '' : 'price_1TUOxdEWkmdeWsQPoLT3QgjM'
 			 },
 		 Classes:{
 			 cost: 90,
 			 studentCost: 75,
 			 isAvailable: true,
-			 priceId: livePricing ? 'price_1SA5CAEWkmdeWsQPj0XI3FK2' : 'price_1S8NSIEWkmdeWsQPI9IKOn2t',
-			 studentPriceId: livePricing ? 'price_1SA5CAEWkmdeWsQPnSmS6nnN' : 'price_1S8NSnEWkmdeWsQP5TjZFrK2'
+			 priceId: livePricing ? '' : 'price_1TUOzAEWkmdeWsQPmGYyS90N',
+			 studentPriceId: livePricing ? '' : 'price_1TUOzAEWkmdeWsQPUEtXJYVK'
 			 },
 		},
 	Sunday: { 
@@ -44,15 +44,15 @@ export const individualTickets: IndividualTickets = {
 			 cost: 85,
 			 studentCost: 70,
 			 isAvailable: true,
-			 priceId: livePricing ? 'price_1SA5CCEWkmdeWsQPTMcJmdgM' : 'price_1S8NU1EWkmdeWsQPbIUHQ8xW',
-			 studentPriceId: livePricing ? 'price_1SA5CCEWkmdeWsQP6mJMZPz3' : 'price_1S8NUXEWkmdeWsQPQ7IKGm04'
+			 priceId: livePricing ? '' : 'price_1TUP0iEWkmdeWsQPJ6pKxafx',
+			 studentPriceId: livePricing ? '' : 'price_1TUP0iEWkmdeWsQPGcqUbBa8'
 			 },
 		 Party:{
 			 cost: 25,
 			 studentCost: 20,
 			 isAvailable: true,
-			 priceId: livePricing ? 'price_1SA5C7EWkmdeWsQP11NfW0jC' : 'price_1S8NAKEWkmdeWsQPIvqBiYnf',
-			 studentPriceId: livePricing ? 'price_1SA5C7EWkmdeWsQPUkP6uaZp' : 'price_1S8NAKEWkmdeWsQPIvqBiYnf'
+			 priceId: livePricing ? '' : 'price_1TUP2gEWkmdeWsQPYZDU4CMT',
+			 studentPriceId: livePricing ? '' : 'price_1TUP2gEWkmdeWsQPtSu0fxMs'
 			 },
 		},	
 	// NextYear: { 
@@ -100,84 +100,70 @@ export const passes: Passes = {
 	'Party Pass': {
 		 cost: 60,
 		 studentCost: 55,
-		 isAvailable: false,
+		 isAvailable: true,
 		 saving: 20,
 		 studentSaving: 30,
 		 combination: ['Friday Party', 'Saturday Party', 'Sunday Party'],
 		 description: "Party away every single night, the ultimate party weekend",
-		 priceId: livePricing ? 'price_1SA5CQEWkmdeWsQPAJST71nr' : 'price_1S8O2TEWkmdeWsQPPGWnMeKF',
-		 studentPriceId: livePricing ? 'price_1SA5CQEWkmdeWsQPkydzgTb7' : 'price_1S8O4WEWkmdeWsQP4I4EYd1y'},
+		 priceId: livePricing ? '' : 'price_1TUOrrEWkmdeWsQPOM7J6lcf',
+		 studentPriceId: livePricing ? '' : 'price_1TUOsFEWkmdeWsQPlgX30fnz'},
+
 	'Sunday Pass': {
 		 cost: 90,
 		 studentCost: 85,
-		 isAvailable: false,
+		 isAvailable: true,
 		 saving: 25,
 		 studentSaving: 30,
 		 combination: ['Sunday Classes', 'Sunday Party'],
 		 description: "The whole Sunday experience",
-		 priceId: livePricing ? 'price_1SA5CKEWkmdeWsQPHD4lYXLJ' : 'price_1S8Nx1EWkmdeWsQPUYLzUn2A',
-		 studentPriceId: livePricing ? 'price_1SA5CJEWkmdeWsQPIj7wkQ3Y' : 'price_1S8NxDEWkmdeWsQPcLk97Dqm'},
+		 priceId: livePricing ? '' : 'price_1TUOpzEWkmdeWsQP98nxi7er',
+		 studentPriceId: livePricing ? '' : 'price_1TUOqGEWkmdeWsQPOeafIVxm'},
+
 	'Dine and Dance Pass': {
 		 cost: 65,
-		 studentCost: 58,
-		 isAvailable: false,
+		 studentCost: 55,
+		 isAvailable: true,
 		 saving: 7.5,
-		 studentSaving: 14.50,
+		 studentSaving: 17.5,
 		 combination: ['Saturday Dinner', 'Saturday Party'],
-		 description: "Saturday evening is covered including the gala dinner",
-		 priceId: livePricing ? 'price_1SA5CMEWkmdeWsQPyoVpDABM' : 'price_1S8O0OEWkmdeWsQP6lccQHK1',
-		 studentPriceId: livePricing ? 'price_1SA5CMEWkmdeWsQPuQ2PuYU4' : 'price_1S8O3LEWkmdeWsQPepywj2e2'},
+		 description: "Saturday evening is covered including the gala buffet dinner",
+		 priceId: livePricing ? '' : 'price_1TUOmaEWkmdeWsQP1hG3X8NY',
+		 studentPriceId: livePricing ? '' : 'price_1TUOnJEWkmdeWsQPLWIwAOVX'},
+
 	'Saturday Pass': {
 		 cost: 95,
 		 studentCost: 90,
-		 isAvailable: false,
+		 isAvailable: true,
 		 saving: 25,
-		 studentSaving: 34,
+		 studentSaving: 30,
 		 combination: ['Saturday Classes', 'Saturday Party'],
 		 description: "The entire Saturday dancing experience",
-		 priceId: livePricing ? 'price_1SA5CHEWkmdeWsQPsea9zmWZ' : 'price_1S8NpgEWkmdeWsQPYctgJJJb',
-		 studentPriceId: livePricing ? 'price_1SA5CHEWkmdeWsQP9wK9h169' : 'price_1S8NwAEWkmdeWsQPEMsgiBff'},
-	'Full Pass': {
-		 cost: 140,
+		 priceId: livePricing ? '' : 'price_1TUOafEWkmdeWsQP8FQzVaov',
+		 studentPriceId: livePricing ? '' : 'price_1TUOazEWkmdeWsQPFwWycU6o'},
+
+	'Saturday Pass with Gala Buffet': {
+		 cost: 130,
 		 studentCost: 125,
-		 isAvailable: false,
-		 saving: 87.5,
-		 studentSaving: 95.5,
-		 combination: ['Friday Party', 'Saturday Classes', 'Saturday Party', 'Sunday Classes', 'Sunday Party'],
-		 description: "All the dancing the festival has at the best rate! If you're looking for the best deal this is it",
-		 priceId: livePricing ? '' : 'price_1QQZIXEWkmdeWsQP14qtK7nR',
-		 studentPriceId: livePricing ? '' : 'price_1QQZJlEWkmdeWsQPjZKrpTxx'},
+		 isAvailable: true,
+		 saving: 32.50,
+		 studentSaving: 37.50,
+		 combination: ['Saturday Classes', 'Saturday Dinner', 'Saturday Party'],
+		 description: "The entire Saturday dancing experience including the gala buffet dinner",
+		 priceId: livePricing ? '' : 'price_1TUOdREWkmdeWsQPRlPe1G9R',
+		 studentPriceId: livePricing ? '' : 'price_1TUOdjEWkmdeWsQPX2PPkdh4'},
+
 	'Class Pass': {
 		 cost: 130,
 		 studentCost: 125,
-		 isAvailable: false,
+		 isAvailable: true,
 		 saving: 45,
-		 studentSaving: 57.5,
+		 studentSaving: 50,
 		 combination: ['Saturday Classes', 'Sunday Classes'],
 		 description: "All the daytime classes for the weekend",
-		 priceId: livePricing ? 'price_1SA5COEWkmdeWsQP29ztwPfV' : 'price_1S8O1jEWkmdeWsQPWIp5OKOu',
-		 studentPriceId: livePricing ? 'price_1SA5COEWkmdeWsQPy8MXPhJ0' : 'price_1S8O4FEWkmdeWsQPxU0tVzXA'},
-	'2025 Full Pass': {
-			cost: 160,
-			studentCost: 140,
-			isAvailable: false,
-			saving: 95,
-			studentSaving: 115,
-			combination: ['Friday Party', 'Saturday Classes', 'Saturday Party', 'Sunday Classes', 'Sunday Party'],
-			description: "The full experience in 2025 (this pass does not include gala dinner)",
-			priceId: livePricing ? 'price_1QQneIEWkmdeWsQPJhsLrRof' : 'price_1S8Nj2EWkmdeWsQPobswkzuJ',
-			studentPriceId: livePricing ? 'price_1QQnjjEWkmdeWsQPgurnBDwI' : 'price_1S8NjNEWkmdeWsQPkk1GiRMe'},
-	'2025 Full Pass (with dinner)': {
-			cost: 180,
-			studentCost: 160,
-			isAvailable: false,
-			saving: 117.5,
-			studentSaving: 137.5,
-			combination: ['Friday Party', 'Saturday Classes', 'Saturday Party',  'Saturday Dinner', 'Sunday Classes', 'Sunday Party'],
-			description: "The full experience in 2025 (this pass does include gala dinner)",
-			priceId: livePricing ? 'price_1QQnfhEWkmdeWsQPVwOq7u4Q' : 'price_1S8Np9EWkmdeWsQPrJQMdpkz',
-			studentPriceId: livePricing ? 'price_1QQnm6EWkmdeWsQPuyYqgEWo' :  'price_1S8NpgEWkmdeWsQPYctgJJJb'},
-	'2026 Early Bird Full Pass': {
+		 priceId: livePricing ? 'price_1TUOXxEWkmdeWsQPRgjS4RDy' : 'price_1TUOBpEWkmdeWsQPOWSD8Gyw',
+		 studentPriceId: livePricing ? 'price_1TUOXxEWkmdeWsQPtKLCRVpr' : 'price_1TUOCFEWkmdeWsQPAeKTDUkS'},
+
+	'2026 Full Pass': {
 			cost: 160,
 			studentCost: 140,
 			isAvailable: true,
@@ -185,8 +171,19 @@ export const passes: Passes = {
 			studentSaving: 115,
 			combination: ['Friday Party', 'Saturday Classes', 'Saturday Party', 'Sunday Classes', 'Sunday Party'],
 			description: "The full experience in 2026 (this pass does not include gala dinner an upgrade will be available)",
-			priceId: livePricing ? 'price_1SZBEKEWkmdeWsQP5pSnS41H' : 'price_1S8Np9EWkmdeWsQPrJQMdpkz',
-			studentPriceId: livePricing ? 'price_1SZBGyEWkmdeWsQPdAlpQhfI' :  'price_1S8NpgEWkmdeWsQPYctgJJJb'},
+			priceId: livePricing ? 'price_1SZBEKEWkmdeWsQP5pSnS41H' : 'price_1TUO87EWkmdeWsQPrPP6OQ6w',
+			studentPriceId: livePricing ? 'price_1SZBGyEWkmdeWsQPdAlpQhfI' :  'price_1TUO8MEWkmdeWsQPjl50dIux'},
+
+		'2026 Full Pass with Gala Buffet': {
+			cost: 195,
+			studentCost: 175,
+			isAvailable: true,
+			saving: 95,
+			studentSaving: 115,
+			combination: ['Friday Party', 'Saturday Classes', 'Saturday Dinner',  'Saturday Party', 'Sunday Classes', 'Sunday Party'],
+			description: "The full experience in 2026 (this pass includes gala buffet dinner)",
+			priceId: livePricing ? 'price_1TUNj1EWkmdeWsQPseHa3JX5' : 'price_1TUO3hEWkmdeWsQPpcplwPm6',
+			studentPriceId: livePricing ? 'price_1TUNjMEWkmdeWsQPtwVFrEuL' :  'price_1TUO3vEWkmdeWsQPk2TMBqWd'},
 }
 
 export const fullPassName = Object.keys(passes).at(6)
