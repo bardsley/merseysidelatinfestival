@@ -10,7 +10,7 @@ import { singleDiscountValid } from '@components/ticketing/pricingDefaultsDynami
 
 import StripeForm from "./stripe"
 
-type fieldEntry = {name: string, label?: string, placeholder?: string, type?: string, value?: string | number, error?: string, width?: string  }
+type fieldEntry = {name: string, label?: string, placeholder?: string, type?: string, value?: string | number, error?: string, width?: string, autoComplete?: string  }
 
 export default function CheckoutClient() {
   const [preferences, setPreferences] = useState(blankPreferences)
@@ -22,9 +22,9 @@ export default function CheckoutClient() {
   const [bestCombo,setBestCombo] = useState({price:0, options: []})
 
   const yourDetailsFields: fieldEntry[] = [
-    {name: 'name', placeholder: "Johnn Salsa", width: "w-80", label: "Full Name"},
-    {name: 'email', placeholder: "johnny@salsa.com", type: "email", width: "w-96"},
-    {name: 'phone', placeholder: "0770912781367", width: "w-96"},
+    {name: 'name', placeholder: "Johnn Salsa", width: "w-80", label: "Full Name", autoComplete: 'name'},
+    {name: 'email', placeholder: "johnny@salsa.com", type: "email", width: "w-96", autoComplete: 'email'},
+    {name: 'phone', placeholder: "0770912781367", type: "tel", width: "w-96", autoComplete: 'tel'},
     {name: 'number_of_tickets', value: 1, type: "hidden"},
   ]
 
@@ -89,9 +89,9 @@ export default function CheckoutClient() {
             Name: {userData.name} <br/>
             Email: {userData.email}<br/>
             Phone: {userData.phone}<br/>
-            <button className="mt-3 border px-6 py-1 border-white rounded-md" onClick={() => setSteps({...steps,details:false})}>Edit</button>
+            <button className="mt-3 border px-6 py-1 border-white rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chillired-400 focus-visible:shadow-[0_0_8px_2px_theme(colors.chillired.400)]" onClick={() => setSteps({...steps,details:false})}>Edit</button>
           </>) :
-          (<>
+          (<form autoComplete="on" onSubmit={(e) => e.preventDefault()}>
             <p className="text-sm">These ones should be relatively easy to fill out</p>
           
             {yourDetailsFields.map((field) => {
@@ -110,6 +110,7 @@ export default function CheckoutClient() {
                       id={field.name}
                       name={field.name}
                       type={field.type || "text"}
+                      autoComplete={field.autoComplete}
                       placeholder={field.placeholder || null}
                       defaultValue={userData[field.name] || null}
                       aria-invalid="true"
@@ -128,8 +129,8 @@ export default function CheckoutClient() {
               )
             })}
 
-            <button className="bg-chillired-400 px-6 py-2 rounded" onClick={() => nextStep('details')}>Continue</button>
-          </>)
+            <button type="button" className="bg-chillired-400 px-6 py-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chillired-400 focus-visible:shadow-[0_0_8px_2px_theme(colors.chillired.400)]" onClick={() => nextStep('details')}>Continue</button>
+          </form>)
       }
     </Container>
     {dinnerInfoRequired ? (
@@ -142,8 +143,8 @@ export default function CheckoutClient() {
       {/* <p className="text-sm">If you don&apos;t know the answer to some of these things you can always update preferences later</p> */}
       <p className="text-sm">Food preferences will be available to select closer to the event. We will email you at the above email</p>
       <MealPreferences preferences={preferences} setPreferences={setPreferences}></MealPreferences>
-      <button className="bg-chillired-400 px-6 py-2 rounded" onClick={() => nextStep("meal")}>Continue</button>
-      </> : steps.meal ? (<><p>Meal details entered</p><button className="mt-3 border px-6 py-1 border-white rounded-md" onClick={() => setSteps({...steps,meal:false})}>Edit</button></>) : "Complete attendee details first " }
+      <button className="bg-chillired-400 px-6 py-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chillired-400 focus-visible:shadow-[0_0_8px_2px_theme(colors.chillired.400)]" onClick={() => nextStep("meal")}>Continue</button>
+      </> : steps.meal ? (<><p>Meal details entered</p><button className="mt-3 border px-6 py-1 border-white rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chillired-400 focus-visible:shadow-[0_0_8px_2px_theme(colors.chillired.400)]" onClick={() => setSteps({...steps,meal:false})}>Edit</button></>) : "Complete attendee details first " }
        </>
     </Container>) : null }
     

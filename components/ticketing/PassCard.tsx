@@ -8,16 +8,30 @@ export const PassCard = ({passName, clickFunction, pass, priceModel, hasASaving,
   const passPadding = basic ? 'p-4 md:p-4' : 'p-6 md:p-10'
   const baseTextSize = basic ? 'text-sm md:text-sm' : 'text-xl md:text-base'
   const priceTextSize = basic ? 'text-sm md:text-sm leading-7' : 'text-4xl md:text-4xl'
+  const isDisabled = locked || included
   const hoverClasses = locked ? 'hover:border-richblack-500 cursor-not-allowed' : 
     selected ? "border-white cursor-pointer" : 
     included ? 'hover:border-richblack-500 cursor-not-allowed' : 'hover:border-white cursor-pointer'
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (isDisabled) return
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      clickFunction()
+    }
+  }
   return (
     <div
-      onClick={locked ? ()=>{console.log('locked')} : clickFunction}
+      onClick={isDisabled ? undefined : clickFunction}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={isDisabled ? -1 : 0}
+      aria-pressed={selected}
+      aria-disabled={isDisabled}
+      aria-label={`${passName}, £${pass[priceModel]}${selected ? ', currently selected' : ''}${isDisabled ? ', unavailable' : ''}`}
       key={passName}
       title={passName}
       className={`relative flex flex-col justify-between rounded-3xl bg-richblack-600 ${passPadding} shadow-xl 
-      ring-1 ring-gray-900/10  text-white border border-richblack-500 ${hoverClasses} ${cardWidthClasses}`}
+      ring-1 ring-gray-900/10  text-white border border-richblack-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white ${hoverClasses} ${cardWidthClasses}`}
     >
       <div className={`grid grid-cols-3 gap-2 md:flex flex-wrap md:flex-nowrap md:justify-between h-full w-full ${cardWidthClasses}`}>
 
