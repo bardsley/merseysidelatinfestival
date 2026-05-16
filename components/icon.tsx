@@ -65,8 +65,8 @@ const iconColorClass: {
     circle: "bg-white-400 dark:bg-white-500 text-white-50",
   },
   merseyside: {
-    regular: "text-richblack-500 dark:text-white",
-    circle: "bg-richblack-500 dark:bg-white text-white dark:text-richblack-500",
+    regular: "text-merseyblue-500 dark:text-white",
+    circle: "bg-merseyblue-500 dark:bg-white text-white dark:text-merseyblue-500",
   },
 };
 

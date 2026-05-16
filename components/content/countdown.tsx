@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Countdown from "react-countdown";
 
 const valueClasses = " text-2xl md:text-5xl font-bold";
-const containerClasses = "flex flex-wrap max-w-md gap-x-6 justify-center items-center border border-richblack-700  bg-richblack-500 p-6 rounded-xl mb-3";
+const containerClasses = "flex flex-wrap max-w-md gap-x-6 justify-center items-center border border-merseyblue-700  bg-merseyblue-500 p-6 rounded-xl mb-3";
 const headerClasses = "w-full text-center text-lg"
 
 const preEventRenderer = ({ days, hours, minutes, seconds, completed, props }) => {

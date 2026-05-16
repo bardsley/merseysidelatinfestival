@@ -91,7 +91,7 @@ export default function TimetableClientPage(props: ClientClassProps) {
           </h1>
           <span className="hidden md:block"></span>
           {locations.map((location)=>{
-            return <span className={`bg-richblack-700 p-4 col-span-2 hidden md:block text-center text-white text-sm lg:text-xl font-bold uppercase sticky top-0 border-b-4 border-b-richblack-500`} key={`${day}-${location}`}>{location}</span>
+            return <span className={`bg-richblack-700 p-4 col-span-2 hidden md:block text-center text-white text-sm lg:text-xl font-bold uppercase sticky top-0 border-b-4 border-b-merseyblue-500`} key={`${day}-${location}`}>{location}</span>
           })}
           {Object.keys(classesOrganised[day]).map((timeSlot) => {
             const fullWidth = classesOrganised[day][timeSlot]["all"]
@@ -122,8 +122,8 @@ export default function TimetableClientPage(props: ClientClassProps) {
                   >
                     { clasS?.artist1?.avatar || clasS?.artist2?.avatar ? 
                     <div className={`${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? ' h-28 sm:h-16 lg:h-24 lg:min-w-40 xl:min-w-42 ' : ' h-16 lg:h-24 lg:min-w-28 xl:min-w-42'} w-16 sm:w-28 relative flex flex-col`}>
-                      {clasS?.artist2?.avatar ? <Image className={`rounded-full border-3 border-richblack-500 ww-12 wh-12 sm:w-16 sm:h-16 lg:w-24 lg:h-24 ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? 'absolute sm:left-10 lg:left-16 sm:top-auto top-10' : ''}`} src={clasS.artist2.avatar} alt={clasS.artist2.name} width={250} height={250} /> : null }
-                      {clasS?.artist1?.avatar ? <Image className={`rounded-full border-3 border-richblack-500 ww-12 wh-12 sm:w-16 sm:h-16 lg:w-24 lg:h-24 ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? 'absolute sm:left--3 lg:left-0' : ''}`} src={clasS.artist1.avatar} alt={clasS.artist1.name} width={250} height={250} /> : null }
+                      {clasS?.artist2?.avatar ? <Image className={`rounded-full border-3 border-merseyblue-500 ww-12 wh-12 sm:w-16 sm:h-16 lg:w-24 lg:h-24 ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? 'absolute sm:left-10 lg:left-16 sm:top-auto top-10' : ''}`} src={clasS.artist2.avatar} alt={clasS.artist2.name} width={250} height={250} /> : null }
+                      {clasS?.artist1?.avatar ? <Image className={`rounded-full border-3 border-merseyblue-500 ww-12 wh-12 sm:w-16 sm:h-16 lg:w-24 lg:h-24 ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? 'absolute sm:left--3 lg:left-0' : ''}`} src={clasS.artist1.avatar} alt={clasS.artist1.name} width={250} height={250} /> : null }
                     </div>
 
                     : null }

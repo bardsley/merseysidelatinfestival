@@ -11,7 +11,7 @@ export const FilterLabel: React.FC<FilterLabelProps> = ({fieldname,addFilterFunc
   const [filtering, setFiltering] = useState(false)
   const currentInput = useRef(null)
   return filtering ? (
-    <input ref={currentInput} className="border-b border-t-0 bg-richblack-500 text-white w-full" type="text" placeholder={fieldname} size={10} autoFocus={true} 
+    <input ref={currentInput} className="border-b border-t-0 bg-merseyblue-500 text-white w-full" type="text" placeholder={fieldname} size={10} autoFocus={true} 
       onBlur={(evt) => {addFilterFunction({field: fieldname, value: evt.target.value}); setFiltering(false)}}
       onKeyUp={(evt) => {if (evt.key === 'Enter' && currentInput.current ) {setFiltering(false); addFilterFunction({field: fieldname, value: currentInput.current.value}) }}}
     />
