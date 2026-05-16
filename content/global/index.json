@@ -40,7 +40,7 @@
       {
         "href": "accomodation",
         "label": "Hotel",
-        "visible": false
+        "visible": true
       }
     ]
   },
