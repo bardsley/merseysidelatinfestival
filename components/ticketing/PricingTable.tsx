@@ -79,7 +79,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
     const { pending } = useFormStatus();
     return (
       <button type="submit" disabled={pending} 
-        className='bg-chillired-400 text-white rounded-lg py-6 px-12 hover:bg-chillired-700 text-nowrap w-full max-w-72 md:w-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chillired-500 focus-visible:shadow-[0_0_8px_2px_theme(colors.chillired.500)]'>
+        className='bg-merseyred-500 text-white rounded-lg py-6 px-12 hover:bg-merseyred-800 text-nowrap w-full max-w-72 md:w-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-merseyred-600 focus-visible:shadow-[0_0_8px_2px_theme(colors.merseyred.600)]'>
         {pending ? "Checking Out..." : "Buy Now"}
       </button>
 
@@ -94,7 +94,7 @@ const PricingTable = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Func
   
   const cellClasses = 'border border-gray-600 text-center py-2 px-3 md:py-2 md:px-4 ';
   const headerClasses = cellClasses.replaceAll('border-gray-600','border-chillired-400')
-  const toggleCellClasses = "bg-richblack-600 text-white " +  cellClasses 
+  const toggleCellClasses = "bg-merseyblue-900 text-white " +  cellClasses 
   const singleItemDiscount = packages.length == 1 && singleDiscountValid.test(packages[0])
 
   return (

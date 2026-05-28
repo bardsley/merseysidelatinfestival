@@ -120,7 +120,7 @@ export default function Hub() {
             actionIdx === actions.length - 3 ? 'lg:rounded-bl-lg' : '',
             actionIdx === actions.length - 2 ? 'sm:rounded-bl-lg lg:rounded-none' : '',
             actionIdx === actions.length - 1 ? 'rounded-bl-lg rounded-br-lg sm:rounded-bl-none' : '',
-            'group relative bg-richblack-500 p-6 focus-within:ring-2  focus-within:ring-inset focus-within:ring-chillired-500 border-b border-richblack-700 ',
+            'group relative bg-merseyblue-500 p-6 focus-within:ring-2  focus-within:ring-inset focus-within:ring-chillired-500 border-b border-richblack-700 ',
           )}
         >
           <div className='flex'>

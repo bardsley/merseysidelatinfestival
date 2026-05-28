@@ -69,7 +69,7 @@ export default function CheckoutClient() {
       </div>
       </Container>
 
-      <Container size="small" width="medium" className=" text-white w-full rounded-3xl border border-richblack-700 bg-richblack-500 py-6 transition-all	">
+      <Container size="small" width="medium" className=" text-white w-full rounded-3xl border border-richblack-700 bg-merseyblue-500 py-6 transition-all	">
         <h2 className="text-xl flex items-center -ml-14 ">
           <Icon data={{name: "BiCart", color: "purple", style: "circle", size: "medium"}} className="mr-2 border border-richblack-700"></Icon>
           {student ? "Student " : null}Passes selected
@@ -79,7 +79,7 @@ export default function CheckoutClient() {
         {/* {JSON.stringify(stripeProducts) } */}
       </Container>
 
-      <Container size="small" width="medium" className=" text-white w-full rounded-3xl border border-richblack-700 bg-richblack-500 py-6 transition-all	">
+      <Container size="small" width="medium" className=" text-white w-full rounded-3xl border border-richblack-700 bg-merseyblue-500 py-6 transition-all	">
       <h2 className="text-xl flex items-center -ml-14 ">
         <Icon data={{name: "BiUser", color: "blue", style: "circle", size: "medium"}} className="mr-2 border border-richblack-700"></Icon>
         Attendee details
@@ -134,7 +134,7 @@ export default function CheckoutClient() {
       }
     </Container>
     {dinnerInfoRequired ? (
-    <Container size="small" width="medium" className=" text-white w-full rounded-3xl border border-richblack-700 bg-richblack-500 pb-6">
+    <Container size="small" width="medium" className=" text-white w-full rounded-3xl border border-richblack-700 bg-merseyblue-500 pb-6">
       <><h2 className="text-xl flex items-center -ml-14 mt-6">
         <Icon data={{name: "BiBowlHot", color: "red", style: "circle", size: "medium"}} className="mr-2"></Icon>
         Dinner Preferences
@@ -148,7 +148,7 @@ export default function CheckoutClient() {
        </>
     </Container>) : null }
     
-    <Container size="small" width="medium" className=" text-white w-full rounded-3xl border border-richblack-700 bg-richblack-500 py-0 md:pt-6 pb-6 md:pb-16 px-3 md:px-0 flex flex-col ">
+    <Container size="small" width="medium" className=" text-white w-full rounded-3xl border border-richblack-700 bg-merseyblue-500 py-0 md:pt-6 pb-6 md:pb-16 px-3 md:px-0 flex flex-col ">
       <h2 className="text-xl flex items-center -ml-12 md:-ml-6">
       <Icon data={{name: "BiPound", color: "green", style: "circle", size: "medium"}} className="mr-2 border border-richblack-700"></Icon>
         Payment

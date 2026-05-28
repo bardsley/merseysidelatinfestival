@@ -38,7 +38,7 @@ const invertedButtonColorClasses = {
   yellow:
     "text-yellow-500 bg-white hover:bg-gray-50 bg-gradient-to-r from-gray-50 to-white hover:to-gray-100",
     merseyside: 
-    "text-white-800 bg-chillired-500 hover:bg-chillired-600 bg-gradient-to-r from-chillired-400 to-chillired-600 hover:from-chillired-400 hover:to-chillired-500",
+    "text-white-800 bg-merseyred-600 hover:bg-merseyred-700 bg-gradient-to-r from-merseyred-500 to-merseyred-700 hover:from-merseyred-500 hover:to-merseyred-600",
 };
 
 const linkButtonColorClasses = {

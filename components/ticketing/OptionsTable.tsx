@@ -7,7 +7,7 @@ export const OptionsTable = ({headerClasses, toggleCellClasses, cellClasses, sel
   return (
     <table className={`option-table w-full mx-auto max-w-4xl table-auto border-collapse border-b border-chillired-300 ${hidden ? 'hidden' : ''}`}>
       <thead>
-        <tr className='bg-chillired-300 text-white border-chillired-400'>
+        <tr className='bg-merseyred-600 text-white border-merseyred-900'>
           <th className={headerClasses}>
             
           </th>

@@ -40,7 +40,7 @@ export default function Footer() {
       purple: "text-white from-purple-500 to-purple-600",
       orange: "text-white from-orange-500 to-orange-600",
       yellow: "text-white from-yellow-500 to-yellow-600",
-      merseyside: "text-white from-chillired-300 to-chillired-500",
+      merseyside: "text-white from-merseyred-500 to-merseyred-800",
     },
   };
 

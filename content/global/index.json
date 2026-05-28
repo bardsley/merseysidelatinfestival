@@ -20,7 +20,7 @@
       {
         "href": "timetable",
         "label": "Timetable",
-        "visible": true
+        "visible": false
       },
       {
         "href": "artists",
@@ -40,7 +40,7 @@
       {
         "href": "accomodation",
         "label": "Hotel",
-        "visible": false
+        "visible": true
       }
     ]
   },

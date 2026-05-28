@@ -30,7 +30,7 @@ const Layout: FC<LayoutProps> = async (props) => {
       { propsWithDefaults.cleanLayout ? null : <Header header={globalData.global.header} theme={globalData.global.theme} /> }
       <main id="app"
         className={cn(
-          "font-sans flex-1 text-gray-800 bg-gradient-to-br from-richblack-500 to-richblack-600 flex flex-col"
+          "font-sans flex-1 text-gray-800 bg-gradient-to-br from-merseyblue-500 to-richblack-600 flex flex-col"
         )}
       >
         {props.children}

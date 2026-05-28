@@ -41,14 +41,14 @@ export default function AttendeeMealTable({ attendees, summaryLoading, summaryIs
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`px-2 py-1 text-sm ${currentPage === 1 ? 'bg-richblack-500 cursor-not-allowed' : 'bg-chillired-500'} text-white rounded-md mr-2`}>
+                className={`px-2 py-1 text-sm ${currentPage === 1 ? 'bg-merseyblue-500 cursor-not-allowed' : 'bg-chillired-500'} text-white rounded-md mr-2`}>
                 Previous
               </button>
               <span className="text-xs text-gray-500">Page {currentPage} of {totalPages}</span>
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`px-2 py-1 text-sm ${currentPage === totalPages ? 'bg-richblack-500 cursor-not-allowed' : 'bg-chillired-500'} text-white rounded-md ml-2`}>
+                className={`px-2 py-1 text-sm ${currentPage === totalPages ? 'bg-merseyblue-500 cursor-not-allowed' : 'bg-chillired-500'} text-white rounded-md ml-2`}>
                 Next
               </button>
             </div>
