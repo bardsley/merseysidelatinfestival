@@ -1,8 +1,12 @@
 
 # dependencies
 /node_modules
+/.pnpm-store/
 /.pnp
 .pnp.js
+
+# TypeScript incremental build cache
+/tsconfig.tsbuildinfo
 
 # testing
 /coverage
