@@ -36,7 +36,7 @@ export default function ArtistClientPage(props: ClientPostProps) {
     <div className="text-white grid grid-cols-2 md:grid-cols-3 gap-4 lg:grid-cols-4 max-w-5xl mx-auto my-6 w-full ">
       <h1 className="col-span-2 md:col-span-3 lg:col-span-4 text-5xl font-bold">Artists</h1>
       {data?.artistConnection.edges.filter(
-          (artist) => /^(?=2026).+/.test(artist.node._sys.relativePath)
+          (artist) => artist.node._sys.relativePath.startsWith("2026/")
         ).map((artistData,index) => {
         const artist = artistData.node;
         return (
@@ -47,7 +47,7 @@ export default function ArtistClientPage(props: ClientPostProps) {
             className="group block rounded-md relative aspect-square overflow-visible transition-colors duration-1500 ease-in-out text-white hover:text-gold-700"
           > 
           
-            <img src={artist.avatar} alt={artist.name}
+            <img src={artist.avatar || "/avatar.jpg"} alt={artist.name}
               className="block rounded-full aspect-square w-full scale-75 hover:scale-100 absolute
               object-cover m-0 bg-auto bg-center bg-no-repeat overflow-hidden
               shadow transition-all duration-500 ease-out delay-150 hover:shadow-lg hover:z-0 z-20 opacity-100" 
