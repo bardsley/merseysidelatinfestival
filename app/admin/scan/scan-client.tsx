@@ -1,5 +1,5 @@
 'use client'
-import { useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/nextjs";
 import { authUsage } from "@lib/authorise";
 import QrReader from "@components/admin/scan/QRReader"
 import { useEffect, useState } from "react"

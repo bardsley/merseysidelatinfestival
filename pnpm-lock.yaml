@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@clerk/backend':
+        specifier: 1.9.2
+        version: 1.9.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@clerk/nextjs':
         specifier: ^5.2.8
         version: 5.4.1(next@14.2.35(@babel/core@7.25.2)(@playwright/test@1.46.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -32,6 +35,9 @@ importers:
       '@tailwindcss/typography':
         specifier: ^0.5.8
         version: 0.5.15(tailwindcss@3.4.10)
+      '@tinacms/schema-tools':
+        specifier: 1.9.1
+        version: 1.9.1(react@18.3.1)(yup@1.7.0)
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.1
@@ -147,6 +153,9 @@ importers:
       '@types/node':
         specifier: ^20.14.4
         version: 20.16.4
+      '@types/papaparse':
+        specifier: ^5.5.2
+        version: 5.5.2
       '@types/react':
         specifier: ^18.3.3
         version: 18.3.5
@@ -2239,6 +2248,9 @@ packages:
 
   '@types/offscreencanvas@2019.7.3':
     resolution: {integrity: sha512-ieXiYmgSRXUDeOntE1InxjWyvEelZGP63M+cGuquuRLuIKKT1osnkXjxev9B7d1nXSug5vpunx+gNlbVxMlC9A==}
+
+  '@types/papaparse@5.5.2':
+    resolution: {integrity: sha512-gFnFp/JMzLHCwRf7tQHrNnfhN4eYBVYYI897CGX4MY1tzY9l2aLkVyx2IlKZ/SAqDbB3I1AOZW5gTMGGsqWliA==}
 
   '@types/prismjs@1.26.4':
     resolution: {integrity: sha512-rlAnzkW2sZOjbqZ743IHUhFcvzaGbqijwOu8QZnZCjfQzBqFE3s4lOTJEsxikImav9uzz/42I+O7YUs1mWgMlg==}
@@ -10308,6 +10320,10 @@ snapshots:
       undici-types: 6.19.6
 
   '@types/offscreencanvas@2019.7.3': {}
+
+  '@types/papaparse@5.5.2':
+    dependencies:
+      '@types/node': 20.16.4
 
   '@types/prismjs@1.26.4': {}
 
