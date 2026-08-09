@@ -39,6 +39,7 @@ export default function ArtistClientPage(props: ClientPostProps) {
           (artist) => artist.node._sys.relativePath.startsWith("2026/")
         ).map((artistData,index) => {
         const artist = artistData.node;
+        const artistPath = artistData.node._sys.relativePath
         return (
           
             <Link
@@ -71,6 +72,7 @@ export default function ArtistClientPage(props: ClientPostProps) {
                 </textPath>
               </text>
             </svg>
+            <p>{artistPath}{artistPath.startsWith("2026/") ? "Yes" : "No" }</p>
           </Link>
         
           
