@@ -7,7 +7,7 @@ import { unstable_noStore as noStore } from "next/cache";
 
 export default async function TimetablePage() {
   noStore();
-  const classes = await client.queries.classConnection({filter: { date: {after: "2025-01-01T07:00:00.000Z" }}, sort: 'date', first: 100});
+  const classes = await client.queries.classConnection({filter: { date: {after: "2026-01-01T07:00:00.000Z" }}, sort: 'date', first: 200});
   // const classes = classesRaw.data.classConnection.edges.sort((a,b) => { 
   //   const aTime = getUnixTime(parseISO(a.node.date))
   //   const bTime = getUnixTime(parseISO(b.node.date))
