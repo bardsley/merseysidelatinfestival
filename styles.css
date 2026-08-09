@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+.timetable-day-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 900px) {
+  .timetable-day-grid {
+    grid-template-columns: minmax(8rem, auto) repeat(var(--location-count), minmax(0, 1fr));
+  }
+
+  .timetable-session-full {
+    grid-column: 2 / -1;
+  }
+}
+
 /* Clerk Styles */
 .cl-userButtonBox {
   flex-direction: row-reverse;

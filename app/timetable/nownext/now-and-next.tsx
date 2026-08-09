@@ -5,6 +5,7 @@ import { Fragment } from "react";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
+import { locations as locationDefinitions } from "@tina/collection/options";
 export const timeToTimeSlot = (dateToConvert) => {
   return `${getUnixTime(parseISO(dateToConvert))}-${format(dateToConvert,"HHmm-EEE")}`
 }
@@ -45,7 +46,7 @@ const NowAndNext = ({classesUnordered,basic}) => {
         artist: current.artist1 ? { 
           name: current.artist1.name,
           avatar: current.artist1.avatar ? current.artist1.avatar : null,
-          url: `/artists/${current.artist1._sys.filename}`
+          url: `/artists/${current.artist1._sys.breadcrumbs.join("/")}`
         } : { name: null, avatar: null, url: '/artists'}
       }
       organised[timeSlot] = organised[timeSlot] ? organised[timeSlot] : {}
@@ -54,16 +55,17 @@ const NowAndNext = ({classesUnordered,basic}) => {
     return organised
   }, {})
 
-  const maxNumRooms = Object.keys(sessionsToDisplay).reduce((highest,slotName) => {
-    // console.log("SLOT",Object.keys(sessionsToDisplay[slotName]).length)
-    const length = Object.keys(sessionsToDisplay[slotName]).length
-    return length > highest ? length : highest
-  }, 0 )
-
-  const rooms = maxNumRooms == 3 
-    ? ["ballroom","derby","hypostyle"]
-    : maxNumRooms == 4 ? ["ballroom","derby","sefton","hypostyle"]
-      : ["ballroom","derby","sefton","hypostyle","terrace"]
+  const roomOrder = Object.keys(locationDefinitions).filter((location) => location !== "all")
+  const rooms = Array.from(new Set(
+    Object.values(sessionsToDisplay).flatMap((timeSlot) => Object.keys(timeSlot))
+  ))
+    .filter((location) => location !== "all")
+    .sort((a, b) => {
+      const aIndex = roomOrder.indexOf(a)
+      const bIndex = roomOrder.indexOf(b)
+      return (aIndex === -1 ? roomOrder.length : aIndex) - (bIndex === -1 ? roomOrder.length : bIndex)
+    })
+  const maxNumRooms = Math.max(rooms.length, 1)
 
 
   return <div className="grid grid-cols-[8vw_minmax(400px,_1fr)]">
@@ -87,7 +89,7 @@ const NowAndNext = ({classesUnordered,basic}) => {
         
         <div className={`border-t-[0.3vw] ${timeColor} font-bold`}><span className={`bg-yellow-400 px-[1vw] py-[0.5vw] text-[1.2vw] rounded-[0.6vw] relative -top-[1vw] text-black`}>{time}</span></div>
 
-        <div className={`grid ${roomsToCol(maxNumRooms)}`}>
+        <div className="grid" style={{gridTemplateColumns: `repeat(${maxNumRooms}, minmax(0, 1fr))`}}>
         {sessionsToDisplay[timeSlot]['all'] 
           ? <SingleTimeSlot session={sessionsToDisplay[timeSlot]['all']} numberOfSessions={maxNumRooms} />
           : rooms.map((roomName) => {
@@ -126,34 +128,17 @@ const TimeSlot = ({session,numberOfSessions,basic}) => {
 
 const SingleTimeSlot = ({session,numberOfSessions}) => {
   const fullWidthColor = session?.level == 'admin' ? 'text-white p-[1vw] bg-richblack-600 ' : 'text-black px-[1vw] py-[1vw] flex justify-center'
-  return <div className={`${roomsToSpan(numberOfSessions)} text-[1.4vw] border-t-[0.3vw] ${timeColor} ${fullWidthColor}`}>
+  return <div className={`text-[1.4vw] border-t-[0.3vw] ${timeColor} ${fullWidthColor}`} style={{gridColumn: "1 / -1"}}>
     <h1 className="text-[1.8vw] font-bold">{session?.title}</h1>
     <TinaMarkdown content={session?.details}/>
   </div> 
 }
 
 const RoomHeaders = ({rooms,day,numberOfSessions}) => {
-  const gridCss = roomsToCol(numberOfSessions)
-  return <div className={`grid ${gridCss}`}>
-    {rooms.map((location)=>{ return <div className="bg-richblack-700 p-[1vw] block text-center text-white text-[1.4vw] font-bold uppercase col-span-1" key={`${day}-${location}`}>{location}</div>})}
+  return <div className="grid" style={{gridTemplateColumns: `repeat(${numberOfSessions}, minmax(0, 1fr))`}}>
+    {rooms.map((location)=>{ return <div className="bg-richblack-700 p-[1vw] block text-center text-white text-[1.4vw] font-bold uppercase col-span-1" key={`${day}-${location}`}>{locationDefinitions[location]?.title || location}</div>})}
   </div>
 
-}
-
-const roomsToCol = (rooms) => {
-  let css = 'grid-cols-5'
-  if(rooms == 4) { css = "grid-cols-4"}
-  if(rooms == 3) { css = "grid-cols-3" }
-  if(rooms == 2) { css = "grid-cols-1" }  
-  return css
-}
-
-const roomsToSpan = (rooms) => {
-  let css = 'col-span-5'
-  if(rooms == 4) { css = "col-span-4"}
-  if(rooms == 3) { css = "col-span-3" }
-  if(rooms == 2) { css = "col-span-1" }  
-  return css
 }
 
 export default NowAndNext

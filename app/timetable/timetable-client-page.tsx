@@ -9,6 +9,7 @@ import { useSearchParams } from "next/navigation";
 // import { BsArrowRight } from "react-icons/bs";
 // import { TinaMarkdown } from "tinacms/dist/rich-text";
 import { levels } from "@tina/collection/sessionLevels"
+import { locations as locationDefinitions } from "@tina/collection/options"
 import {
   ClassConnectionQuery,
   ClassConnectionQueryVariables,
@@ -56,12 +57,12 @@ export default function TimetableClientPage(props: ClientClassProps) {
       artist1: current.artist1 ? { 
         name: current.artist1.name,
         avatar: current.artist1.avatar ? current.artist1.avatar : null,
-        url: `/artists/${current.artist1._sys.filename}`
+        url: `/artists/${current.artist1._sys.breadcrumbs.join("/")}`
       } : { name: null, avatar: null, url: '/artists'},
       artist2: current.artist2 ? { 
         name: current.artist2.name,
         avatar: current.artist2.avatar ? current.artist2.avatar : null,
-        url: `/artists/${current.artist2._sys.filename}`
+        url: `/artists/${current.artist2._sys.breadcrumbs.join("/")}`
       } : null
     }
     organised[day] = organised[day] ? organised[day] : {}
@@ -70,7 +71,7 @@ export default function TimetableClientPage(props: ClientClassProps) {
     return organised
   }, {})
 
-  const locations = ["ballroom","derby","sefton","hypostyle","terrace"]
+  const locationOrder = Object.keys(locationDefinitions).filter((location) => location !== "all")
   const days = Object.keys(classesOrganised).sort()
   // const timeSlots = days.map((day) => Object.keys(classesOrganised[day]) )
 
@@ -83,15 +84,29 @@ export default function TimetableClientPage(props: ClientClassProps) {
 
   return <Fragment key="single">
     
-    <div className="grid grid-cols-11 text-black p-8 gap-0">
+    <div className="text-black p-8">
     {days.map((day) => {
+        const locations = Array.from(new Set(
+          Object.values(classesOrganised[day]).flatMap((timeSlot) => Object.keys(timeSlot))
+        ))
+          .filter((location) => location !== "all")
+          .sort((a, b) => {
+            const aIndex = locationOrder.indexOf(a)
+            const bIndex = locationOrder.indexOf(b)
+            return (aIndex === -1 ? locationOrder.length : aIndex) - (bIndex === -1 ? locationOrder.length : bIndex)
+          })
+
         return (<Fragment key={day}>
-          <h1 className="col-span-10 col-start-2 leading-10 pb-5 pt-24 font-black text-right sm:text-left text-4xl md:text-5xl lg:text-8xl uppercase text-white" key={day}>
+          <h1 className="leading-10 pb-5 pt-24 font-black text-right sm:text-left text-4xl md:text-5xl lg:text-8xl uppercase text-white" key={day}>
             {day}
           </h1>
+          <div
+            className="timetable-day-grid"
+            style={{ "--location-count": locations.length } as React.CSSProperties}
+          >
           <span className="hidden md:block"></span>
           {locations.map((location)=>{
-            return <span className={`bg-richblack-700 p-4 col-span-2 hidden md:block text-center text-white text-sm lg:text-xl font-bold uppercase sticky top-0 border-b-4 border-b-merseyblue-500`} key={`${day}-${location}`}>{location}</span>
+            return <span className="bg-richblack-700 p-4 hidden md:block text-center text-white text-sm lg:text-xl font-bold uppercase sticky top-0 border-b-4 border-b-merseyblue-500" key={`${day}-${location}`}>{locationDefinitions[location]?.title || location}</span>
           })}
           {Object.keys(classesOrganised[day]).map((timeSlot) => {
             const fullWidth = classesOrganised[day][timeSlot]["all"]
@@ -107,7 +122,7 @@ export default function TimetableClientPage(props: ClientClassProps) {
               <span ref={shouldMarkRef ? currentTimeSlot:null} className={`${shouldMarkRef ? "bg-chillired-500 text-white": "bg-yellow-400"} px-3 pl-2 pr-3 rounded-lg relative -top-3 mr-2 block`}>{shouldMarkRef ? "You Are Here": time}</span>
             </div>)
             return fullWidth ? <Fragment key={timeSlot}>{timeCell}
-                <div className={`${fullWidthColor} text-xs sm:text-base col-span-10 flex gap-2 border-t-3 ${timeColor}`} style={{backgroundColor: levels[classesOrganised[day][timeSlot]["all"].level].colour}}>
+                <div className={`${fullWidthColor} timetable-session-full text-xs sm:text-base flex gap-2 border-t-3 ${timeColor}`} style={{backgroundColor: levels[classesOrganised[day][timeSlot]["all"].level].colour}}>
                   <strong>{classesOrganised[day][timeSlot]["all"].title}</strong>
                   <TinaMarkdown content={fullWidth.details} />
                 </div>
@@ -117,7 +132,7 @@ export default function TimetableClientPage(props: ClientClassProps) {
                 const clasS = classesOrganised[day][timeSlot][location] || false
                 const level = levels[clasS.level] || false
                 return clasS ? <Link href={clasS?.artist1?.url || '#'} key={`${clasS.date}-${location}`} 
-                  className={`bg-richblack-700 col-span-10 col-start-2 md:col-span-2 p-2 sm:p-4 flex flex-row md:flex-col justify-between items-center ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? '2xl:flex-row' : '2xl:flex-row'}  gap-1 md:gap-3 border-t-3 ${timeColor} ${level ? '' : 'text-white'}`}
+                  className={`bg-richblack-700 p-2 sm:p-4 flex flex-row md:flex-col justify-between items-center ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? '2xl:flex-row' : '2xl:flex-row'} gap-1 md:gap-3 border-t-3 ${timeColor} ${level ? '' : 'text-white'}`}
                   style={{backgroundColor: level.colour}}
                   >
                     { clasS?.artist1?.avatar || clasS?.artist2?.avatar ? 
@@ -133,7 +148,7 @@ export default function TimetableClientPage(props: ClientClassProps) {
                     <p className="text-sm md:text-md lg:text-lg leading-4 md:leading-6">{clasS.artist1.name} </p>
                     <TinaMarkdown content={clasS.details} />
                   </div>
-                  <span className="rounded bg-richblack-600 text-white px-2 py-0.5 md:hidden">{clasS.location}</span>
+                  <span className="rounded bg-richblack-600 text-white px-2 py-0.5 md:hidden">{locationDefinitions[clasS.location]?.title || clasS.location}</span>
                   {/* {clasS.level} */}
                   {/* {JSON.stringify(clasS,null,2)} */}
                   {/* {`${timeSlot} ${location}`} */}
@@ -143,11 +158,12 @@ export default function TimetableClientPage(props: ClientClassProps) {
               })}
             </Fragment>
           })}
+          </div>
         </Fragment>
         )
 
       })}
     </div>
-    <pre className="hidden text-white">{JSON.stringify(locations,null,2)} {JSON.stringify(days, null,2)}  {JSON.stringify(classesOrganised,null,2)}</pre>
+    <pre className="hidden text-white">{JSON.stringify(days, null,2)} {JSON.stringify(classesOrganised,null,2)}</pre>
   </Fragment>
 }
