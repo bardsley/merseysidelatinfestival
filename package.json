@@ -53,6 +53,7 @@
     "next": "14.2.35",
     "next-themes": "^0.3.0",
     "npm": "^10.8.2",
+    "papaparse": "^5.5.4",
     "power-set": "^1.1.8",
     "pusher": "^5.2.0",
     "pusher-js": "^8.4.0-rc2",
