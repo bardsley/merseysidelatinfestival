@@ -45,7 +45,7 @@ stages:
 #######################
 provider:
   name: aws
-  runtime: nodejs18.x # Needed to enable serverless to run on github actions
+  runtime: nodejs24.x # Needed to enable serverless to run on github actions
   memorySize: 128 # I think this might be overkill
   region: eu-west-1
   stage: ${opt:stage, env:stage, 'preview'}
@@ -657,4 +657,4 @@ functions:
 
       - httpApi:
           path: /checkout_complete_inperson
-          method: post                                 
+          method: post

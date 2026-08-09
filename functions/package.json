@@ -5,6 +5,9 @@
   "main": "index.js",
   "author": "Adam Bardsley & Connor Monaghan",
   "license": "Speak to Authors",
+  "engines": {
+    "node": "24.x"
+  },
   "dependencies": {
     "serverless": "^4.2.3",
     "serverless-prune-plugin": "^2.0.2"

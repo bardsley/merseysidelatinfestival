@@ -3,6 +3,9 @@
   "version": "1.0.6",
   "private": true,
   "license": "Contact Adam & Connor for details",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "dev": "tinacms dev -c \"set NODE_DEBUG=http && next dev\"",
     "build": "tinacms build && next build",
