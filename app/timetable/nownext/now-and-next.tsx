@@ -1,5 +1,5 @@
 'use client'
-import { format,getUnixTime,fromUnixTime, parseISO } from "date-fns";
+import { format,getUnixTime,fromUnixTime, parseISO, subDays } from "date-fns";
 import { levels } from "@tina/collection/sessionLevels"
 import { Fragment } from "react";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
@@ -8,6 +8,11 @@ import Image from "next/image";
 import { locations as locationDefinitions } from "@tina/collection/options";
 export const timeToTimeSlot = (dateToConvert) => {
   return `${getUnixTime(parseISO(dateToConvert))}-${format(dateToConvert,"HHmm-EEE")}`
+}
+
+const festivalDayFor = (date) => {
+  const sessionDate = typeof date === "string" ? parseISO(date) : date
+  return format(Number(format(sessionDate, "H")) < 4 ? subDays(sessionDate, 1) : sessionDate, "eeee")
 }
 
 const timeColor = "border-t-yellow-400"
@@ -20,9 +25,9 @@ const NowAndNext = ({classesUnordered,basic}) => {
   const rightNowUnix = getUnixTime(rightNow)
   const secondsIntoSession = rightNowUnix % (30 * 60)
   const sessionBegining = rightNowUnix - secondsIntoSession
-  const day = format(fromUnixTime(sessionBegining-(181*60)),"eeee")
+  const day = festivalDayFor(fromUnixTime(sessionBegining))
   
-  const todaysSessions = classesUnordered.filter((current)=> day == format(current.date,"eeee"))
+  const todaysSessions = classesUnordered.filter((current)=> day == festivalDayFor(current.date))
   const sessionNotFinishedYet = (todaysSessions?.length > 0 ? todaysSessions : classesUnordered).filter((current)=> getUnixTime(current.date) >= sessionBegining )
   const sessionLeft = sessionNotFinishedYet.length > 0 
   const sessionsToConsider = sessionLeft ? sessionNotFinishedYet : todaysSessions.length > 0 ? todaysSessions : classesUnordered
@@ -90,12 +95,15 @@ const NowAndNext = ({classesUnordered,basic}) => {
         <div className={`border-t-[0.3vw] ${timeColor} font-bold`}><span className={`bg-yellow-400 px-[1vw] py-[0.5vw] text-[1.2vw] rounded-[0.6vw] relative -top-[1vw] text-black`}>{time}</span></div>
 
         <div className="grid" style={{gridTemplateColumns: `repeat(${maxNumRooms}, minmax(0, 1fr))`}}>
-        {sessionsToDisplay[timeSlot]['all'] 
+        {sessionsToDisplay[timeSlot]['all']
           ? <SingleTimeSlot session={sessionsToDisplay[timeSlot]['all']}/>
-          : rooms.map((roomName) => {
+          : null}
+        {!sessionsToDisplay[timeSlot]['all'] || rooms.some((roomName) => sessionsToDisplay[timeSlot][roomName])
+          ? rooms.map((roomName) => {
             const session = sessionsToDisplay[timeSlot][roomName]
             return <TimeSlot key={`${timeSlot}-${roomName}`} session={session} numberOfSessions={maxNumRooms} basic={basic}/>
           })
+          : null
         }
         </div>
         </Fragment>

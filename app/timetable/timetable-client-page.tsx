@@ -1,5 +1,5 @@
 "use client";
-import { format,parseISO, getUnixTime, fromUnixTime, subMinutes} from "date-fns";
+import { format,parseISO, getUnixTime, fromUnixTime, subDays} from "date-fns";
 import Link from "next/link";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 import Image from "next/image";
@@ -45,8 +45,14 @@ export default function TimetableClientPage(props: ClientClassProps) {
   const classesUnordered = data?.classConnection.edges.map((item)=> item.node)
   const classesOrganised = classesUnordered.reduce((organised,current) => { 
     // console.log(current)
-    const timeSlot = `${getUnixTime(parseISO(current.date))}-${format(subMinutes(current.date,181),"HHmm-EEE")}`
-    const day = format(subMinutes(current.date,181),"eeee")
+    const sessionDate = parseISO(current.date)
+    const sessionHour = Number(format(sessionDate, "H"))
+    const festivalDate = sessionHour < 4 ? subDays(sessionDate, 1) : sessionDate
+    const timeSlot = `${getUnixTime(sessionDate)}-${format(festivalDate,"HHmm-EEE")}`
+    const festivalDay = format(festivalDate,"eeee")
+    const day = festivalDay === "Saturday"
+      ? `Saturday ${sessionHour >= 18 || sessionHour < 5 ? "Night" : "Day"}`
+      : festivalDay
     const locationName  = current.location ? current.location : "unknown"
     const classBlock = {
       title: current.title,
@@ -110,6 +116,7 @@ export default function TimetableClientPage(props: ClientClassProps) {
           })}
           {Object.keys(classesOrganised[day]).map((timeSlot) => {
             const fullWidth = classesOrganised[day][timeSlot]["all"]
+            const hasRoomSessions = locations.some((location) => classesOrganised[day][timeSlot][location])
             const fullWidthColor = classesOrganised[day][timeSlot]["all"]?.level == 'admin' ? 'text-white px-4 py-2 ' : 'text-black px-4 py-6 flex justify-center'
             const time = format(fromUnixTime(parseInt(timeSlot.split('-')[0])),"mm") == '00' 
               ? `${format(fromUnixTime(parseInt(timeSlot.split('-')[0])),"haaa")}`
@@ -121,14 +128,15 @@ export default function TimetableClientPage(props: ClientClassProps) {
             const timeCell = (<div className={`border-t-3 ${timeColor} font-bold flex items-start`}>
               <span ref={shouldMarkRef ? currentTimeSlot:null} className={`${shouldMarkRef ? "bg-chillired-500 text-white": "bg-yellow-400"} px-3 pl-2 pr-3 rounded-lg relative -top-3 mr-2 block`}>{shouldMarkRef ? "You Are Here": time}</span>
             </div>)
-            return fullWidth ? <Fragment key={timeSlot}>{timeCell}
-                <div className={`${fullWidthColor} timetable-session-full text-xs sm:text-base flex gap-2 border-t-3 ${timeColor}`} style={{backgroundColor: levels[classesOrganised[day][timeSlot]["all"].level].colour}}>
+            return <Fragment key={timeSlot}>
+              {timeCell}
+              {fullWidth ? <div className={`${fullWidthColor} timetable-session-full text-xs sm:text-base flex gap-2 border-t-3 ${timeColor}`} style={{backgroundColor: levels[classesOrganised[day][timeSlot]["all"].level].colour}}>
                   <strong>{classesOrganised[day][timeSlot]["all"].title}</strong>
                   <TinaMarkdown content={fullWidth.details} />
                 </div>
-              </Fragment> : <Fragment key={timeSlot}>
-              {timeCell}
-              {locations.map((location) => {
+              : null}
+              {fullWidth && hasRoomSessions ? <div className={`border-t-3 hidden md:block ${timeColor}`} /> : null}
+              {!fullWidth || hasRoomSessions ? locations.map((location) => {
                 const clasS = classesOrganised[day][timeSlot][location] || false
                 const level = levels[clasS.level] || false
                 return clasS ? <Link href={clasS?.artist1?.url || '#'} key={`${clasS.date}-${location}`} 
@@ -152,10 +160,10 @@ export default function TimetableClientPage(props: ClientClassProps) {
                   {/* {clasS.level} */}
                   {/* {JSON.stringify(clasS,null,2)} */}
                   {/* {`${timeSlot} ${location}`} */}
-                </Link> : <div key={`${timeSlot}-${location}`} className={`col-span-2 border-t-3 hidden md:block ${timeColor}`}>
+                </Link> : <div key={`${timeSlot}-${location}`} className={`border-t-3 hidden md:block ${timeColor}`}>
                   {/* {timeSlot} {clasS.title} <TinaMarkdown content={fullWidth} /> {location} */}
                 </div>
-              })}
+              }) : null}
             </Fragment>
           })}
           </div>
