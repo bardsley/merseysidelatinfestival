@@ -32,6 +32,12 @@ interface ClientClassProps {
   query: string;
 }
 
+const desktopGridPosition = (column: number | string, row: number, rowSpan = 1): React.CSSProperties => ({
+  "--grid-column": column,
+  "--grid-row": row,
+  "--grid-row-span": rowSpan,
+} as React.CSSProperties)
+
 
 
 export default function TimetableClientPage(props: ClientClassProps) {
@@ -92,7 +98,7 @@ export default function TimetableClientPage(props: ClientClassProps) {
 
   return <Fragment key="single">
     
-    <div className="text-black p-8">
+    <div className="text-black px-0 py-8 md:p-8">
     {days.map((day) => {
         const locations = Array.from(new Set(
           Object.values(classesOrganised[day]).flatMap((timeSlot) => Object.keys(timeSlot))
@@ -149,16 +155,16 @@ export default function TimetableClientPage(props: ClientClassProps) {
         }
 
         return (<Fragment key={day}>
-          <h1 className="leading-10 pb-5 pt-24 font-black text-right sm:text-left text-4xl md:text-5xl lg:text-8xl uppercase text-white" key={day}>
+          <h1 className="leading-10 pb-5 pt-24 font-black text-center md:text-right sm:text-left text-4xl md:text-5xl lg:text-8xl uppercase text-white" key={day}>
             {day}
           </h1>
           <div
             className="timetable-day-grid"
             style={{ "--location-count": locations.length } as React.CSSProperties}
           >
-          <span className="hidden md:block" style={{gridColumn: 1, gridRow: 1}}></span>
+          <span className="timetable-positioned hidden md:block" style={desktopGridPosition(1, 1)}></span>
           {locations.map((location, locationIndex)=>{
-            return <span className="bg-richblack-700 p-4 hidden md:block text-center text-white text-sm lg:text-xl font-bold uppercase sticky top-0 border-b-4 border-b-merseyblue-500" style={{gridColumn: locationIndex + 2, gridRow: 1}} key={`${day}-${location}`}>{locationDefinitions[location]?.title || location}</span>
+            return <span className="timetable-positioned bg-richblack-700 p-4 hidden md:block text-center text-white text-sm lg:text-xl font-bold uppercase sticky top-0 border-b-4 border-b-merseyblue-500" style={desktopGridPosition(locationIndex + 2, 1)} key={`${day}-${location}`}>{locationDefinitions[location]?.title || location}</span>
           })}
           {timeSlots.map((timeSlot, timeSlotIndex) => {
             const fullWidth = classesOrganised[day][timeSlot]["all"]
@@ -173,30 +179,35 @@ export default function TimetableClientPage(props: ClientClassProps) {
             const timeColor = shouldMarkRef ? "border-t-chillired-500":"border-t-yellow-400"
 
             if(shouldMarkRef) { timeSlotMarked = true}
-            const timeCell = (<div className={`border-t-3 ${timeColor} font-bold flex items-start`} style={{gridColumn: 1, gridRow: timeSlotRow}}>
-              <span ref={shouldMarkRef ? currentTimeSlot:null} className={`${shouldMarkRef ? "bg-chillired-500 text-white": "bg-yellow-400"} px-3 pl-2 pr-3 rounded-lg relative -top-3 mr-2 block`}>{shouldMarkRef ? "You Are Here": time}</span>
+            const timeCell = (<div 
+              className={`timetable-time-cell timetable-positioned border-t-3 ${timeColor} font-bold flex items-start`} 
+              style={desktopGridPosition(1, timeSlotRow)}>
+                <span ref={shouldMarkRef ? currentTimeSlot:null} 
+                  className={`timetable-time-label ${shouldMarkRef ? "bg-chillired-500 text-white": "bg-yellow-400"} px-0 md:px-3 pl-2 pr-3 rounded-lg relative -top-3 mr-2 block`}>
+                    {shouldMarkRef ? "You Are Here": time}
+                </span>
             </div>)
             return <Fragment key={timeSlot}>
               {timeCell}
-              {fullWidth ? <div className={`${fullWidthColor} timetable-session-full text-xs sm:text-base flex gap-2 border-t-3 ${timeColor}`} style={{backgroundColor: levels[classesOrganised[day][timeSlot]["all"].level].colour, gridRow: timeSlotRow}}>
+              {fullWidth ? <div className={`${fullWidthColor} timetable-positioned timetable-session-full text-xs sm:text-base flex gap-2 border-t-3 ${timeColor}`} style={{backgroundColor: levels[classesOrganised[day][timeSlot]["all"].level].colour, ...desktopGridPosition("2 / -1", timeSlotRow)}}>
                   <strong>{classesOrganised[day][timeSlot]["all"].title}</strong>
                   <TinaMarkdown content={fullWidth.details} />
                 </div>
               : null}
-              {fullWidth && hasRoomSessions ? <div className={`border-t-3 hidden md:block ${timeColor}`} style={{gridColumn: 1, gridRow: roomSessionRow}} /> : null}
+              {fullWidth && hasRoomSessions ? <div className={`timetable-positioned border-t-3 hidden md:block ${timeColor}`} style={desktopGridPosition(1, roomSessionRow)} /> : null}
               {!fullWidth || hasRoomSessions ? locations.map((location, locationIndex) => {
                 const clasS = classesOrganised[day][timeSlot][location] || false
                 if (!clasS && isCoveredByParty(location, timeSlotIndex)) return null
                 const level = levels[clasS.level] || false
                 const rowSpan = clasS?.level === "party" ? partyRowSpan(location, timeSlotIndex) : 1
                 return clasS ? <Link href={clasS?.artist1?.url || '#'} key={`${clasS.date}-${location}`} 
-                  className={`bg-richblack-700 ${clasS.level === 'admin' ? 'text-white text-xs sm:text-base px-4 py-2' : 'p-2 sm:p-4'} flex flex-row md:flex-col justify-between items-center ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? '2xl:flex-row' : '2xl:flex-row'} gap-1 md:gap-3 border-t-3 ${timeColor} ${!level ? 'text-white' : ''}`}
-                  style={{backgroundColor: level.colour, gridColumn: locationIndex + 2, gridRow: `${roomSessionRow} / span ${rowSpan}`}}
+                  className={`timetable-positioned bg-richblack-700 ${clasS.level === 'admin' ? 'text-white text-xs sm:text-base px-4 py-2' : 'p-2 sm:p-4'} flex flex-row md:flex-col justify-between items-center ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? '2xl:flex-row' : '2xl:flex-row'} gap-1 md:gap-3 border-t-3 ${timeColor} ${!level ? 'text-white' : ''}`}
+                  style={{backgroundColor: level.colour, ...desktopGridPosition(locationIndex + 2, roomSessionRow, rowSpan)}}
                   >
                     { clasS?.artist1?.avatar || clasS?.artist2?.avatar ? 
-                    <div className={`${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? ' h-28 sm:h-16 lg:h-24 lg:min-w-40 xl:min-w-42 ' : ' h-16 lg:h-24 lg:min-w-28 xl:min-w-42'} w-16 sm:w-28 relative flex flex-col`}>
-                      {clasS?.artist2?.avatar ? <Image className={`rounded-full border-3 border-merseyblue-500 ww-12 wh-12 sm:w-16 sm:h-16 lg:w-24 lg:h-24 ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? 'absolute sm:left-10 lg:left-16 sm:top-auto top-10' : ''}`} src={clasS.artist2.avatar} alt={clasS.artist2.name} width={250} height={250} /> : null }
-                      {clasS?.artist1?.avatar ? <Image className={`rounded-full border-3 border-merseyblue-500 ww-12 wh-12 sm:w-16 sm:h-16 lg:w-24 lg:h-24 ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? 'absolute sm:left--3 lg:left-0' : ''}`} src={clasS.artist1.avatar} alt={clasS.artist1.name} width={250} height={250} /> : null }
+                    <div className={`${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? ' h-28 sm:h-16 lg:h-24 lg:min-w-40 xl:min-w-42 ' : ' h-16 lg:h-24 lg:min-w-28 xl:min-w-42'} w-16 min-w-[4rem] sm:w-28 relative flex flex-none flex-col`}>
+                      {clasS?.artist2?.avatar ? <Image className={`aspect-square object-cover object-center overflow-hidden rounded-full border-3 border-merseyblue-500 w-12 min-w-[3rem] h-12 max-w-none flex-none sm:w-16 sm:h-16 lg:w-24 lg:h-24 ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? 'absolute sm:left-10 lg:left-16 sm:top-auto top-10' : ''}`} src={clasS.artist2.avatar} alt={clasS.artist2.name} width={250} height={250} /> : null }
+                      {clasS?.artist1?.avatar ? <Image className={`aspect-square object-cover object-center overflow-hidden rounded-full border-3 border-merseyblue-500 w-12 min-w-[3rem] h-12 max-w-none flex-none sm:w-16 sm:h-16 lg:w-24 lg:h-24 ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? 'absolute sm:left--3 lg:left-0' : ''}`} src={clasS.artist1.avatar} alt={clasS.artist1.name} width={250} height={250} /> : null }
                     </div>
 
                     : null }
@@ -206,11 +217,17 @@ export default function TimetableClientPage(props: ClientClassProps) {
                     <p className="text-sm md:text-md lg:text-lg leading-4 md:leading-6">{clasS.artist1.name} </p>
                     <TinaMarkdown content={clasS.details} />
                   </div>
-                  <span className="rounded bg-richblack-600 text-white px-2 py-0.5 md:hidden">{locationDefinitions[clasS.location]?.title || clasS.location}</span>
+                  <span className="rounded bg-richblack-600 text-white text-xs whitespace-nowrap flex-none px-2 py-0.5 md:hidden">{
+                    location === "kensington1"
+                      ? "Knsgtn 1"
+                      : location === "kensington2"
+                        ? "Knsgtn 2"
+                        : locationDefinitions[location]?.title || location
+                  }</span>
                   {/* {clasS.level} */}
                   {/* {JSON.stringify(clasS,null,2)} */}
                   {/* {`${timeSlot} ${location}`} */}
-                </Link> : <div key={`${timeSlot}-${location}`} className={`border-t-3 hidden md:block ${timeColor}`} style={{gridColumn: locationIndex + 2, gridRow: roomSessionRow}}>
+                </Link> : <div key={`${timeSlot}-${location}`} className={`timetable-positioned border-t-3 hidden md:block ${timeColor}`} style={desktopGridPosition(locationIndex + 2, roomSessionRow)}>
                   {/* {timeSlot} {clasS.title} <TinaMarkdown content={fullWidth} /> {location} */}
                 </div>
               }) : null}

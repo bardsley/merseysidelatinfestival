@@ -7,9 +7,29 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
+@media (max-width: 899px) {
+  .timetable-time-cell {
+    border-top-width: 0;
+    padding-top: 1rem;
+  }
+
+  .timetable-time-label {
+    top: 0;
+    width: 100%;
+    border-radius: 0;
+    margin-right: 0;
+    margin-bottom: 0rem;
+  }
+}
+
 @media (min-width: 900px) {
   .timetable-day-grid {
     grid-template-columns: minmax(8rem, auto) repeat(var(--location-count), minmax(0, 1fr));
+  }
+
+  .timetable-positioned {
+    grid-column: var(--grid-column);
+    grid-row: var(--grid-row) / span var(--grid-row-span, 1);
   }
 
   .timetable-session-full {

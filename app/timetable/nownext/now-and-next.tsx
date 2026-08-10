@@ -124,7 +124,7 @@ const TimeSlot = ({session,numberOfSessions,basic}) => {
   const padding = numberOfSessions == 3 ? "p-[1.3vw]" : "p-[1vw]"
   return <div className={`${session?.level === 'admin' ? 'text-white' : 'text-black'} border-t-[0.3vw] ${padding} ${timeColor} flex gap-[1.5vw] items-start`} 
   style={{backgroundColor: levels[session?.level]?.colour}}>
-    {session?.artist?.avatar && !basic ? <Image src={session?.artist?.avatar} width={256} height={256}  alt="" className={`${avatarSize} aspect-square rounded-full shadow-2xl`} /> : null }
+    {session?.artist?.avatar && !basic ? <Image src={session?.artist?.avatar} width={256} height={256}  alt="" className={`${avatarSize} aspect-square object-cover object-center overflow-hidden rounded-full shadow-2xl flex-shrink-0`} /> : null }
     <div>
       <h1 className={`${titleSize} font-bold leading-none`}>{session?.title}</h1>
       <p className={`${artistSize} leading-none`}>{session?.artist?.name}</p>

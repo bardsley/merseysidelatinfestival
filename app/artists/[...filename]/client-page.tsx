@@ -34,7 +34,7 @@ export default function ArtistClientPage(props: ArtistClientPageProps) {
         size="medium"
         className="grid grid-cols-1 md:grid-cols-5 gap-0 md:gap-14 items-start justify-center"
       >
-        <img src={artist.avatar || '/avatar.jpg'} alt="" data-tina-field={tinaField(data.artist, "avatar")} className="rounded-full w-80 md:w-full max-w-1/2 md:max-w-full mx-auto"/>
+        <img src={artist.avatar || '/avatar.jpg'} alt="" data-tina-field={tinaField(data.artist, "avatar")} className="aspect-square rounded-full object-cover object-center overflow-hidden w-80 md:w-full max-w-1/2 md:max-w-full mx-auto"/>
         <div className="md:col-start-2 md:col-end-5">
           <h1 data-tina-field={tinaField(data.artist, "name")} className="text-5xl font-bold text-center md:text-left ">{artist.name}</h1>
           <div className="prose-base text-white" data-tina-field={tinaField(data.artist, "about")}>
