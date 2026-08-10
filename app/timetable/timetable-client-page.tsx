@@ -50,8 +50,10 @@ export default function TimetableClientPage(props: ClientClassProps) {
     const festivalDate = sessionHour < 4 ? subDays(sessionDate, 1) : sessionDate
     const timeSlot = `${getUnixTime(sessionDate)}-${format(festivalDate,"HHmm-EEE")}`
     const festivalDay = format(festivalDate,"eeee")
-    const day = festivalDay === "Saturday"
-      ? `Saturday ${sessionHour >= 18 || sessionHour < 5 ? "Night" : "Day"}`
+    const sessionTime = Number(format(sessionDate, "HHmm"))
+    const splitTime = festivalDay === "Saturday" ? 1800 : festivalDay === "Sunday" ? 1930 : null
+    const day = splitTime
+      ? `${festivalDay} ${sessionTime >= splitTime || sessionHour < 5 ? "Night" : "Day"}`
       : festivalDay
     const locationName  = current.location ? current.location : "unknown"
     const classBlock = {
@@ -117,20 +119,30 @@ export default function TimetableClientPage(props: ClientClassProps) {
         const gridEndRow = timeSlots.length
           ? rowStarts[timeSlots[timeSlots.length - 1]] + 1
           : 2
+        const roomRowFor = (timeSlot) => {
+          const sessions = classesOrganised[day][timeSlot]
+          const hasRooms = locations.some((location) => sessions[location])
+          return rowStarts[timeSlot] + (sessions.all && hasRooms ? 1 : 0)
+        }
 
         const partyRowSpan = (location, timeSlotIndex) => {
           const nextSessionIndex = timeSlots.findIndex((candidateSlot, candidateIndex) => (
-            candidateIndex > timeSlotIndex && classesOrganised[day][candidateSlot][location]
+            candidateIndex > timeSlotIndex && (
+              classesOrganised[day][candidateSlot][location] ||
+              classesOrganised[day][candidateSlot].all
+            )
           ))
-          const startRow = rowStarts[timeSlots[timeSlotIndex]]
+          const startRow = roomRowFor(timeSlots[timeSlotIndex])
           return nextSessionIndex === -1
             ? gridEndRow - startRow
-            : rowStarts[timeSlots[nextSessionIndex]] - startRow
+            : roomRowFor(timeSlots[nextSessionIndex]) - startRow
         }
 
         const isCoveredByParty = (location, timeSlotIndex) => {
           for (let index = timeSlotIndex - 1; index >= 0; index--) {
-            const previousSession = classesOrganised[day][timeSlots[index]][location]
+            const previousSessions = classesOrganised[day][timeSlots[index]]
+            if (previousSessions.all) return false
+            const previousSession = previousSessions[location]
             if (previousSession) return previousSession.level === "party"
           }
           return false
