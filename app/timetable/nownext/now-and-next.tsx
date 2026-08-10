@@ -91,7 +91,7 @@ const NowAndNext = ({classesUnordered,basic}) => {
 
         <div className="grid" style={{gridTemplateColumns: `repeat(${maxNumRooms}, minmax(0, 1fr))`}}>
         {sessionsToDisplay[timeSlot]['all'] 
-          ? <SingleTimeSlot session={sessionsToDisplay[timeSlot]['all']} numberOfSessions={maxNumRooms} />
+          ? <SingleTimeSlot session={sessionsToDisplay[timeSlot]['all']}/>
           : rooms.map((roomName) => {
             const session = sessionsToDisplay[timeSlot][roomName]
             return <TimeSlot key={`${timeSlot}-${roomName}`} session={session} numberOfSessions={maxNumRooms} basic={basic}/>
@@ -126,7 +126,7 @@ const TimeSlot = ({session,numberOfSessions,basic}) => {
   </div>
 }
 
-const SingleTimeSlot = ({session,numberOfSessions}) => {
+const SingleTimeSlot = ({session}) => {
   const fullWidthColor = session?.level == 'admin' ? 'text-white p-[1vw] bg-richblack-600 ' : 'text-black px-[1vw] py-[1vw] flex justify-center'
   return <div className={`text-[1.4vw] border-t-[0.3vw] ${timeColor} ${fullWidthColor}`} style={{gridColumn: "1 / -1"}}>
     <h1 className="text-[1.8vw] font-bold">{session?.title}</h1>
