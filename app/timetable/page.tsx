@@ -29,7 +29,11 @@ export default async function TimetablePage() {
 
   return (
     <Layout rawPageData={classes}>
-     
+      <div className="bg-red-500">
+        <h1 className="col-span-11 text-center leading-10 pb-0 pt-24 font-black text-5xl md:text-6xl lg:text-6xl uppercase text-white">provisional</h1>
+        <p className="col-span-11 text-center pt-3 pb-12 text-lg text-white">This timetable is not <strong>finalised</strong> and all artists and timing subject to change.</p>
+      </div>
+    
       <TimetableClientPage {...classes} />
       {/* <pre className="text-white">
         {JSON.stringify(classes.data?.classConnection.edges.map((cla)=>{ return `${cla.node.title} ${cla.node.location} ${cla.node.date}`}),null,2)}
