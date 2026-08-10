@@ -146,12 +146,12 @@ export default function Footer() {
           <div className="w-1/3 flex justify-center flex-1 ">
             <p className="text-center">
               Event organised by and related content copyright of{" "}
-              <a href="http://www.salsaliverpool.com/">Dance Engine</a>
+              <a href="http://www.salsaliverpool.com/">Salsa Liverpool</a>
             </p>
           </div>
           <div className="w-1/3 flex justify-center flex-1">
             <p className="text-center">This Event runs on Dance Engine owned by<br/>
-              <a href="https://adambardsley.co.uk">Adam Bardsley</a> & Connor Monaghan
+              <a href="https://adambardsley.co.uk">Adam Bardsley</a> &amp; Connor Monaghan
             </p>
           </div>
           <div className="w-1/3 flex flex-col justify-center text-center flex-1">
