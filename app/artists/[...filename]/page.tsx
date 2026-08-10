@@ -5,7 +5,22 @@ import React from "react";
 import client from "@tina/__generated__/client";
 import Layout from "@components/layout/layout";
 import ArtistClientPage from "./client-page";
+import type { Metadata } from "next";
 // import { ArtistQuery } from "@tina/__generated__/types";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { filename: string[] };
+}): Promise<Metadata> {
+  const data = await client.queries.artist({
+    relativePath: `${params.filename.join("/")}.mdx`,
+  });
+
+  return {
+    title: data.data.artist.name,
+  };
+}
 
 
 

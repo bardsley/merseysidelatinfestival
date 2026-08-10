@@ -26,7 +26,10 @@ const lato = Lato({
 });
 
 export const metadata: Metadata = {
-  title: "Demo Site" + (process.env.NODE_ENV == 'development' ? " - DEV" : ""),
+  title: {
+    default: "Merseyside Latin Festival" + (process.env.NODE_ENV === "development" ? " - DEV" : ""),
+    template: "%s | Merseyside Latin Festival",
+  },
   description: "Merseyside Latin Festival",
 };
 

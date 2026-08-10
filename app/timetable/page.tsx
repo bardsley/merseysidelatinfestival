@@ -5,6 +5,10 @@ import TimetableClientPage from "./timetable-client-page";
 export const dynamic = "force-dynamic";
 import { unstable_noStore as noStore } from "next/cache";
 
+export const metadata = {
+  title: "Timetable",
+};
+
 export default async function TimetablePage() {
   noStore();
   const classes = await client.queries.classConnection({filter: { date: {after: "2026-01-01T07:00:00.000Z" }}, sort: 'date', first: 200});
