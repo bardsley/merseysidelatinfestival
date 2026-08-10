@@ -5,7 +5,11 @@ import TimetableFooter from "../timetable-footer";
 import NowAndNext from "../now-and-next";
 
 export default async function NowNextPage() {
-  const classes = await client.queries.classConnection({sort: 'date', first: 500});
+  const classes = await client.queries.classConnection({
+    filter: { date: { after: "2026-01-01T00:00:00.000Z" } },
+    sort: 'date',
+    first: 500,
+  });
 
   if (!classes) { return <div>No Classes</div>; }
   const classesUnordered = classes.data?.classConnection.edges.map((item)=> item.node)
@@ -28,5 +32,4 @@ export default async function NowNextPage() {
     </Layout>
   );
 }
-
 

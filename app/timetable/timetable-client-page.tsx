@@ -101,6 +101,40 @@ export default function TimetableClientPage(props: ClientClassProps) {
             const bIndex = locationOrder.indexOf(b)
             return (aIndex === -1 ? locationOrder.length : aIndex) - (bIndex === -1 ? locationOrder.length : bIndex)
           })
+        const timeSlots = Object.keys(classesOrganised[day]).sort((a, b) => (
+          Number(a.split("-")[0]) - Number(b.split("-")[0])
+        ))
+        const rowStarts = timeSlots.reduce((rows, timeSlot, index) => {
+          if (index === 0) rows[timeSlot] = 2
+          else {
+            const previousSlot = timeSlots[index - 1]
+            const previousSessions = classesOrganised[day][previousSlot]
+            const previousHasRooms = locations.some((location) => previousSessions[location])
+            rows[timeSlot] = rows[previousSlot] + (previousSessions.all && previousHasRooms ? 2 : 1)
+          }
+          return rows
+        }, {})
+        const gridEndRow = timeSlots.length
+          ? rowStarts[timeSlots[timeSlots.length - 1]] + 1
+          : 2
+
+        const partyRowSpan = (location, timeSlotIndex) => {
+          const nextSessionIndex = timeSlots.findIndex((candidateSlot, candidateIndex) => (
+            candidateIndex > timeSlotIndex && classesOrganised[day][candidateSlot][location]
+          ))
+          const startRow = rowStarts[timeSlots[timeSlotIndex]]
+          return nextSessionIndex === -1
+            ? gridEndRow - startRow
+            : rowStarts[timeSlots[nextSessionIndex]] - startRow
+        }
+
+        const isCoveredByParty = (location, timeSlotIndex) => {
+          for (let index = timeSlotIndex - 1; index >= 0; index--) {
+            const previousSession = classesOrganised[day][timeSlots[index]][location]
+            if (previousSession) return previousSession.level === "party"
+          }
+          return false
+        }
 
         return (<Fragment key={day}>
           <h1 className="leading-10 pb-5 pt-24 font-black text-right sm:text-left text-4xl md:text-5xl lg:text-8xl uppercase text-white" key={day}>
@@ -110,13 +144,15 @@ export default function TimetableClientPage(props: ClientClassProps) {
             className="timetable-day-grid"
             style={{ "--location-count": locations.length } as React.CSSProperties}
           >
-          <span className="hidden md:block"></span>
-          {locations.map((location)=>{
-            return <span className="bg-richblack-700 p-4 hidden md:block text-center text-white text-sm lg:text-xl font-bold uppercase sticky top-0 border-b-4 border-b-merseyblue-500" key={`${day}-${location}`}>{locationDefinitions[location]?.title || location}</span>
+          <span className="hidden md:block" style={{gridColumn: 1, gridRow: 1}}></span>
+          {locations.map((location, locationIndex)=>{
+            return <span className="bg-richblack-700 p-4 hidden md:block text-center text-white text-sm lg:text-xl font-bold uppercase sticky top-0 border-b-4 border-b-merseyblue-500" style={{gridColumn: locationIndex + 2, gridRow: 1}} key={`${day}-${location}`}>{locationDefinitions[location]?.title || location}</span>
           })}
-          {Object.keys(classesOrganised[day]).map((timeSlot) => {
+          {timeSlots.map((timeSlot, timeSlotIndex) => {
             const fullWidth = classesOrganised[day][timeSlot]["all"]
             const hasRoomSessions = locations.some((location) => classesOrganised[day][timeSlot][location])
+            const timeSlotRow = rowStarts[timeSlot]
+            const roomSessionRow = timeSlotRow + (fullWidth && hasRoomSessions ? 1 : 0)
             const fullWidthColor = classesOrganised[day][timeSlot]["all"]?.level == 'admin' ? 'text-white px-4 py-2 ' : 'text-black px-4 py-6 flex justify-center'
             const time = format(fromUnixTime(parseInt(timeSlot.split('-')[0])),"mm") == '00' 
               ? `${format(fromUnixTime(parseInt(timeSlot.split('-')[0])),"haaa")}`
@@ -125,23 +161,25 @@ export default function TimetableClientPage(props: ClientClassProps) {
             const timeColor = shouldMarkRef ? "border-t-chillired-500":"border-t-yellow-400"
 
             if(shouldMarkRef) { timeSlotMarked = true}
-            const timeCell = (<div className={`border-t-3 ${timeColor} font-bold flex items-start`}>
+            const timeCell = (<div className={`border-t-3 ${timeColor} font-bold flex items-start`} style={{gridColumn: 1, gridRow: timeSlotRow}}>
               <span ref={shouldMarkRef ? currentTimeSlot:null} className={`${shouldMarkRef ? "bg-chillired-500 text-white": "bg-yellow-400"} px-3 pl-2 pr-3 rounded-lg relative -top-3 mr-2 block`}>{shouldMarkRef ? "You Are Here": time}</span>
             </div>)
             return <Fragment key={timeSlot}>
               {timeCell}
-              {fullWidth ? <div className={`${fullWidthColor} timetable-session-full text-xs sm:text-base flex gap-2 border-t-3 ${timeColor}`} style={{backgroundColor: levels[classesOrganised[day][timeSlot]["all"].level].colour}}>
+              {fullWidth ? <div className={`${fullWidthColor} timetable-session-full text-xs sm:text-base flex gap-2 border-t-3 ${timeColor}`} style={{backgroundColor: levels[classesOrganised[day][timeSlot]["all"].level].colour, gridRow: timeSlotRow}}>
                   <strong>{classesOrganised[day][timeSlot]["all"].title}</strong>
                   <TinaMarkdown content={fullWidth.details} />
                 </div>
               : null}
-              {fullWidth && hasRoomSessions ? <div className={`border-t-3 hidden md:block ${timeColor}`} /> : null}
-              {!fullWidth || hasRoomSessions ? locations.map((location) => {
+              {fullWidth && hasRoomSessions ? <div className={`border-t-3 hidden md:block ${timeColor}`} style={{gridColumn: 1, gridRow: roomSessionRow}} /> : null}
+              {!fullWidth || hasRoomSessions ? locations.map((location, locationIndex) => {
                 const clasS = classesOrganised[day][timeSlot][location] || false
+                if (!clasS && isCoveredByParty(location, timeSlotIndex)) return null
                 const level = levels[clasS.level] || false
+                const rowSpan = clasS?.level === "party" ? partyRowSpan(location, timeSlotIndex) : 1
                 return clasS ? <Link href={clasS?.artist1?.url || '#'} key={`${clasS.date}-${location}`} 
-                  className={`bg-richblack-700 p-2 sm:p-4 flex flex-row md:flex-col justify-between items-center ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? '2xl:flex-row' : '2xl:flex-row'} gap-1 md:gap-3 border-t-3 ${timeColor} ${level ? '' : 'text-white'}`}
-                  style={{backgroundColor: level.colour}}
+                  className={`bg-richblack-700 ${clasS.level === 'admin' ? 'text-white text-xs sm:text-base px-4 py-2' : 'p-2 sm:p-4'} flex flex-row md:flex-col justify-between items-center ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? '2xl:flex-row' : '2xl:flex-row'} gap-1 md:gap-3 border-t-3 ${timeColor} ${!level ? 'text-white' : ''}`}
+                  style={{backgroundColor: level.colour, gridColumn: locationIndex + 2, gridRow: `${roomSessionRow} / span ${rowSpan}`}}
                   >
                     { clasS?.artist1?.avatar || clasS?.artist2?.avatar ? 
                     <div className={`${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? ' h-28 sm:h-16 lg:h-24 lg:min-w-40 xl:min-w-42 ' : ' h-16 lg:h-24 lg:min-w-28 xl:min-w-42'} w-16 sm:w-28 relative flex flex-col`}>
@@ -152,7 +190,7 @@ export default function TimetableClientPage(props: ClientClassProps) {
                     : null }
                     
                   <div className="flex-grow ">
-                    <h2 className="text-md md:text-sm lg:text-lg 2xl:text-2xl font-bold leading-4 md:leading-6">{clasS.title}</h2>
+                    <h2 className={`${clasS.level === 'admin' ? 'text-xs sm:text-base' : 'text-md md:text-sm lg:text-lg 2xl:text-2xl'} font-bold leading-4 md:leading-6`}>{clasS.title}</h2>
                     <p className="text-sm md:text-md lg:text-lg leading-4 md:leading-6">{clasS.artist1.name} </p>
                     <TinaMarkdown content={clasS.details} />
                   </div>
@@ -160,7 +198,7 @@ export default function TimetableClientPage(props: ClientClassProps) {
                   {/* {clasS.level} */}
                   {/* {JSON.stringify(clasS,null,2)} */}
                   {/* {`${timeSlot} ${location}`} */}
-                </Link> : <div key={`${timeSlot}-${location}`} className={`border-t-3 hidden md:block ${timeColor}`}>
+                </Link> : <div key={`${timeSlot}-${location}`} className={`border-t-3 hidden md:block ${timeColor}`} style={{gridColumn: locationIndex + 2, gridRow: roomSessionRow}}>
                   {/* {timeSlot} {clasS.title} <TinaMarkdown content={fullWidth} /> {location} */}
                 </div>
               }) : null}

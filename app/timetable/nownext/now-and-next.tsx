@@ -6,12 +6,16 @@ import { TinaMarkdown } from "tinacms/dist/rich-text";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { locations as locationDefinitions } from "@tina/collection/options";
+
+const parseSessionDate = (date) => typeof date === "string" ? parseISO(date) : date
+
 export const timeToTimeSlot = (dateToConvert) => {
-  return `${getUnixTime(parseISO(dateToConvert))}-${format(dateToConvert,"HHmm-EEE")}`
+  const sessionDate = parseSessionDate(dateToConvert)
+  return `${getUnixTime(sessionDate)}-${format(sessionDate,"HHmm-EEE")}`
 }
 
 const festivalDayFor = (date) => {
-  const sessionDate = typeof date === "string" ? parseISO(date) : date
+  const sessionDate = parseSessionDate(date)
   return format(Number(format(sessionDate, "H")) < 4 ? subDays(sessionDate, 1) : sessionDate, "eeee")
 }
 
@@ -28,7 +32,7 @@ const NowAndNext = ({classesUnordered,basic}) => {
   const day = festivalDayFor(fromUnixTime(sessionBegining))
   
   const todaysSessions = classesUnordered.filter((current)=> day == festivalDayFor(current.date))
-  const sessionNotFinishedYet = (todaysSessions?.length > 0 ? todaysSessions : classesUnordered).filter((current)=> getUnixTime(current.date) >= sessionBegining )
+  const sessionNotFinishedYet = (todaysSessions?.length > 0 ? todaysSessions : classesUnordered).filter((current)=> getUnixTime(parseSessionDate(current.date)) >= sessionBegining )
   const sessionLeft = sessionNotFinishedYet.length > 0 
   const sessionsToConsider = sessionLeft ? sessionNotFinishedYet : todaysSessions.length > 0 ? todaysSessions : classesUnordered
   const nextThreeIshSessionKeys = sessionLeft
@@ -113,12 +117,12 @@ const NowAndNext = ({classesUnordered,basic}) => {
 }
 
 const TimeSlot = ({session,numberOfSessions,basic}) => {
-  const titleSize = numberOfSessions == 3 ? "text-[2vw]" : "text-[1.6vw]"
+  const titleSize = session?.level === 'admin' ? "text-[1.4vw]" : numberOfSessions == 3 ? "text-[2vw]" : "text-[1.6vw]"
   const artistSize = numberOfSessions == 3 ? "text-[1.6vw]" : "text-[1.4vw]"
   const infoSize = numberOfSessions == 3 ? "text-[1.3vw]" : "text-[1.1vw]"
   const avatarSize = numberOfSessions == 3 ? "w-[33%]" : "w-[25%]"
   const padding = numberOfSessions == 3 ? "p-[1.3vw]" : "p-[1vw]"
-  return <div className={`text-black border-t-[0.3vw] ${padding} ${timeColor} flex gap-[1.5vw] items-start`} 
+  return <div className={`${session?.level === 'admin' ? 'text-white' : 'text-black'} border-t-[0.3vw] ${padding} ${timeColor} flex gap-[1.5vw] items-start`} 
   style={{backgroundColor: levels[session?.level]?.colour}}>
     {session?.artist?.avatar && !basic ? <Image src={session?.artist?.avatar} width={256} height={256}  alt="" className={`${avatarSize} aspect-square rounded-full shadow-2xl`} /> : null }
     <div>
