@@ -14,7 +14,7 @@ import {
   ClassConnectionQuery,
   ClassConnectionQueryVariables,
 } from "@tina/__generated__/types";
-import { useTina } from "tinacms/dist/react";
+import { tinaField, useTina } from "tinacms/dist/react";
 
 // const titleColorClasses = {
 //   blue: "group-hover:text-blue-600 dark:group-hover:text-blue-300",
@@ -63,17 +63,20 @@ export default function TimetableClientPage(props: ClientClassProps) {
       : festivalDay
     const locationName  = current.location ? current.location : "unknown"
     const classBlock = {
+      source: current,
       title: current.title,
       date: timeSlot,
       details: current.details,
       location: current.location,
       level: current.level || "unknown",
       artist1: current.artist1 ? { 
+        source: current.artist1,
         name: current.artist1.name,
         avatar: current.artist1.avatar ? current.artist1.avatar : null,
         url: `/artists/${current.artist1._sys.breadcrumbs.join("/")}`
       } : { name: null, avatar: null, url: '/artists'},
       artist2: current.artist2 ? { 
+        source: current.artist2,
         name: current.artist2.name,
         avatar: current.artist2.avatar ? current.artist2.avatar : null,
         url: `/artists/${current.artist2._sys.breadcrumbs.join("/")}`
@@ -189,9 +192,11 @@ export default function TimetableClientPage(props: ClientClassProps) {
             </div>)
             return <Fragment key={timeSlot}>
               {timeCell}
-              {fullWidth ? <div className={`${fullWidthColor} timetable-positioned timetable-session-full text-xs sm:text-base flex gap-2 border-t-3 ${timeColor}`} style={{backgroundColor: levels[classesOrganised[day][timeSlot]["all"].level].colour, ...desktopGridPosition("2 / -1", timeSlotRow)}}>
-                  <strong>{classesOrganised[day][timeSlot]["all"].title}</strong>
-                  <TinaMarkdown content={fullWidth.details} />
+              {fullWidth ? <div data-tina-field={tinaField(fullWidth.source)} className={`${fullWidthColor} timetable-positioned timetable-session-full text-xs sm:text-base flex gap-2 border-t-3 ${timeColor}`} style={{backgroundColor: levels[classesOrganised[day][timeSlot]["all"].level].colour, ...desktopGridPosition("2 / -1", timeSlotRow)}}>
+                  <strong data-tina-field={tinaField(fullWidth.source, "title")}>{classesOrganised[day][timeSlot]["all"].title}</strong>
+                  <div data-tina-field={tinaField(fullWidth.source, "details")}>
+                    <TinaMarkdown content={fullWidth.details} />
+                  </div>
                 </div>
               : null}
               {fullWidth && hasRoomSessions ? <div className={`timetable-positioned border-t-3 hidden md:block ${timeColor}`} style={desktopGridPosition(1, roomSessionRow)} /> : null}
@@ -200,22 +205,25 @@ export default function TimetableClientPage(props: ClientClassProps) {
                 if (!clasS && isCoveredByParty(location, timeSlotIndex)) return null
                 const level = levels[clasS.level] || false
                 const rowSpan = clasS?.level === "party" ? partyRowSpan(location, timeSlotIndex) : 1
-                return clasS ? <Link href={clasS?.artist1?.url || '#'} key={`${clasS.date}-${location}`} 
+                return clasS ? <Link href={clasS?.artist1?.url || '#'} key={`${clasS.date}-${location}`}
+                  data-tina-field={tinaField(clasS.source)}
                   className={`timetable-positioned bg-richblack-700 ${clasS.level === 'admin' ? 'text-white text-xs sm:text-base px-4 py-2' : 'p-2 sm:p-4'} flex flex-row md:flex-col justify-between items-center ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? '2xl:flex-row' : '2xl:flex-row'} gap-1 md:gap-3 border-t-3 ${timeColor} ${!level ? 'text-white' : ''}`}
                   style={{backgroundColor: level.colour, ...desktopGridPosition(locationIndex + 2, roomSessionRow, rowSpan)}}
                   >
                     { clasS?.artist1?.avatar || clasS?.artist2?.avatar ? 
                     <div className={`${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? ' h-28 sm:h-16 lg:h-24 lg:min-w-40 xl:min-w-42 ' : ' h-16 lg:h-24 lg:min-w-28 xl:min-w-42'} w-16 min-w-[4rem] sm:w-28 relative flex flex-none flex-col`}>
-                      {clasS?.artist2?.avatar ? <Image className={`aspect-square object-cover object-center overflow-hidden rounded-full border-3 border-merseyblue-500 w-12 min-w-[3rem] h-12 max-w-none flex-none sm:w-16 sm:h-16 lg:w-24 lg:h-24 ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? 'absolute sm:left-10 lg:left-16 sm:top-auto top-10' : ''}`} src={clasS.artist2.avatar} alt={clasS.artist2.name} width={250} height={250} /> : null }
-                      {clasS?.artist1?.avatar ? <Image className={`aspect-square object-cover object-center overflow-hidden rounded-full border-3 border-merseyblue-500 w-12 min-w-[3rem] h-12 max-w-none flex-none sm:w-16 sm:h-16 lg:w-24 lg:h-24 ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? 'absolute sm:left--3 lg:left-0' : ''}`} src={clasS.artist1.avatar} alt={clasS.artist1.name} width={250} height={250} /> : null }
+                      {clasS?.artist2?.avatar ? <Image data-tina-field={tinaField(clasS.artist2.source, "avatar")} className={`aspect-square object-cover object-center overflow-hidden rounded-full border-3 border-merseyblue-500 w-12 min-w-[3rem] h-12 max-w-none flex-none sm:w-16 sm:h-16 lg:w-24 lg:h-24 ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? 'absolute sm:left-10 lg:left-16 sm:top-auto top-10' : ''}`} src={clasS.artist2.avatar} alt={clasS.artist2.name} width={250} height={250} /> : null }
+                      {clasS?.artist1?.avatar ? <Image data-tina-field={tinaField(clasS.artist1.source, "avatar")} className={`aspect-square object-cover object-center overflow-hidden rounded-full border-3 border-merseyblue-500 w-12 min-w-[3rem] h-12 max-w-none flex-none sm:w-16 sm:h-16 lg:w-24 lg:h-24 ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? 'absolute sm:left--3 lg:left-0' : ''}`} src={clasS.artist1.avatar} alt={clasS.artist1.name} width={250} height={250} /> : null }
                     </div>
 
                     : null }
                     
                   <div className="flex-grow ">
-                    <h2 className={`${clasS.level === 'admin' ? 'text-xs sm:text-base' : 'text-md md:text-sm lg:text-lg 2xl:text-2xl'} font-bold leading-4 md:leading-6`}>{clasS.title}</h2>
-                    <p className="text-sm md:text-md lg:text-lg leading-4 md:leading-6">{clasS.artist1.name} </p>
-                    <TinaMarkdown content={clasS.details} />
+                    <h2 data-tina-field={tinaField(clasS.source, "title")} className={`${clasS.level === 'admin' ? 'text-xs sm:text-base' : 'text-md md:text-sm lg:text-lg 2xl:text-2xl'} font-bold leading-4 md:leading-6`}>{clasS.title}</h2>
+                    <p data-tina-field={clasS.artist1.source ? tinaField(clasS.artist1.source, "name") : undefined} className="text-sm md:text-md lg:text-lg leading-4 md:leading-6">{clasS.artist1.name} </p>
+                    <div data-tina-field={tinaField(clasS.source, "details")}>
+                      <TinaMarkdown content={clasS.details} />
+                    </div>
                   </div>
                   <span className="rounded bg-richblack-600 text-white text-xs whitespace-nowrap flex-none px-2 py-0.5 md:hidden">{
                     location === "kensington1"
