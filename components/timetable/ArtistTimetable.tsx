@@ -22,26 +22,28 @@ export const ArtistTimetable = ({classes}) => {
             <th className={headClassNames}>Location</th>
           </tr>
         </thead>
-      {classes.map((class_) => (
-        <Fragment key={`${class_.id}-1`}>
+        <tbody>
+          {classes.map((class_) => (
+            <Fragment key={`${class_.id}-1`}>
       
-          <tr key={`${class_.id}-1`} className="text-sm">
-            <td className={cellClassNames + " text-nowrap"}>{format(class_.date,'E do MMM')}</td>
-            <td className={cellClassNames}>{format(class_.date,'HH:mm')}</td>
-            <td className={cellClassNames}>{locations[class_.location].title}</td>
+              <tr className="text-sm">
+                <td className={cellClassNames + " text-nowrap"}>{format(class_.date,'E do MMM')}</td>
+                <td className={cellClassNames}>{format(class_.date,'HH:mm')}</td>
+                <td className={cellClassNames}>{locations[class_.location].title}</td>
             
-          </tr>
-          <tr key={`${class_.id}-2`}>
-            <td colSpan={3} className={cellClassNames}>
-              <h3 className="font-bold text-lg">{class_.title}</h3>
-              <div className="prose-base text-white">
-                <TinaMarkdown content={class_.details} />
-                {/* <pre>{JSON.stringify(class_,null,2)}</pre> */}
-              </div>
-            </td>
-          </tr>
-        </Fragment>
-      ))}
+              </tr>
+              <tr>
+                <td colSpan={3} className={cellClassNames}>
+                  <h3 className="font-bold text-lg">{class_.title}</h3>
+                  <div className="prose-base text-white">
+                    <TinaMarkdown content={class_.details} />
+                    {/* <pre>{JSON.stringify(class_,null,2)}</pre> */}
+                  </div>
+                </td>
+              </tr>
+            </Fragment>
+          ))}
+        </tbody>
       </table>
     </>
   ) : null

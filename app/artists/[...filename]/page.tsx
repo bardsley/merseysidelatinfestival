@@ -44,16 +44,6 @@ export default async function PostPage({
   return (
     <Layout rawPageData={data}>
       <ArtistClientPage {...data} classes={classData}></ArtistClientPage>
-      <p suppressHydrationWarning className="text-xs opacity-60">
-        renderedAt: {new Date().toISOString()}
-      </p>
-      <p style={{fontSize:12,opacity:.6}}>
-  BRANCH: {process.env.NEXT_PUBLIC_TINA_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || process.env.HEAD || 'main'}
-</p>
-<p style={{fontSize:12,opacity:.6}}>
-  FILE: {data?.data?.artist?._sys?.relativePath}
-</p>
-
     </Layout>
   );
 }
