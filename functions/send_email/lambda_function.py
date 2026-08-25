@@ -159,14 +159,17 @@ def generate_standard_ticket_body(data):
     total_amount = 0
     # generate table of items purchased
     for i in data['line_items']:
+        amount_total = int(i['amount_total'])
+        if 'discount_id' in i:
+            amount_total = -amount_total
         with open("./send_email/ticket_row.html", 'r') as line_item_row_file:
             line_item_tmpl = Template(line_item_row_file.read())
             rows = rows+"\n"+line_item_tmpl.substitute({
                 'tickettype':i['description'], 
                 'qty':1, 
-                'price':babel.numbers.format_currency(int(i['amount_total'])/100, "GBP", locale='en_UK')
+                'price':babel.numbers.format_currency(amount_total/100, "GBP", locale='en_UK')
             })
-            total_amount += int(i['amount_total'])
+            total_amount += amount_total
     # create total row
     with open("./send_email/ticket_row.html", 'r') as total_row_file:
         total_tmpl = Template(total_row_file.read())
@@ -195,14 +198,17 @@ def generate_meal_upgrade_ticket_body(data):
     total_amount = 0
     # generate table of items purchased
     for i in data['line_items']:
+        amount_total = int(i['amount_total'])
+        if 'discount_id' in i:
+            amount_total = -amount_total
         with open("./send_email/ticket_row.html", 'r') as line_item_row_file:
             line_item_tmpl = Template(line_item_row_file.read())
             rows = rows+"\n"+line_item_tmpl.substitute({
                 'tickettype':i['description'], 
                 'qty':1, 
-                'price':babel.numbers.format_currency(int(i['amount_total'])/100, "GBP", locale='en_UK')
+                'price':babel.numbers.format_currency(amount_total/100, "GBP", locale='en_UK')
             })
-            total_amount += int(i['amount_total'])
+            total_amount += amount_total
     # create total row
     with open("./send_email/ticket_row.html", 'r') as total_row_file:
         total_tmpl = Template(total_row_file.read())
@@ -326,7 +332,7 @@ def lambda_handler(event, context):
 
     to_email = event['email']
     
-    if stage_name == "preview":
+    if stage_name == "preview" or stage_name == "dev":
         return send_email_preview(from_email, to_email, subject, html_content, qr_ticket)
     else:
         return send_email_brevo(from_email, to_email, subject, html_content, qr_ticket)
