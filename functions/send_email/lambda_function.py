@@ -157,22 +157,41 @@ def group_rec(data):
 def generate_standard_ticket_body(data):
     rows = ""
     total_amount = 0
+    discount_names = []
+    has_discount = False
     # generate table of items purchased
     for i in data['line_items']:
+        if 'discount_id' in i:
+            has_discount = True
+            coupon_name = i.get('coupon_name')
+            if coupon_name and coupon_name != 'unknown':
+                discount_names.append(coupon_name)
+            continue
+
+        amount_total = int(i['amount_total'])
         with open("./send_email/ticket_row.html", 'r') as line_item_row_file:
             line_item_tmpl = Template(line_item_row_file.read())
             rows = rows+"\n"+line_item_tmpl.substitute({
                 'tickettype':i['description'], 
                 'qty':1, 
-                'price':babel.numbers.format_currency(int(i['amount_total'])/100, "GBP", locale='en_UK')
+                'price':babel.numbers.format_currency(amount_total/100, "GBP", locale='en_UK')
             })
-            total_amount += int(i['amount_total'])
+            total_amount += amount_total
+
+    if has_discount:
+        with open("./send_email/ticket_row.html", 'r') as discount_row_file:
+            discount_tmpl = Template(discount_row_file.read())
+            rows = rows+"\n"+discount_tmpl.substitute({
+                'tickettype': "Discount applied" + (": " + ", ".join(discount_names) if discount_names else ""),
+                'qty': "",
+                'price': ""
+            })
     # create total row
     with open("./send_email/ticket_row.html", 'r') as total_row_file:
         total_tmpl = Template(total_row_file.read())
         total_row = total_tmpl.substitute({
             'tickettype':"", 
-            'qty':"<strong>Total</strong>", 
+            'qty':"<strong>Total paid</strong>",
             'price':"<strong>"+babel.numbers.format_currency(total_amount/100, "GBP", locale='en_UK')+"</strong>"
         })
     
@@ -193,22 +212,41 @@ def generate_standard_ticket_body(data):
 def generate_meal_upgrade_ticket_body(data):
     rows = ""
     total_amount = 0
+    discount_names = []
+    has_discount = False
     # generate table of items purchased
     for i in data['line_items']:
+        if 'discount_id' in i:
+            has_discount = True
+            coupon_name = i.get('coupon_name')
+            if coupon_name and coupon_name != 'unknown':
+                discount_names.append(coupon_name)
+            continue
+
+        amount_total = int(i['amount_total'])
         with open("./send_email/ticket_row.html", 'r') as line_item_row_file:
             line_item_tmpl = Template(line_item_row_file.read())
             rows = rows+"\n"+line_item_tmpl.substitute({
                 'tickettype':i['description'], 
                 'qty':1, 
-                'price':babel.numbers.format_currency(int(i['amount_total'])/100, "GBP", locale='en_UK')
+                'price':babel.numbers.format_currency(amount_total/100, "GBP", locale='en_UK')
             })
-            total_amount += int(i['amount_total'])
+            total_amount += amount_total
+
+    if has_discount:
+        with open("./send_email/ticket_row.html", 'r') as discount_row_file:
+            discount_tmpl = Template(discount_row_file.read())
+            rows = rows+"\n"+discount_tmpl.substitute({
+                'tickettype': "Discount applied" + (": " + ", ".join(discount_names) if discount_names else ""),
+                'qty': "",
+                'price': ""
+            })
     # create total row
     with open("./send_email/ticket_row.html", 'r') as total_row_file:
         total_tmpl = Template(total_row_file.read())
         total_row = total_tmpl.substitute({
             'tickettype':"", 
-            'qty':"<strong>Total</strong>", 
+            'qty':"<strong>Total paid</strong>",
             'price':"<strong>"+babel.numbers.format_currency(total_amount/100, "GBP", locale='en_UK')+"</strong>"
         })
     
@@ -326,7 +364,7 @@ def lambda_handler(event, context):
 
     to_email = event['email']
     
-    if stage_name == "preview":
+    if stage_name == "preview" or stage_name == "dev":
         return send_email_preview(from_email, to_email, subject, html_content, qr_ticket)
     else:
         return send_email_brevo(from_email, to_email, subject, html_content, qr_ticket)

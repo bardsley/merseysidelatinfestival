@@ -59,3 +59,7 @@ functions/node_modules
 tina/__generated__
 sendgrid.env
 .env*
+
+# Python bytecode and cache files
+__pycache__/
+*.py[cod]
