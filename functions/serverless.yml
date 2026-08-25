@@ -361,7 +361,7 @@ functions:
       SENDGRID_API_KEY: ${param:sendgridApiKey}
       BREVO_API_KEY: ${param:brevoAPIKey}
       SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
-      MAILDEV_IP: "3.254.106.153"
+      MAILDEV_IP: "3.253.3.214"
     layers:
       - !Ref BrevoLambdaLayer
 
