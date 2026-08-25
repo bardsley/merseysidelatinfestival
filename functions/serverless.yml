@@ -23,6 +23,7 @@ stages:
   default:
     observability: false
     params:
+      brevoAPIKey: "${ssm:/danceengine/preview/brevo/api_key}"
       eventTableName: "${sls:stage}-MLF24"
       attendeesTableName: "${sls:stage}-mlf-attendees"
       stripeProductsTableName: "${sls:stage}-mlf-stripe-products"
@@ -35,6 +36,7 @@ stages:
         type: aws
   prod:
     params:
+      brevoAPIKey: "${ssm:/danceengine/${sls:stage}/brevo/api_key}"
       isProd: true
       deletionPolicy: Retain
       githubBranchDestination: "main"
@@ -357,7 +359,7 @@ functions:
       STAGE_NAME: ${sls:stage}
       FROM_EMAIL: ${param:fromEmail}
       SENDGRID_API_KEY: ${param:sendgridApiKey}
-      BREVO_API_KEY: ${ssm:/danceengine/${sls:stage}/brevo/api_key}
+      BREVO_API_KEY: ${param:brevoAPIKey}
       SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
       MAILDEV_IP: "3.254.106.153"
     layers:
