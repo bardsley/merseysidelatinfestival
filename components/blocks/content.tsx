@@ -15,7 +15,7 @@ const components = { BuyButton, CountdownElement }
 
 const proseClasses = "prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl \
 prose-a:text-chillired-600 hover:prose-a:text-chillired-800 \
-prose-blockquote:border prose-blockquote:border-richblack-700 prose-blockquote:p-6 prose-blockquote:rounded-md prose-blockquote:text-xl prose-blockquote:m-3 prose-blockquote:bg-richblack-500 \
+prose-blockquote:border prose-blockquote:border-richblack-700 prose-blockquote:p-6 prose-blockquote:rounded-md prose-blockquote:text-xl prose-blockquote:m-3 prose-blockquote:bg-merseyblue-500 \
 prose-p:mb-3 \
 prose-strong:font-semibold \
 prose-ul:list-disc    prose-ul:list-outside prose-ul:pl-6 prose-ul:mb-6 \

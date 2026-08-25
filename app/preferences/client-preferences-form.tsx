@@ -59,8 +59,8 @@ export default function ClientPreferencesForm(props) {
           {/* {JSON.stringify(preferences)} */}
           {preferences && typeof preferences === 'object' ? (
             <form action="/api/preferences" method="POST" encType="multipart/form-data">
-            <MealPreferences preferences={preferences} setPreferences={setPreferences}></MealPreferences>
-              <button className="py-3 px-4 bg-chillired-500 rounded-lg">Save Preferences</button>
+            <MealPreferences preferences={preferences} setPreferences={setPreferences} admin={true}></MealPreferences>
+              
             </form>
           ) : preferences ? preferences : (<div className="m-2 ">Loading Preferences...</div>) }
         </>

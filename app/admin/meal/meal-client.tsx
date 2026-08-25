@@ -14,7 +14,9 @@ export default function DiningPageClient() {
 
   const {data: summaryData, error: summaryError, isLoading: summaryLoading, isValidating: summaryValidating} = useSWR(mealSummaryApiUrl, fetcher, { keepPreviousData: false });
 
-  const attendees = summaryData && summaryData.meal_attendees_list
+  const attendeesAll = summaryData && summaryData.meal_attendees_list
+  // console.log("attendeesAll", attendeesAll)
+  const attendees = attendeesAll //? attendeesAll.filter((attendee) => /dinner/i.test(attendee.pass_type)) : []
 
   const handleSubmit = async (e) => {
     e.preventDefault();

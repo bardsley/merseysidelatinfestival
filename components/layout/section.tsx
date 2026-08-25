@@ -19,11 +19,12 @@ export const Section = ({ children, color = "", className = "" , backgroundImage
       orange:
         "text-white bg-orange-500 bg-gradient-to-br from-orange-500 to-orange-600",
       yellow:
-        "text-white bg-richblack-500 bg-gradient-to-br from-richblack-500 to-yellow-600",
+        "text-white bg-merseyblue-500 bg-gradient-to-br from-merseyblue-500 to-yellow-600",
       merseyside:
-        "text-white bg-richblack-500 bg-gradient-to-br from-richblack-500 to-richblack-600",
+        "text-white",
     },
     transparent: "text-gray-900 dark:text-gray-100",
+    old: "text-white bg-richblack-500 bg-gradient-to-br from-richblack-500 to-richblack-800",
   };
   const sectionColorCss =
     color === "primary"

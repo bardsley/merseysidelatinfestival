@@ -4,7 +4,7 @@
       "color": "yellow",
       "style": "float"
     },
-    "name": "Merseyside Latin Festival 2025",
+    "name": "Merseyside Latin Festival ",
     "color": "primary",
     "nav": [
       {
@@ -20,12 +20,12 @@
       {
         "href": "timetable",
         "label": "Timetable",
-        "visible": true
+        "visible": false
       },
       {
         "href": "artists",
         "label": "Artists",
-        "visible": true
+        "visible": false
       },
       {
         "href": "tickets",
@@ -40,17 +40,17 @@
       {
         "href": "accomodation",
         "label": "Hotel",
-        "visible": false
+        "visible": true
       }
     ]
   },
   "footer": {
     "color": "primary",
     "social": {
-      "facebook": "/https://www.facebook.com/profile.php?id=100091289556414",
+      "facebook": "",
       "twitter": "",
-      "instagram": "https://www.instagram.com/merseysidelatinfestival/",
-      "youtube": "https://www.youtube.com/@SalsaLiverpool"
+      "instagram": "https://www.instagram.com/danceengine/",
+      "youtube": ""
     }
   },
   "theme": {

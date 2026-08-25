@@ -3,6 +3,9 @@
   "version": "1.0.6",
   "private": true,
   "license": "Contact Adam & Connor for details",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "dev": "tinacms dev -c \"set NODE_DEBUG=http && next dev\"",
     "build": "tinacms build && next build",
@@ -16,9 +19,10 @@
     "@next/bundle-analyzer": "^14.2.5",
     "@playwright/test": "^1.46.0",
     "@svgr/webpack": "^8.1.0",
-    "@tinacms/cli": "1.6.0",
+    "@tinacms/cli": "1.10.2",
     "@types/js-cookie": "^3.0.0",
     "@types/node": "^20.14.4",
+    "@types/papaparse": "^5.5.2",
     "@types/react": "^18.3.3",
     "@types/styled-components": "^5.1.15",
     "@typescript-eslint/eslint-plugin": "^8.0.1",
@@ -33,6 +37,7 @@
     "serverless-prune-plugin": "^2.0.2"
   },
   "dependencies": {
+    "@clerk/backend": "1.9.2",
     "@clerk/nextjs": "^5.2.8",
     "@fillout/react": "^1.1.2",
     "@headlessui/react": "^2.1.2",
@@ -41,15 +46,17 @@
     "@stripe/stripe-js": "^4.1.0",
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/typography": "^0.5.8",
+    "@tinacms/schema-tools": "1.9.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.1",
     "date-fns": "^3.6.0",
     "formik": "^2.4.6",
     "install": "^0.13.0",
     "method-override": "^3.0.0",
-    "next": "^14.2.4",
+    "next": "14.2.35",
     "next-themes": "^0.3.0",
     "npm": "^10.8.2",
+    "papaparse": "^5.5.4",
     "power-set": "^1.1.8",
     "pusher": "^5.2.0",
     "pusher-js": "^8.4.0-rc2",
@@ -72,9 +79,11 @@
     "typescript": "^5.5.3",
     "yup": "^1.4.0"
   },
-  "resolutions": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+  "pnpm": {
+    "overrides": {
+      "react": "^18.3.1",
+      "react-dom": "^18.3.1"
+    }
   },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  "packageManager": "pnpm@9.15.9"
 }

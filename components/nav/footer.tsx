@@ -40,7 +40,7 @@ export default function Footer() {
       purple: "text-white from-purple-500 to-purple-600",
       orange: "text-white from-orange-500 to-orange-600",
       yellow: "text-white from-yellow-500 to-yellow-600",
-      merseyside: "text-white from-chillired-300 to-chillired-500",
+      merseyside: "text-white from-merseyred-500 to-merseyred-800",
     },
   };
 
@@ -151,7 +151,7 @@ export default function Footer() {
           </div>
           <div className="w-1/3 flex justify-center flex-1">
             <p className="text-center">This Event runs on Dance Engine owned by<br/>
-              <a href="https://adambardsley.co.uk">Adam Bardsley</a> & Connor Monaghan
+              <a href="https://adambardsley.co.uk">Adam Bardsley</a> &amp; Connor Monaghan
             </p>
           </div>
           <div className="w-1/3 flex flex-col justify-center text-center flex-1">

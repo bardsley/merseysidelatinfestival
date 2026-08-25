@@ -92,7 +92,7 @@ export const TicketRow = ({attendee,setActiveTicket, setNameChangeModalActive, s
               </a>) : <span className='line-through block px-3 py-1 text-sm leading-6 text-gray-300 data-[focus]:bg-gray-50'>Change Name</span> }
             </MenuItem>
             <MenuItem>
-              <a href="#" className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50 line-through">
+              <a href={`/preferences?email=${attendee.email}&ticket_number=${attendee.ticket_number}`} className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50">
                 Meal Preferences<span className="sr-only">, {attendee.name}</span>
               </a>
             </MenuItem>

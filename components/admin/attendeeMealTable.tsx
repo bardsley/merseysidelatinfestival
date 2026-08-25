@@ -2,9 +2,9 @@
 import React, { useState } from "react";
 
 const courseMappings = [
-  { 0: "Vegetable", 1: "Chicken " },
-  { 0: "Onion", 1: "Fish", 2: "Chicken" },
-  { 0: "Fruit", 1: "Bread & Butter" }
+  { 0: "Mushroom", 1: "Chicken " },
+  { 0: "Risotto", 1: "Chicken" },
+  { 0: "Eton Mess", 1: "Sticky Toffee" }
 ];
 
 export default function AttendeeMealTable({ attendees, summaryLoading, summaryIsValidating, summaryError, itemsPerPage = 25, attendeesGroupedByTable = false }) {
@@ -41,14 +41,14 @@ export default function AttendeeMealTable({ attendees, summaryLoading, summaryIs
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`px-2 py-1 text-sm ${currentPage === 1 ? 'bg-richblack-500 cursor-not-allowed' : 'bg-chillired-500'} text-white rounded-md mr-2`}>
+                className={`px-2 py-1 text-sm ${currentPage === 1 ? 'bg-merseyblue-500 cursor-not-allowed' : 'bg-chillired-500'} text-white rounded-md mr-2`}>
                 Previous
               </button>
               <span className="text-xs text-gray-500">Page {currentPage} of {totalPages}</span>
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`px-2 py-1 text-sm ${currentPage === totalPages ? 'bg-richblack-500 cursor-not-allowed' : 'bg-chillired-500'} text-white rounded-md ml-2`}>
+                className={`px-2 py-1 text-sm ${currentPage === totalPages ? 'bg-merseyblue-500 cursor-not-allowed' : 'bg-chillired-500'} text-white rounded-md ml-2`}>
                 Next
               </button>
             </div>
@@ -84,7 +84,7 @@ export default function AttendeeMealTable({ attendees, summaryLoading, summaryIs
             <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                       <table className="min-w-full divide-y divide-gray-300 w-full">
-                      <HeaderRow/>
+                      <HeaderRow/> test 
 
                       <tbody className="divide-y divide-gray-700">
                       {attendeesToDisplay.map((attendee, index) => {

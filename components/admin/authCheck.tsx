@@ -1,5 +1,5 @@
 'use client'
-import { useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/nextjs";
 import { authUsage } from "@lib/authorise";
 import { usePathname } from 'next/navigation'
 import { BiSolidHand } from "react-icons/bi";

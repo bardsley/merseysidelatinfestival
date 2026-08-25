@@ -10,7 +10,7 @@ import { filterItems, filter, FilterSelector, FilterLabel } from './lists/filter
 import { TicketRow } from './lists/ticketRow';
 import { fetcher } from  "@lib/fetchers";
 import ScanSuccessDialog from '@components/admin/scan/ScanSuccessDialog'
-import { useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/nextjs";
 import { authUsage } from "@lib/authorise";
 
 export default function TicketList() {
@@ -90,7 +90,7 @@ export default function TicketList() {
     })
     console.log("apiResponse", apiResponse)
     // After sending, you might want to clear the selection
-    // setSelectedTickets([])
+    setSelectedTickets([])
   }
 
   const headerClassNames = "p-0 text-left text-sm font-semibold text-white "
@@ -214,4 +214,3 @@ export default function TicketList() {
     )
   }
 }
-

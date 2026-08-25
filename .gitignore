@@ -1,8 +1,12 @@
 
 # dependencies
 /node_modules
+/.pnpm-store/
 /.pnp
 .pnp.js
+
+# TypeScript incremental build cache
+/tsconfig.tsbuildinfo
 
 # testing
 /coverage
@@ -54,3 +58,4 @@ functions/node_modules
 
 tina/__generated__
 sendgrid.env
+.env*

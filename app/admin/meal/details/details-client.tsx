@@ -16,7 +16,7 @@ export default function DetailsPageClient() {
     </div>
     <h2 className="text-xl">Statistics summary</h2>
     <MealStatsTable />
-    <h2 className="text-xl new-page">Attendees breakdown</h2>
+    <h2 className="text-xl new-page">Attendees breakdown !</h2>
     <AttendeesMealTable attendees={attendees} summaryLoading={attendeeLoading} summaryIsValidating={attendeeValidating} summaryError={attendeeError} attendeesGroupedByTable={true} />
     </>)
 }

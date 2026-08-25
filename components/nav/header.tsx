@@ -19,7 +19,7 @@ const headerColor = {
     purple: "text-white from-purple-400 to-purple-500",
     orange: "text-white from-orange-400 to-orange-500",
     yellow: "text-white from-yellow-400 to-yellow-500",
-    merseyside: "text-white from-richblack-500 to-richblack-500",
+    merseyside: "text-white from-merseyblue-500 to-merseyblue-500",
   },
 };
 
@@ -42,12 +42,10 @@ export default function Header({header, theme}:any) {
               className="flex gap-1 items-center whitespace-nowrap tracking-[.002em]"
               
             >
-              <Logo className="w-24 h-24" />
+              <Logo className="w-16 h-16 mt-4" />
               {" "}
               <span data-tina-field={tinaField(header, "name")} className="ml-2 hidden xs:inline">
-                
-                {header.name.replace("2025", "")}
-                <span className="hidden sm:inline md:hidden lg:inline">2025</span>
+                {header.name}
               </span>
             </Link>
           </h4>

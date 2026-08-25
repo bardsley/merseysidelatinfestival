@@ -1,5 +1,5 @@
 "use client";
-import { format,parseISO, getUnixTime, fromUnixTime, subMinutes} from "date-fns";
+import { format,parseISO, getUnixTime, fromUnixTime, subDays} from "date-fns";
 import Link from "next/link";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 import Image from "next/image";
@@ -9,11 +9,12 @@ import { useSearchParams } from "next/navigation";
 // import { BsArrowRight } from "react-icons/bs";
 // import { TinaMarkdown } from "tinacms/dist/rich-text";
 import { levels } from "@tina/collection/sessionLevels"
+import { locations as locationDefinitions } from "@tina/collection/options"
 import {
   ClassConnectionQuery,
   ClassConnectionQueryVariables,
 } from "@tina/__generated__/types";
-import { useTina } from "tinacms/dist/react";
+import { tinaField, useTina } from "tinacms/dist/react";
 
 // const titleColorClasses = {
 //   blue: "group-hover:text-blue-600 dark:group-hover:text-blue-300",
@@ -31,6 +32,12 @@ interface ClientClassProps {
   query: string;
 }
 
+const desktopGridPosition = (column: number | string, row: number, rowSpan = 1): React.CSSProperties => ({
+  "--grid-column": column,
+  "--grid-row": row,
+  "--grid-row-span": rowSpan,
+} as React.CSSProperties)
+
 
 
 export default function TimetableClientPage(props: ClientClassProps) {
@@ -44,24 +51,35 @@ export default function TimetableClientPage(props: ClientClassProps) {
   const classesUnordered = data?.classConnection.edges.map((item)=> item.node)
   const classesOrganised = classesUnordered.reduce((organised,current) => { 
     // console.log(current)
-    const timeSlot = `${getUnixTime(parseISO(current.date))}-${format(subMinutes(current.date,181),"HHmm-EEE")}`
-    const day = format(subMinutes(current.date,181),"eeee")
+    const sessionDate = parseISO(current.date)
+    const sessionHour = Number(format(sessionDate, "H"))
+    const festivalDate = sessionHour < 4 ? subDays(sessionDate, 1) : sessionDate
+    const timeSlot = `${getUnixTime(sessionDate)}-${format(festivalDate,"HHmm-EEE")}`
+    const festivalDay = format(festivalDate,"eeee")
+    const sessionTime = Number(format(sessionDate, "HHmm"))
+    const splitTime = festivalDay === "Saturday" ? 1800 : festivalDay === "Sunday" ? 1930 : null
+    const day = splitTime
+      ? `${festivalDay} ${sessionTime >= splitTime || sessionHour < 5 ? "Night" : "Day"}`
+      : festivalDay
     const locationName  = current.location ? current.location : "unknown"
     const classBlock = {
+      source: current,
       title: current.title,
       date: timeSlot,
       details: current.details,
       location: current.location,
       level: current.level || "unknown",
       artist1: current.artist1 ? { 
+        source: current.artist1,
         name: current.artist1.name,
         avatar: current.artist1.avatar ? current.artist1.avatar : null,
-        url: `/artists/${current.artist1._sys.filename}`
+        url: `/artists/${current.artist1._sys.breadcrumbs.join("/")}`
       } : { name: null, avatar: null, url: '/artists'},
       artist2: current.artist2 ? { 
+        source: current.artist2,
         name: current.artist2.name,
         avatar: current.artist2.avatar ? current.artist2.avatar : null,
-        url: `/artists/${current.artist2._sys.filename}`
+        url: `/artists/${current.artist2._sys.breadcrumbs.join("/")}`
       } : null
     }
     organised[day] = organised[day] ? organised[day] : {}
@@ -70,7 +88,7 @@ export default function TimetableClientPage(props: ClientClassProps) {
     return organised
   }, {})
 
-  const locations = ["ballroom","derby","sefton","hypostyle","terrace"]
+  const locationOrder = Object.keys(locationDefinitions).filter((location) => location !== "all")
   const days = Object.keys(classesOrganised).sort()
   // const timeSlots = days.map((day) => Object.keys(classesOrganised[day]) )
 
@@ -83,18 +101,79 @@ export default function TimetableClientPage(props: ClientClassProps) {
 
   return <Fragment key="single">
     
-    <div className="grid grid-cols-11 text-black p-8 gap-0">
+    <div className="text-black px-0 py-8 md:p-8">
     {days.map((day) => {
+        const locations = Array.from(new Set(
+          Object.values(classesOrganised[day]).flatMap((timeSlot) => Object.keys(timeSlot))
+        ))
+          .filter((location) => location !== "all")
+          .sort((a, b) => {
+            const aIndex = locationOrder.indexOf(a)
+            const bIndex = locationOrder.indexOf(b)
+            return (aIndex === -1 ? locationOrder.length : aIndex) - (bIndex === -1 ? locationOrder.length : bIndex)
+          })
+        const timeSlots = Object.keys(classesOrganised[day]).sort((a, b) => (
+          Number(a.split("-")[0]) - Number(b.split("-")[0])
+        ))
+        const rowStarts = timeSlots.reduce((rows, timeSlot, index) => {
+          if (index === 0) rows[timeSlot] = 2
+          else {
+            const previousSlot = timeSlots[index - 1]
+            const previousSessions = classesOrganised[day][previousSlot]
+            const previousHasRooms = locations.some((location) => previousSessions[location])
+            rows[timeSlot] = rows[previousSlot] + (previousSessions.all && previousHasRooms ? 2 : 1)
+          }
+          return rows
+        }, {})
+        const gridEndRow = timeSlots.length
+          ? rowStarts[timeSlots[timeSlots.length - 1]] + 1
+          : 2
+        const roomRowFor = (timeSlot) => {
+          const sessions = classesOrganised[day][timeSlot]
+          const hasRooms = locations.some((location) => sessions[location])
+          return rowStarts[timeSlot] + (sessions.all && hasRooms ? 1 : 0)
+        }
+
+        const partyRowSpan = (location, timeSlotIndex) => {
+          const nextSessionIndex = timeSlots.findIndex((candidateSlot, candidateIndex) => (
+            candidateIndex > timeSlotIndex && (
+              classesOrganised[day][candidateSlot][location] ||
+              classesOrganised[day][candidateSlot].all
+            )
+          ))
+          const startRow = roomRowFor(timeSlots[timeSlotIndex])
+          return nextSessionIndex === -1
+            ? gridEndRow - startRow
+            : roomRowFor(timeSlots[nextSessionIndex]) - startRow
+        }
+
+        const isCoveredByParty = (location, timeSlotIndex) => {
+          for (let index = timeSlotIndex - 1; index >= 0; index--) {
+            const previousSessions = classesOrganised[day][timeSlots[index]]
+            if (previousSessions.all) return false
+            const previousSession = previousSessions[location]
+            if (previousSession) return previousSession.level === "party"
+          }
+          return false
+        }
+
         return (<Fragment key={day}>
-          <h1 className="col-span-10 col-start-2 leading-10 pb-5 pt-24 font-black text-right sm:text-left text-4xl md:text-5xl lg:text-8xl uppercase text-white" key={day}>
+          <h1 className="leading-10 pb-5 pt-24 font-black text-center md:text-right sm:text-left text-4xl md:text-5xl lg:text-8xl uppercase text-white" key={day}>
             {day}
           </h1>
-          <span className="hidden md:block"></span>
-          {locations.map((location)=>{
-            return <span className={`bg-richblack-700 p-4 col-span-2 hidden md:block text-center text-white text-sm lg:text-xl font-bold uppercase sticky top-0 border-b-4 border-b-richblack-500`} key={`${day}-${location}`}>{location}</span>
+          <div
+            className="timetable-day-grid"
+            style={{ "--location-count": locations.length } as React.CSSProperties}
+          >
+          <span className="timetable-positioned hidden md:block" style={desktopGridPosition(1, 1)}></span>
+          {locations.map((location, locationIndex)=>{
+            return <span className="timetable-positioned bg-richblack-700 p-4 hidden md:block text-center text-white text-sm lg:text-xl font-bold uppercase sticky top-0 border-b-4 border-b-merseyblue-500" style={desktopGridPosition(locationIndex + 2, 1)} key={`${day}-${location}`}>{locationDefinitions[location]?.title || location}</span>
           })}
-          {Object.keys(classesOrganised[day]).map((timeSlot) => {
+          {timeSlots.map((timeSlot, timeSlotIndex) => {
             const fullWidth = classesOrganised[day][timeSlot]["all"]
+            const hasRoomSessions = locations.some((location) => classesOrganised[day][timeSlot][location])
+            const timeSlotRow = rowStarts[timeSlot]
+            const roomSessionRow = timeSlotRow + (fullWidth && hasRoomSessions ? 1 : 0)
             const fullWidthColor = classesOrganised[day][timeSlot]["all"]?.level == 'admin' ? 'text-white px-4 py-2 ' : 'text-black px-4 py-6 flex justify-center'
             const time = format(fromUnixTime(parseInt(timeSlot.split('-')[0])),"mm") == '00' 
               ? `${format(fromUnixTime(parseInt(timeSlot.split('-')[0])),"haaa")}`
@@ -103,51 +182,71 @@ export default function TimetableClientPage(props: ClientClassProps) {
             const timeColor = shouldMarkRef ? "border-t-chillired-500":"border-t-yellow-400"
 
             if(shouldMarkRef) { timeSlotMarked = true}
-            const timeCell = (<div className={`border-t-3 ${timeColor} font-bold flex items-start`}>
-              <span ref={shouldMarkRef ? currentTimeSlot:null} className={`${shouldMarkRef ? "bg-chillired-500 text-white": "bg-yellow-400"} px-3 pl-2 pr-3 rounded-lg relative -top-3 mr-2 block`}>{shouldMarkRef ? "You Are Here": time}</span>
+            const timeCell = (<div 
+              className={`timetable-time-cell timetable-positioned border-t-3 ${timeColor} font-bold flex items-start`} 
+              style={desktopGridPosition(1, timeSlotRow)}>
+                <span ref={shouldMarkRef ? currentTimeSlot:null} 
+                  className={`timetable-time-label ${shouldMarkRef ? "bg-chillired-500 text-white": "bg-yellow-400"} px-0 md:px-3 pl-2 pr-3 rounded-lg relative -top-3 mr-2 block`}>
+                    {shouldMarkRef ? "You Are Here": time}
+                </span>
             </div>)
-            return fullWidth ? <Fragment key={timeSlot}>{timeCell}
-                <div className={`${fullWidthColor} text-xs sm:text-base col-span-10 flex gap-2 border-t-3 ${timeColor}`} style={{backgroundColor: levels[classesOrganised[day][timeSlot]["all"].level].colour}}>
-                  <strong>{classesOrganised[day][timeSlot]["all"].title}</strong>
-                  <TinaMarkdown content={fullWidth.details} />
-                </div>
-              </Fragment> : <Fragment key={timeSlot}>
+            return <Fragment key={timeSlot}>
               {timeCell}
-              {locations.map((location) => {
+              {fullWidth ? <div data-tina-field={tinaField(fullWidth.source)} className={`${fullWidthColor} timetable-positioned timetable-session-full text-xs sm:text-base flex gap-2 border-t-3 ${timeColor}`} style={{backgroundColor: levels[classesOrganised[day][timeSlot]["all"].level].colour, ...desktopGridPosition("2 / -1", timeSlotRow)}}>
+                  <strong data-tina-field={tinaField(fullWidth.source, "title")}>{classesOrganised[day][timeSlot]["all"].title}</strong>
+                  <div data-tina-field={tinaField(fullWidth.source, "details")}>
+                    <TinaMarkdown content={fullWidth.details} />
+                  </div>
+                </div>
+              : null}
+              {fullWidth && hasRoomSessions ? <div className={`timetable-positioned border-t-3 hidden md:block ${timeColor}`} style={desktopGridPosition(1, roomSessionRow)} /> : null}
+              {!fullWidth || hasRoomSessions ? locations.map((location, locationIndex) => {
                 const clasS = classesOrganised[day][timeSlot][location] || false
+                if (!clasS && isCoveredByParty(location, timeSlotIndex)) return null
                 const level = levels[clasS.level] || false
-                return clasS ? <Link href={clasS?.artist1?.url || '#'} key={`${clasS.date}-${location}`} 
-                  className={`bg-richblack-700 col-span-10 col-start-2 md:col-span-2 p-2 sm:p-4 flex flex-row md:flex-col justify-between items-center ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? '2xl:flex-row' : '2xl:flex-row'}  gap-1 md:gap-3 border-t-3 ${timeColor} ${level ? '' : 'text-white'}`}
-                  style={{backgroundColor: level.colour}}
+                const rowSpan = clasS?.level === "party" ? partyRowSpan(location, timeSlotIndex) : 1
+                return clasS ? <Link href={clasS?.artist1?.url || '#'} key={`${clasS.date}-${location}`}
+                  data-tina-field={tinaField(clasS.source)}
+                  className={`timetable-positioned bg-richblack-700 ${clasS.level === 'admin' ? 'text-white text-xs sm:text-base px-4 py-2' : 'p-2 sm:p-4'} flex flex-row md:flex-col justify-between items-center ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? '2xl:flex-row' : '2xl:flex-row'} gap-1 md:gap-3 border-t-3 ${timeColor} ${!level ? 'text-white' : ''}`}
+                  style={{backgroundColor: level.colour, ...desktopGridPosition(locationIndex + 2, roomSessionRow, rowSpan)}}
                   >
                     { clasS?.artist1?.avatar || clasS?.artist2?.avatar ? 
-                    <div className={`${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? ' h-28 sm:h-16 lg:h-24 lg:min-w-40 xl:min-w-42 ' : ' h-16 lg:h-24 lg:min-w-28 xl:min-w-42'} w-16 sm:w-28 relative flex flex-col`}>
-                      {clasS?.artist2?.avatar ? <Image className={`rounded-full border-3 border-richblack-500 ww-12 wh-12 sm:w-16 sm:h-16 lg:w-24 lg:h-24 ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? 'absolute sm:left-10 lg:left-16 sm:top-auto top-10' : ''}`} src={clasS.artist2.avatar} alt={clasS.artist2.name} width={250} height={250} /> : null }
-                      {clasS?.artist1?.avatar ? <Image className={`rounded-full border-3 border-richblack-500 ww-12 wh-12 sm:w-16 sm:h-16 lg:w-24 lg:h-24 ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? 'absolute sm:left--3 lg:left-0' : ''}`} src={clasS.artist1.avatar} alt={clasS.artist1.name} width={250} height={250} /> : null }
+                    <div className={`${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? ' h-28 sm:h-16 lg:h-24 lg:min-w-40 xl:min-w-42 ' : ' h-16 lg:h-24 lg:min-w-28 xl:min-w-42'} w-16 min-w-[4rem] sm:w-28 relative flex flex-none flex-col`}>
+                      {clasS?.artist2?.avatar ? <Image data-tina-field={tinaField(clasS.artist2.source, "avatar")} className={`aspect-square object-cover object-center overflow-hidden rounded-full border-3 border-merseyblue-500 w-12 min-w-[3rem] h-12 max-w-none flex-none sm:w-16 sm:h-16 lg:w-24 lg:h-24 ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? 'absolute sm:left-10 lg:left-16 sm:top-auto top-10' : ''}`} src={clasS.artist2.avatar} alt={clasS.artist2.name} width={250} height={250} /> : null }
+                      {clasS?.artist1?.avatar ? <Image data-tina-field={tinaField(clasS.artist1.source, "avatar")} className={`aspect-square object-cover object-center overflow-hidden rounded-full border-3 border-merseyblue-500 w-12 min-w-[3rem] h-12 max-w-none flex-none sm:w-16 sm:h-16 lg:w-24 lg:h-24 ${ clasS?.artist1?.avatar && clasS?.artist2?.avatar ? 'absolute sm:left--3 lg:left-0' : ''}`} src={clasS.artist1.avatar} alt={clasS.artist1.name} width={250} height={250} /> : null }
                     </div>
 
                     : null }
                     
                   <div className="flex-grow ">
-                    <h2 className="text-md md:text-sm lg:text-lg 2xl:text-2xl font-bold leading-4 md:leading-6">{clasS.title}</h2>
-                    <p className="text-sm md:text-md lg:text-lg leading-4 md:leading-6">{clasS.artist1.name} </p>
-                    <TinaMarkdown content={clasS.details} />
+                    <h2 data-tina-field={tinaField(clasS.source, "title")} className={`${clasS.level === 'admin' ? 'text-xs sm:text-base' : 'text-md md:text-sm lg:text-lg 2xl:text-2xl'} font-bold leading-4 md:leading-6`}>{clasS.title}</h2>
+                    <p data-tina-field={clasS.artist1.source ? tinaField(clasS.artist1.source, "name") : undefined} className="text-sm md:text-md lg:text-lg leading-4 md:leading-6">{clasS.artist1.name} </p>
+                    <div data-tina-field={tinaField(clasS.source, "details")}>
+                      <TinaMarkdown content={clasS.details} />
+                    </div>
                   </div>
-                  <span className="rounded bg-richblack-600 text-white px-2 py-0.5 md:hidden">{clasS.location}</span>
+                  <span className="rounded bg-richblack-600 text-white text-xs whitespace-nowrap flex-none px-2 py-0.5 md:hidden">{
+                    location === "kensington1"
+                      ? "Knsgtn 1"
+                      : location === "kensington2"
+                        ? "Knsgtn 2"
+                        : locationDefinitions[location]?.title || location
+                  }</span>
                   {/* {clasS.level} */}
                   {/* {JSON.stringify(clasS,null,2)} */}
                   {/* {`${timeSlot} ${location}`} */}
-                </Link> : <div key={`${timeSlot}-${location}`} className={`col-span-2 border-t-3 hidden md:block ${timeColor}`}>
+                </Link> : <div key={`${timeSlot}-${location}`} className={`timetable-positioned border-t-3 hidden md:block ${timeColor}`} style={desktopGridPosition(locationIndex + 2, roomSessionRow)}>
                   {/* {timeSlot} {clasS.title} <TinaMarkdown content={fullWidth} /> {location} */}
                 </div>
-              })}
+              }) : null}
             </Fragment>
           })}
+          </div>
         </Fragment>
         )
 
       })}
     </div>
-    <pre className="hidden text-white">{JSON.stringify(locations,null,2)} {JSON.stringify(days, null,2)}  {JSON.stringify(classesOrganised,null,2)}</pre>
+    <pre className="hidden text-white">{JSON.stringify(days, null,2)} {JSON.stringify(classesOrganised,null,2)}</pre>
   </Fragment>
 }
