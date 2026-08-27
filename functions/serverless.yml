@@ -110,6 +110,8 @@ resources:
             AttributeType: S
           - AttributeName: ticket_number 
             AttributeType: S
+          - AttributeName: event_year
+            AttributeType: S
         KeySchema:
           - AttributeName: email 
             KeyType: HASH
@@ -118,6 +120,14 @@ resources:
         BillingMode: PAY_PER_REQUEST
         TableName: ${param:attendeesTableName}
         GlobalSecondaryIndexes:
+          - IndexName: event_year-ticket_number-index
+            KeySchema:
+              - AttributeName: event_year
+                KeyType: HASH
+              - AttributeName: ticket_number
+                KeyType: RANGE
+            Projection:
+              ProjectionType: 'ALL'
           - IndexName: ticket_number-index
             KeySchema:
               - AttributeName: ticket_number 
