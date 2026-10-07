@@ -20,7 +20,7 @@
       {
         "href": "timetable",
         "label": "Timetable",
-        "visible": false
+        "visible": true
       },
       {
         "href": "artists",
