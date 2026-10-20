@@ -79,23 +79,23 @@ export const ImportRow = ({attendee, handleSaveChanges, onDelete, isEditing, tog
                 <Select name="passes" value={editedAttendee.passes}
                   onChange={(e) => setEditedAttendee({ ...editedAttendee, passes: [e.target.value] })}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                     <option value="2025 Full Pass">2025 Full Pass</option>
-                      <option value="2025 Artist Pass">2025 Artist Pass</option>
-                      <option value="2025 Artist Guest">2025 Artist Guest</option>
-                      <option value="2025 Staff Pass">2025 Staff Pass</option>
-                      <option value="2025 Full Pass (without dinner)">2025 Full Pass (without dinner)</option>
-                      <option value="2025 Volunteer Pass (without dinner)">2025 Volunteer Pass (without dinner)</option>
-                      <option value="2025 Artist Pass (without dinner)">2025 Artist Pass (without dinner)</option>
-                      <option value="2025 Party Pass">2025 Party Pass</option>
-                      <option value="2025 Saturday Pass">2025 Saturday Pass</option>
-                      <option value="2025 Sunday Pass">2025 Sunday Pass</option>
-                      <option value="2025 Class Pass<">2025 Class Pass</option>
-                      <option value="2025 Saturday - Party">2025 Saturday - Party</option>
-                      <option value="2025 Saturday - Class">2025 Saturday - Class</option>
-                      <option value="2025 Gala Dinner">2025 Gala Dinner</option>
-                      <option value="2025 Friday - Party">2025 Friday - Party</option>
-                      <option value="2025 Sunday - Party">2025 Sunday - Party</option>
-                      <option value="2025 Sunday - Class">2025 Sunday - Class</option>
+                     <option value="2026 Full Pass">2026 Full Pass</option>
+                      <option value="2026 Artist Pass">2026 Artist Pass</option>
+                      <option value="2026 Artist Guest Pass">2026 Artist Guest Pass</option>
+                      <option value="2026 Staff Pass">2026 Staff Pass</option>
+                      <option value="2026 Full Pass (without dinner)">2026 Full Pass (without dinner)</option>
+                      <option value="2026 Volunteer Pass (without dinner)">2026 Volunteer Pass (without dinner)</option>
+                      <option value="2026 Artist Pass (without dinner)">2026 Artist Pass (without dinner)</option>
+                      <option value="2026 Party Pass">2026 Party Pass</option>
+                      <option value="2026 Saturday Pass">2026 Saturday Pass</option>
+                      <option value="2026 Sunday Pass">2026 Sunday Pass</option>
+                      <option value="2026 Class Pass<">2026 Class Pass</option>
+                      <option value="2026 Saturday - Party">2026 Saturday - Party</option>
+                      <option value="2026 Saturday - Class">2026 Saturday - Class</option>
+                      <option value="2026 Saturday - Dinner">2026 Saturday - Dinner</option>
+                      <option value="2026 Friday - Party">2026 Friday - Party</option>
+                      <option value="2026 Sunday - Party">2026 Sunday - Party</option>
+                      <option value="2026 Sunday - Class">2026 Sunday - Class</option>
                 </Select>
               </label>
 
