@@ -100,8 +100,28 @@ export default function TimetableClientPage(props: ClientClassProps) {
   },[currentTimeSlot])
 
   return <Fragment key="single">
-    
-    <div className="text-black px-0 py-8 md:p-8">
+    <div className="key sticky max-w-full top-3 mt-3 z-50 flew justify-items-center">
+      <div className="grid w-fit grid-cols-5 gap-1 rounded-md bg-black p-1">
+        <span className="text-xs uppercase col-span-5 px-2 py-1 text-center text-white">
+          Class Level
+        </span>
+
+        {["all", "beginner", "improver", "intermediate", "advanced"].map((levelKey) => (
+          <span
+            key={levelKey}
+            className="rounded px-2 py-1 text-center text-xs"
+            style={{ backgroundColor: levels[levelKey].colour }}
+          >
+            {levels[levelKey].title
+              .replace("Suitable for All", "Open")
+              .replace("Imnpover", "Imprv.")
+              .replace("Intermediate", "Intrmdt.")
+              .replace("Advanced", "Adv.")}
+          </span>
+        ))}
+      </div>
+    </div>
+    <div className="text-black px-0 py-2 md:py-8 md:p-8">
     {days.map((day) => {
         const locations = Array.from(new Set(
           Object.values(classesOrganised[day]).flatMap((timeSlot) => Object.keys(timeSlot))
@@ -158,7 +178,7 @@ export default function TimetableClientPage(props: ClientClassProps) {
         }
 
         return (<Fragment key={day}>
-          <h1 className="leading-10 pb-5 pt-24 font-black text-center md:text-right sm:text-left text-4xl md:text-5xl lg:text-8xl uppercase text-white" key={day}>
+          <h1 className="leading-10 md:pb-5 pt-12 md:pt-24 font-black text-center md:text-right sm:text-left text-4xl md:text-5xl lg:text-8xl uppercase text-white" key={day}>
             {day}
           </h1>
           <div
