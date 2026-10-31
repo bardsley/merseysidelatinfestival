@@ -1,5 +1,6 @@
 import json
 import boto3
+from boto3.dynamodb.conditions import Key
 import logging
 from decimal import Decimal
 from shared import DecimalEncoder as shared
@@ -23,7 +24,15 @@ table = db.Table(os.environ.get("ATTENDEES_TABLE_NAME"))
 #         return super().default(obj)
 
 def lambda_handler(event, context):
-    response = table.scan()    
+    query_params = (event or {}).get('queryStringParameters') or {}
+    year = query_params.get('year')
+    if year is not None:
+        response = table.query(
+            IndexName='event_year-ticket_number-index',
+            KeyConditionExpression=Key('event_year').eq(year)
+        )
+    else:
+        response = table.scan()
     return {
         'statusCode': 200,
         'body': json.dumps(response, cls=shared.DecimalEncoder)
