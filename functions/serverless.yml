@@ -30,6 +30,7 @@ stages:
       isProd: false
       deletionPolicy: Delete 
       skipTables: true
+      eventYear: "2026"
       githubBranchDestination: "develop"
     resolvers:
       awsAccount1:
@@ -245,6 +246,7 @@ functions:
       STRIPE_SECRET_KEY: ${param:stripeSecretKey}
       SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
       ATTENDEE_GROUPS_LAMBDA: "${sls:stage}-attendee_groups"
+      EVENT_YEAR: ${param:eventYear}
     # layers:
     #   - !Ref DynamodbLambdaLayer
 
@@ -665,6 +667,7 @@ functions:
       EVENT_TABLE_NAME: ${param:eventTableName}
       ATTENDEES_TABLE_NAME: ${param:attendeesTableName}
       SEND_EMAIL_LAMBDA: "${sls:stage}-send_email"
+      EVENT_YEAR: ${param:eventYear}
     events:
 
       - httpApi:

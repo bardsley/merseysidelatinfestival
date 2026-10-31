@@ -174,6 +174,7 @@ def lambda_handler(event, context):
         logger.info(response)
         
         return {'statusCode': 200, 'body': json.dumps({'message':"Ticket transferred"})}
+
     else:
         #   create a new ticket with a new ticket number
         #   make the old ticket inactive and state that it has been transferred and to who
@@ -209,6 +210,9 @@ def lambda_handler(event, context):
                 'schedule': ticket_entry['schedule'],
                 'history': history
                 }
+
+        if 'event_year' in ticket_entry:
+            payload['event_year'] = ticket_entry['event_year']
 
         if ticket_entry['meal_preferences'] is not None:
             if ticket_entry['meal_preferences']['seating_preference'] is not None:
@@ -260,4 +264,3 @@ def lambda_handler(event, context):
         logger.info(response)
         
         return {'statusCode': 200, 'body': json.dumps({'message':"Ticket transferred"})}
-
