@@ -1,6 +1,7 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useFormStatus } from "react-dom"
+import TerminalDebug from './TerminalDebug';
 import Cell from '../ticketing/Cell';
 import { initialSelectedOptions, fullPassName, passes, individualTickets } from '../ticketing/pricingDefaults'
 import { calculateTotalCost, passOrTicket, getBestCombination, itemsFromPassCombination, itemListToOptions, addToOptions, mapItemsToAccessArray} from '../ticketing/pricingUtilities'
@@ -24,7 +25,91 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
   const [ticket,setTicket] = useState(false as any)
   const [selectedAccessArray, setSelectedAccessArray] = useState([])
 
+  const [busy, setBusy] = useState(false);
+  const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
+  const [message, setMessage] = useState('');
+  const polling = useRef(0);
+  const attemptId = useRef<string | null>(null);
+  const purchase = useRef<any>(null);
+  const locked = busy || !!paymentIntentId || !!attemptId.current;
+
+  async function terminalRequest(method: string, body?: any) {
+    const response = await fetch('/api/admin/epos/terminal' + (method === 'GET' ? `?paymentIntentId=${body.paymentIntentId}` : ''), {
+      method, headers: { 'Content-Type': 'application/json' },
+      ...(method !== 'GET' ? { body: JSON.stringify(body) } : {}),
+    });
+    const data = await response.json();
+    if (data.paymentIntentId) setPaymentIntentId(data.paymentIntentId);
+    if (!response.ok) throw new Error(data.error || 'Terminal request failed.');
+    return data;
+  }
+
+  async function savePurchase(details) {
+    setMessage('Saving ticket…');
+    const response = await fetch('/api/admin/epos', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(details),
+    });
+    const data = await response.json();
+    if (!response.ok || !data.ticket_number) throw new Error(data.error || 'Unable to save ticket.');
+    setTicket(data.ticket_number);
+    setPaymentIntentId(null);
+    attemptId.current = null;
+    purchase.current = null;
+    setSelectedOptions(deepCopy(initialSelectedOptions));
+    setStudentDiscount(false);
+    setPriceModel('cost');
+    setMessage('');
+  }
+
+  async function collectCard() {
+    setBusy(true);
+    const run = ++polling.current;
+    try {
+      setMessage('Follow the instructions on the card reader.');
+      const started = await terminalRequest('POST', {
+        amount: purchase.current.checkout_amount, attemptId: attemptId.current, paymentIntentId,
+      });
+      const id = started.paymentIntentId;
+      while (run === polling.current) {
+        const result = await terminalRequest('GET', { paymentIntentId: id });
+        if (run !== polling.current) return;
+        if (result.status === 'succeeded') {
+          await savePurchase({ ...purchase.current, checkout_session: id });
+          break;
+        }
+        if (result.status === 'canceled') {
+          setPaymentIntentId(null);
+          attemptId.current = null;
+          purchase.current = null;
+          setMessage('Payment canceled.');
+          break;
+        }
+        if (result.failure) throw new Error(result.failure);
+        await new Promise(resolve => setTimeout(resolve, 1500));
+      }
+    } catch (error) {
+      setMessage(`${error.message} Use Retry / check payment to continue without starting a new charge.`);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function cancelCard() {
+    setBusy(true);
+    try {
+      if (!paymentIntentId) throw new Error('Use Retry / check payment to recover the payment before canceling.');
+      await terminalRequest('DELETE', { paymentIntentId });
+      polling.current++;
+      setPaymentIntentId(null);
+      attemptId.current = null;
+      purchase.current = null;
+      setMessage('Payment canceled.');
+    } catch (error) { setMessage(error.message); }
+    finally { setBusy(false); }
+  }
+
   const togglePriceModel = () => {
+    if (locked) return;
     setPriceModel(priceModel === "cost"? "studentCost" : "cost")
     setStudentDiscount(priceModel === "cost" ? true : false) //! This looks backwards but priceModel hasn't changed yet
   }
@@ -58,12 +143,14 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
   }
 
   const setIndividualOption = (day,passType) => {
+    if (locked) return;
     let initialOptions = selectedOptions
     initialOptions[day][passType] =!initialOptions[day][passType]
     setSelectedOptions({...initialOptions})
   }
 
   const clearOptions = () => {
+    if (locked) return;
     console.log("Options reset to: ", initialSelectedOptions)
     localStorage.removeItem("selectedOptions")
     setSelectedOptions(deepCopy(initialSelectedOptions))
@@ -84,10 +171,11 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
     bg-green-700 hover:bg-green-800 text-xl text-nowrap w-full max-w-72 md:w-auto`
     return(
       <div className='flex gap-6'>
-        <button type="submit" name="checkout-button" id="checkout-button" value="cash" disabled={pending || totalCost <= 0}
+        <button type="submit" name="checkout-button" id="checkout-button" value="cash" disabled={pending || locked || totalCost <= 0}
           className={activeButtonClass}>
           {pending ? "Storing..." : "Cash"}
         </button>
+        <button type="submit" name="checkout-button" value="card" disabled={pending || locked || totalCost <= 0} className={activeButtonClass}>Card</button>
       </div>
 
     );
@@ -95,15 +183,14 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
 
   async function checkout(formObject) {
 
-    setSelectedOptions(deepCopy(initialSelectedOptions))
-    setStudentDiscount(false)
+    if (locked) return;
 
     // Generate line items for each pass/ticket
     const line_items = packages.map(passName => {
       const line_item = passes[passName] ? passes[passName] : individualTickets[passName.split(" ")[0]][passName.split(" ")[1]]
       if (line_item) {
         return {
-          'amount_total': formObject.get("inperson-amount"),  //studentDiscount ? line_item.cost * 100 : line_item.studentCost * 100,
+          'amount_total': Math.round((studentDiscount ? line_item.studentCost : line_item.cost) * 100),
           'description': passName,
           'price_id': studentDiscount ? line_item.studentPriceId : line_item.priceId,
         }
@@ -122,24 +209,19 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
       'status': `paid_${formObject.get('checkout-button')}`,
       'student_ticket': studentDiscount,
       'checkout_session': formObject.get('checkout-button'),
-      'checkout_amount': packageCost*100,
+      'checkout_amount': Math.round(packageCost*100),
       'heading_message':"THANK YOU FOR YOUR PURCHASE",
       'send_standard_ticket': true,
     }
-    console.log("Purchase object",purchaseObj)
-    const apiResponse = await fetch('/api/admin/epos', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(purchaseObj),
-    })
-    const apiData = await apiResponse.json()
-    const apiAmmendedData = apiResponse.ok ? apiData : {...apiData, ticket_number: false }
-    console.log("apiData",apiAmmendedData)
-    setTicket(apiData.ticket_number)
-    if(!apiResponse.ok) {
-      alert(`PROBLEM, ${JSON.stringify(apiData)} ${apiResponse.status}`)
+    purchase.current = purchaseObj;
+    if (formObject.get('checkout-button') === 'card') {
+      attemptId.current = crypto.randomUUID();
+      await collectCard();
+    } else {
+      setBusy(true);
+      try { await savePurchase(purchaseObj); }
+      catch (error) { setMessage(error.message); }
+      finally { setBusy(false); }
     }
   }
 
@@ -165,11 +247,12 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
           scrollToElement={scrollToElement}
           shouldScroll={false}
           basic={true}
+          locked={locked}
           ></PassCards>
 
         <div className='mb-12'>
           <Cell option={{name: 'Student Ticket (Check Student ID)', cost: 0, studentCost: 0, isAvailable: true } }
-            isSelected={studentDiscount} onSelect={togglePriceModel} studentDiscount={studentDiscount}/>
+            isSelected={studentDiscount} onSelect={togglePriceModel} studentDiscount={studentDiscount} locked={locked}/>
         </div>
       </div>
 
@@ -181,6 +264,7 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
         clearOptions={clearOptions}
         setIndividualOption={setIndividualOption}
         priceModel={priceModel}
+        locked={locked}
 
       />
 
@@ -190,6 +274,16 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
           <div className='rounded-t-md border-t-gray-600 border border-b-0 border-l-0 border-r-0 bg-gold-500 p-2 font-bold text-center'>This is a student only ticket deal!</div>)
         : null }
 
+        <div className="px-6 pt-4" aria-live="polite">
+          {message && <p role="status">{message}</p>}
+          {paymentIntentId && <p className="text-xs mt-2">Payment reference: {paymentIntentId}</p>}
+          {locked && !busy && <div className="flex gap-4 mt-3">
+            <button type="button" className="underline" onClick={collectCard}>Retry / check payment</button>
+            <button type="button" className="underline" onClick={cancelCard}>Cancel card payment</button>
+          </div>}
+          {paymentIntentId && busy && <button type="button" className="underline block mt-3" onClick={cancelCard}>Cancel card payment</button>}
+        </div>
+
         <div className='flex flex-col md:flex-row justify-between pb-10 px-10 pt-6 gap-3'>
           { totalCost > 0 ? (
             <>
@@ -198,9 +292,9 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
                 <h2 className='text-3xl font-bold'>{ totalCost - packageCost > 0 ? (<span className='line-through'>£{totalCost}</span>) : null } £{packageCost}</h2>
               </div>
               <form autoComplete="off" action={checkout} className='flex w-full md:w-2/3 flex-col items-center justify-center'>
-                <input type="text" autoComplete="off" name="inperson-amount" placeholder="Money" defaultValue={packageCost*100} className={inputClasses} />
-                <input type="text" autoComplete="off" name="inperson-name" placeholder="Name" className={inputClasses} />
-                <input type="text" autoComplete="off" name="inperson-email" placeholder="Email" className={inputClasses}   />
+                <input type="hidden" name="inperson-amount" value={Math.round(packageCost*100)} />
+                <input type="text" autoComplete="off" name="inperson-name" placeholder="Name" required readOnly={locked} className={inputClasses} />
+                <input type="email" autoComplete="off" name="inperson-email" placeholder="Email" required readOnly={locked} className={inputClasses}   />
                 <CheckoutButtons></CheckoutButtons>
               </form>
 
@@ -212,15 +306,11 @@ const Till = ({fullPassFunction,scrollToElement}:{fullPassFunction?:Function,scr
       </div>
       </div>
 
-      { process.env.NODE_ENV == 'development' && process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' ?
-        <div className='col-span-full'>
-        <hr />
-        <h2>Debug Ignore below the line</h2>
-        <div className='flex'>
-          <pre>Selected -- {JSON.stringify(selectedOptions,null,2)}</pre>
-          <pre>Packages--{JSON.stringify(packages,null,2)}</pre>
-        </div>
-        </div> : null }
+      <TerminalDebug paymentIntentId={paymentIntentId} selection={{ selectedOptions, packages, packageCost, studentDiscount }} onReaderReleased={() => {
+        polling.current++;
+        setBusy(false);
+        setMessage('Reader action stopped. Use Retry / check payment to check or resume this sale.');
+      }} />
 
     </div>
   )
