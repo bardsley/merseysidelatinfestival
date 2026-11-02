@@ -10,6 +10,7 @@ from decimal import Decimal
 import os
 import logging
 from shared import DecimalEncoder as shared
+from shared.event_year import resolve_event_year
 
 logger = logging.getLogger()
 logger.setLevel("INFO")
@@ -131,6 +132,17 @@ def lambda_handler(event, context):
         'promo_code':event['promo_code'] if 'promo_code' in event else None,
         'history':event['history'] if 'history' in event else [],
     }
+
+    event_year = resolve_event_year(
+        event['line_items'],
+        event.get('event_year'),
+        os.environ.get('EVENT_YEAR'),
+    )
+    if event_year:
+        Item['event_year'] = event_year
+    else:
+        logger.warning("Ticket has no valid event year or configured sales-cycle fallback; it will not appear in the event-year index")
+
     update_ddb = table.put_item(Item=Item)
     logger.info(update_ddb)
 

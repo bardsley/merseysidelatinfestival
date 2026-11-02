@@ -8,6 +8,7 @@ import boto3
 from boto3.dynamodb.conditions import Key
 from shared.DecimalEncoder import DecimalEncoder
 from shared.parser import parse_event, validate_event, validate_line_items
+from shared.event_year import resolve_event_year
 
 #ENV
 attendees_table_name = os.environ.get("ATTENDEES_TABLE_NAME")
@@ -115,6 +116,16 @@ def lambda_handler(event, context):
         if key in event:
             item[key] = event.get(key)
 
+    event_year = resolve_event_year(
+        line_items,
+        event.get('event_year'),
+        os.environ.get('EVENT_YEAR'),
+    )
+    if event_year:
+        item['event_year'] = event_year
+    else:
+        logger.warning("Ticket has no valid event year or configured sales-cycle fallback; it will not appear in the event-year index")
+
     attendees_table.put_item(Item=item)
 
     try:
@@ -145,4 +156,4 @@ def lambda_handler(event, context):
             'ticket_number': ticket_number,
             'email': email
         })
-    }                
+    }
