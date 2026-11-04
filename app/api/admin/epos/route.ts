@@ -1,17 +1,7 @@
+import { tillPayment } from '@lib/terminal';
 import { createClerkClient } from '@clerk/backend';
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
-// import  Pusher from 'pusher'
-
-// const pusher = new Pusher({
-//   appId: process.env.PUSHER_APP_ID,
-//   key: process.env.NEXT_PUBLIC_PUSHER_APP_KEY,
-//   secret: process.env.PUSHER_APP_SECRET,
-//   cluster: "eu",
-//   useTLS: true
-// });
-
-
 export async function POST(request: Request) {
   const body = await request.json()
   console.log(body)
@@ -26,6 +16,17 @@ export async function POST(request: Request) {
   const requestingUser = await clerkClient.users.getUser(userId);
   if(!requestingUser.publicMetadata.admin){
     return Response.json({error: "User is does not have permissions."}, { status: 401 });
+  }
+
+  if (body.status === 'paid_card') {
+    try {
+      const intent = await tillPayment(body.checkout_session, userId);
+      if (intent.status !== 'succeeded' || intent.currency !== 'gbp' || intent.amount_received !== body.checkout_amount) {
+        return NextResponse.json({ error: 'Card payment has not completed for this amount.' }, { status: 400 });
+      }
+    } catch (error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
   }
 
   const checkoutUrl = process.env.LAMBDA_CHECKOUT_COMPLETE_INPERSON

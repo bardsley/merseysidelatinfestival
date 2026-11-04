@@ -5,7 +5,7 @@ const grantUsage = {
   "all-admins": ["/admin"], // Everyone gets this set
   "developer": ["#","/admin/users","/admin/stripe","/admin/import"],
   "content-manager": ['/admin/content'],
-  "door-staff": ['/admin/ticketing','/admin/scan', '/admin/epos'],
+  "door-staff": ['/admin/ticketing','/admin/scan', '/admin/epos', '/admin/epos-zettle'],
   "event-manager": ['/admin/ticketing.*','/admin/meal.*'] // Everything under ticketing
 }
 
