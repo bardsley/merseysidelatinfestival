@@ -13,6 +13,8 @@ event_table_name = os.environ.get("EVENT_TABLE_NAME")
 logger = logging.getLogger()
 logger.setLevel("INFO")
 
+TARGET_EVENT_YEAR = '2026'
+
 # profile_name='danceengine-admin'
 # boto3.setup_default_session(profile_name=profile_name)
 # logging.basicConfig()
@@ -34,7 +36,16 @@ def err(msg:str, code=400, logmsg=None, **kwargs):
         }
 
 def get_dinner_pass_names():
-    return ["2025 Full Pass (with dinner)", "2025 Artist Pass", "2025 Volunteer Pass", "2025 Gala Dinner","Dine and Dance Pass 2025"]
+    return [
+        "2026 Full Pass with Gala Buffet",
+        "2026 Artist Pass",
+        "2026 Artist Guest Pass",
+        "2026 Staff Pass",
+        "2026 Volunteer Pass",
+        "2026 Saturday - Dinner",
+        "Saturday Pass with Gala Buffet",
+        "Dine and Dance Pass",
+    ]
 
 def extract_pass_type(line_items):
     pass_names = get_dinner_pass_names()
@@ -48,7 +59,8 @@ def extract_pass_type(line_items):
 
 def get_last_email():
     response = event_table.scan(FilterExpression=Key('PK').eq("EMAIL#MEALREMINDER"))
-    sorted_list = sorted(response['Items'], key=lambda item: item['timestamp']) if len(response['Items']) > 0 else None
+    items = response.get('Items', [])
+    sorted_list = sorted(items, key=lambda item: item['timestamp']) if items else None
 
     return sorted_list
 
@@ -56,7 +68,21 @@ def lambda_handler(event, context):
     logger.info(f"Event {event}")
     if event['requestContext']['http']['method'] != "GET": return err("Method not allowed, make GET request", code=405)
 
-    response = table.scan(FilterExpression=Key('active').eq(True))
+    # Meal summaries are event-specific. Query the event-year index so older
+    # tickets cannot be included in the current meal totals.
+    response = table.query(
+        IndexName='event_year-ticket_number-index',
+        KeyConditionExpression=Key('event_year').eq(TARGET_EVENT_YEAR)
+    )
+    year_counts = {}
+    for item in response.get('Items', []):
+        year = str(item.get('event_year'))
+        year_counts[year] = year_counts.get(year, 0) + 1
+    logger.info(f"Meal summary event years returned by query: {year_counts}")
+    year_items = [
+        item for item in response.get('Items', [])
+        if str(item.get('event_year')) == TARGET_EVENT_YEAR
+    ]
 
     course_mappings = [
             {0: "Mushroom & Truffle", 1: "Chicken Liver Pate"},
@@ -74,9 +100,17 @@ def lambda_handler(event, context):
     selected_count = 0       # All choices are >= 0 (options selected)
     group_count = 0
     
-    filtered_items = [item for item in response['Items'] if (item['access'][2] == 1) and extract_pass_type(item.get('line_items', [])) in get_dinner_pass_names()] # if they have access to dinner
+    filtered_items = [
+        item for item in year_items
+        if item.get('active') is True
+        and len(item.get('access') or []) > 2
+        and item['access'][2] == 1
+    ] # if they have access to dinner
 
-    not_wanted_count = len([item for item in response['Items'] if (item['access'][2] == -1)]) # if it has been removed by an admin because they didn't want
+    not_wanted_count = len([
+        item for item in year_items
+        if len(item.get('access') or []) > 2 and item['access'][2] == -1
+    ]) # if it has been removed by an admin because they didn't want
 
     meal_attendees_list = []
     
@@ -145,7 +179,8 @@ def lambda_handler(event, context):
     logger.info(f"Dietary Frequencies: {dietary_frequencies}")
 
     for i in range(len(course_frequencies)):
-        course_frequencies[i][course_mappings[i][0]] += not_selected_count
+        default_dish = course_mappings[i][0]
+        course_frequencies[i][default_dish] = course_frequencies[i].get(default_dish, 0) + not_selected_count
 
     return {
         'statusCode': 200,

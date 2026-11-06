@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { deepCopy } from '@lib/useful'
 import { Icon } from "@components/icon";
-export const courses = [
-  { name: "Starter", options: ["Mushroom & Truffle cake", "Chicken Liver Pate"]},
-  { name: "Main", options: ["Smoked Cheese Risotto", "Chicken Supreme"]},
-  { name: "Desert", options: ["Eton Mess", "Sticky Toffee Pudding"]},
-]
-
-export const blankPreferences = {choices: [-1,-1,-1], dietary_requirements : { selected: [], other: ""}, seating_preference: '', recommendations: []}
+export const blankPreferences = {choices: [0,0,0], dietary_requirements : { selected: [], other: ""}, seating_preference: '', recommendations: []}
 const dietaryRequirements = ["vegan","gluten free","lactose free","nut alergy","kosher","halal","other"]
-const veganChoices = Object.keys(courses).map((key) => courses[key].options[0])
 
 
 
@@ -23,8 +16,8 @@ const MealPreferences = ({preferences,setPreferences, admin = false}) =>{
     process.env.NEXT_PUBLIC_INTERNAL_DEBUG == 'true' && console.log(choicesValid(preferences),seatingValid(preferences),dietValid(preferences))
     return choicesValid(preferences) && seatingValid(preferences) && dietValid(preferences)
   }
-  const preferencesDisabled = true
-  const preferenceSent =  true
+  const preferencesDisabled = false
+  const preferenceSent =  false
   
   useEffect(() => {
     if(!checkInputOk(preferences)) {
@@ -65,46 +58,8 @@ const MealPreferences = ({preferences,setPreferences, admin = false}) =>{
     <>
       { preferenceSent ? <div className='bg-yellow-500 p-5 mt-2 text-richblack-600 font-bold rounded'>Food preferences have now been sent to the venue.</div> : null }
       
-      <fieldset className="my-6 max-w-full">
-        <legend className="text-base font-semibold leading-6 text-white">Course</legend>
-        <div className="mt-4 divide-y divide-gray-700 border-b border-t border-gray-700">
-          {courses.map((course, courseIdx) => (
-            <div key={courseIdx} className="relative grid grid-cols-6 items-center md:items-start justify-between w-full py-4 flex-wrap md:flex-nowrap auto-rows-max">
-              <div className="min-w-0 text-sm leading-6 w-full md:w-auto col-span-6 md:col-span-1 ">
-                <span className="select-none  text-white font-bold md:font-medium">
-                  {course.name}
-                </span>
-              </div>
-              <div className="ml-3 grid grid-cols-1 sm:grid-cols-3 items-center justify-end gap-5 col-span-6 md:col-span-5">
-                {course.options.map((option,optionIdx) => {
-                  return (
-                    <div key={`c${courseIdx}-${optionIdx}`} className={`flex items-center gap-3 justify-start cols-span-1`}>
-                    
-                    <input
-                      id={`course-${courseIdx}-${optionIdx}`}
-                      name={`course-${courseIdx}`}
-                      type="radio"
-                      value={optionIdx}
-                      readOnly = {(preferencesDisabled && !admin) ? true : false}
-                      defaultChecked={preferences && preferences.choices && preferences.choices[courseIdx] == optionIdx}
-                      // checked={preferences[courseIdx] == optionIdx}
-                      className="h-4 w-4 rounded-full border-gray-700 text-indigo-600 focus:ring-indigo-600"
-                      onClick={(event) =>  maintainState(event)}
-                      onChange={(event) => { preferencesDisabled ? maintainState(event): setPreferences({...preferences, choices:[...preferences.choices.slice(0,courseIdx),optionIdx,...preferences.choices.slice(courseIdx+1)]})}}
-                    />
-                    <label htmlFor={`course-${courseIdx}-${optionIdx}`}>{option}</label>
-                    </div>
-                  )
-                })}
-                
-              </div>
-            </div>
-          ))}
-        </div>
-      </fieldset>
       <fieldset className='my-6 max-w-full w-full'>
         <legend className="text-base font-semibold leading-6 text-white">Other Specific Dietary Requirements</legend>
-        <p className='mb-3 text-sm'>Please note the food choices above, {veganChoices.join(', ').toLowerCase()} are vegan or will be replaced with Vegan options if vegan is set in Dietary requirments</p>
 
         <ul className='grid grid-cols-2 md:grid-cols-4 gap-2 mb-3'>
         {dietaryRequirements.map((diet) => {

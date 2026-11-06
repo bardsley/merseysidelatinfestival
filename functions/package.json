@@ -9,7 +9,7 @@
     "node": "24.x"
   },
   "dependencies": {
-    "serverless": "^4.2.3",
-    "serverless-prune-plugin": "^2.0.2"
+    "serverless": "^4.46.0",
+    "serverless-prune-plugin": "^2.1.0"
   }
 }

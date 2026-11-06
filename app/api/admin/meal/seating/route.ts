@@ -19,6 +19,7 @@ export async function GET(_req: NextRequest) {
   console.log(seatingUrl)
   const seatingResponse = await fetch(seatingUrl, {
     method: 'GET',
+    cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
     },

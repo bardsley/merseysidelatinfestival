@@ -4,10 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  react: ^18.3.1
-  react-dom: ^18.3.1
-
 importers:
 
   .:
@@ -196,6 +192,15 @@ importers:
       serverless-prune-plugin:
         specifier: ^2.0.2
         version: 2.0.2(serverless@4.2.4)
+
+  functions:
+    dependencies:
+      serverless:
+        specifier: ^4.46.0
+        version: 4.46.0
+      serverless-prune-plugin:
+        specifier: ^2.1.0
+        version: 2.1.0(serverless@4.46.0)
 
 packages:
 
@@ -6191,9 +6196,19 @@ packages:
     peerDependencies:
       serverless: 1 || 2 || 3
 
+  serverless-prune-plugin@2.1.0:
+    resolution: {integrity: sha512-++22inpEFECgfw+DR2cRn8huxzcsQVgSii4Rjp5q6cPxKo2eKmFc0dfMaJ81DwQoHEnVhfVipIlGdodkauOm1g==}
+    peerDependencies:
+      serverless: 1.x || 2.x || 3.x || 4.x
+
   serverless@4.2.4:
     resolution: {integrity: sha512-iRyWkTyW/7bJgyJC468VlZm1inTwHasCOsFFelY7Ffz9lFeNHpGuPTTfN/FUO3TckQqQmyuWNOjBvAFLmTqUWw==}
     engines: {node: '>=18.0.0'}
+    hasBin: true
+
+  serverless@4.46.0:
+    resolution: {integrity: sha512-9VYGuErqCb4nlPeJ5sGzUrLRwILdcCcy6rbOpQwHDs6LcTkCGi5YZuldrITZTpj7c8u+cdFwedMueUx8QQheAA==}
+    engines: {node: '>=18.17.0'}
     hasBin: true
 
   set-blocking@2.0.0:
@@ -6771,6 +6786,10 @@ packages:
 
   undici-types@6.19.6:
     resolution: {integrity: sha512-e/vggGopEfTKSvj4ihnOLTsqhrKRN3LeO6qSN/GxohhuRv8qH9bNQ4B8W7e/vFL+0XTnmHPB4/kegunZGA4Org==}
+
+  undici@6.29.1:
+    resolution: {integrity: sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==}
+    engines: {node: '>=18.17'}
 
   unicode-canonical-property-names-ecmascript@2.0.0:
     resolution: {integrity: sha512-yY5PpDlfVIU5+y/BSCxAJRBIS1Zc2dDG3Ujq+sR0U+JjUevW2JhocOF+soROYDSaAezOzOKuyyixhD6mBknSmQ==}
@@ -14498,6 +14517,11 @@ snapshots:
       bluebird: 3.7.2
       serverless: 4.2.4
 
+  serverless-prune-plugin@2.1.0(serverless@4.46.0):
+    dependencies:
+      bluebird: 3.7.2
+      serverless: 4.46.0
+
   serverless@4.2.4:
     dependencies:
       axios: 1.7.7
@@ -14506,6 +14530,10 @@ snapshots:
       xml2js: 0.6.2
     transitivePeerDependencies:
       - debug
+
+  serverless@4.46.0:
+    dependencies:
+      undici: 6.29.1
 
   set-blocking@2.0.0: {}
 
@@ -15383,6 +15411,8 @@ snapshots:
   unc-path-regex@0.1.2: {}
 
   undici-types@6.19.6: {}
+
+  undici@6.29.1: {}
 
   unicode-canonical-property-names-ecmascript@2.0.0: {}
 

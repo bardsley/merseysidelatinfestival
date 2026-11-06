@@ -3,7 +3,7 @@ import client from "@tina/__generated__/client";
 import ClientPage from "./client-page";
 import Layout from "@components/layout/layout";
 import type { Metadata } from "next";
-import { redirect } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 export const dynamic = "force-dynamic";
 import { unstable_noStore as noStore } from "next/cache";
 
@@ -13,6 +13,9 @@ export async function generateMetadata({
   params: { filename: string[] };
 }): Promise<Metadata> {
   noStore();
+
+  // Browser tooling probes this well-known path, which is not a Tina page.
+  if (params.filename[0] === '.well-known') return {};
 
   try {
     const data = await client.queries.page({
@@ -32,6 +35,10 @@ export default async function Page({
 }: {
   params: { filename: string[] };
 }) {
+  if (params.filename[0] === '.well-known') {
+    notFound();
+  }
+
   const clerkregex = /^clerk_(.*)$/;
   if(clerkregex.test(params.filename[0])) {
     redirect(`/admin`);

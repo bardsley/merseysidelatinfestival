@@ -24,14 +24,18 @@ table = db.Table(os.environ.get("ATTENDEES_TABLE_NAME"))
 #         return super().default(obj)
 
 def lambda_handler(event, context):
+    logger.info(f"Event: {event}")
+    logger.info(f"Context: {context}")
     query_params = (event or {}).get('queryStringParameters') or {}
     year = query_params.get('year')
     if year is not None:
+        logger.info(f"Filtering for year: {year}")
         response = table.query(
             IndexName='event_year-ticket_number-index',
             KeyConditionExpression=Key('event_year').eq(year)
         )
     else:
+        logger.info(f"Not Filtering for year")
         response = table.scan()
     return {
         'statusCode': 200,

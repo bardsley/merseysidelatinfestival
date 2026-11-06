@@ -18,6 +18,9 @@ event_table_name = os.environ.get("EVENT_TABLE_NAME")
 logger = logging.getLogger()
 logger.setLevel("INFO")
 
+TARGET_EVENT_YEAR = '2026'
+SEATING_CACHE_KEY = f'SEATING#OPTIMISED#{TARGET_EVENT_YEAR}'
+
 db = boto3.resource('dynamodb')
 attendees_table = db.Table(attendees_table_name)
 event_table = db.Table(event_table_name)
@@ -32,7 +35,16 @@ def get_output_string(seating):
     return output_str
 
 def get_dinner_pass_names():
-    return ["2025 Full Pass (with dinner)", "2025 Artist Pass", "2025 Volunteer Pass", "2025 Gala Dinner","Dine and Dance Pass 2025"]
+    return [
+        "2026 Full Pass with Gala Buffet",
+        "2026 Artist Pass",
+        "2026 Artist Guest Pass",
+        "2026 Staff Pass",
+        "2026 Volunteer Pass",
+        "2026 Saturday - Dinner",
+        "Saturday Pass with Gala Buffet",
+        "Dine and Dance Pass",
+    ]
 
 def extract_pass_type(line_items):
     pass_names = get_dinner_pass_names()
@@ -277,8 +289,16 @@ def simulated_annealing(attendees, fixed_tickets, table_capacities, initial_temp
     return best_state
 
 def post(event):  
-    response = attendees_table.scan(FilterExpression=Key('active').eq(True))
-    filtered_items = [item for item in response.get('Items', []) if item['access'][2] == 1 and extract_pass_type(item.get('line_items', [])) in get_dinner_pass_names()]
+    response = attendees_table.query(
+        IndexName='event_year-ticket_number-index',
+        KeyConditionExpression=Key('event_year').eq(TARGET_EVENT_YEAR)
+    )
+    filtered_items = [
+        item for item in response.get('Items', [])
+        if item.get('active') is True
+        and len(item.get('access') or []) > 2
+        and item['access'][2] == 1
+    ]
 
     attendees = []
     fixed_tickets = event.get('fixed_tickets', {})
@@ -337,7 +357,7 @@ def post(event):
 
     try:
         event_entry = {
-            'PK': 'SEATING#OPTIMISED',
+            'PK': SEATING_CACHE_KEY,
             'SK': f"DETAIL#{int(time.time())}",
             'seating_data': json.dumps(optimised_seating, indent=2, cls=DecimalEncoder),
             'timestamp': int(time.time())
@@ -362,7 +382,7 @@ def post(event):
 def get(event):
     try:
         response = event_table.query(
-            KeyConditionExpression=Key('PK').eq('SEATING#OPTIMISED'),
+            KeyConditionExpression=Key('PK').eq(SEATING_CACHE_KEY),
             ScanIndexForward=False,
             Limit=1
         )

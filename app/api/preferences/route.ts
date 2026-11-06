@@ -7,7 +7,10 @@ export async function POST(request: Request) {
   const ticket = cookies().get('ticket')
   const email = cookies().get('email')
   console.log(data)
+  // Course selection is no longer collected by the picker. Keep the API contract
+  // complete by selecting the first option for each course by default.
   const courseInfo = Array.from(data.entries()).filter((item)=>{ return /course/.test(item[0]) ? true : false }).map((item)=>{ return parseInt(item[1].toString()) })
+  const defaultCourseInfo = courseInfo.length === 3 ? courseInfo : [0, 0, 0]
   const dietChoices = Array.from(data.entries()).filter((item)=>{ return /selected\[.*\]/.test(item[0]) ? true : false }).map((item)=>{ return item[0].replace('selected[','').replace(']','') })
   console.log("courseInfo", courseInfo)
   console.log("Diet",dietChoices)
@@ -15,7 +18,7 @@ export async function POST(request: Request) {
     ticket_number: ticket.value.trim(),
     email: email.value.trim(),
     preferences: {
-      choices: courseInfo,
+      choices: defaultCourseInfo,
       dietary_requirements: {
         selected: [...dietChoices],
         other: data.get('other'),

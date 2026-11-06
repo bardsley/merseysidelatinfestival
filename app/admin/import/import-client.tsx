@@ -431,14 +431,18 @@ export default function ImportPageClient() {
                       <option value="2025 Sunday - Class">2025 Sunday - Class</option> */}
 
                       <option value="2026 Full Pass">2026 Full Pass</option>
+                      <option value="2026 Full Pass with Gala Buffet">2026 Full Pass with Gala Buffet</option>
                       <option value="2026 Artist Pass">2026 Artist Pass</option>
                       <option value="2026 Artist Guest Pass">2026 Artist Guest Pass</option>
                       <option value="2026 Staff Pass">2026 Staff Pass</option>
+                      <option value="2026 Volunteer Pass">2026 Volunteer Pass</option>
                       <option value="2026 Full Pass (without dinner)">2026 Full Pass (without dinner)</option>
                       <option value="2026 Volunteer Pass (without dinner)">2026 Volunteer Pass (without dinner)</option>
                       <option value="2026 Artist Pass (without dinner)">2026 Artist Pass (without dinner)</option>
                       <option value="2026 Party Pass">2026 Party Pass</option>
                       <option value="2026 Saturday Pass">2026 Saturday Pass</option>
+                      <option value="Saturday Pass with Gala Buffet">Saturday Pass with Gala Buffet</option>
+                      <option value="Dine and Dance Pass">Dine and Dance Pass</option>
                       <option value="2026 Sunday Pass">2026 Sunday Pass</option>
                       <option value="2026 Class Pass<">2026 Class Pass</option>
                       <option value="2026 Saturday - Party">2026 Saturday - Party</option>

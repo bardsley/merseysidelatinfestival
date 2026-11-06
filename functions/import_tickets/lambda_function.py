@@ -87,24 +87,17 @@ def match_passes(imported_pass):
         "Friday - Party":    [1,0,0,0,0,0],
         "Sunday - Party":    [0,0,0,0,0,1],
         "Sunday - Class":    [0,0,0,0,1,0],
-        "2025 Full Pass":   [1,1,1,1,1,1],
-        "2025 Artist Pass": [1,1,1,1,1,1],
-        "2025 Staff Pass":  [1,1,1,1,1,1],
-        "2025 Full Pass (without dinner)":       [1,1,0,1,1,1],
-        "2025 Volunteer Pass (without dinner)":  [1,1,0,1,1,1],
-        "2025 Artist Pass (without dinner)":     [1,1,0,1,1,1],
-        "2025 Saturday Pass (without dinner)":   [0,1,0,1,0,0],
-        "2025 Party Pass":    [1,0,0,1,0,1],
-        "2025 Saturday Pass": [0,1,1,1,0,0],
-        "2025 Sunday Pass":   [0,0,0,0,1,1],
-        "2025 Class Pass":    [0,1,0,0,1,0],
-        "2025 Saturday - Party":  [0,0,0,1,0,0],
-        "2025 Saturday - Class":  [0,1,0,0,0,0],
-        "2025 Saturday - Dinner": [0,0,1,0,0,0],
-        "2025 Friday - Party":    [1,0,0,0,0,0],
-        "2025 Sunday - Party":    [0,0,0,0,0,1],
-        "2025 Sunday - Class":    [0,0,0,0,1,0],
-        "2025 Artist Guest":    [1,1,0,1,1,1],
+        "2026 Full Pass": [1,1,0,1,1,1],
+        "2026 Full Pass with Gala Buffet": [1,1,1,1,1,1],
+        "2026 Artist Pass": [1,1,1,1,1,1],
+        "2026 Artist Pass (without dinner)":     [1,1,0,1,1,1],
+        "2026 Artist Guest Pass": [1,1,0,1,1,1],
+        "2026 Staff Pass": [1,1,1,1,1,1],
+        "2026 Volunteer Pass": [1,1,0,1,1,1],
+        "2026 Saturday Pass": [0,1,1,1,0,0],
+        "Saturday Pass with Gala Buffet": [0,1,1,1,0,0],
+        "Dine and Dance Pass": [0,0,1,0,0,1],
+        "2026 Saturday - Dinner": [0,0,1,0,0,0],
     }
     # imported_pass = re.sub(r'\(.*?\)|student', '', imported_pass, flags=re.IGNORECASE).strip().lower()
 
@@ -184,6 +177,7 @@ def lambda_handler(event, context):
                 'meal_preferences': None,
                 'promo_code': None,
                 'history': None,
+                'event_year': '2026',
             }
 
             input = {k: v for k, v in input.items() if v is not None}
