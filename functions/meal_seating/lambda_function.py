@@ -20,6 +20,8 @@ logger.setLevel("INFO")
 
 TARGET_EVENT_YEAR = '2026'
 SEATING_CACHE_KEY = f'SEATING#OPTIMISED#{TARGET_EVENT_YEAR}'
+TABLE_CAPACITY = 10
+MAX_TABLE_CAPACITY = 13
 
 db = boto3.resource('dynamodb')
 attendees_table = db.Table(attendees_table_name)
@@ -66,7 +68,7 @@ def remove_empty_tables_and_reindex(tables):
             attendee['table_number'] = new_index
     return non_empty_tables
 
-def generate_initial_state(attendees, fixed_tickets, table_capacities, min_table_capacity=10, max_table_capacity=12):
+def generate_initial_state(attendees, fixed_tickets, table_capacities, min_table_capacity=TABLE_CAPACITY, max_table_capacity=MAX_TABLE_CAPACITY):
     '''
     Generate initial state with groups sat together
     '''
@@ -218,7 +220,7 @@ def evaluate_seating(tables, table_capacities, preferred_capacity=10):
     return score
 
 
-def simulated_annealing(attendees, fixed_tickets, table_capacities, initial_temp=100000, cooling_rate=0.9, min_temp=1, min_table_capacity=10, max_table_capacity=12, allow_capacity_adjustment=True):
+def simulated_annealing(attendees, fixed_tickets, table_capacities, initial_temp=100000, cooling_rate=0.9, min_temp=1, min_table_capacity=TABLE_CAPACITY, max_table_capacity=MAX_TABLE_CAPACITY, allow_capacity_adjustment=True):
     '''
     Optimise the seating with simulated annealing.
     '''
@@ -251,22 +253,24 @@ def simulated_annealing(attendees, fixed_tickets, table_capacities, initial_temp
         # move together if group
         if group_or_attendee['group']:
             group_members = [p for p in table1 if p['group'] == group_or_attendee['group']]
-            if len(table2) + len(group_members) <= max_table_capacity:
+            table2_index = new_state.index(table2)
+            if len(table2) + len(group_members) <= table_capacities[table2_index]:
                 for member in group_members:
                     table1.remove(member)
                     table2.append(member)
                     member['table_number'] = new_state.index(table2)
 
                 if allow_capacity_adjustment and len(table2) > min_table_capacity:
-                    table_capacities[new_state.index(table2)] = min(max_table_capacity, len(table2))
+                    table_capacities[table2_index] = min(max_table_capacity, len(table2))
         else:
-            if len(table2) < max_table_capacity:
+            table2_index = new_state.index(table2)
+            if len(table2) < table_capacities[table2_index]:
                 table1.remove(group_or_attendee)
                 table2.append(group_or_attendee)
                 group_or_attendee['table_number'] = new_state.index(table2)
 
                 if allow_capacity_adjustment and len(table2) > min_table_capacity:
-                    table_capacities[new_state.index(table2)] = min(max_table_capacity, len(table2))
+                    table_capacities[table2_index] = min(max_table_capacity, len(table2))
 
         new_score = evaluate_seating(new_state, table_capacities)
         delta_score = new_score - current_score
@@ -347,7 +351,8 @@ def post(event):
     elif isinstance(event.get('table_capacities'), list):
         table_capacities = event.get('table_capacities')
     else:
-        table_capacities = [10 for i in range(20)]
+        table_capacities = [TABLE_CAPACITY for i in range(20)]
+
 
     optimised_seating = simulated_annealing(attendees, fixed_tickets, table_capacities)
 

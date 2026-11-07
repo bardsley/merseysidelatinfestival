@@ -10,7 +10,8 @@ import { MdRestaurantMenu } from "react-icons/md";
 
 const mealTableApiUrl = "/api/admin/meal/seating"; // Update with the actual API URL
 const submitApiUrl = "/api/admin/meal/seating"; // Update with the actual submission API URL
-const maxTableCapacity = 13; // Set maximum allowed capacity to 12
+const defaultTableCapacity = 10;
+const maxTableCapacity = 13;
 
 export default function MealTableSorter() {
   const [fixedSeating, setFixedSeating] = useState<{ [key: string]: number }>({});
@@ -27,7 +28,7 @@ export default function MealTableSorter() {
         setOriginalTableData(JSON.parse(JSON.stringify(data.seating_data)));
 
         // Set the initial capacities based on the number of attendees on each table
-        const initialCapacities = data.seating_data.map((table) => Math.max(10, Math.min(table.length, maxTableCapacity)));
+        const initialCapacities = data.seating_data.map(() => defaultTableCapacity);
         setTableCapacities(initialCapacities);
 
         // Automatically add attendees to fixedSeating if attendee.fixed is true
@@ -134,10 +135,7 @@ export default function MealTableSorter() {
 
   const handleCapacityChange = (tableIndex, newCapacity) => {
     if (newCapacity >= 1 && newCapacity <= maxTableCapacity) {
-      setTableCapacities((prev) => ({
-        ...prev,
-        [tableIndex]: newCapacity,
-      }));
+      setTableCapacities((prev) => ({ ...prev, [tableIndex]: newCapacity }));
     }
   };
 
@@ -212,7 +210,7 @@ export default function MealTableSorter() {
               }
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                 {tableData.seating_data.map((table, tableIndex) => {
-                  const currentCapacity = tableCapacities[tableIndex] || maxTableCapacity;
+                  const currentCapacity = tableCapacities[tableIndex] || defaultTableCapacity;
                   const isTableLocked = lockedTables[tableIndex];
 
                   return (

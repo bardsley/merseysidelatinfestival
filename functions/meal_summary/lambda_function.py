@@ -136,6 +136,7 @@ def lambda_handler(event, context):
         meal_attendees_list.append({
             'ticket_number': ticket_number,
             'full_name': full_name,
+            'email': item.get('email', ''),
             'pass_type': pass_type,
             'choices': choices,
             'dietary_requirements': dietary_requirements,
