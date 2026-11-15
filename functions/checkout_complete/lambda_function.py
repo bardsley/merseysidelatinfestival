@@ -27,6 +27,7 @@ logger = logging.getLogger()
 logger.setLevel("INFO")
 
 stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
+STAGE_NAME = os.environ.get("STAGE_NAME")
 
 # get dynamodb table
 db = boto3.resource('dynamodb')
@@ -103,6 +104,66 @@ def lambda_handler(event, context):
                 'body': json.dumps({'error': 'Checkout session does not exist'})
             }
 
+        PRICE_ID_ALLOW_LIST = [
+            "price_1TUt4EEWkmdeWsQPo2E2DO9L",
+            "price_1TUt4EEWkmdeWsQPbG4FVSQq",
+            "price_1TUt4LEWkmdeWsQP20RlcHQz",
+            "price_1TUt4LEWkmdeWsQPxHSWhwCE",
+            "price_1TUt4OEWkmdeWsQPDwb6RK0k",
+            "price_1TUt4OEWkmdeWsQPAGJiImnX",
+            "price_1TUt4QEWkmdeWsQPOYsnSjqX",
+            "price_1TUt4QEWkmdeWsQP690iNmOM",
+            "price_1TUt4SEWkmdeWsQP0zxEhGkx",
+            "price_1TUt4SEWkmdeWsQPx327zc4s",
+            "price_1TUt4TEWkmdeWsQPAskEPbH5",
+            "price_1TUt4TEWkmdeWsQPBEmmZxrj",
+            "price_1TUt4CEWkmdeWsQPqRwZHVuU",
+            "price_1TUt4CEWkmdeWsQPAqoOSiK7",
+            "price_1TUt4AEWkmdeWsQPkC9IkoPc",
+            "price_1TUt4AEWkmdeWsQP2N1UHAQL",
+            "price_1TUt48EWkmdeWsQPNlKBk2Zl",
+            "price_1TUt48EWkmdeWsQPsFeXZMQA",
+            "price_1TUt45EWkmdeWsQPWqwGV8To",
+            "price_1TUt45EWkmdeWsQPUsDZ0LNn",
+            "price_1TUt46EWkmdeWsQPvPpn4N6I",
+            "price_1TUt46EWkmdeWsQPxvmHcdrm",
+            "price_1TUOXxEWkmdeWsQPRgjS4RDy",
+            "price_1TUOXxEWkmdeWsQPtKLCRVpr",
+            "price_1SZBEKEWkmdeWsQP5pSnS41H",
+            "price_1SZBGyEWkmdeWsQPdAlpQhfI",
+            "price_1TUNj1EWkmdeWsQPseHa3JX5",
+            "price_1TUNjMEWkmdeWsQPtwVFrEuL",
+        ] if STAGE_NAME=="PROD" else [
+            "price_1TUOuEEWkmdeWsQPzO3YshAj",
+            "price_1TUOuZEWkmdeWsQPRZBEeYng",
+            "price_1TUOw4EWkmdeWsQPCSybBkY0",
+            "price_1TUOw4EWkmdeWsQP4BgU0in7",
+            "price_1TUOxdEWkmdeWsQPhQN2T8Ew",
+            "price_1TUOxdEWkmdeWsQPoLT3QgjM",
+            "price_1TUOzAEWkmdeWsQPmGYyS90N",
+            "price_1TUOzAEWkmdeWsQPUEtXJYVK",
+            "price_1TUP0iEWkmdeWsQPJ6pKxafx",
+            "price_1TUP0iEWkmdeWsQPGcqUbBa8",
+            "price_1TUP2gEWkmdeWsQPYZDU4CMT",
+            "price_1TUP2gEWkmdeWsQPtSu0fxMs",
+            "price_1TUOrrEWkmdeWsQPOM7J6lcf",
+            "price_1TUOsFEWkmdeWsQPlgX30fnz",
+            "price_1TUOpzEWkmdeWsQP98nxi7er",
+            "price_1TUOqGEWkmdeWsQPOeafIVxm",
+            "price_1TUOmaEWkmdeWsQP1hG3X8NY",
+            "price_1TUOnJEWkmdeWsQPLWIwAOVX",
+            "price_1TUOafEWkmdeWsQP8FQzVaov",
+            "price_1TUOazEWkmdeWsQPFwWycU6o",
+            "price_1TUOdREWkmdeWsQPRlPe1G9R",
+            "price_1TUOdjEWkmdeWsQPX2PPkdh4",
+            "price_1TUOBpEWkmdeWsQPOWSD8Gyw",
+            "price_1TUOCFEWkmdeWsQPAeKTDUkS",
+            "price_1TUO87EWkmdeWsQPrPP6OQ6w",
+            "price_1TUO8MEWkmdeWsQPjl50dIux",
+            "price_1TUO3hEWkmdeWsQPpcplwPm6",
+            "price_1TUO3vEWkmdeWsQPk2TMBqWd",
+        ]
+
         if stripe_response['metadata'].get('ticket_upgrade', False):
             ticket_number = stripe_response.get('client_reference_id', None)
             full_name = next((item for item in stripe_response['custom_fields'] if item["key"] == "fullname"), {}).get('text', {}).get('value', "unknown")
@@ -126,7 +187,9 @@ def lambda_handler(event, context):
             logger.info(response)  
             
             return {'statusCode':200}
-                                
+
+        if stripe_response['line_items']['data'][0]['price']['id'] not in PRICE_ID_ALLOW_LIST:
+            return {'statusCode':200}
 
         access, line_items = process_line_items(stripe_response['line_items'], stripe_response)
         student_ticket = True if stripe_response['line_items']['data'][0]['price']['nickname' ] == "student_active" else False
