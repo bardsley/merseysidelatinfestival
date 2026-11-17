@@ -132,8 +132,7 @@ def lambda_handler(event, context):
             "price_1SZBEKEWkmdeWsQP5pSnS41H",
             "price_1SZBGyEWkmdeWsQPdAlpQhfI",
             "price_1TUNj1EWkmdeWsQPseHa3JX5",
-            "price_1TUNjMEWkmdeWsQPtwVFrEuL",
-        ] if STAGE_NAME=="PROD" else [
+            "price_1TUNjMEWkmdeWsQPtwVFrEuL", # On the next line starts test env prices
             "price_1TUOuEEWkmdeWsQPzO3YshAj",
             "price_1TUOuZEWkmdeWsQPRZBEeYng",
             "price_1TUOw4EWkmdeWsQPCSybBkY0",
