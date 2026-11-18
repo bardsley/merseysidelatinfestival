@@ -41,6 +41,8 @@ export async function GET() {
       email: attendee.email,
       checkin_at: attendee.ticket_used,
       passes: attendee.line_items ? attendee.line_items.map((item) => item.description) : [],
+      access: attendee.access || [],
+      event_year: attendee.event_year,
       purchased_date: guaranteeISOstringFromDate(attendee.purchase_date), 
       ticket_number: attendee.ticket_number,
       active: attendee.active,

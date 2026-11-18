@@ -1,59 +1,11 @@
 import useSWR from "swr";
-import {  BiSolidBadgeCheck, BiIdCard} from "react-icons/bi";
+import { BiIdCard } from "react-icons/bi";
 // import { itemsFromPassCombination} from '@components/ticketing/pricingUtilities'
 import WristBandIcon from '@public/wristband.svg';
-import TicketIcon from '@public/ticket.svg';
+import { accessToWristbands } from '@components/admin/scan/wristbands';
 
 import { format, fromUnixTime } from "date-fns";
 import { fetcher, scanIn, scanInMeal } from "@lib/fetchers";
-
-export type line_item = {
-  description: string,
-}
-// fri party, sat class, sat din, sat party, sun class, sun party
-//    0           1         2         3         4           5
-const accessToWristbands = (accesCode: number[], line_items: line_item[]) => {
-  let wristBands = []
-  const meal = accesCode[2] > 0
-  const friday = accesCode[0] > 0
-  
-  const artist = line_items.filter((li) => { return /Artist/.test(li.description)}).length > 0
-  const staffPass = line_items.filter((li) => { return /Staff/.test(li.description) || /Volunteer/.test(li.description)}).length > 0
-  const fullPass = line_items.filter((li) => { return /Full/.test(li.description)}).length > 0
-  const fullPassLike = artist || staffPass || fullPass
-
-  const partyPass = line_items.filter((li) => { return /Party\sPass/.test(li.description)}).length > 0 || (accesCode[0] > 0 && accesCode[3] > 0 && accesCode[5] > 0)  && !fullPassLike
-  const classPass = line_items.filter((li) => { return /Class\sPass/.test(li.description)}).length > 0 || (accesCode[1] > 0 && accesCode[4] > 0) && !fullPassLike
-  const saturdayPass = line_items.filter((li) => { return /Saturday\sPass/.test(li.description) }).length > 0 || (accesCode[1] > 0 && accesCode[3] > 0) && !fullPassLike
-  const sundayPass = line_items.filter((li) => { return /Sunday\sPass/.test(li.description) }).length > 0 || (accesCode[4] > 0 && accesCode[5] > 0) && !fullPassLike
-  const saturdayClass = line_items.filter((li) => { return /Saturday\s-\sClass/.test(li.description) }).length > 0 || (accesCode[1] > 0 && !saturdayPass && !classPass) && !fullPassLike
-  const saturdayParty = line_items.filter((li) => { return /Saturday\s-\sParty/.test(li.description) || /Dine\sand\sDance\sPass/.test(li.description) }).length > 0 || (accesCode[3] > 0 && !saturdayPass && !partyPass) && !fullPassLike
-  const sundayClass = line_items.filter((li) => { return /Sunday\s-\sClass/.test(li.description) }).length > 0 || (accesCode[4] > 0 && !sundayPass && !classPass) && !fullPassLike
-  const sundayParty = line_items.filter((li) => { return /Sunday\s-\sParty/.test(li.description) }).length > 0 || (accesCode[5] > 0 && !sundayPass && !partyPass) && !fullPassLike
-
-  if(meal) { wristBands.push({ 
-    colour: "bg-white text-black", 
-    name: "Dinner - Ticket",
-    icon: <TicketIcon className="w-8 h-8"/>
-  }) }
-  if(friday && !artist && !staffPass && !fullPass && !partyPass) { wristBands.push({ 
-    colour: "bg-black border border-gray-600", 
-    name: "Friday - Stamp",
-    icon: <BiSolidBadgeCheck className="w-8 h-8"/>
-  }) }
-  if(artist) { wristBands.push({ colour: "bg-blue-600", name: "Artist Pass - Plastic"}) }
-  if(staffPass) { wristBands.push({ colour: "bg-blue-600", name: "Staff/Volunteer Pass - Plastic"}) }
-  if(fullPass) { wristBands.push({ colour: "bg-gray-300 text-black", name: "Full Pass - Plastic"}) }
-  if(partyPass) { wristBands.push({ colour: "bg-orange-700", name: "Party Pass - Plastic"}) }
-  if(classPass) { wristBands.push({ colour: "bg-orange-400 text-black", name: "Class Pass - Paper"}) }
-  if(saturdayPass) { wristBands.push({ colour: "bg-purple-700", name: "Saturday Pass - Plastic"}) }
-  if(sundayPass) { wristBands.push({ colour: "bg-yellow-300 text-black", name: "Sunday Pass - Paper"}) }
-  if(saturdayClass) { wristBands.push({ colour: "bg-pink-400 text-black", name: "Saturday Class - Paper"}) }
-  if(saturdayParty) { wristBands.push({ colour: "bg-green-950", name: "Saturday Party - Paper"}) }
-  if(sundayClass) { wristBands.push({ colour: "bg-green-400", name: "Sunday Class - Plastic"}) }
-  if(sundayParty) { wristBands.push({ colour: "bg-blue-800", name: "Sunday Party - Paper"}) }
-  return wristBands
-}
 
 const ScanSuccessDialog = ({scan,onClick}) => {
   const {data, error, isLoading, isValidating} = useSWR(`/api/admin/scan/${scan}`, fetcher, { keepPreviousData: false });

@@ -23,10 +23,11 @@ export default async function AdminDashboardPage() {
       <Container width="large" padding="tight" className={`flex-1 pb-2`} size="none">
       <h1 className="text-2xl md:text-5xl">Ticketing</h1>
       <p className="">See recent sales, mark as attended and give pass etc</p>
+      <a href="/admin/ticketing/wristbands" className="inline-block mt-2 px-4 py-2 text-gray-100 hover:text-white rounded bg-chillired-400">Wristband counts &rarr;</a>
       </Container>
-      <Container width="large" padding="tight" className={`flex-1 pb-2`} size="none">
+      {/* <Container width="large" padding="tight" className={`flex-1 pb-2`} size="none">
         <AttendeeStats/>
-      </Container>
+      </Container> */}
       
       <Container width="large" padding="tight" className={`flex-1 pb-2`} size="none">
         <Suspense>
