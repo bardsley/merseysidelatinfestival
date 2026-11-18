@@ -3,7 +3,7 @@ import Layout from "@components/layout/layout";
 import { Container } from "@components/layout/container";
 import Navigation from "@components/admin/navigation";
 import TicketList from "@components/admin/ticketList";
-import AttendeeStats from "@components/admin/attendeeStats";
+// import AttendeeStats from "@components/admin/attendeeStats";
 import { admin_ticketing_url } from "@lib/urls";
 
 export default async function AdminDashboardPage() {
