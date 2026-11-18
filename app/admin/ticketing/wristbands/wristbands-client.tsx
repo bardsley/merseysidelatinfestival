@@ -1,6 +1,7 @@
 'use client'
 import { useMemo, useState } from "react";
 import useSWR from "swr";
+import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { authUsage } from "@lib/authorise";
 import { fetcher } from "@lib/fetchers";
@@ -11,6 +12,7 @@ const YEAR = '2026'
 
 type Attendee = {
   name: string,
+  email: string,
   ticket_number: string,
   active: boolean,
   checkin_at?: number,
@@ -68,13 +70,18 @@ export default function WristbandsClient() {
 
   const missingAccess = attendees.filter((attendee) => !attendee.access || attendee.access.length === 0).length
 
+  const inactiveCount = (list: Attendee[]) => list.filter((attendee) => !attendee.active).length
+
   const toggle = (key: WristBandKey | 'none') => setExpanded(expanded === key ? null : key)
 
   const attendeeList = (list: Attendee[]) => (
     <ul className="bg-richblack-700 rounded-b px-4 py-2 mb-2 -mt-2 text-sm max-h-96 overflow-y-auto">
       {list.map((attendee) => (
-        <li key={attendee.ticket_number} className="flex justify-between gap-4 py-1 border-b border-richblack-500 last:border-none">
-          <span>{attendee.name}{!attendee.active ? <span className="text-chillired-300"> (inactive)</span> : null}</span>
+        <li key={attendee.ticket_number} className={`flex justify-between gap-4 py-1 border-b border-richblack-500 last:border-none ${!attendee.active ? 'opacity-60' : ''}`}>
+          <span className="flex items-center gap-2">
+            <Link href={`/admin/ticketing/ticket/${attendee.ticket_number}/${attendee.email}`} className={`underline hover:text-chillired-300 ${!attendee.active ? 'line-through' : ''}`}>{attendee.name}</Link>
+            {!attendee.active ? <span className="bg-chillired-800 text-white text-xs uppercase font-bold rounded px-2 py-0.5">Inactive</span> : null}
+          </span>
           <span className="text-gray-400 text-right">{attendee.passes.filter((pass) => pass.includes(YEAR)).join(', ')}</span>
         </li>
       ))}
@@ -113,7 +120,10 @@ export default function WristbandsClient() {
                 {band.icon ? band.icon : <WristBandIcon className="w-8 h-8"/>}
                 {band.name}
               </span>
-              <span className="text-2xl font-bold">{counts[band.key]}</span>
+              <span className="flex items-baseline gap-2">
+                {inactiveCount(byBand[band.key]) > 0 ? <span className="text-sm opacity-80">({inactiveCount(byBand[band.key])} inactive)</span> : null}
+                <span className="text-2xl font-bold">{counts[band.key]}</span>
+              </span>
             </button>
             {expanded === band.key && counts[band.key] > 0 ? attendeeList(byBand[band.key]) : null}
           </div>
@@ -124,7 +134,10 @@ export default function WristbandsClient() {
             className="bg-chillired-800 flex justify-between items-center gap-4 rounded w-full text-lg p-4 mb-2 text-left"
           >
             <span>No wristband matched</span>
-            <span className="text-2xl font-bold">{noBand.length}</span>
+            <span className="flex items-baseline gap-2">
+              {inactiveCount(noBand) > 0 ? <span className="text-sm opacity-80">({inactiveCount(noBand)} inactive)</span> : null}
+              <span className="text-2xl font-bold">{noBand.length}</span>
+            </span>
           </button>
           {expanded === 'none' && noBand.length > 0 ? attendeeList(noBand) : null}
         </div>
