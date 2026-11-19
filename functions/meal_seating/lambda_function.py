@@ -227,7 +227,17 @@ def simulated_annealing(attendees, fixed_tickets, table_capacities, initial_temp
     provided_table_capacities = table_capacities is not None and len(table_capacities) > 0
     allow_capacity_adjustment = not provided_table_capacities
 
+    table_capacities = list(table_capacities) if table_capacities else []
+
     current_state = generate_initial_state(attendees, fixed_tickets, table_capacities, min_table_capacity, max_table_capacity)
+
+    # The initial state adds tables when more attendees exist than the supplied
+    # capacities allow (e.g. new tickets since the last plan). Give those tables
+    # the default capacity so the capacity list covers every table.
+    if len(table_capacities) < len(current_state):
+        logger.info(f"Initial state has {len(current_state)} tables but only {len(table_capacities)} capacities supplied; padding with {min_table_capacity}")
+        table_capacities.extend([min_table_capacity] * (len(current_state) - len(table_capacities)))
+
     current_score = evaluate_seating(current_state, table_capacities)
     best_state = deepcopy(current_state)
     best_score = current_score
