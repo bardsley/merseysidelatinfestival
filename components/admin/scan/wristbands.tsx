@@ -29,20 +29,36 @@ export type WristBand = {
 }
 
 // Ordered as they should be displayed
+// export const WRISTBANDS: WristBand[] = [
+//   { key: 'meal',          colour: "bg-white text-black",               name: "Dinner - Ticket", icon: <TicketIcon className="w-8 h-8"/> },
+//   { key: 'friday',        colour: "bg-black border border-gray-600",   name: "Friday - Stamp",  icon: <BiSolidBadgeCheck className="w-8 h-8"/> },
+//   { key: 'artist',        colour: "bg-blue-600",                       name: "Artist Pass - Plastic" },
+//   { key: 'staff',         colour: "bg-blue-600",                       name: "Staff/Volunteer Pass - Plastic" },
+//   { key: 'fullPass',      colour: "bg-gray-300 text-black",            name: "Full Pass - Plastic" },
+//   { key: 'partyPass',     colour: "bg-orange-700",                     name: "Party Pass - Plastic" },
+//   { key: 'classPass',     colour: "bg-orange-400 text-black",          name: "Class Pass - Paper" },
+//   { key: 'saturdayPass',  colour: "bg-purple-700",                     name: "Saturday Pass - Plastic" },
+//   { key: 'sundayPass',    colour: "bg-yellow-300 text-black",          name: "Sunday Pass - Paper" },
+//   { key: 'saturdayClass', colour: "bg-pink-400 text-black",            name: "Saturday Class - Paper" },
+//   { key: 'saturdayParty', colour: "bg-green-950",                      name: "Saturday Party - Paper" },
+//   { key: 'sundayClass',   colour: "bg-green-400",                      name: "Sunday Class - Plastic" },
+//   { key: 'sundayParty',   colour: "bg-blue-800",                       name: "Sunday Party - Paper" },
+// ]
+
 export const WRISTBANDS: WristBand[] = [
   { key: 'meal',          colour: "bg-white text-black",               name: "Dinner - Ticket", icon: <TicketIcon className="w-8 h-8"/> },
   { key: 'friday',        colour: "bg-black border border-gray-600",   name: "Friday - Stamp",  icon: <BiSolidBadgeCheck className="w-8 h-8"/> },
-  { key: 'artist',        colour: "bg-blue-600",                       name: "Artist Pass - Plastic" },
-  { key: 'staff',         colour: "bg-blue-600",                       name: "Staff/Volunteer Pass - Plastic" },
-  { key: 'fullPass',      colour: "bg-gray-300 text-black",            name: "Full Pass - Plastic" },
-  { key: 'partyPass',     colour: "bg-orange-700",                     name: "Party Pass - Plastic" },
-  { key: 'classPass',     colour: "bg-orange-400 text-black",          name: "Class Pass - Paper" },
-  { key: 'saturdayPass',  colour: "bg-purple-700",                     name: "Saturday Pass - Plastic" },
-  { key: 'sundayPass',    colour: "bg-yellow-300 text-black",          name: "Sunday Pass - Paper" },
-  { key: 'saturdayClass', colour: "bg-pink-400 text-black",            name: "Saturday Class - Paper" },
-  { key: 'saturdayParty', colour: "bg-green-950",                      name: "Saturday Party - Paper" },
-  { key: 'sundayClass',   colour: "bg-green-400",                      name: "Sunday Class - Plastic" },
-  { key: 'sundayParty',   colour: "bg-blue-800",                       name: "Sunday Party - Paper" },
+  { key: 'artist',        colour: "bg-gray-300 text-black",                       name: "Artist Pass - Plastic" },
+  { key: 'staff',         colour: "bg-green-400 text-black",                       name: "Staff/Volunteer Pass - Plastic" },
+  { key: 'fullPass',      colour: "bg-purple-600 text-white",            name: "Full Pass - Plastic" },
+  { key: 'partyPass',     colour: "bg-pink-600",                     name: "Party Pass - Plastic Sparkly" },
+  { key: 'classPass',     colour: "bg-yellow-400 text-black",          name: "Class Pass - Plastipaper" },
+  { key: 'saturdayPass',  colour: "bg-orange-700",                     name: "Saturday Pass - Plastic" },
+  { key: 'saturdayClass', colour: "bg-pink-400 text-white",            name: "Saturday Class - Paper" },
+  { key: 'saturdayParty', colour: "bg-blue-800",                      name: "Saturday Party - Plastipaper" },
+  { key: 'sundayPass',    colour: "bg-blue-500 text-white",          name: "Sunday Pass - Plastic" },
+  { key: 'sundayClass',   colour: "bg-orange-400",                      name: "Sunday Class - Neon Paper" },
+  { key: 'sundayParty',   colour: "bg-pink-600",                       name: "Sunday Party - Plastipaper" },
 ]
 
 const hasItem = (line_items: line_item[], ...patterns: RegExp[]) =>

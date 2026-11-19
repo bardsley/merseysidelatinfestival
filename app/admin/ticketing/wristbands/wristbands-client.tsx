@@ -128,6 +128,7 @@ export default function WristbandsClient() {
             {expanded === band.key && counts[band.key] > 0 ? attendeeList(byBand[band.key]) : null}
           </div>
         ))}
+        { noBand.length > 0 ?
         <div>
           <button
             onClick={() => toggle('none')}
@@ -140,7 +141,7 @@ export default function WristbandsClient() {
             </span>
           </button>
           {expanded === 'none' && noBand.length > 0 ? attendeeList(noBand) : null}
-        </div>
+        </div> : null }
       </div>
       <p className="text-sm text-gray-400 mt-4">Click a row to see the attendees. A ticket can need more than one wristband, so the counts won&apos;t sum to the ticket total.</p>
     </div>
