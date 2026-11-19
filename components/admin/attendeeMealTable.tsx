@@ -7,7 +7,7 @@ const courseMappings = [
   { 0: "Eton Mess", 1: "Sticky Toffee" }
 ];
 
-export default function AttendeeMealTable({ attendees, summaryLoading, summaryIsValidating, summaryError, itemsPerPage = 25, attendeesGroupedByTable = false }) {
+export default function AttendeeMealTable({ attendees, summaryLoading, summaryIsValidating, summaryError, itemsPerPage = 25, attendeesGroupedByTable = false, tableByTicket = null }) {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = attendees ? Math.ceil(attendees.length / itemsPerPage) : 1;
 
@@ -84,19 +84,17 @@ export default function AttendeeMealTable({ attendees, summaryLoading, summaryIs
             <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                       <table className="min-w-full divide-y divide-gray-300 w-full">
-                      <HeaderRow/> test 
+                      <ListHeaderRow/>
 
                       <tbody className="divide-y divide-gray-700">
                       {attendeesToDisplay.map((attendee, index) => {
                         const baseClasses = "whitespace-nowrap px-1 py-3 text-xs text-gray-100 ";
-                        const choices = attendee.choices || [];
+                        const tableNumber = tableByTicket?.get(String(attendee.ticket_number));
 
                         return (
                           <tr key={index} className={`${attendee.not_wanted ? 'decoration-1 line-through text-gray-600' : ''} ${attendee.is_selected ? '' : 'bg-yellow-900/20'}`}>
                             <td className={baseClasses}>{attendee.full_name}</td>
-                            <td className={baseClasses}>{courseMappings[0][choices[0]] || courseMappings[0][0]}</td>
-                            <td className={baseClasses}>{courseMappings[1][choices[1]] || courseMappings[1][0]}</td>
-                            <td className={baseClasses}>{courseMappings[2][choices[2]] || courseMappings[2][0]}</td>
+                            <td className={baseClasses}>{tableNumber ? `Table ${tableNumber}` : "Unassigned"}</td>
                             <td className={baseClasses}>{attendee.dietary_requirements?.selected?.join(", ") || "None"}</td>
                             <td className={baseClasses}>{attendee.dietary_requirements?.other || "None"}</td>
                           </tr>
@@ -139,6 +137,27 @@ const HeaderRow = () => {
       </tr>
     </thead>
 )
+}
+
+const ListHeaderRow = () => {
+  return (
+    <thead className="bg-richblack-700">
+      <tr>
+        <th scope="col" className="py-4 pl-4 pr-3 text-left text-lg font-bold text-gray-100 w-44">
+          Name
+        </th>
+        <th scope="col" className="px-3 py-4 text-left text-lg font-bold text-gray-100 w-[7rem]">
+          Table
+        </th>
+        <th scope="col" className="px-3 py-4 text-left text-lg font-bold text-gray-100 w-[10rem]">
+          Dietary Req.
+        </th>
+        <th scope="col" className="px-3 py-4 text-left text-lg font-bold text-gray-100">
+          Details
+        </th>
+      </tr>
+    </thead>
+  )
 }
 
 const TableHeader =({tableIndex}) => {

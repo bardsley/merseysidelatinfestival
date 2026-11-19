@@ -14,10 +14,20 @@ export default function DiningPageClient() {
 
   const {data: summaryData, error: summaryError, isLoading: summaryLoading, isValidating: summaryValidating} = useSWR(mealSummaryApiUrl, fetcher, { keepPreviousData: false });
   const {data: attendeeData} = useSWR('/api/admin/attendees', fetcher, { keepPreviousData: false });
+  const {data: seatingData} = useSWR('/api/admin/meal/seating', fetcher, { keepPreviousData: false });
 
+  // Latest seating plan -> ticket number to table number (1-based, matching the details page)
+  const tableByTicket = new Map<string, number>();
+  (seatingData?.seating_data || []).forEach((table, tableIndex) => {
+    (table || []).forEach((attendee) => tableByTicket.set(String(attendee.ticket_number), tableIndex + 1));
+  });
   const attendeesAll = summaryData && summaryData.meal_attendees_list
-  // console.log("attendeesAll", attendeesAll)
-  const attendees = attendeesAll //? attendeesAll.filter((attendee) => /dinner/i.test(attendee.pass_type)) : []
+  // Sort by table number (unassigned last), then by name within each table
+  const tableOf = (attendee) => tableByTicket.get(String(attendee.ticket_number)) ?? Number.MAX_SAFE_INTEGER
+  const attendees = attendeesAll && [...attendeesAll].sort((a, b) =>
+    tableOf(a) - tableOf(b) || String(a.full_name || '').localeCompare(String(b.full_name || ''))
+  )
+
 
   const handleExport = () => {
     if (!attendees?.length) return;
@@ -25,13 +35,16 @@ export default function DiningPageClient() {
     const escapeCsvValue = (value) => `"${String(value ?? '').replace(/"/g, '""')}"`;
     const emailsByTicket = new Map((attendeeData?.attendees || []).map((attendee) => [String(attendee.ticket_number), attendee.email || '']));
     const rows = [
-      ['Forename', 'Surname', 'Email', 'Ticket Number'],
+      ['Table', 'Forename', 'Surname', 'Email', 'Ticket Number', 'Dietary Requirements', 'Dietary Details'],
       ...attendees.map((attendee) => [
+        tableByTicket.has(String(attendee.ticket_number)) ? `Table ${tableByTicket.get(String(attendee.ticket_number))}` : 'Unassigned',
         ...(String(attendee.full_name || '').trim().split(/\s+(?=[^\s]+$)/).length > 1
           ? String(attendee.full_name).trim().split(/\s+(?=[^\s]+$)/)
           : [String(attendee.full_name || '').trim(), '']),
         attendee.email || emailsByTicket.get(String(attendee.ticket_number)) || '',
         attendee.ticket_number,
+        (attendee.dietary_requirements?.selected || []).join(', '),
+        attendee.dietary_requirements?.other || '',
       ]),
     ];
     const csv = rows.map((row) => row.map(escapeCsvValue).join(',')).join('\r\n');
@@ -73,7 +86,7 @@ export default function DiningPageClient() {
           <span className={`transform transition-transform ${isAttendeesCollapsed ? '' : 'rotate-90'}`}><ArrowRightIcon className="w-4 h-4"/></span>
         </div>
         {!isAttendeesCollapsed && (
-          <AttendeesMealTable attendees={attendees} summaryLoading={summaryLoading} summaryIsValidating={summaryValidating} summaryError={summaryError} />
+          <AttendeesMealTable attendees={attendees} summaryLoading={summaryLoading} summaryIsValidating={summaryValidating} summaryError={summaryError} tableByTicket={tableByTicket} />
         )}
       </div>
       <br />
