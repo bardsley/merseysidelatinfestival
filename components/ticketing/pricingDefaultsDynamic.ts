@@ -27,7 +27,7 @@ export const individualTickets: IndividualTickets = {
 		 Dinner:{
 			 cost: 42.5,
 			 studentCost: 38.5,
-			 isAvailable: true,
+			 isAvailable: false,
 			 priceId: livePricing ? 'price_1TUt4OEWkmdeWsQPDwb6RK0k' : 'price_1TUOxdEWkmdeWsQPhQN2T8Ew',
 			 studentPriceId: livePricing ? 'price_1TUt4OEWkmdeWsQPAGJiImnX' : 'price_1TUOxdEWkmdeWsQPoLT3QgjM'
 			 },
@@ -99,7 +99,7 @@ export const passes: Passes = {
 	'Dine and Dance Pass': {
 		 cost: 65,
 		 studentCost: 55,
-		 isAvailable: true,
+		 isAvailable: false,
 		 saving: 7.5,
 		 studentSaving: 17.5,
 		 combination: ['Saturday Dinner', 'Saturday Party'],
@@ -121,7 +121,7 @@ export const passes: Passes = {
 	'Saturday Pass with Gala Buffet': {
 		 cost: 130,
 		 studentCost: 125,
-		 isAvailable: true,
+		 isAvailable: false,
 		 saving: 32.50,
 		 studentSaving: 37.50,
 		 combination: ['Saturday Classes', 'Saturday Dinner', 'Saturday Party'],
@@ -154,7 +154,7 @@ export const passes: Passes = {
 		'2026 Full Pass with Gala Buffet': {
 			cost: 195,
 			studentCost: 175,
-			isAvailable: true,
+			isAvailable: false,
 			saving: 95,
 			studentSaving: 115,
 			combination: ['Friday Party', 'Saturday Classes', 'Saturday Dinner',  'Saturday Party', 'Sunday Classes', 'Sunday Party'],
