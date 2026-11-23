@@ -3,7 +3,7 @@ import * as React from "react";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 import type { Template } from "tinacms";
 import { PageBlocksHero } from "@tina/__generated__/types";
-import { tinaField } from "tinacms/dist/react";
+import { tinaField } from "tinacms/dist/tina-field";
 import Image from "next/image";
 import { Section } from "../layout/section";
 import { Container } from "../layout/container";

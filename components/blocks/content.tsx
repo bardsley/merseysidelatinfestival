@@ -4,7 +4,7 @@ import React from "react";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 import type { Template } from "tinacms";
 import { PageBlocksContent } from "@tina/__generated__/types";
-import { tinaField } from "tinacms/dist/react";
+import { tinaField } from "tinacms/dist/tina-field";
 import { Container } from "../layout/container";
 import { Section } from "../layout/section";
 import BuyButton, { BuyButtonTemplate } from "../content/buybutton";

@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import Link from "next/link";
 import { Container } from "../layout/container";
 import { cn } from "../../lib/utils";
-import { tinaField } from "tinacms/dist/react";
+import { tinaField } from "tinacms/dist/tina-field";
 import NavItems from "./nav-items";
 import NavMobile from "./nav-mobile";
 import Logo from './logo'

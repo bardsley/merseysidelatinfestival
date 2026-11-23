@@ -2,7 +2,7 @@
 import { usePathname } from "next/navigation";
 import React from "react";
 import NavActive from "./nav-active";
-import { tinaField } from "tinacms/dist/react";
+import { tinaField } from "tinacms/dist/tina-field";
 import Link from "next/link";
 import { useLayout } from "../layout/layout-context";
 import { useSearchParams } from 'next/navigation'
